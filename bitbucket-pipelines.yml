@@ -1,0 +1,13 @@
+image: nikolaik/python-nodejs
+pipelines:
+  branches:
+    master:
+      - step:
+          deployment: Production
+          caches:
+            - node
+          script:
+            - yarn install
+            - CI=false yarn build
+            - pip install awscli --upgrade --ignore-installed six
+            - aws s3 sync ./build s3://verifiedimpactnfts.com --acl bucket-owner-full-control --acl public-read
