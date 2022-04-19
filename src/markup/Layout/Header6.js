@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-import logo from './../../images/logo.png';
+import logo from './../../images/logov.png';
+import casper from './../../images/icon/casper.png';
 import logo2 from './../../images/logo-black.png';
 import HeaderMenu from './HeaderMenu';
 
@@ -56,11 +57,7 @@ class Header6 extends Component {
                                     <span></span>
                                 </button>
 
-                                <div className="extra-nav">
-                                    <div className="extra-cell">
-                                        <Link to={'./contact'} className="dez-page site-button primary">Inquire Now </Link>
-                                    </div>
-                                </div>
+                              
 
                                 <div className="header-nav navbar-collapse collapse myNavbar justify-content-end" id="navbarNavDropdown">
 									<div className="logo-header mostion d-md-block d-lg-none">
@@ -70,6 +67,11 @@ class Header6 extends Component {
 										<HeaderMenu />
 									{/*  Header Menu Contents End */}
                                 </div>
+                                 <div className="extra-nav">
+                                    <div className="extra-cell">
+                                       <img src={casper} className="img img-fluid" width={"50px"}/>
+                                    </div>
+                                </div> 
                             </div>
                         </div>
                     </div>

@@ -123,7 +123,7 @@ class Header1 extends Component {
 										<Link to={'./'} className="dez-page"><img src={logo2} alt="" /></Link>
 									</div>
                                     <ul className="nav navbar-nav">
-                                        <li className="active"><Link to={'./index-4'}><span className="ti-home"></span> Home</Link>
+                                        <li className="active"><Link to={'./'}><span className="ti-home"></span> Home</Link>
                                            
                                         </li>
                                         <li><Link to={'#'}>Pages <i className="fa fa-chevron-down"></i></Link>
