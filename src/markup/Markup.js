@@ -3,12 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import ThemeButton from './Element/ThemeButton/ThemeButton';
 
 import Homepage from './Pages/Homepage1';
-import Index2 from './Pages/Index2';
-import Index3 from './Pages/Index3';
 import Index4 from './Pages/Index4';
-import Index5 from './Pages/Index5';
-import Index6 from './Pages/Index6';
-import Index7 from './Pages/Index7';
 import Aboutus1 from './Pages/Aboutus/Aboutus1';
 import Aboutus2 from './Pages/Aboutus/Aboutus2';
 import Error403 from './Pages/Error/Error403';
@@ -70,12 +65,6 @@ class Markup extends Component{
                 <div className="page-wraper">
                     <Switch>
                         <Route path='/' exact component={Index4} />
-                        <Route path='/index-2' exact component={Index2} />
-                        <Route path='/index-3' exact component={Index3} />
-                        <Route path='/index-4' exact component={Index4} />
-                        <Route path='/index-5' exact component={Index5} />
-                        <Route path='/index-6' exact component={Index6} />
-                        <Route path='/index-7' exact component={Index7} />
                         <Route path='/about-1' exact component={Aboutus1} />
                         <Route path='/about-2' exact component={Aboutus2} />
                         <Route path='/error-403' exact component={Error403} />
@@ -128,7 +117,7 @@ class Markup extends Component{
 					</Switch>
                 </div>
 				<ScrollToTop />
-				<ThemeButton />
+				{/* <ThemeButton /> */}
             </HashRouter>	
 		)
 	}

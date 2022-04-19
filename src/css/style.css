@@ -2535,6 +2535,12 @@ blockquote:before {
     display: inline-block;
     margin-left: 10px;
 }
+@media only screen and (min-width: 767px){
+.site-header .container{
+    align-items: center;
+    display: flex;
+}
+}
 @media only screen and (max-width: 767px) {
     .extra-nav {
         margin-right: 15px;
@@ -2822,7 +2828,7 @@ blockquote:before {
 .logo-footer img {
     height: auto;
 	width: auto;
-	max-width: 140px;
+	/* max-width: 140px; */
 }
 .logo-header span,
 .logo-footer span {

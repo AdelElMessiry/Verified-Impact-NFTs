@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import logo from './../../images/logo.png';
+import logo from './../../images/logov.png';
 import logo2 from './../../images/logo-black.png';
 import HeaderMenu from './HeaderMenu';
+import casper from './../../images/icon/casper.png';
 
 
 class Header1 extends Component {
@@ -43,24 +44,6 @@ class Header1 extends Component {
         return (
             <>
                 <header className="site-header header-transparent mo-left" id="fix-header">
-                    <div className="top-bar">
-                        <div className="container">
-                            <div className="row d-flex justify-content-between">
-                                <div className="dlab-topbar-left">
-                                    <ul>
-                                        <li><i className="flaticon-phone-call m-r5"></i> 001 1234 6789</li>
-                                        <li><i className="ti-location-pin m-r5"></i> 6701 Democracy Blvd, Suite 300, USA</li>
-                                    </ul>
-                                </div>
-                                <div className="dlab-topbar-right">
-                                    <ul>
-                                        <li><i className="ti-skype m-r5"></i> Agency.software</li>
-                                        <li><i className="ti-email m-r5"></i> info@example.com</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <div className="sticky-header main-bar-wraper navbar-expand-lg" >
                         <div className="main-bar clearfix ">
@@ -75,11 +58,7 @@ class Header1 extends Component {
                                     <span></span>
                                 </button>
 
-                                <div className="extra-nav">
-                                    <div className="extra-cell">
-                                        <Link to={'./contact'} className="dez-page site-button primary">Inquire Now </Link>
-                                    </div>
-                                </div>
+                               
 
                                 <div className="header-nav navbar-collapse collapse myNavbar justify-content-end" id="navbarNavDropdown">
 									<div className="logo-header mostion d-md-block d-lg-none">
@@ -88,6 +67,11 @@ class Header1 extends Component {
 									{/*  Header Menu Contents  */}
 										<HeaderMenu />
 									{/*  Header Menu Contents End */}
+                                </div>
+                                <div className="extra-nav">
+                                    <div className="extra-cell">
+                                    <img src={casper} className="img img-fluid" width={"50px"}/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
