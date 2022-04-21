@@ -1,7 +1,7 @@
 import React from "react";
 import {Link} from 'react-router-dom';
 
-const PageTitle = ({ motherMenu, activeMenu }) => {
+const PageTitle = ({ motherMenu, activeMenu,secondMenu }) => {
    return (
 		<div className="container">
 			<div className="dlab-bnr-inr-entry">
@@ -11,6 +11,7 @@ const PageTitle = ({ motherMenu, activeMenu }) => {
 					<ul className="list-inline">
 						<li><Link to={"#"}>Home</Link></li>
 						<li className="ml-1">{activeMenu}</li>
+						{secondMenu&&(<li className="ml-1">{secondMenu}</li>)}
 					</ul>
 				</div>
 			</div>

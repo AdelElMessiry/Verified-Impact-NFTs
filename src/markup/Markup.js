@@ -31,10 +31,6 @@ import BlogClassicRightSidebar from './Pages/BlogClassic/BlogClassicRightSidebar
 import BlogListLeftSidebar from './Pages/BlogList/BlogListLeftSidebar';
 import BlogListRightSidebar from './Pages/BlogList/BlogListRightSidebar';
 import BlogDetails from './Pages/BlogDetail/BlogDetails';
-import ProtfolioFullWidth from './Pages/Protfolio/ProtfolioFullWidth';
-import PortfolioGrid2 from './Pages/Protfolio/PortfolioGrid2';
-import PortfolioGrid3 from './Pages/Protfolio/PortfolioGrid3';
-import PortfolioGrid4 from './Pages/Protfolio/PortfolioGrid4';
 import ShopColumns from './Pages/Shop/ShopColumns';
 import ShopColumnsSidebar from './Pages/Shop/ShopColumnsSidebar';
 
@@ -57,6 +53,7 @@ import ShortAccordions from './Pages/ShortCode/ShortAccordions';
 
 import ScrollToTop from './Element/ScrollToTop';
 import { HashRouter } from 'react-router-dom';
+import NFTs from './Pages/Protfolio/NFTs';
 
 class Markup extends Component{
 	render(){
@@ -92,10 +89,7 @@ class Markup extends Component{
                         <Route path='/blog-list-left-sidebar' exact component={BlogListLeftSidebar} />
                         <Route path='/blog-list-right-sidebar' exact component={BlogListRightSidebar} />
                         <Route path='/blog-details' exact component={BlogDetails} />
-                        <Route path='/portfolio-full-width' exact component={ProtfolioFullWidth} />
-                        <Route path='/portfolio-grid-2' exact component={PortfolioGrid2} />
-                        <Route path='/portfolio-grid-3' exact component={PortfolioGrid3} />
-                        <Route path='/portfolio-grid-4' exact component={PortfolioGrid4} />
+                        <Route path='/NFTs' exact component={NFTs} />
                         <Route path='/shop-columns' exact component={ShopColumns} />
                         <Route path='/shop-columns-sidebar' exact component={ShopColumnsSidebar} />
 						

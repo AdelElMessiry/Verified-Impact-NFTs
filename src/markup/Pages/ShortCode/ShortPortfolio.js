@@ -4,7 +4,6 @@ import Footer from './../../Layout/Footer1';
 import PageTitle from './../../Layout/PageTitle';
 import PortfolioCarousel from './../../Element/PortfolioCarousel';
 import ProtfolioStyle3 from './ProtfolioStyle3';
-import {GalleryGrid} from './../Protfolio/PortfolioGrid4';
 
 import bnr1 from './../../../images/banner/bnr2.jpg';
 
@@ -60,7 +59,7 @@ class ShortPortfolio extends Component {
                                         </div>
                                     </div>
                                     <div className="col-lg-9 ">
-                                        <GalleryGrid />
+                                        {/* <GalleryGrid /> */}
                                     </div>
                                 </div>
                             </div>
