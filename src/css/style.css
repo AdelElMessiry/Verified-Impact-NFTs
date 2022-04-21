@@ -10023,17 +10023,17 @@ ul[class*="list-"]{
 }
 .overlay-bx .align-b{
     height: auto;
-    left: 0;
+  /*  left: 0;*/
     list-style: outside none none;
     margin: 0;
     position: absolute;
-	top:auto;
-    bottom: 0;
+	/*top:auto;*/
+    /*bottom: 0;*/
     width: 100%;
-	transform: translate(0);
-    -o-transform: translate(0);
+	  /*transform: translate(0);
+   -o-transform: translate(0);
     -moz-transform: translate(0);
-    -webkit-transform: translate(0);
+    -webkit-transform: translate(0); */
 }
 .overlay-icon a {
     display: inline-block;
@@ -10916,7 +10916,7 @@ footer .widget_services ul li:hover {
     background: #000;
     background-size: cover;
     background-position: center;
-    padding: 80px 0 20px;
+    /* padding: 80px 0 20px; */
 }
 .footer-bottom {
     background-color:#000;
@@ -13069,10 +13069,12 @@ ol.commentlist li .star-rating {
 	font-size: 30px;
 	position: absolute;
 	right: 15px;
-	bottom: 15px;
 	line-height: 30px;
 	color: #fff;
 	opacity: 0.5;
+}
+.portfolio  .buy-icon{
+    right: 65px;
 }
 .portfolio  .portfolio-fullscreen:hover{
 	opacity:1;	

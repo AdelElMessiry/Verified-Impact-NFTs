@@ -66,8 +66,8 @@ class Index4 extends Component {
 					<div className="home-banner" style={{backgroundImage:"url("+ bgimg +")" }}>
 						<div className="home-bnr-inner">
 							<div className="home-bnr-content">
-								<h4 className="sub-title">THE</h4>
-								<h2 className="dz-title">AGENCY</h2>
+								<h4 className="dz-title">Verified Impact NFTs</h4>
+								<h2 className="sub-title">Making a Verified Impact</h2>
 								<div className="home-bnr-btns">
 									<Link to={"#"} className="site-button white btn-icon">Read more <i className="fa fa-angle-double-right"></i></Link>
 									<VideoPopup2 />
@@ -120,16 +120,16 @@ class Index4 extends Component {
                         </div>
                         {/* <!-- About Us End --> */}
                         {/* <!-- Tabs End --> */}
-                        <div className="section-full content-inner-2 tab-bx br-top">
+                        {/* <div className="section-full content-inner-2 tab-bx br-top">
                             <div className="container">
                                 <div className="">
                                     <Index4Tab />
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                         {/* <!-- Testimonial End --> */}
                         {/* <!-- Testimonial --> */}
-                        <div className="section-full content-inner-2 bg-img-fix overlay-primary gradient testimonial-curv-bx" style={{ backgroundImage: "url(" + bg1 + ")" }}>
+                        {/* <div className="section-full content-inner-2 bg-img-fix overlay-primary gradient testimonial-curv-bx" style={{ backgroundImage: "url(" + bg1 + ")" }}>
                             <div className="container">
                                 <div className="row">
                                     <div className="col-lg-2"></div>
@@ -142,10 +142,10 @@ class Index4 extends Component {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                         {/* <!-- Testimonial End --> */}
                         {/* <!-- Pricing Table --> */}
-                        <div className="section-full content-inner bg-gray pricing-bx">
+                        {/* <div className="section-full content-inner bg-gray pricing-bx">
                             <div className="container">
                                 <div className="row">
                                     <div className="col-lg-12">
@@ -153,7 +153,7 @@ class Index4 extends Component {
                                             <h2 className="text-uppercase "><span className="font-weight-300">Check our opportunities</span> <br /> Start Pre-ICO & Get a Reward</h2>
                                             <h5 className="font-weight-400 text-gray-dark max-w800 m-auto">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters.</h5>
                                         </div>
-                                        {/* <!-- Pricing table-1 Columns 3 with gap --> */}
+                                     
                                         <div className="section-content box-sort-in button-example m-t80">
                                             <div className="pricingtable-row">
                                                 <div className="row max-w1000 m-auto">
@@ -226,10 +226,10 @@ class Index4 extends Component {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                         {/* <!-- Pricing Table End --> */}
                         {/* <!-- Pricing Table --> */}
-                        <div className="section-full content-inner bg-white workspace-bx mfp-gallery">
+                        {/* <div className="section-full content-inner bg-white workspace-bx mfp-gallery">
                             <div className="container">
                                 <div className="row">
                                     <div className="col-lg-12">
@@ -349,10 +349,10 @@ class Index4 extends Component {
 									</SRLWrapper >
 								</SimpleReactLightbox>
                             </div>
-                        </div>
+                        </div> */}
                         {/* <!-- Pricing Table End --> */}
                         {/* <!-- Testimonial --> */}
-                        <div className="section-full content-inner-2 bg-img-fix overlay-primary gradient subscribe-bx" style={{ backgroundImage: "url(" + bg1 + ")" }}>
+                        {/* <div className="section-full content-inner-2 bg-img-fix overlay-primary gradient subscribe-bx" style={{ backgroundImage: "url(" + bg1 + ")" }}>
                             <div className="container">
                                 <form className="row text-white dezPlaceAni align-items-center dzSubscribe" action="script/mailchamp.php" method="post">
                                     <div className="col-lg-4  col-md-12">
@@ -372,10 +372,10 @@ class Index4 extends Component {
                                     </div>
                                 </form>
                             </div>
-                        </div>
+                        </div> */}
                         {/* <!-- Testimonial End --> */}
                         {/* <!-- Contact Us --> */}
-                        <div className="section-full content-inner-2 bg-white contact-form-bx" style={{ backgroundImage: "url(" + bg16 + ")" , backgroundSize: "100%" }}>
+                        {/* <div className="section-full content-inner-2 bg-white contact-form-bx" style={{ backgroundImage: "url(" + bg16 + ")" , backgroundSize: "100%" }}>
                             <div className="container">
                                 <div className="section-head text-center">
                                     <h2 className="text-uppercase"><span className="font-weight-300">Contact </span> us</h2>
@@ -420,7 +420,7 @@ class Index4 extends Component {
                                     </form>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                         {/* <!-- Contact Us End --> */}
                     </div>
                     {/* <!-- contact area END --> */}
