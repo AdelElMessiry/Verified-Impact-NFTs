@@ -4245,7 +4245,7 @@ button:focus{
 	animation: dzMove1 11.5s linear infinite;
 }
 .home-banner .home-bnr-inner .dz-title{
-	font-size: 144px;
+	font-size: 80px;
     color: #fff;
     line-height: 1.1;
 	animation: dzMove1 10.5s linear infinite;
