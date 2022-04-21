@@ -2,9 +2,9 @@ import React, { Component, useState, useEffect, Fragment } from "react";
 import { Link } from "react-router-dom";
 import SimpleReactLightbox from "simple-react-lightbox";
 import { SRLWrapper, useLightbox } from "simple-react-lightbox";
-import Header from "./../../Layout/Header1";
-import Footer from "./../../Layout/Footer1";
-import PageTitle from "./../../Layout/PageTitle";
+import Header from "../../Layout/Header1";
+import Footer from "../../Layout/Footer1";
+import PageTitle from "../../Layout/PageTitle";
 import Masonry from "react-masonry-component";
 
 //images
@@ -21,6 +21,7 @@ import box9 from "./../../../images/portfolio/image_9.jpg";
 import box10 from "./../../../images/portfolio/image_10.jpg";
 import box11 from "./../../../images/portfolio/image_11.jpg";
 import box12 from "./../../../images/portfolio/image_12.jpg";
+import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 
 const imageBlog = [
   { Large: box1, tag: ["Web", "Advertising"] },
@@ -69,17 +70,22 @@ const TagLi = ({ name, handlesettag, tagActive }) => {
       onClick={() => handlesettag(name)}
     >
       <input type="radio" />
-      <Link to={"#"} className="site-button-secondry radius-sm">
+      <button className="site-button-secondry radius-sm">
         <span>
           {name} {""}
         </span>{" "}
-      </Link>
+      </button>
     </li>
   );
 };
 
-class ProtfolioFullWidth extends Component {
-  render() {
+const NFTs =()=> {
+  const search = useLocation().search
+  const queryParams = new URLSearchParams(search);
+  debugger;
+ const beneficiary = queryParams.get("beneficiary")
+  const creator = queryParams.get("creator")
+  const campaign = queryParams.get("campaign")
     return (
       <Fragment>
         <Header />
@@ -90,8 +96,9 @@ class ProtfolioFullWidth extends Component {
             style={{ backgroundImage: "url(" + bnr1 + ")" }}
           >
             <PageTitle
-              motherMenu="Portfolio Full Width"
-              activeMenu="Portfolio Full Width"
+               motherMenu={campaign?campaign:beneficiary?beneficiary:creator}
+              activeMenu={beneficiary?beneficiary:creator}
+              secondMenu={campaign?campaign:undefined}
             />
           </div>
           {/*  Section-1 Start  */}
@@ -100,7 +107,6 @@ class ProtfolioFullWidth extends Component {
         <Footer />
       </Fragment>
     );
-  }
 }
 function PortfolioItem() {
   const [tag, setTag] = useState("All");
@@ -226,4 +232,4 @@ export {
   box12,
   imageBlog,
 };
-export default ProtfolioFullWidth;
+export default NFTs;

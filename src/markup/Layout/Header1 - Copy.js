@@ -191,7 +191,7 @@ class Header1 extends Component {
                                         </li>
                                         <li><Link to={'#'}>Our Portfolio <i className="fa fa-chevron-down"></i></Link>
                                             <ul className="sub-menu">
-                                                <li><Link to={'./portfolio-full-width'} className="dez-page">Portfolio Full Width  </Link></li>
+                                                <li><Link to={'./NFTs'} className="dez-page">Portfolio Full Width  </Link></li>
                                                 <li><Link to={'./portfolio-grid-2'} className="dez-page">Portfolio Grid 2 </Link></li>
                                                 <li><Link to={'./portfolio-grid-3'} className="dez-page">Portfolio Grid 3 </Link></li>
                                                 <li><Link to={'./portfolio-grid-4'} className="dez-page">Portfolio Grid 4 </Link></li>

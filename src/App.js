@@ -8,6 +8,7 @@ import './css/skin/skin-1.css';
 import './plugins/slick/slick.min.css';
 import './plugins/slick/slick-theme.min.css';
 import 'react-modal-video/css/modal-video.min.css';
+import './scss/_custom.scss';
 
 function App() {
 	const [body_, setbody_] = useState();
