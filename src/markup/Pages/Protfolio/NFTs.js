@@ -82,7 +82,6 @@ const TagLi = ({ name, handlesettag, tagActive }) => {
 const NFTs =()=> {
   const search = useLocation().search
   const queryParams = new URLSearchParams(search);
-  debugger;
  const beneficiary = queryParams.get("beneficiary")
   const creator = queryParams.get("creator")
   const campaign = queryParams.get("campaign")
@@ -189,16 +188,19 @@ function PortfolioItem() {
                                   <b>Category: </b>Branding and Identity
                                 </p>
                                 <p>
-                                  <b>Beneficiary: </b>Branding and Identity
+                                  <b>Beneficiary: </b>Ukraine Gov<span className="bg-success text-white px-1 ml-1 border-raduis-2">80%</span>
                                 </p>
                                 <p>
                                   <b>Campaign: </b>Branding and Identity
                                 </p>
                                 <p>
-                                  <b>Creator: </b>Branding and Identity
+                                  <b>Creator: </b>NFT PUNKs<span className="bg-danger text-white px-1 ml-1 border-raduis-2">20%</span>
                                 </p>
                                 <p>
                                   <b>Collection: </b>Branding and Identity
+                                </p>
+                                <p>
+                                  <b>Price: </b>0.02 $
                                 </p>
                                 <Iconimage />
                               </div>
