@@ -10570,7 +10570,7 @@ ul[class*="list-"]{
 .dlab-media img,
 .dlab-post-media img {
     width: 100%;
-    height: auto;
+    height: 380px;
 }
 /* Box Background */
 .dlab-box-bg{
