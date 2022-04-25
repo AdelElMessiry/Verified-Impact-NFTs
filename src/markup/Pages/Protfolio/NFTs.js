@@ -1,17 +1,16 @@
 import React, { Component, useState, useEffect, Fragment } from "react";
-import { Link } from "react-router-dom";
 import SimpleReactLightbox from "simple-react-lightbox";
 import { SRLWrapper, useLightbox } from "simple-react-lightbox";
 import Header from "../../Layout/Header1";
 import Footer from "../../Layout/Footer1";
 import PageTitle from "../../Layout/PageTitle";
 import Masonry from "react-masonry-component";
-
+import NFTCard from "../../Element/NFTCard";
 //images
 import bnr1 from "./../../../images/banner/bnr1.jpg";
 
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-
+import Lightbox from "react-image-lightbox";
 const imageBlog = [
   {
     name: "Prayer",
@@ -83,7 +82,7 @@ const imageBlog = [
     currency: "CSPR",
   },
   {
-    name: "Food Portions",
+    name: "Children of Ukraine",
     image:
       "https://media.npr.org/assets/img/2022/03/03/gettyimages-1377728411_custom-f265b99e048006a23cff07314bcedb2e54711725-s900-c85.webp",
     category: "2",
@@ -97,7 +96,7 @@ const imageBlog = [
     currency: "CSPR",
   },
   {
-    name: "Twins Refugees ",
+    name: "Five Million Refugee",
     image:
       "https://i.guim.co.uk/img/media/79184ce9e786449f09c64db3e3a96f9d5ea81a13/0_247_4703_2822/master/4703.jpg?width=1200&height=1200&quality=85&auto=format&fit=crop&s=8c3659a6e5fd210b5c341667222ddfcf",
     category: "2",
@@ -111,9 +110,9 @@ const imageBlog = [
     currency: "CSPR",
   },
   {
-    name: "Cold Children",
+    name: "Railway Station",
     image:
-      "https://i.guim.co.uk/img/media/f6bb7d35e8cc60ad05a3385d0281cebd9092d73d/0_0_5568_3341/master/5568.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=9670286535fb54af84ca1296365a0a40",
+      "https://socialeurope.eu/wp-content/uploads/2022/03/shutterstock_2133235509-750x392.jpg.webp",
     category: "2",
     beneficiary: "Ukraine Gov",
     beneficiaryPercentage: "80",
@@ -167,7 +166,7 @@ const imageBlog = [
     currency: "CSPR",
   },
   {
-    name: "Abondoned School",
+    name: "Destroyed",
     image:
       "https://www.thetimes.co.uk/imageserver/image/%2Fmethode%2Ftimes%2Fprod%2Fweb%2Fbin%2F83306900-a860-11ec-8da7-c2b9b8c9eee5.jpg?crop=6001%2C3376%2C0%2C313&resize=1200",
     category: "3",
@@ -430,23 +429,6 @@ const imageBlog = [
   },
 ];
 
-//Light Gallery on icon click
-const Iconimage = (props) => {
-  const { openLightbox } = useLightbox();
-  return (
-    <>
-      <Link
-        to={"#"}
-        onClick={() => openLightbox(props.imageToOpen)}
-        className="mfp-link portfolio-fullscreen"
-      >
-        <i className="ti-fullscreen icon-bx-xs"></i>
-      </Link>
-      <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
-    </>
-  );
-};
-
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -480,40 +462,85 @@ const NFTs = () => {
   const [tag, setTag] = useState("All");
   const [filteredImages, setFilterdImages] = useState([]);
   const [selectedNfts, setSelectedNfts] = useState(imageBlog);
+  const [openSlider, setOpenSlider] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const [sliderCaptions, setSliderCaptions] = useState([]);
 
-  const setSelectedTag=(tag,data=null) => {
-    setTag(tag)
-    tag === "All" &&data?setFilterdImages(data)
-     : tag === "All" &&!data ?setFilterdImages(selectedNfts)
+ 
+
+  const setSelectedTag = (tag, data = null) => {
+    setTag(tag);
+    tag === "All" && data
+      ? setFilterdImages(data)
+      : tag === "All" && !data
+      ? setFilterdImages(selectedNfts)
       : setFilterdImages(selectedNfts.filter((nft) => nft.collection === tag));
-  }
+  };
 
   useEffect(() => {
-    let Data=[]
+    let Data = [];
     if (beneficiary && !campaign) {
-      Data=
-        imageBlog.filter((nft) => nft.beneficiary === beneficiary)
-     
+      Data = imageBlog.filter((nft) => nft.beneficiary === beneficiary);
     } else if (beneficiary && campaign) {
-      Data=
-        imageBlog.filter(
-          (nft) => nft.beneficiary === beneficiary && nft.campaign === campaign
-        )
-      
+      Data = imageBlog.filter(
+        (nft) => nft.beneficiary === beneficiary && nft.campaign === campaign
+      );
     } else if (creator && !campaign) {
-      Data=imageBlog.filter((nft) => nft.creator === creator)
+      Data = imageBlog.filter((nft) => nft.creator === creator);
     } else if (creator && campaign) {
-      Data=
-        imageBlog.filter(
-          (nft) => nft.creator === creator && nft.campaign === campaign
-        )
-     
+      Data = imageBlog.filter(
+        (nft) => nft.creator === creator && nft.campaign === campaign
+      );
     } else {
-      Data=imageBlog;
+      Data = imageBlog;
     }
     setSelectedNfts(Data);
-    setSelectedTag("All",Data)
-  }, [beneficiary,campaign,creator]);
+    setSelectedTag("All", Data);
+    const captions = [];
+    for (let item=0;item< Data.length;item++) {
+      captions.push(  
+      <div className="text-white text-left port-box">
+        <h5>{Data[item].name}</h5>
+        {/* <p>
+          <b>Category: </b>
+          {imageBlog[item].category}
+        </p> */}
+        <p>
+          <b>Beneficiary: </b>
+          {Data[item].beneficiary}
+          <span className="bg-success text-white px-1 ml-1 border-raduis-2">
+            {Data[item].beneficiaryPercentage}%
+          </span>
+        </p>
+        <p>
+          <b>Campaign: </b>
+          {Data[item].campaign}
+        </p>
+        <p>
+          <b>Creator: </b>
+          {Data[item].creator}
+          <span className="bg-danger text-white px-1 ml-1 border-raduis-2">
+            {Data[item].creatorPercentage}%
+          </span>
+        </p>
+        <p>
+          <b>Collection: </b>
+          {Data[item].collection}
+        </p>
+        <p>
+          <b>Price: </b>
+          {Data[item].price} {Data[item].currency}
+        </p>
+      </div>);
+    }
+    setSliderCaptions(captions)
+  }, [beneficiary, campaign, creator]);
+
+  const options = {
+    buttons: { showDownloadButton: false },
+  };
+
+
   return (
     <Fragment>
       <Header />
@@ -533,115 +560,104 @@ const NFTs = () => {
         </div>
         {/*  Section-1 Start  */}
         <div className="section-full content-inner-1 portfolio text-uppercase">
-        <div className="site-filters clearfix center  m-b40">
-          <ul className="filters" data-toggle="buttons">
-            <TagLi
-              name="All"
-              handlesettag={setSelectedTag}
-              tagActive={tag === "All" ? true : false}
+          <div className="site-filters clearfix center  m-b40">
+            <ul className="filters" data-toggle="buttons">
+              <TagLi
+                name="All"
+                handlesettag={setSelectedTag}
+                tagActive={tag === "All" ? true : false}
+              />
+              <TagLi
+                name="Pray for Ukraine"
+                handlesettag={setSelectedTag}
+                tagActive={tag === "Pray for Ukraine" ? true : false}
+              />
+              <TagLi
+                name="A hard night"
+                handlesettag={setSelectedTag}
+                tagActive={tag === "A hard night" ? true : false}
+              />
+              <TagLi
+                name="Build it Back"
+                handlesettag={setSelectedTag}
+                tagActive={tag === "Build it Back" ? true : false}
+              />
+              <TagLi
+                name="Damaged Houses"
+                handlesettag={setSelectedTag}
+                tagActive={tag === "Damaged Houses" ? true : false}
+              />
+              <TagLi
+                name="Freedom is not Free"
+                handlesettag={setSelectedTag}
+                tagActive={tag === "Freedom is not Free" ? true : false}
+              />
+              <TagLi
+                name="Soldiers"
+                handlesettag={setSelectedTag}
+                tagActive={tag === "Soldiers" ? true : false}
+              />
+            </ul>
+          </div>
+          {openSlider && (
+            <Lightbox
+              mainSrc={filteredImages[photoIndex].image}
+              nextSrc={
+                filteredImages[(photoIndex + 1) % filteredImages.length].image
+              }
+              prevSrc={
+                filteredImages[
+                  (photoIndex + filteredImages.length - 1) %
+                    filteredImages.length
+                ].image
+              }
+              onCloseRequest={() => setOpenSlider(false)}
+              onMovePrevRequest={() =>
+                setPhotoIndex(
+                  (photoIndex + filteredImages.length - 1) %
+                    filteredImages.length
+                )
+              }
+              onMoveNextRequest={() =>
+                setPhotoIndex((photoIndex + 1) % filteredImages.length)
+              }
+              imageCaption={sliderCaptions[photoIndex]}
             />
-            <TagLi
-              name="Pray for Ukraine"
-              handlesettag={setSelectedTag}
-              tagActive={tag === "Pray for Ukraine" ? true : false}
-            />
-            <TagLi
-              name="A hard night"
-              handlesettag={setSelectedTag}
-              tagActive={tag === "A hard night" ? true : false}
-            />
-            <TagLi
-              name="Build it Back"
-              handlesettag={setSelectedTag}
-              tagActive={tag === "Build it Back" ? true : false}
-            />
-            <TagLi
-              name="Damaged Houses"
-              handlesettag={setSelectedTag}
-              tagActive={tag === "Damaged Houses" ? true : false}
-            />
-            <TagLi
-              name="Freedom is not Free"
-              handlesettag={setSelectedTag}
-              tagActive={tag === "Freedom is not Free" ? true : false}
-            />
-            <TagLi
-              name="Soldiers"
-              handlesettag={setSelectedTag}
-              tagActive={tag === "Soldiers" ? true : false}
-            />
-          </ul>
-        </div>
-       {filteredImages.length>0?( <SimpleReactLightbox>
-          <SRLWrapper>
-            <div className="clearfix">
-              <ul
-                id="masonry"
-                className="dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1"
-              >
-                <Masonry
-                  className={"my-gallery-class"} // default ''
-                  options={masonryOptions} // default {}
-                  disableImagesLoaded={false} // default false
-                  updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
-                  imagesLoadedOptions={imagesLoadedOptions} // default {}
-                >
-                  {filteredImages.map((item, index) => (
-                    <li
-                      className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
-                      key={index}
+          )}
+          {filteredImages.length > 0 ? (
+            <SimpleReactLightbox>
+              <SRLWrapper options={options}>
+                <div className="clearfix">
+                  <ul
+                    id="masonry"
+                    className="dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1"
+                  >
+                    <Masonry
+                      className={"my-gallery-class"} // default ''
+                      options={masonryOptions} // default {}
+                      disableImagesLoaded={false} // default false
+                      updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
+                      imagesLoadedOptions={imagesLoadedOptions} // default {}
                     >
-                      <div className="dlab-box dlab-gallery-box">
-                        <div className="dlab-media dlab-img-overlay1 dlab-img-effect">
-                          <img src={item.image} alt="" />
-                          <div className="overlay-bx">
-                            <div className="overlay-icon align-b text-white text-left">
-                              <div className="text-white text-left port-box">
-                                <h5>{item.name}</h5>
-                                <p>
-                                  <b>Category: </b>
-                                  {item.category}
-                                </p>
-                                <p>
-                                  <b>Beneficiary: </b>
-                                  {item.beneficiary}
-                                  <span className="bg-success text-white px-1 ml-1 border-raduis-2">
-                                    {item.beneficiaryPercentage}%
-                                  </span>
-                                </p>
-                                <p>
-                                  <b>Campaign: </b>
-                                  {item.campaign}
-                                </p>
-                                <p>
-                                  <b>Creator: </b>
-                                  {item.creator}
-                                  <span className="bg-danger text-white px-1 ml-1 border-raduis-2">
-                                    {item.creatorPercentage}%
-                                  </span>
-                                </p>
-                                <p>
-                                  <b>Collection: </b>
-                                  {item.collection}
-                                </p>
-                                <p>
-                                  <b>Price: </b>
-                                  {item.price} {item.currency}
-                                </p>
-                                <Iconimage />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </Masonry>
-              </ul>
-            </div>
-          </SRLWrapper>
-        </SimpleReactLightbox>):(<h4 className="text-muted text-center mb-5">There is No Data With this Filter</h4>)}
-      </div>
+                      {filteredImages.map((item, index) => (
+                        <li
+                          className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
+                          key={index}
+                        >
+                          <NFTCard item={item} openSlider={()=>setOpenSlider(true)}/>
+                        </li>
+                      ))}
+                    </Masonry>
+                  </ul>
+                </div>
+              </SRLWrapper>
+            </SimpleReactLightbox>
+          ) : (
+            <h4 className="text-muted text-center mb-5">
+              There is No Data With this Filter
+            </h4>
+          )}
+        </div>
       </div>
       <Footer />
     </Fragment>
