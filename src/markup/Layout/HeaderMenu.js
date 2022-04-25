@@ -48,22 +48,22 @@ class HeaderMenu extends Component {
             <ul className="sub-menu">
              
             <li>
-            <Link to={"./NFTs?creator=Live Scripts"} className="dez-page">
-                Live Scripts <i className="fa fa-angle-right"></i>
+            <Link to={"./NFTs?creator=Script Culture"} className="dez-page">
+            Script Culture <i className="fa fa-angle-right"></i>
                 </Link>
                 <ul className="sub-menu">
                   <li>
-                    <Link to={"./NFTs?creator=Live Scripts&campaign=Ukraine Calligraphy"} className="dez-page">
+                    <Link to={"./NFTs?creator=Script Culture&campaign=Ukraine Calligraphy"} className="dez-page">
                     Ukraine Calligraphy{" "}
                     </Link>
                   </li>
                   <li>
-                    <Link to={"./NFTs?creator=Live Scripts&campaign=English Calligraphy"} className="dez-page">
+                    <Link to={"./NFTs?creator=Script Culture&campaign=English Calligraphy"} className="dez-page">
                     English Calligraphy{" "}
                     </Link>
                   </li>
                   <li>
-                    <Link to={"./NFTs?creator=Live Scripts&campaign=Arabic Calligraphy"} className="dez-page">
+                    <Link to={"./NFTs?creator=Script Culture&campaign=Arabic Calligraphy"} className="dez-page">
                     Arabic Calligraphy{" "}
                     </Link>
                   </li>
