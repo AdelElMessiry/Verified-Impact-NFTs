@@ -4210,7 +4210,7 @@ button:focus{
 	font-size: 45px;
     color: #fff;
     line-height: 1.1;	
-	animation: dzMove1 10s linear infinite;
+	/* animation: dzMove1 10s linear infinite; */
 }
 .home-banner .home-bnr-inner{
 	width:100%;
@@ -4220,7 +4220,7 @@ button:focus{
     justify-content: center;
     text-align: center;
 }
-.home-banner .home-bnr-inner:before,
+/* .home-banner .home-bnr-inner:before,
 .home-banner .home-bnr-inner:after{
 	content:"";
 	position:absolute;
@@ -4230,8 +4230,8 @@ button:focus{
 	top:0;
     background-repeat: no-repeat;
     background-position: bottom center;
-}
-.home-banner .home-bnr-inner:before{
+} */
+/* .home-banner .home-bnr-inner:before{
 	background-image:url(./../images/main-slider/rev-slider/box-bg2.png);
 	background-size: 400px;
 	animation: dzMove1 9s linear infinite;
@@ -4240,16 +4240,16 @@ button:focus{
 	background-image:url(./../images/main-slider/rev-slider/box-bg1.png);
 	background-size: 520px;
 	animation: dzMove1 11s linear infinite;
-}
+} */
 .home-banner .home-bnr-inner .site-button{
 	margin:0 5px;
-	animation: dzMove1 11.5s linear infinite;
+	/* animation: dzMove1 11.5s linear infinite; */
 }
 .home-banner .home-bnr-inner .dz-title{
 	font-size: 80px;
     color: #fff;
     line-height: 1.1;
-	animation: dzMove1 10.5s linear infinite;
+	/* animation: dzMove1 10.5s linear infinite; */
 }
 
 @media screen and (max-width:991px){

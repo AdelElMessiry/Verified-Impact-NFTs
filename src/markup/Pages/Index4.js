@@ -1,135 +1,266 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import SimpleReactLightbox from 'simple-react-lightbox';
-import {SRLWrapper, useLightbox} from 'simple-react-lightbox'; 
-import Header6 from './../Layout/Header6';
-import Footer3 from './../Layout/footer3';
-import Index4Tab from './../Element/Index4Tab';
-import ReviewsCarousel from './../Element/ReviewsCarousel';
-import {VideoPopup2} from './../Element/VideoPopup';
-
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import SimpleReactLightbox from "simple-react-lightbox";
+import { SRLWrapper, useLightbox } from "simple-react-lightbox";
+import Header6 from "./../Layout/Header6";
+import Footer3 from "./../Layout/footer3";
+import Index4Tab from "./../Element/Index4Tab";
+import ReviewsCarousel from "./../Element/ReviewsCarousel";
+import { VideoPopup2 } from "./../Element/VideoPopup";
+import NFTCard from "../Element/NFTCard";
 //Images..
-import bgimg from './../../images/main-slider/slide6.jpg';
-import bg16 from './../../images/background/bg16.jpg';
-import about1 from './../../images/about/pic9.jpg';
-import bg1 from './../../images/background/bg1.jpg';
-import gallery10 from './../../images/gallery/pic10.jpg';
-import gallery11 from './../../images/gallery/pic11.jpg';
-import gallery12 from './../../images/gallery/pic12.jpg';
-import gallery13 from './../../images/gallery/pic13.jpg';
-import gallery14 from './../../images/gallery/pic14.jpg';
-import gallery15 from './../../images/gallery/pic15.jpg';
-import gallery16 from './../../images/gallery/pic16.jpg';
+import bgimg from "./../../images/main-slider/slide6.jpg";
+import bg16 from "./../../images/background/bg16.jpg";
+import about1 from "./../../images/about/pic9.jpg";
+import Lightbox from "react-image-lightbox";
 
-//Light Gallery on icon click 
-const Iconimage = props => {
-	const { openLightbox } = useLightbox()
-	return (
-    <Link  to={"#"} onClick={() => openLightbox(props.imageToOpen)} className="mfp-link" >
+import Masonry from "react-masonry-component";
+//Light Gallery on icon click
+const Iconimage = (props) => {
+  const { openLightbox } = useLightbox();
+  return (
+    <Link
+      to={"#"}
+      onClick={() => openLightbox(props.imageToOpen)}
+      className="mfp-link"
+    >
       <i className="ti-fullscreen icon-bx-xs"></i>
     </Link>
-  )
-}
+  );
+};
+const imageBlog = [
+  {
+    name: "Prayer",
+    image:
+      "https://churchrez.org/wp-content/uploads/2022/03/Pray-for-Ukraine-IG.png",
+    category: "1",
+    beneficiary: "Ukraine Gov",
+    beneficiaryPercentage: "80",
+    campaign: "Stand With Ukraine",
+    creator: "NFT Punks",
+    creatorPercentage: "20",
+    collection: "Pray for Ukraine",
+    price: "1000",
+    currency: "CSPR",
+  },
+  {
+    name: "Solidarity",
+    image: "https://www.eqar.eu/assets/uploads/2022/02/Flag_of_Ukraine.jpeg",
+    category: "1",
+    beneficiary: "Ukraine Gov",
+    beneficiaryPercentage: "80",
+    campaign: "Stand With Ukraine",
+    creator: "NFT Punks",
+    creatorPercentage: "20",
+    collection: "Pray for Ukraine",
+    price: "1000",
+    currency: "CSPR",
+  },
+  {
+    name: "The Motherland Monument",
+    image:
+      "https://rayleighbaptist.org.uk/wp-content/uploads/2022/02/Pray-for-Ukraine.png",
+    category: "1",
+    beneficiary: "Ukraine Gov",
+    beneficiaryPercentage: "80",
+    campaign: "Stand With Ukraine",
+    creator: "NFT Punks",
+    creatorPercentage: "20",
+    collection: "Pray for Ukraine",
+    price: "1000",
+    currency: "CSPR",
+  },
+  {
+    name: "War Consequences",
+    image:
+      "https://bloximages.newyork1.vip.townnews.com/unionleader.com/content/tncms/assets/v3/editorial/1/23/12389a1f-f0c9-5150-b529-3462f28d4a8b/622f2e079fd3e.image.jpg?resize=743%2C500",
+    category: "6",
+    beneficiary: "Ukraine Gov",
+    beneficiaryPercentage: "80",
+    campaign: "A Hero’s Stand",
+    creator: "NFT Punks",
+    creatorPercentage: "20",
+    collection: "Soldiers",
+    price: "1000",
+    currency: "CSPR",
+  },
+];
+const Index4 = () => {
+  const [openSlider, setOpenSlider] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const [sliderCaptions, setSliderCaptions] = useState([]);
 
-class Index4 extends Component {
-    componentDidMount() {
-        var i = 0;
-		
-		// Placeholder Animation Start
-		var inputSelector = document.querySelectorAll('input, textarea');
-		
-		for (i = 0; i < inputSelector.length; i++) {
-			inputSelector[i].addEventListener('focus', function(event) {
-				return this.parentElement.parentElement.classList.add("focused");
-			});
-		}
-		
-		
-		for (i = 0; i < inputSelector.length; i++) {
-			inputSelector[i].addEventListener('blur', function(event) {
-				var inputValue = this.value;	
-				if ( inputValue === '' ) {
-					this.parentElement.parentElement.classList.remove('filled');
-					this.parentElement.parentElement.classList.remove('focused');  
-				} else {
-					this.parentElement.parentElement.classList.add('filled');
-				}
-			});
-		}
+  const options = {
+    buttons: { showDownloadButton: false },
+  };
+  // Masonry section
+  const masonryOptions = {
+    transitionDuration: 0,
+  };
+
+  const imagesLoadedOptions = { background: ".my-bg-image-el" };
+  // Masonry section end
+  useEffect(() => {
+    var i = 0;
+
+    // Placeholder Animation Start
+    var inputSelector = document.querySelectorAll("input, textarea");
+
+    for (i = 0; i < inputSelector.length; i++) {
+      inputSelector[i].addEventListener("focus", function (event) {
+        return this.parentElement.parentElement.classList.add("focused");
+      });
     }
-    render() {
-        return (
-            <>
-                <Header6 />
-                <div className="page-content bg-white rubik">
 
-					<div className="home-banner" style={{backgroundImage:"url("+ bgimg +")" }}>
-						<div className="home-bnr-inner">
-							<div className="home-bnr-content">
-								<h4 className="dz-title">Verified Impact NFTs</h4>
-								<h2 className="sub-title">Making a Verified Impact</h2>
-								<div className="home-bnr-btns">
-									<Link to={"#"} className="site-button white btn-icon">Read more <i className="fa fa-angle-double-right"></i></Link>
-									<VideoPopup2 />
-								</div>
-							</div>	
-						</div>
-					</div>
+    for (i = 0; i < inputSelector.length; i++) {
+      inputSelector[i].addEventListener("blur", function (event) {
+        var inputValue = this.value;
+        if (inputValue === "") {
+          this.parentElement.parentElement.classList.remove("filled");
+          this.parentElement.parentElement.classList.remove("focused");
+        } else {
+          this.parentElement.parentElement.classList.add("filled");
+        }
+      });
+    }
+    const captions = [];
+    for (let item = 0; item < imageBlog.length; item++) {
+      captions.push(
+        <div className="text-white text-left port-box">
+          <h5>{imageBlog[item].name}</h5>
+          {/* <p>
+          <b>Category: </b>
+          {imageBlog[item].category}
+        </p> */}
+          <p>
+            <b>Beneficiary: </b>
+            {imageBlog[item].beneficiary}
+            <span className="bg-success text-white px-1 ml-1 border-raduis-2">
+              {imageBlog[item].beneficiaryPercentage}%
+            </span>
+          </p>
+          <p>
+            <b>Campaign: </b>
+            {imageBlog[item].campaign}
+          </p>
+          <p>
+            <b>Creator: </b>
+            {imageBlog[item].creator}
+            <span className="bg-danger text-white px-1 ml-1 border-raduis-2">
+              {imageBlog[item].creatorPercentage}%
+            </span>
+          </p>
+          <p>
+            <b>Collection: </b>
+            {imageBlog[item].collection}
+          </p>
+          <p>
+            <b>Price: </b>
+            {imageBlog[item].price} {imageBlog[item].currency}
+          </p>
+        </div>
+      );
+    }
+    setSliderCaptions(captions);
+  }, []);
 
-                    {/* <!-- contact area --> */}
-                    <div className="content-block">
-                        {/* <!-- About Us --> */}
-                        <div className="section-full content-inner about-progress">
-                            <div className="container">
-                                <div className="row">
-                                    <div className="col-md-12 col-lg-6">
-                                        <h2 className="text-uppercase"><span className="font-weight-300">Give the </span><br />green light</h2>
-                                        <div className="progress-section">
-                                            <div className="progress-bx">
-                                                <h4>Hard Work</h4>
-                                                <div className="count-box">70%</div>
-                                                <div className="progress">
-                                                    <div className="progress-bar bg-success" style={{width:'70%'}} role="progressbar"></div>
-                                                </div>
-                                            </div>
-                                            <div className="progress-bx">
-                                                <h4>Projects Delivery</h4>
-                                                <div className="count-box">80%</div>
-                                                <div className="progress">
-                                                    <div className="progress-bar bg-success" style={{width:'80%'}} role="progressbar"></div>
-                                                </div>
-                                            </div>
-                                            <div className="progress-bx">
-                                                <h4>Customers Love</h4>
-                                                <div className="count-box">90%</div>
-                                                <div className="progress">
-                                                    <div className="progress-bar bg-success" style={{width:'90%'}} role="progressbar" ></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <h3 className="m-b10">The Project</h3>
-                                        <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters.</p>
-                                    </div>
-                                    <div className="col-md-12 col-lg-6 d-flex ">
-                                        <div className="img-half-bx align-items-stretch">
-                                            <img src={about1}  alt="" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {/* <!-- About Us End --> */}
-                        {/* <!-- Tabs End --> */}
-                        {/* <div className="section-full content-inner-2 tab-bx br-top">
+  return (
+    <>
+      <Header6 />
+      <div className="page-content bg-white rubik">
+        <div
+          className="home-banner"
+          style={{ backgroundImage: "url(" + bgimg + ")" }}
+        >
+          <div className="home-bnr-inner">
+            <div className="home-bnr-content">
+              <h4 className="dz-title">Verified Impact NFTs</h4>
+              <h2 className="sub-title">Making a Verified Impact</h2>
+              <div className="home-bnr-btns">
+                <Link to={"#"} className="site-button white btn-icon">
+                  Read more <i className="fa fa-angle-double-right"></i>
+                </Link>
+                <VideoPopup2 />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* <!-- contact area --> */}
+        <div className="content-block">
+          {/* <!-- About Us --> */}
+          <div className="section-full content-inner about-progress">
+            <div className="container">
+              <div className="row">
+                <div className="col-md-12 col-lg-6">
+                  <h2 className="text-uppercase">
+                    <span className="font-weight-300">Give the </span>
+                    <br />
+                    green light
+                  </h2>
+                  <div className="progress-section">
+                    <div className="progress-bx">
+                      <h4>Hard Work</h4>
+                      <div className="count-box">70%</div>
+                      <div className="progress">
+                        <div
+                          className="progress-bar bg-success"
+                          style={{ width: "70%" }}
+                          role="progressbar"
+                        ></div>
+                      </div>
+                    </div>
+                    <div className="progress-bx">
+                      <h4>Projects Delivery</h4>
+                      <div className="count-box">80%</div>
+                      <div className="progress">
+                        <div
+                          className="progress-bar bg-success"
+                          style={{ width: "80%" }}
+                          role="progressbar"
+                        ></div>
+                      </div>
+                    </div>
+                    <div className="progress-bx">
+                      <h4>Customers Love</h4>
+                      <div className="count-box">90%</div>
+                      <div className="progress">
+                        <div
+                          className="progress-bar bg-success"
+                          style={{ width: "90%" }}
+                          role="progressbar"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                  <h3 className="m-b10">The Project</h3>
+                  <p>
+                    It is a long established fact that a reader will be
+                    distracted by the readable content of a page when looking at
+                    its layout. The point of using Lorem Ipsum is that it has a
+                    more-or-less normal distribution of letters.
+                  </p>
+                </div>
+                <div className="col-md-12 col-lg-6 d-flex ">
+                  <div className="img-half-bx align-items-stretch">
+                    <img src={about1} alt="" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* <!-- About Us End --> */}
+          {/* <!-- Tabs End --> */}
+          {/* <div className="section-full content-inner-2 tab-bx br-top">
                             <div className="container">
                                 <div className="">
                                     <Index4Tab />
                                 </div>
                             </div>
                         </div> */}
-                        {/* <!-- Testimonial End --> */}
-                        {/* <!-- Testimonial --> */}
-                        {/* <div className="section-full content-inner-2 bg-img-fix overlay-primary gradient testimonial-curv-bx" style={{ backgroundImage: "url(" + bg1 + ")" }}>
+          {/* <!-- Testimonial End --> */}
+          {/* <!-- Testimonial --> */}
+          {/* <div className="section-full content-inner-2 bg-img-fix overlay-primary gradient testimonial-curv-bx" style={{ backgroundImage: "url(" + bg1 + ")" }}>
                             <div className="container">
                                 <div className="row">
                                     <div className="col-lg-2"></div>
@@ -143,9 +274,9 @@ class Index4 extends Component {
                                 </div>
                             </div>
                         </div> */}
-                        {/* <!-- Testimonial End --> */}
-                        {/* <!-- Pricing Table --> */}
-                        {/* <div className="section-full content-inner bg-gray pricing-bx">
+          {/* <!-- Testimonial End --> */}
+          {/* <!-- Pricing Table --> */}
+          {/* <div className="section-full content-inner bg-gray pricing-bx">
                             <div className="container">
                                 <div className="row">
                                     <div className="col-lg-12">
@@ -227,9 +358,9 @@ class Index4 extends Component {
                                 </div>
                             </div>
                         </div> */}
-                        {/* <!-- Pricing Table End --> */}
-                        {/* <!-- Pricing Table --> */}
-                        {/* <div className="section-full content-inner bg-white workspace-bx mfp-gallery">
+          {/* <!-- Pricing Table End --> */}
+          {/* <!-- Pricing Table --> */}
+          {/* <div className="section-full content-inner bg-white workspace-bx mfp-gallery">
                             <div className="container">
                                 <div className="row">
                                     <div className="col-lg-12">
@@ -350,9 +481,9 @@ class Index4 extends Component {
 								</SimpleReactLightbox>
                             </div>
                         </div> */}
-                        {/* <!-- Pricing Table End --> */}
-                        {/* <!-- Testimonial --> */}
-                        {/* <div className="section-full content-inner-2 bg-img-fix overlay-primary gradient subscribe-bx" style={{ backgroundImage: "url(" + bg1 + ")" }}>
+          {/* <!-- Pricing Table End --> */}
+          {/* <!-- Testimonial --> */}
+          {/* <div className="section-full content-inner-2 bg-img-fix overlay-primary gradient subscribe-bx" style={{ backgroundImage: "url(" + bg1 + ")" }}>
                             <div className="container">
                                 <form className="row text-white dezPlaceAni align-items-center dzSubscribe" action="script/mailchamp.php" method="post">
                                     <div className="col-lg-4  col-md-12">
@@ -373,9 +504,9 @@ class Index4 extends Component {
                                 </form>
                             </div>
                         </div> */}
-                        {/* <!-- Testimonial End --> */}
-                        {/* <!-- Contact Us --> */}
-                        {/* <div className="section-full content-inner-2 bg-white contact-form-bx" style={{ backgroundImage: "url(" + bg16 + ")" , backgroundSize: "100%" }}>
+          {/* <!-- Testimonial End --> */}
+          {/* <!-- Contact Us --> */}
+          {/* <div className="section-full content-inner-2 bg-white contact-form-bx" style={{ backgroundImage: "url(" + bg16 + ")" , backgroundSize: "100%" }}>
                             <div className="container">
                                 <div className="section-head text-center">
                                     <h2 className="text-uppercase"><span className="font-weight-300">Contact </span> us</h2>
@@ -421,14 +552,65 @@ class Index4 extends Component {
                                 </div>
                             </div>
                         </div> */}
-                        {/* <!-- Contact Us End --> */}
-                    </div>
-                    {/* <!-- contact area END --> */}
-                </div>
+          {/* <!-- Contact Us End --> */}
+        </div>
+        {/* <!-- contact area END --> */}
+        {openSlider && (
+          <Lightbox
+            mainSrc={imageBlog[photoIndex].image}
+            nextSrc={imageBlog[(photoIndex + 1) % imageBlog.length].image}
+            prevSrc={
+              imageBlog[(photoIndex + imageBlog.length - 1) % imageBlog.length]
+                .image
+            }
+            onCloseRequest={() => setOpenSlider(false)}
+            onMovePrevRequest={() =>
+              setPhotoIndex(
+                (photoIndex + imageBlog.length - 1) % imageBlog.length
+              )
+            }
+            onMoveNextRequest={() =>
+              setPhotoIndex((photoIndex + 1) % imageBlog.length)
+            }
+            imageCaption={sliderCaptions[photoIndex]}
+          />
+        )}
+        <h3>Latest NFTs</h3>
+        <SimpleReactLightbox>
+          <SRLWrapper options={options}>
+            <div className="clearfix portfolio">
+              <ul
+                id="masonry"
+                className="dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1"
+              >
+                <Masonry
+                  className={"my-gallery-class"} // default ''
+                  options={masonryOptions} // default {}
+                  disableImagesLoaded={false} // default false
+                  updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
+                  imagesLoadedOptions={imagesLoadedOptions} // default {}
+                >
+                  {imageBlog.map((item, index) => (
+                    <li
+                      className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
+                      key={index}
+                    >
+                      <NFTCard
+                        item={item}
+                        openSlider={() => setOpenSlider(true)}
+                      />
+                    </li>
+                  ))}
+                </Masonry>
+              </ul>
+            </div>
+          </SRLWrapper>
+        </SimpleReactLightbox>
+      </div>
 
-                <Footer3 />
-            </>
-        )
-    }
-}
+      <Footer3 />
+    </>
+  );
+};
+
 export default Index4;

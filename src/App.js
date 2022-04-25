@@ -8,6 +8,7 @@ import './css/skin/skin-1.css';
 import './plugins/slick/slick.min.css';
 import './plugins/slick/slick-theme.min.css';
 import 'react-modal-video/css/modal-video.min.css';
+import "react-image-lightbox/style.css";
 import './scss/_custom.scss';
 
 function App() {
@@ -18,17 +19,17 @@ function App() {
 
 	useEffect(() => {
 		setbody_(document.querySelector("body"));
-		setHeader_(document.getElementsByClassName("main-bar-wraper"));
+		//setHeader_(document.getElementsByClassName("main-bar-wraper"));
 	  }, []);
 
 
-	var element = document.getElementById("fix-header"); 	
+	// var element = document.getElementById("fix-header"); 	
 		
-	if(typeof(element) != 'undefined' && element != null){
-		header === "fixed" && scrollPosition > 10
-			? header_ && header_[0].classList.add("is-fixed")
-			: header_ && header_[0].classList.remove("is-fixed"); 	
-	}
+	// if(typeof(element) != 'undefined' && element != null){
+	// 	header === "fixed" && scrollPosition > 10
+	// 		? header_ && header_[0].classList.add("is-fixed")
+	// 		: header_ && header_[0].classList.remove("is-fixed"); 	
+	// }
   return (
     <div className="App">
       <Markup />
