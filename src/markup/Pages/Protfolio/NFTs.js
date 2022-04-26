@@ -510,6 +510,7 @@ const NFTs = () => {
   const [collectionTags, setCollectionTags] = useState([]);
   const [campaignTags, setCampaignTags] = useState([]);
   const [creatorTags, setCreatorTags] = useState([]);
+  const [searchFlag, setSearchFlag] = useState(false);
 
   const Iconimage = (props) => {
     return (
@@ -521,28 +522,22 @@ const NFTs = () => {
 
   const setSelectedCollectionTag = (tag, data = null) => {
     setTagCollection(tag);
-    // tag === "All" && data
-    //   ? setFilterdImages(data)
-    //   : tag === "All" && !data
-    //   ? setFilterdImages(selectedNfts)
-    //   : setFilterdImages(selectedNfts.filter((nft) => nft.collection === tag));
-      handleSearch(tag,tagCreator,tagCampaign)
+    setSearchFlag(!searchFlag)
   };
 
   const setSelectedCampaignTag = (tag, data = null) => {
     setTagCampaign(tag);
-    handleSearch(tagCollection,tagCreator,tag)
+    setSearchFlag(!searchFlag)
   };
 
   const setSelectedCreatorTag = (tag, data = null) => {
     setTagCreator(tag);
-    handleSearch(tagCollection,tag,tagCampaign)
+    setSearchFlag(!searchFlag)
 
   };
 
 
   const handleSearch=(collectionFilter,creatorFilter,campaignFilter)=>{
-    debugger;
 let filteredAllData = selectedNfts?.filter((nft) => {
   return (
     (collectionFilter === nft.collection || collectionFilter === "All") &&
@@ -590,9 +585,10 @@ setFilterdImages(filteredAllData)
 
     setCreatorTags([{ name: "All" }, ...creators]);
     setSelectedNfts(Data);
-    setSelectedCampaignTag("All", Data);
-    setSelectedCollectionTag("All", Data);
-    setSelectedCreatorTag("All", Data);
+    setTagCampaign("All")
+    setTagCollection("All")
+    setTagCreator("All")
+    setSearchFlag(!searchFlag)
     const captions = [];
     for (let item = 0; item < Data.length; item++) {
       captions.push(
@@ -642,7 +638,7 @@ setFilterdImages(filteredAllData)
   const options = {
     buttons: { showDownloadButton: false },
   };
-
+  useEffect(()=>{handleSearch(tagCollection,tagCreator,tagCampaign)},[searchFlag])
   return (
     <Fragment>
       <Header />
