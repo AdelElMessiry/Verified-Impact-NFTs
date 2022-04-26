@@ -723,7 +723,6 @@ const Index4 = () => {
                         <NFTCard
                           item={item}
                           openSlider={(newIndex) => {
-                              debugger;
                             setPhotoIndex(newIndex);
                             setOpenSlider(true);
                           }}

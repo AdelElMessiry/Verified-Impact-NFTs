@@ -499,7 +499,6 @@ const NFTs = () => {
   const beneficiary = queryParams.get("beneficiary");
   const creator = queryParams.get("creator");
   const campaign = queryParams.get("campaign");
-  debugger;
   const [tagCollection, setTagCollection] = useState("All");
   const [tagCreator, setTagCreator] = useState("All");
   const [tagCampaign, setTagCampaign] = useState("All");
@@ -539,7 +538,6 @@ const NFTs = () => {
 
 
   const handleSearch=(collectionFilter,creatorFilter,campaignFilter)=>{
-    debugger;
 let filteredAllData = selectedNfts?.filter((nft) => {
   return (
     (collectionFilter === nft.collection || collectionFilter === "All") &&
@@ -551,7 +549,6 @@ setFilterdImages(filteredAllData)
   }
 
   useEffect(() => {
-    debugger;
     let Data = [];
     if (beneficiary && !campaign) {
       Data = imageBlog.filter((nft) => nft.beneficiary === beneficiary);
