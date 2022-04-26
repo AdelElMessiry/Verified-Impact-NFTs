@@ -17,15 +17,9 @@ import Lightbox from "react-image-lightbox";
 import Masonry from "react-masonry-component";
 //Light Gallery on icon click
 const Iconimage = (props) => {
-  const { openLightbox } = useLightbox();
   return (
-    <Link
-      to={"#"}
-      onClick={() => openLightbox(props.imageToOpen)}
-      className="mfp-link"
-    >
-      <i className="ti-fullscreen icon-bx-xs"></i>
-    </Link>
+    <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+
   );
 };
 const imageBlog = [
@@ -584,6 +578,7 @@ const Index4 = () => {
             <b>Price: </b>
             {imageBlog[item].price} {imageBlog[item].currency}
           </p>
+          <Iconimage />
         </div>
       );
     }
