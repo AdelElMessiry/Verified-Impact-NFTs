@@ -11,6 +11,8 @@ import bnr1 from "./../../../images/banner/bnr1.jpg";
 
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import Lightbox from "react-image-lightbox";
+import { Link } from "react-router-dom";
+
 const imageBlog = [
   {
     name: "Prayer",
@@ -25,6 +27,7 @@ const imageBlog = [
     collection: "Pray for Ukraine",
     price: "1000",
     currency: "CSPR",
+    description: "During hard days we should pray for peace ",
   },
   {
     name: "Solidarity",
@@ -38,6 +41,8 @@ const imageBlog = [
     collection: "Pray for Ukraine",
     price: "1000",
     currency: "CSPR",
+    description:
+      "Solidarity and support to Ukraine is just a humane action regardless the consequences ",
   },
   {
     name: "The Motherland Monument",
@@ -52,6 +57,8 @@ const imageBlog = [
     collection: "Pray for Ukraine",
     price: "1000",
     currency: "CSPR",
+    description:
+      "The Motherland Monument is a monumental statue in Kyiv, the capital of Ukraine. The sculpture is a part of the National Museum of the History of Ukraine in the Second World War.",
   },
   {
     name: "The Flag",
@@ -66,6 +73,8 @@ const imageBlog = [
     collection: "Pray for Ukraine",
     price: "1000",
     currency: "CSPR",
+    description:
+      "The colours in the Ukrainian flag represent golden fields of grain under a clear blue sky, appropriate for a country known as the 'bread basket' of its area.",
   },
   {
     name: "Dove of Peace",
@@ -80,11 +89,12 @@ const imageBlog = [
     collection: "Pray for Ukraine",
     price: "1000",
     currency: "CSPR",
+    description: "The Dove of peace will definitely fly over Ukrain soon ",
   },
   {
     name: "Children of Ukraine",
     image:
-      "https://media.npr.org/assets/img/2022/03/03/gettyimages-1377728411_custom-f265b99e048006a23cff07314bcedb2e54711725-s900-c85.webp",
+      "https://images.english.elpais.com/resizer/-H_Flr48rWE46RoaB_3NQY0eNeM=/1960x0/filters:focal(1187x607:1197x617)/cloudfront-eu-central-1.images.arcpublishing.com/prisa/O7SHEKPH55MAUOO654FLPSBEDE.jpg",
     category: "2",
     beneficiary: "Ukraine Gov",
     beneficiaryPercentage: "80",
@@ -94,11 +104,13 @@ const imageBlog = [
     collection: "A hard night",
     price: "1000",
     currency: "CSPR",
+    description:
+      "Children a re suffering from the new homeless routine far feom their homes and schools ",
   },
   {
     name: "Five Million Refugee",
     image:
-      "https://i.guim.co.uk/img/media/79184ce9e786449f09c64db3e3a96f9d5ea81a13/0_247_4703_2822/master/4703.jpg?width=1200&height=1200&quality=85&auto=format&fit=crop&s=8c3659a6e5fd210b5c341667222ddfcf",
+      "https://ca-times.brightspotcdn.com/dims4/default/1172dd9/2147483647/strip/true/crop/5905x3912+0+0/resize/840x556!/format/webp/quality/90/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2F15%2F3d%2F18359ce2474987af32638e12a0d5%2Fap22067559048461.jpg",
     category: "2",
     beneficiary: "Ukraine Gov",
     beneficiaryPercentage: "80",
@@ -108,6 +120,8 @@ const imageBlog = [
     collection: "A hard night",
     price: "1000",
     currency: "CSPR",
+    description:
+      "Refugees inside Ukraine's facilities likethe old days during WW2",
   },
   {
     name: "Railway Station",
@@ -122,11 +136,12 @@ const imageBlog = [
     collection: "A hard night",
     price: "1000",
     currency: "CSPR",
+    description: "Huge playschools inside the railway satation of Warsaw ",
   },
   {
     name: "Pets Refugees",
     image:
-      "https://static.independent.co.uk/2022/03/24/17/64a707b26424bdd011aae4fcc23d7037Y29udGVudHNlYXJjaGFwaSwxNjQ4MjIyNjk0-2.66022243.jpg?quality=75&width=982&height=726&auto=webp",
+      "https://static.euronews.com/articles/stories/06/51/84/04/800x650_cmsv2_efabd5ed-96fb-51d6-8736-8c8b98b2f0e0-6518404.jpg",
     category: "2",
     beneficiary: "Ukraine Gov",
     beneficiaryPercentage: "80",
@@ -136,6 +151,7 @@ const imageBlog = [
     collection: "A hard night",
     price: "1000",
     currency: "CSPR",
+    description: "Ukrainian did not let down their pets during the invasion ",
   },
   {
     name: "We Wait!",
@@ -150,6 +166,7 @@ const imageBlog = [
     collection: "A hard night",
     price: "1000",
     currency: "CSPR",
+    description: "Ukrainians wait in streets ",
   },
   {
     name: "No War!",
@@ -164,6 +181,7 @@ const imageBlog = [
     collection: "Build it Back",
     price: "1000",
     currency: "CSPR",
+    description: "Stop war to rebuild",
   },
   {
     name: "Destroyed",
@@ -178,6 +196,7 @@ const imageBlog = [
     collection: "Build it Back",
     price: "1000",
     currency: "CSPR",
+    description: "Nothing is worse than a war on your homeland ",
   },
   {
     name: "Once Upon a Time",
@@ -191,6 +210,7 @@ const imageBlog = [
     collection: "Build it Back",
     price: "1000",
     currency: "CSPR",
+    description: "Kiev is the colourful city ",
   },
   {
     name: "New City",
@@ -205,6 +225,8 @@ const imageBlog = [
     collection: "Build it Back",
     price: "1000",
     currency: "CSPR",
+    description:
+      "Reconstruction of a city is simply way harder than destroying it",
   },
   {
     name: "Farming",
@@ -219,6 +241,7 @@ const imageBlog = [
     collection: "Build it Back",
     price: "1000",
     currency: "CSPR",
+    description: "We shall retain our bread basket city!",
   },
   {
     name: "City of Ghosts",
@@ -233,6 +256,8 @@ const imageBlog = [
     collection: "Damaged Houses",
     price: "1000",
     currency: "CSPR",
+    description:
+      "Dreams and memories are faded away just like ashes in the air ",
   },
   {
     name: "Children Damaged school",
@@ -247,6 +272,7 @@ const imageBlog = [
     collection: "Damaged Houses",
     price: "1000",
     currency: "CSPR",
+    description: "Childrens' second homes are a total mess ",
   },
   {
     name: "Home!",
@@ -261,6 +287,8 @@ const imageBlog = [
     collection: "Damaged Houses",
     price: "1000",
     currency: "CSPR",
+    description:
+      "Your home is gone but together we will find a way to sort it out for you ",
   },
   {
     name: "Playground",
@@ -275,6 +303,7 @@ const imageBlog = [
     collection: "Damaged Houses",
     price: "1000",
     currency: "CSPR",
+    description: "Stop war so our kids can find some assurance to play ",
   },
   {
     name: "My home is gone",
@@ -289,6 +318,7 @@ const imageBlog = [
     collection: "Damaged Houses",
     price: "1000",
     currency: "CSPR",
+    description: "My home is gone but I will go back again ",
   },
   {
     name: "Fight Fight",
@@ -303,6 +333,7 @@ const imageBlog = [
     collection: "Freedom is not Free",
     price: "1000",
     currency: "CSPR",
+    description: "We will fight the ingolorious ghost ",
   },
   {
     name: "Be ready for war",
@@ -316,6 +347,7 @@ const imageBlog = [
     collection: "Freedom is not Free",
     price: "1000",
     currency: "CSPR",
+    description: "You started this war and I am going to end it soon",
   },
   {
     name: "What Now!",
@@ -330,6 +362,7 @@ const imageBlog = [
     collection: "Freedom is not Free",
     price: "1000",
     currency: "CSPR",
+    description: "Waiting for the next command ",
   },
   {
     name: "Fight Back!",
@@ -344,6 +377,7 @@ const imageBlog = [
     collection: "Freedom is not Free",
     price: "1000",
     currency: "CSPR",
+    description: "War trenchers are harder targets ",
   },
   {
     name: "Proud Solider",
@@ -358,11 +392,12 @@ const imageBlog = [
     collection: "Freedom is not Free",
     price: "1000",
     currency: "CSPR",
+    description: "Call of duty",
   },
   {
     name: "Rescuing a Friend",
     image:
-      "https://www.telegraph.co.uk/content/dam/world-news/2022/02/24/TELEMMGLPICT000287174617_trans_NvBQzQNjv4BqAfwcn9-ioHookDyYnjAMrUR8YSybYNWDTYrGStsI8ko.jpeg",
+      "https://media.vanityfair.com/photos/622643d4dcdd2790085ec50e/2:3/w_887",
     category: "6",
     beneficiary: "Ukraine Gov",
     beneficiaryPercentage: "80",
@@ -372,6 +407,7 @@ const imageBlog = [
     collection: "Soldiers",
     price: "1000",
     currency: "CSPR",
+    description: "We don't leave our friends ",
   },
   {
     name: "War Consequences",
@@ -386,6 +422,7 @@ const imageBlog = [
     collection: "Soldiers",
     price: "1000",
     currency: "CSPR",
+    description: "It was a tough tank",
   },
   {
     name: "Love!",
@@ -400,6 +437,7 @@ const imageBlog = [
     collection: "Soldiers",
     price: "1000",
     currency: "CSPR",
+    description: "I found love during the fight ",
   },
   {
     name: "Soliders on a Tank",
@@ -413,6 +451,7 @@ const imageBlog = [
     collection: "Soldiers",
     price: "1000",
     currency: "CSPR",
+    description: "We wait for orders or enemies whatever comes first ",
   },
   {
     name: "Sniper",
@@ -426,6 +465,7 @@ const imageBlog = [
     collection: "Soldiers",
     price: "1000",
     currency: "CSPR",
+    description: "Aim, hold your breath and Shoot!",
   },
 ];
 
@@ -459,23 +499,59 @@ const NFTs = () => {
   const beneficiary = queryParams.get("beneficiary");
   const creator = queryParams.get("creator");
   const campaign = queryParams.get("campaign");
-  const [tag, setTag] = useState("All");
+  const [tagCollection, setTagCollection] = useState("All");
+  const [tagCreator, setTagCreator] = useState("All");
+  const [tagCampaign, setTagCampaign] = useState("All");
   const [filteredImages, setFilterdImages] = useState([]);
   const [selectedNfts, setSelectedNfts] = useState(imageBlog);
   const [openSlider, setOpenSlider] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [sliderCaptions, setSliderCaptions] = useState([]);
+  const [collectionTags, setCollectionTags] = useState([]);
+  const [campaignTags, setCampaignTags] = useState([]);
+  const [creatorTags, setCreatorTags] = useState([]);
 
- 
-
-  const setSelectedTag = (tag, data = null) => {
-    setTag(tag);
-    tag === "All" && data
-      ? setFilterdImages(data)
-      : tag === "All" && !data
-      ? setFilterdImages(selectedNfts)
-      : setFilterdImages(selectedNfts.filter((nft) => nft.collection === tag));
+  const Iconimage = (props) => {
+    return (
+      <>
+        <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+      </>
+    );
   };
+
+  const setSelectedCollectionTag = (tag, data = null) => {
+    setTagCollection(tag);
+    // tag === "All" && data
+    //   ? setFilterdImages(data)
+    //   : tag === "All" && !data
+    //   ? setFilterdImages(selectedNfts)
+    //   : setFilterdImages(selectedNfts.filter((nft) => nft.collection === tag));
+      handleSearch(tag,tagCreator,tagCampaign)
+  };
+
+  const setSelectedCampaignTag = (tag, data = null) => {
+    setTagCampaign(tag);
+    handleSearch(tagCollection,tagCreator,tag)
+  };
+
+  const setSelectedCreatorTag = (tag, data = null) => {
+    setTagCreator(tag);
+    handleSearch(tagCollection,tag,tagCampaign)
+
+  };
+
+
+  const handleSearch=(collectionFilter,creatorFilter,campaignFilter)=>{
+    debugger;
+let filteredAllData = selectedNfts?.filter((nft) => {
+  return (
+    (collectionFilter === nft.collection || collectionFilter === "All") &&
+    (creatorFilter === nft.creator || creatorFilter === "All") &&
+    (campaignFilter === nft.campaign || campaignFilter === "All") 
+  );
+});
+setFilterdImages(filteredAllData)
+  }
 
   useEffect(() => {
     let Data = [];
@@ -494,52 +570,78 @@ const NFTs = () => {
     } else {
       Data = imageBlog;
     }
+    let collection = Data.map((data) => ({ name: data.collection })).filter(
+      (value, index, self) =>
+        index === self.findIndex((t) => t.name === value.name)
+    );
+    setCollectionTags([{ name: "All" }, ...collection]);
+
+    let campaigns = Data.map((data) => ({ name: data.campaign })).filter(
+      (value, index, self) =>
+        index === self.findIndex((t) => t.name === value.name)
+    );
+
+    setCampaignTags([{ name: "All" }, ...campaigns]);
+
+    let creators = Data.map((data) => ({ name: data.creator })).filter(
+      (value, index, self) =>
+        index === self.findIndex((t) => t.name === value.name)
+    );
+
+    setCreatorTags([{ name: "All" }, ...creators]);
     setSelectedNfts(Data);
-    setSelectedTag("All", Data);
+    setSelectedCampaignTag("All", Data);
+    setSelectedCollectionTag("All", Data);
+    setSelectedCreatorTag("All", Data);
     const captions = [];
-    for (let item=0;item< Data.length;item++) {
-      captions.push(  
-      <div className="text-white text-left port-box">
-        <h5>{Data[item].name}</h5>
-        {/* <p>
+    for (let item = 0; item < Data.length; item++) {
+      captions.push(
+        <div className="text-white text-left port-box">
+          <h5>{Data[item].name}</h5>
+          {/* <p>
           <b>Category: </b>
           {imageBlog[item].category}
         </p> */}
-        <p>
-          <b>Beneficiary: </b>
-          {Data[item].beneficiary}
-          <span className="bg-success text-white px-1 ml-1 border-raduis-2">
-            {Data[item].beneficiaryPercentage}%
-          </span>
-        </p>
-        <p>
-          <b>Campaign: </b>
-          {Data[item].campaign}
-        </p>
-        <p>
-          <b>Creator: </b>
-          {Data[item].creator}
-          <span className="bg-danger text-white px-1 ml-1 border-raduis-2">
-            {Data[item].creatorPercentage}%
-          </span>
-        </p>
-        <p>
-          <b>Collection: </b>
-          {Data[item].collection}
-        </p>
-        <p>
-          <b>Price: </b>
-          {Data[item].price} {Data[item].currency}
-        </p>
-      </div>);
+          <p>
+            <b>Beneficiary: </b>
+            {Data[item].beneficiary}
+            <span className="bg-success text-white px-1 ml-1 border-raduis-2">
+              {Data[item].beneficiaryPercentage}%
+            </span>
+          </p>
+          <p>
+            <b>Campaign: </b>
+            {Data[item].campaign}
+          </p>
+          <p>
+            <b>Creator: </b>
+            {Data[item].creator}
+            <span className="bg-danger text-white px-1 ml-1 border-raduis-2">
+              {Data[item].creatorPercentage}%
+            </span>
+          </p>
+          <p>
+            <b>Collection: </b>
+            {Data[item].collection}
+          </p>
+          <p>
+            <b>Description: </b>
+            {imageBlog[item].description}
+          </p>
+          <p>
+            <b>Price: </b>
+            {Data[item].price} {Data[item].currency}
+          </p>
+          <Iconimage />
+        </div>
+      );
     }
-    setSliderCaptions(captions)
+    setSliderCaptions(captions);
   }, [beneficiary, campaign, creator]);
 
   const options = {
     buttons: { showDownloadButton: false },
   };
-
 
   return (
     <Fragment>
@@ -560,43 +662,53 @@ const NFTs = () => {
         </div>
         {/*  Section-1 Start  */}
         <div className="section-full content-inner-1 portfolio text-uppercase">
-          <div className="site-filters clearfix center  m-b40">
+          {(creator === undefined || creator === null) && (
+            <div className="site-filters clearfix  left mx-5   m-b40">
+              <ul className="filters" data-toggle="buttons">
+                Creator:{" "}
+                {creatorTags &&
+                  creatorTags.length > 0 &&
+                  creatorTags.map((singleTag, index) => (
+                    <TagLi
+                      key={index}
+                      name={singleTag.name}
+                      handlesettag={setSelectedCreatorTag}
+                      tagActive={tagCreator === singleTag.name ? true : false}
+                    />
+                  ))}
+              </ul>
+            </div>
+          )}
+          {(campaign === undefined || campaign === null) && (
+            <div className="site-filters clearfix  left mx-5   m-b40">
+              <ul className="filters" data-toggle="buttons">
+                Campaign:{" "}
+                {campaignTags &&
+                  campaignTags.length > 0 &&
+                  campaignTags.map((singleTag, index) => (
+                    <TagLi
+                      key={index}
+                      name={singleTag.name}
+                      handlesettag={setSelectedCampaignTag}
+                      tagActive={tagCampaign === singleTag.name ? true : false}
+                    />
+                  ))}
+              </ul>
+            </div>
+          )}
+          <div className="site-filters clearfix left mx-5  m-b40">
             <ul className="filters" data-toggle="buttons">
-              <TagLi
-                name="All"
-                handlesettag={setSelectedTag}
-                tagActive={tag === "All" ? true : false}
-              />
-              <TagLi
-                name="Pray for Ukraine"
-                handlesettag={setSelectedTag}
-                tagActive={tag === "Pray for Ukraine" ? true : false}
-              />
-              <TagLi
-                name="A hard night"
-                handlesettag={setSelectedTag}
-                tagActive={tag === "A hard night" ? true : false}
-              />
-              <TagLi
-                name="Build it Back"
-                handlesettag={setSelectedTag}
-                tagActive={tag === "Build it Back" ? true : false}
-              />
-              <TagLi
-                name="Damaged Houses"
-                handlesettag={setSelectedTag}
-                tagActive={tag === "Damaged Houses" ? true : false}
-              />
-              <TagLi
-                name="Freedom is not Free"
-                handlesettag={setSelectedTag}
-                tagActive={tag === "Freedom is not Free" ? true : false}
-              />
-              <TagLi
-                name="Soldiers"
-                handlesettag={setSelectedTag}
-                tagActive={tag === "Soldiers" ? true : false}
-              />
+              Collection:{" "}
+              {collectionTags &&
+                collectionTags.length > 0 &&
+                collectionTags.map((singleTag, index) => (
+                  <TagLi
+                    key={index}
+                    name={singleTag.name}
+                    handlesettag={setSelectedCollectionTag}
+                    tagActive={tagCollection === singleTag.name ? true : false}
+                  />
+                ))}
             </ul>
           </div>
           {openSlider && (
@@ -644,7 +756,14 @@ const NFTs = () => {
                           className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
                           key={index}
                         >
-                          <NFTCard item={item} openSlider={()=>setOpenSlider(true)}/>
+                          <NFTCard
+                            item={item}
+                            index={index}
+                            openSlider={(newIndex) => {
+                              setPhotoIndex(newIndex);
+                              setOpenSlider(true);
+                            }}
+                          />
                         </li>
                       ))}
                     </Masonry>

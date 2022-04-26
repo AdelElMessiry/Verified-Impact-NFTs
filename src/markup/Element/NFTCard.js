@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const NFTCard=({item,openSlider})=>{
+const NFTCard=({index,item,openSlider})=>{
      //Light Gallery on icon click
   const Iconimage = (props) => {
     return (
@@ -10,7 +10,7 @@ const NFTCard=({item,openSlider})=>{
           to={"/#"}
           onClick={(e) => {
             e.preventDefault();
-            openSlider(true);
+            openSlider(index);
           }}
           className="mfp-link portfolio-fullscreen"
         >
