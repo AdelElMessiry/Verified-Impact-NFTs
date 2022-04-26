@@ -9,6 +9,7 @@ const NFTCard=({index,item,openSlider})=>{
         <Link
           to={"/#"}
           onClick={(e) => {
+              debugger
             e.preventDefault();
             openSlider(index);
           }}
