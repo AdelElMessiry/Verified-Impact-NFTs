@@ -95,7 +95,7 @@ const Index4 = () => {
           <p>
             <b>Beneficiary: </b>
             <VINFTsTooltip
-              title={`Click to see all NFTs for ${data[item].beneficiary} beneficiary`}
+              title={`Click to see all NFTs for "${data[item].beneficiary}" beneficiary`}
             >
               <Link
                 to={`./NFTs?beneficiary=${data[item].beneficiary}`}
@@ -110,7 +110,7 @@ const Index4 = () => {
 
             <b className="ml-4">Campaign: </b>
             <VINFTsTooltip
-              title={`Click to see all NFTs for ${data[item].campaign} campaign`}
+              title={`Click to see all NFTs for "${data[item].campaign}" campaign`}
             >
               {data[item].beneficiary ? (
                 <Link
@@ -130,7 +130,7 @@ const Index4 = () => {
             </VINFTsTooltip>
             <b className="ml-4">Creator: </b>
             <VINFTsTooltip
-              title={`Click to see all NFTs created by ${data[item].creator}`}
+              title={`Click to see all NFTs created by "${data[item].creator}"`}
             >
               <Link
                 to={`./NFTs?creator=${data[item].creator}`}
