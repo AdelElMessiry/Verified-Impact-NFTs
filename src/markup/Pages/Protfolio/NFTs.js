@@ -12,9 +12,8 @@ import bnr1 from "./../../../images/banner/bnr1.jpg";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import Lightbox from "react-image-lightbox";
 import { Link } from "react-router-dom";
-import {imageBlog} from "../../NFTData"
-
-
+import { imageBlog } from "../../NFTData";
+import VINFTsTooltip from "../../Element/Tooltip";
 
 // Masonry section
 const masonryOptions = {
@@ -24,19 +23,29 @@ const masonryOptions = {
 const imagesLoadedOptions = { background: ".my-bg-image-el" };
 // Masonry section end
 
-const TagLi = ({ name, handlesettag, tagActive }) => {
+const TagLi = ({ name, handlesettag, tagActive, type }) => {
   return (
-    <li
-      className={` tag ${tagActive ? "btn active" : "btn"}`}
-      onClick={() => handlesettag(name)}
+    <VINFTsTooltip
+      title={`Click to see all NFTs under the ${name} ${
+        type == "creator"
+          ? name=="All"?"creators":"creator"
+          : type == "campaign"
+          ?  name=="All"?"campaigns":"campaign"
+          :  name=="All"?"collections":"collection"
+      } `}
     >
-      <input type="radio" />
-      <button className="site-button-secondry radius-sm">
-        <span>
-          {name} {""}
-        </span>{" "}
-      </button>
-    </li>
+      <li
+        className={` tag ${tagActive ? "btn active" : "btn"}`}
+        onClick={() => handlesettag(name)}
+      >
+        <input type="radio" />
+        <button className="site-button-secondry radius-sm">
+          <span>
+            {name} {""}
+          </span>{" "}
+        </button>
+      </li>
+    </VINFTsTooltip>
   );
 };
 
@@ -69,31 +78,29 @@ const NFTs = () => {
 
   const setSelectedCollectionTag = (tag, data = null) => {
     setTagCollection(tag);
-    setSearchFlag(!searchFlag)
+    setSearchFlag(!searchFlag);
   };
 
   const setSelectedCampaignTag = (tag, data = null) => {
     setTagCampaign(tag);
-    setSearchFlag(!searchFlag)
+    setSearchFlag(!searchFlag);
   };
 
   const setSelectedCreatorTag = (tag, data = null) => {
     setTagCreator(tag);
-    setSearchFlag(!searchFlag)
-
+    setSearchFlag(!searchFlag);
   };
 
-
-  const handleSearch=(collectionFilter,creatorFilter,campaignFilter)=>{
-let filteredAllData = selectedNfts?.filter((nft) => {
-  return (
-    (collectionFilter === nft.collection || collectionFilter === "All") &&
-    (creatorFilter === nft.creator || creatorFilter === "All") &&
-    (campaignFilter === nft.campaign || campaignFilter === "All") 
-  );
-});
-setFilterdImages(filteredAllData)
-  }
+  const handleSearch = (collectionFilter, creatorFilter, campaignFilter) => {
+    let filteredAllData = selectedNfts?.filter((nft) => {
+      return (
+        (collectionFilter === nft.collection || collectionFilter === "All") &&
+        (creatorFilter === nft.creator || creatorFilter === "All") &&
+        (campaignFilter === nft.campaign || campaignFilter === "All")
+      );
+    });
+    setFilterdImages(filteredAllData);
+  };
 
   useEffect(() => {
     let Data = [];
@@ -132,10 +139,10 @@ setFilterdImages(filteredAllData)
 
     setCreatorTags([{ name: "All" }, ...creators]);
     setSelectedNfts(Data);
-    setTagCampaign("All")
-    setTagCollection("All")
-    setTagCreator("All")
-    setSearchFlag(!searchFlag)
+    setTagCampaign("All");
+    setTagCollection("All");
+    setTagCreator("All");
+    setSearchFlag(!searchFlag);
     const captions = [];
     for (let item = 0; item < Data.length; item++) {
       captions.push(
@@ -151,53 +158,76 @@ setFilterdImages(filteredAllData)
           </p>
           <p>
             <b>Beneficiary: </b>
-            <Link
-              to={`./NFTs?beneficiary=${Data[item].beneficiary}`}
-              className="dez-page text-white" onClick={()=>{setOpenSlider(false)}}
+            <VINFTsTooltip
+              title={`Click to see all NFTs for ${Data[item].beneficiary} beneficiary`}
             >
-              {Data[item].beneficiary}
-            </Link>
-            
+              <Link
+                to={`./NFTs?beneficiary=${Data[item].beneficiary}`}
+                className="dez-page text-white"
+                onClick={() => {
+                  setOpenSlider(false);
+                }}
+              >
+                {Data[item].beneficiary}
+              </Link>
+            </VINFTsTooltip>
             <span className="bg-success text-white px-1 ml-1 border-raduis-2">
               {Data[item].beneficiaryPercentage}%
             </span>
-         
+
             <b className="ml-4">Campaign: </b>
-            {Data[item].beneficiary ? (
-              <Link
-                to={`./NFTs?beneficiary=${Data[item].beneficiary}&campaign=${Data[item].campaign}`}
-                className="dez-page text-white" onClick={()=>{setOpenSlider(false)}}
-              >
-                {Data[item].campaign}
-              </Link>
-            ) : (
-              <Link
-                to={`./NFTs?creator=${Data[item].creator}&campaign=${Data[item].campaign}`}
-                className="dez-page text-white" onClick={()=>{setOpenSlider(false)}}
-              >
-                {Data[item].campaign}
-              </Link>
-            )}
-            
-            <b className="ml-4">Creator: </b>
-            <Link
-              to={`./NFTs?creator=${Data[item].creator}`}
-              className="dez-page text-white" onClick={()=>{setOpenSlider(false)}}
+            <VINFTsTooltip
+              title={`Click to see all NFTs for ${Data[item].campaign} campaign`}
             >
-              {Data[item].creator}
-            </Link>
-            
+              {Data[item].beneficiary ? (
+                <Link
+                  to={`./NFTs?beneficiary=${Data[item].beneficiary}&campaign=${Data[item].campaign}`}
+                  className="dez-page text-white"
+                  onClick={() => {
+                    setOpenSlider(false);
+                  }}
+                >
+                  {Data[item].campaign}
+                </Link>
+              ) : (
+                <Link
+                  to={`./NFTs?creator=${Data[item].creator}&campaign=${Data[item].campaign}`}
+                  className="dez-page text-white"
+                  onClick={() => {
+                    setOpenSlider(false);
+                  }}
+                >
+                  {Data[item].campaign}
+                </Link>
+              )}
+            </VINFTsTooltip>
+            <b className="ml-4">Creator: </b>
+            <VINFTsTooltip
+              title={`Click to see all NFTs created by ${Data[item].creator}`}
+            >
+              <Link
+                to={`./NFTs?creator=${Data[item].creator}`}
+                className="dez-page text-white"
+                onClick={() => {
+                  setOpenSlider(false);
+                }}
+              >
+                {Data[item].creator}
+              </Link>
+            </VINFTsTooltip>
             <span className="bg-info text-white px-1 ml-1 border-raduis-2">
               {Data[item].creatorPercentage}%
             </span>
-         
+
             <b className="ml-4">Collection: </b>
             {Data[item].collection}
-        </p><p>
+          </p>
+          <p>
             <b>Price: </b>
             {Data[item].price} {Data[item].currency}
-         &nbsp;&nbsp;
-          <Iconimage /> </p>
+            &nbsp;&nbsp;
+            <Iconimage />{" "}
+          </p>
         </div>
       );
     }
@@ -207,7 +237,9 @@ setFilterdImages(filteredAllData)
   const options = {
     buttons: { showDownloadButton: false },
   };
-  useEffect(()=>{handleSearch(tagCollection,tagCreator,tagCampaign)},[searchFlag])
+  useEffect(() => {
+    handleSearch(tagCollection, tagCreator, tagCampaign);
+  }, [searchFlag]);
   return (
     <Fragment>
       <Header />
@@ -234,12 +266,13 @@ setFilterdImages(filteredAllData)
                 {creatorTags &&
                   creatorTags.length > 0 &&
                   creatorTags.map((singleTag, index) => (
-                    <TagLi
-                      key={index}
-                      name={singleTag.name}
-                      handlesettag={setSelectedCreatorTag}
-                      tagActive={tagCreator === singleTag.name ? true : false}
-                    />
+                      <TagLi
+                        key={index}
+                        name={singleTag.name}
+                        handlesettag={setSelectedCreatorTag}
+                        tagActive={tagCreator === singleTag.name ? true : false}
+                        type="creator"
+                      />
                   ))}
               </ul>
             </div>
@@ -251,12 +284,15 @@ setFilterdImages(filteredAllData)
                 {campaignTags &&
                   campaignTags.length > 0 &&
                   campaignTags.map((singleTag, index) => (
-                    <TagLi
-                      key={index}
-                      name={singleTag.name}
-                      handlesettag={setSelectedCampaignTag}
-                      tagActive={tagCampaign === singleTag.name ? true : false}
-                    />
+                      <TagLi
+                        key={index}
+                        name={singleTag.name}
+                        handlesettag={setSelectedCampaignTag}
+                        tagActive={
+                          tagCampaign === singleTag.name ? true : false
+                        }
+                      type="campaign"
+                      />
                   ))}
               </ul>
             </div>
@@ -267,12 +303,15 @@ setFilterdImages(filteredAllData)
               {collectionTags &&
                 collectionTags.length > 0 &&
                 collectionTags.map((singleTag, index) => (
-                  <TagLi
-                    key={index}
-                    name={singleTag.name}
-                    handlesettag={setSelectedCollectionTag}
-                    tagActive={tagCollection === singleTag.name ? true : false}
-                  />
+                    <TagLi
+                      key={index}
+                      name={singleTag.name}
+                      handlesettag={setSelectedCollectionTag}
+                      tagActive={
+                        tagCollection === singleTag.name ? true : false
+                      }
+                      type="collection"
+                    />
                 ))}
             </ul>
           </div>
