@@ -9,7 +9,6 @@ import VINFTsTooltip from "../Element/Tooltip";
 
 const Header1 = () => {
   const { isLoggedIn, entityInfo, balance, login, logout } = useAuth();
-  debugger;
   useEffect(() => {
     // sidebar open/close
 
