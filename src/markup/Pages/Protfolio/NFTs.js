@@ -26,7 +26,7 @@ const imagesLoadedOptions = { background: ".my-bg-image-el" };
 const TagLi = ({ name, handlesettag, tagActive, type }) => {
   return (
     <VINFTsTooltip
-      title={`Click to see all NFTs under the ${name} ${
+      title={`Click to see all NFTs under the "${name}" ${
         type == "creator"
           ? name=="All"?"creators":"creator"
           : type == "campaign"
@@ -159,7 +159,7 @@ const NFTs = () => {
           <p>
             <b>Beneficiary: </b>
             <VINFTsTooltip
-              title={`Click to see all NFTs for ${Data[item].beneficiary} beneficiary`}
+              title={`Click to see all NFTs for "${Data[item].beneficiary}" beneficiary`}
             >
               <Link
                 to={`./NFTs?beneficiary=${Data[item].beneficiary}`}
@@ -177,7 +177,7 @@ const NFTs = () => {
 
             <b className="ml-4">Campaign: </b>
             <VINFTsTooltip
-              title={`Click to see all NFTs for ${Data[item].campaign} campaign`}
+              title={`Click to see all NFTs for "${Data[item].campaign}" campaign`}
             >
               {Data[item].beneficiary ? (
                 <Link
@@ -203,7 +203,7 @@ const NFTs = () => {
             </VINFTsTooltip>
             <b className="ml-4">Creator: </b>
             <VINFTsTooltip
-              title={`Click to see all NFTs created by ${Data[item].creator}`}
+              title={`Click to see all NFTs created by "${Data[item].creator}"`}
             >
               <Link
                 to={`./NFTs?creator=${Data[item].creator}`}
