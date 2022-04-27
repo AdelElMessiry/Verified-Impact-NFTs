@@ -11,3 +11,20 @@
 .ril__navButtons{
     z-index: 1;
 }
+.port-box{
+    a{
+        text-decoration: underline;
+        color: #17a2b8;
+        cursor: pointer;
+    }
+}
+.stats-section{
+    position: absolute;
+    bottom: 10%;
+    width: 100%;
+    text-align: center;
+    span{
+        font-size: 18px;
+        color: #28a745;
+    }
+}

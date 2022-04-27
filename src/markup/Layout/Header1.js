@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from './../../images/logov.png';
 import logo2 from './../../images/logo-black.png';
 import HeaderMenu from './HeaderMenu';
 import casper from './../../images/icon/casper.png';
+import { useAuth } from '../../contexts/AuthContext';
 
-
-class Header1 extends Component {
-
-	componentDidMount() {
+const Header1 =() =>{
+    const { isLoggedIn, entityInfo, balance, login, logout } = useAuth();
+useEffect(()=>{	
         // sidebar open/close
 		
         var Navicon = document.querySelector('.navicon');
@@ -38,9 +38,9 @@ class Header1 extends Component {
 				
 			}, 100);			
         }
-	}	
+    },[])	
 	
-    render() {
+ 
         return (
             <>
                 <header className="site-header header-transparent mo-left" id="fix-header">
@@ -70,7 +70,7 @@ class Header1 extends Component {
                                 </div>
                                 <div className="extra-nav">
                                     <div className="extra-cell">
-                                    <img src={casper} className="img img-fluid" width={"50px"}/>
+                                    <img src={casper} className="img img-fluid" width={"50px"} onClick={login}/>
                                     </div>
                                 </div>
                             </div>
@@ -80,7 +80,7 @@ class Header1 extends Component {
             </>
         )
     }
-}
+
 
 	
 export default Header1;

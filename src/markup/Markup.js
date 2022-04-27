@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import ThemeButton from './Element/ThemeButton/ThemeButton';
-
+import { AuthProvider } from '../contexts/AuthContext';
 import Homepage from './Pages/Homepage1';
 import Index4 from './Pages/Index4';
 import Aboutus1 from './Pages/Aboutus/Aboutus1';
@@ -58,6 +58,7 @@ import NFTs from './Pages/Protfolio/NFTs';
 class Markup extends Component{
 	render(){
 		return(
+            <AuthProvider>
 			<HashRouter>
                 <div className="page-wraper">
                     <Switch>
@@ -113,6 +114,7 @@ class Markup extends Component{
 				<ScrollToTop />
 				{/* <ThemeButton /> */}
             </HashRouter>	
+            </AuthProvider>
 		)
 	}
 	
