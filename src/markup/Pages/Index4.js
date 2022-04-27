@@ -15,6 +15,8 @@ import about1 from "./../../images/about/pic9.jpg";
 import Lightbox from "react-image-lightbox";
 import { imageBlog } from "../NFTData";
 import Masonry from "react-masonry-component";
+import VINFTsTooltip from "../Element/Tooltip";
+
 //Light Gallery on icon click
 const Iconimage = (props) => {
   return (
@@ -49,7 +51,6 @@ const Index4 = () => {
       (value, index, self) =>
         index === self.findIndex((t) => t.name === value.name)
     ).length;
-  debugger;
 
   let campaignLength = imageBlog
     .map((data) => ({ name: data.campaign }))
@@ -72,11 +73,96 @@ const Index4 = () => {
         index === self.findIndex((t) => t.name === value.name)
     ).length;
 
-    let csprSum = imageBlog.map(a => Number(a.price)).reduce(function(a, b)
-    {
+  let csprSum = imageBlog
+    .map((a) => Number(a.price))
+    .reduce(function (a, b) {
       return a + b;
     });
+  const setCaptions = (data, camNumber) => {
+    const captionsCamp = [];
+    for (let item = 0; item < data.length; item++) {
+      captionsCamp.push(
+        <div className="text-white text-left port-box">
+          <h5>{data[item].name}</h5>
+          {/* <p>
+          <b>Category: </b>
+          {Camp4Data[item].category}
+        </p> */}
+          <p>
+            <b>Description: </b>
+            {data[item].description}
+          </p>
+          <p>
+            <b>Beneficiary: </b>
+            <VINFTsTooltip
+              title={`Click to see all NFTs for ${data[item].beneficiary} beneficiary`}
+            >
+              <Link
+                to={`./NFTs?beneficiary=${data[item].beneficiary}`}
+                className="dez-page text-white"
+              >
+                {data[item].beneficiary}
+              </Link>
+            </VINFTsTooltip>
+            <span className="bg-success text-white px-1 ml-1 border-raduis-2">
+              {data[item].beneficiaryPercentage}%
+            </span>
 
+            <b className="ml-4">Campaign: </b>
+            <VINFTsTooltip
+              title={`Click to see all NFTs for ${data[item].campaign} campaign`}
+            >
+              {data[item].beneficiary ? (
+                <Link
+                  to={`./NFTs?beneficiary=${data[item].beneficiary}&campaign=${data[item].campaign}`}
+                  className="dez-page text-white"
+                >
+                  {data[item].campaign}
+                </Link>
+              ) : (
+                <Link
+                  to={`./NFTs?creator=${data[item].creator}&campaign=${data[item].campaign}`}
+                  className="dez-page text-white"
+                >
+                  {data[item].campaign}
+                </Link>
+              )}
+            </VINFTsTooltip>
+            <b className="ml-4">Creator: </b>
+            <VINFTsTooltip
+              title={`Click to see all NFTs created by ${data[item].creator}`}
+            >
+              <Link
+                to={`./NFTs?creator=${data[item].creator}`}
+                className="dez-page text-white"
+              >
+                {data[item].creator}
+              </Link>
+            </VINFTsTooltip>
+            <span className="bg-info text-white px-1 ml-1 border-raduis-2">
+              {data[item].creatorPercentage}%
+            </span>
+
+            <b className="ml-4">Collection: </b>
+            {data[item].collection}
+          </p>
+
+          <p>
+            <b>Price: </b>
+            {data[item].price} {data[item].currency}
+            &nbsp;&nbsp; <Iconimage />{" "}
+          </p>
+        </div>
+      );
+    }
+    camNumber == 1
+      ? setSliderCaptionsCamp1(captionsCamp)
+      : camNumber == 2
+      ? setSliderCaptionsCamp2(captionsCamp)
+      : camNumber == 3
+      ? setSliderCaptionsCamp3(captionsCamp)
+      : setSliderCaptionsCamp4(captionsCamp);
+  };
   useEffect(() => {
     var i = 0;
 
@@ -100,290 +186,26 @@ const Index4 = () => {
         }
       });
     }
-    const captionsCamp1 = [];
+
     const Camp1Data = imageBlog.filter(
       (nft) => nft.campaign === "Stand With Ukraine"
     );
-    for (let item = 0; item < Camp1Data.length; item++) {
-      captionsCamp1.push(
-        <div className="text-white text-left port-box">
-          <h5>{Camp1Data[item].name}</h5>
-          {/* <p>
-          <b>Category: </b>
-          {Camp4Data[item].category}
-        </p> */}
-          <p>
-            <b>Description: </b>
-            {Camp1Data[item].description}
-          </p>
-          <p>
-            <b>Beneficiary: </b>
-            <Link
-              to={`./NFTs?beneficiary=${Camp1Data[item].beneficiary}`}
-              className="dez-page text-white"
-            >
-              {Camp1Data[item].beneficiary}
-            </Link>
-            <span className="bg-success text-white px-1 ml-1 border-raduis-2">
-              {Camp1Data[item].beneficiaryPercentage}%
-            </span>
-
-            <b className="ml-4">Campaign: </b>
-            {Camp1Data[item].beneficiary ? (
-              <Link
-                to={`./NFTs?beneficiary=${Camp1Data[item].beneficiary}&campaign=${Camp1Data[item].campaign}`}
-                className="dez-page text-white"
-              >
-                {Camp1Data[item].campaign}
-              </Link>
-            ) : (
-              <Link
-                to={`./NFTs?creator=${Camp1Data[item].creator}&campaign=${Camp1Data[item].campaign}`}
-                className="dez-page text-white"
-              >
-                {Camp1Data[item].campaign}
-              </Link>
-            )}
-
-            <b className="ml-4">Creator: </b>
-            <Link
-              to={`./NFTs?creator=${Camp1Data[item].creator}`}
-              className="dez-page text-white"
-            >
-              {Camp1Data[item].creator}
-            </Link>
-            <span className="bg-info text-white px-1 ml-1 border-raduis-2">
-              {Camp1Data[item].creatorPercentage}%
-            </span>
-
-            <b className="ml-4">Collection: </b>
-            {Camp1Data[item].collection}
-          </p>
-
-          <p>
-            <b>Price: </b>
-            {Camp1Data[item].price} {Camp1Data[item].currency}
-            &nbsp;&nbsp; <Iconimage />{" "}
-          </p>
-        </div>
-      );
-    }
-    setSliderCaptionsCamp1(captionsCamp1);
-
-    const captionsCamp2 = [];
+    setCaptions(Camp1Data, 1);
     const Camp2Data = imageBlog.filter((nft) => nft.campaign === "Refugees");
-    for (let item = 0; item < Camp2Data.length; item++) {
-      captionsCamp2.push(
-        <div className="text-white text-left port-box">
-          <h5>{Camp2Data[item].name}</h5>
-          {/* <p>
-          <b>Category: </b>
-          {Camp4Data[item].category}
-        </p> */}
-          <p>
-            <b>Description: </b>
-            {Camp2Data[item].description}
-          </p>
-          <p>
-            <b>Beneficiary: </b>
-            <Link
-              to={`./NFTs?beneficiary=${Camp2Data[item].beneficiary}`}
-              className="dez-page text-white"
-            >
-              {Camp2Data[item].beneficiary}
-            </Link>
-            <span className="bg-success text-white px-1 ml-1 border-raduis-2">
-              {Camp2Data[item].beneficiaryPercentage}%
-            </span>
+    setCaptions(Camp2Data, 2);
 
-            <b className="ml-4">Campaign: </b>
-            {Camp2Data[item].beneficiary ? (
-              <Link
-                to={`./NFTs?beneficiary=${Camp2Data[item].beneficiary}&campaign=${Camp2Data[item].campaign}`}
-                className="dez-page text-white"
-              >
-                {Camp2Data[item].campaign}
-              </Link>
-            ) : (
-              <Link
-                to={`./NFTs?creator=${Camp2Data[item].creator}&campaign=${Camp2Data[item].campaign}`}
-                className="dez-page text-white"
-              >
-                {Camp2Data[item].campaign}
-              </Link>
-            )}
-            <b className="ml-4">Creator: </b>
-            <Link
-              to={`./NFTs?creator=${Camp2Data[item].creator}`}
-              className="dez-page text-white"
-            >
-              {Camp2Data[item].creator}
-            </Link>
-            <span className="bg-info text-white px-1 ml-1 border-raduis-2">
-              {Camp2Data[item].creatorPercentage}%
-            </span>
-            <b className="ml-4">Collection: </b>
-            {Camp2Data[item].collection}
-          </p>
-
-          <p>
-            <b>Price: </b>
-            {Camp2Data[item].price} {Camp2Data[item].currency}
-            <Iconimage />
-            &nbsp;&nbsp;
-          </p>
-        </div>
-      );
-    }
-    setSliderCaptionsCamp2(captionsCamp2);
-
-    const captionsCamp3 = [];
     const Camp3Data = imageBlog.filter(
       (nft) => nft.campaign === "Reconstruction"
     );
+    setCaptions(Camp3Data, 3);
 
-    for (let item = 0; item < Camp3Data.length; item++) {
-      debugger;
-      captionsCamp3.push(
-        <div className="text-white text-left port-box">
-          <h5>{Camp3Data[item].name}</h5>
-          {/* <p>
-          <b>Category: </b>
-          {Camp4Data[item].category}
-        </p> */}
-          <p>
-            <b>Description: </b>
-            {Camp3Data[item].description}
-          </p>
-          <p>
-            <b>Beneficiary: </b>
-            <Link
-              to={`./NFTs?beneficiary=${Camp3Data[item].beneficiary}`}
-              className="dez-page text-white"
-            >
-              {Camp3Data[item].beneficiary}
-            </Link>
-            <span className="bg-success text-white px-1 ml-1 border-raduis-2">
-              {Camp3Data[item].beneficiaryPercentage}%
-            </span>
-
-            <b className="ml-4">Campaign: </b>
-            {Camp3Data[item].beneficiary ? (
-              <Link
-                to={`./NFTs?beneficiary=${Camp3Data[item].beneficiary}&campaign=${Camp3Data[item].campaign}`}
-                className="dez-page text-white"
-              >
-                {Camp3Data[item].campaign}
-              </Link>
-            ) : (
-              <Link
-                to={`./NFTs?creator=${Camp3Data[item].creator}&campaign=${Camp3Data[item].campaign}`}
-                className="dez-page text-white"
-              >
-                {Camp3Data[item].campaign}
-              </Link>
-            )}
-
-            <b className="ml-4">Creator: </b>
-            <Link
-              to={`./NFTs?creator=${Camp3Data[item].creator}`}
-              className="dez-page text-white"
-            >
-              {Camp3Data[item].creator}
-            </Link>
-            <span className="bg-info text-white px-1 ml-1 border-raduis-2">
-              {Camp3Data[item].creatorPercentage}%
-            </span>
-
-            <b className="ml-4">Collection: </b>
-            {Camp3Data[item].collection}
-          </p>
-
-          <p>
-            <b>Price: </b>
-            {Camp3Data[item].price} {Camp3Data[item].currency}
-            &nbsp;&nbsp; <Iconimage />
-          </p>
-        </div>
-      );
-    }
-    setSliderCaptionsCamp3(captionsCamp3);
-
-    const captionsCamp4 = [];
     const Camp4Data = imageBlog.filter(
       (nft) => nft.campaign === "Forever Keys"
     );
-
-    for (let item = 0; item < Camp4Data.length; item++) {
-      captionsCamp4.push(
-        <div className="text-white text-left port-box">
-          <h5>{Camp4Data[item].name}</h5>
-          {/* <p>
-          <b>Category: </b>
-          {Camp4Data[item].category}
-        </p> */}
-          <p>
-            <b>Description: </b>
-            {Camp4Data[item].description}
-          </p>
-          <p>
-            <b>Beneficiary: </b>
-            <Link
-              to={`./NFTs?beneficiary=${Camp4Data[item].beneficiary}`}
-              className="dez-page text-white"
-            >
-              {Camp4Data[item].beneficiary}
-            </Link>
-            <span className="bg-success text-white px-1 ml-1 border-raduis-2">
-              {Camp4Data[item].beneficiaryPercentage}%
-            </span>
-
-            <b className="ml-4">Campaign: </b>
-            {Camp4Data[item].beneficiary ? (
-              <Link
-                to={`./NFTs?beneficiary=${Camp4Data[item].beneficiary}&campaign=${Camp4Data[item].campaign}`}
-                className="dez-page text-white"
-              >
-                {Camp4Data[item].campaign}
-              </Link>
-            ) : (
-              <Link
-                to={`./NFTs?creator=${Camp4Data[item].creator}&campaign=${Camp4Data[item].campaign}`}
-                className="dez-page text-white"
-              >
-                {Camp4Data[item].campaign}
-              </Link>
-            )}
-
-            <b className="ml-4">Creator: </b>
-            <Link
-              to={`./NFTs?creator=${Camp4Data[item].creator}`}
-              className="dez-page text-white"
-            >
-              {Camp4Data[item].creator}
-            </Link>
-            <span className="bg-info text-white px-1 ml-1 border-raduis-2">
-              {Camp4Data[item].creatorPercentage}%
-            </span>
-
-            <b className="ml-4">Collection: </b>
-            {Camp4Data[item].collection}
-          </p>
-
-          <p>
-            <b>Price: </b>
-            {Camp4Data[item].price} {Camp4Data[item].currency}
-            &nbsp;&nbsp; <Iconimage />{" "}
-          </p>
-        </div>
-      );
-    }
-    debugger;
-    setSliderCaptionsCamp4(captionsCamp4);
+    setCaptions(Camp4Data, 4);
   }, []);
 
   const LightBoxComponent = ({ Data, camNumber }) => {
-    debugger;
     //let Data = arr.Data;
     return (
       <Lightbox
@@ -437,13 +259,27 @@ const Index4 = () => {
             </div>
           </div>
           <div className="row stats-section">
-            <div className="col"><span>{beneficiaryLength}</span> Beneficiaries</div>
-            <div className="col"><span>{campaignLength}</span> Campaigns</div>
-            <div className="col"><span>{creatorLength}</span> Creators</div>
-            <div className="col"><span>{collectionLength} </span>Collections</div>
-            <div className="col"><span>{imageBlog.length}</span> NFTs</div>
-            <div className="col"><span>{csprSum}</span> CSPR</div>
-            <div className="col"><span>{(csprSum/13.68).toFixed(2)}</span> $$</div>
+            <div className="col">
+              <span>{beneficiaryLength}</span> Beneficiaries
+            </div>
+            <div className="col">
+              <span>{campaignLength}</span> Campaigns
+            </div>
+            <div className="col">
+              <span>{creatorLength}</span> Creators
+            </div>
+            <div className="col">
+              <span>{collectionLength} </span>Collections
+            </div>
+            <div className="col">
+              <span>{imageBlog.length}</span> NFTs
+            </div>
+            <div className="col">
+              <span>{csprSum}</span> CSPR
+            </div>
+            <div className="col">
+              <span>{(csprSum / 13.68).toFixed(2)}</span> $$
+            </div>
           </div>
         </div>
 
@@ -499,7 +335,6 @@ const Index4 = () => {
                         <NFTCard
                           item={item}
                           openSlider={(newIndex) => {
-                            debugger;
                             setPhotoIndex(newIndex);
                             setOpenSliderCamp1(true);
                           }}
