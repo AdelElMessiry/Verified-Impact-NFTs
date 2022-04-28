@@ -16,11 +16,13 @@ import Lightbox from "react-image-lightbox";
 import { imageBlog } from "../NFTData";
 import Masonry from "react-masonry-component";
 import VINFTsTooltip from "../Element/Tooltip";
+import { TwitterIcon, TwitterShareButton } from "react-share";
 
 //Light Gallery on icon click
 const Iconimage = (props) => {
   return (
-    <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+    <><i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+  </>
   );
 };
 
@@ -147,10 +149,15 @@ const Index4 = () => {
             {data[item].collection}
           </p>
 
-          <p>
+          <p className="d-flex align-content-center align-items-center">
             <b>Price: </b>
             {data[item].price} {data[item].currency}
-            &nbsp;&nbsp; <Iconimage />{" "}
+            &nbsp;&nbsp; <Iconimage />  &nbsp;&nbsp;  Let other people know about it &nbsp;&nbsp; <TwitterShareButton className="twitter-icon mfp-link portfolio-fullscreen"
+    url={`https://verifiedimpactnfts.com/#/nft-detail?id=${data[item].id}`}
+    title={`I liked this NFT for "${data[item].beneficiary}" beneficiary, "${data[item].collection}" collection, "${data[item].creator}" creator and "${data[item].campaign}" campaign`}
+            >
+              <TwitterIcon size={32} round iconFillColor="white" style={{ fill: 'black' }} />
+            </TwitterShareButton>
           </p>
         </div>
       );

@@ -14,7 +14,7 @@ import UnderMaintenance from './Pages/UnderMaintenance';
 import Expertise from './Pages/Expertise';
 import ProjectManagement from './Pages/ProjectManagement';
 import OurProjects from './Pages/OurProjects';
-import ProjectDetails from './Pages/ProjectDetails';
+import NFTDetail from './Pages/NFTDetail';
 import Team from './Pages/Team';
 import Faqs from './Pages/Faqs';
 import Login from './Pages/Login';
@@ -73,7 +73,7 @@ class Markup extends Component{
                         <Route path='/expertise' exact component={Expertise} />
                         <Route path='/project-management' exact component={ProjectManagement} />
                         <Route path='/our-projects' exact component={OurProjects} />
-                        <Route path='/project-details' exact component={ProjectDetails} />
+                        <Route path='/nft-detail' exact component={NFTDetail} />
                         <Route path='/team' exact component={Team} />
                         <Route path='/faqs' exact component={Faqs} />
                         <Route path='/login' exact component={Login} />
