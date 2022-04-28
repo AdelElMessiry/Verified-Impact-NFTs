@@ -7,7 +7,7 @@ import casper from "./../../images/icon/casper.png";
 import { useAuth } from "../../contexts/AuthContext";
 import VINFTsTooltip from "../Element/Tooltip";
 
-const Header1 = () => {
+const Header1 = ({isNFTDetails=false}) => {
   const { isLoggedIn, entityInfo, balance, login, logout } = useAuth();
   useEffect(() => {
     // sidebar open/close
@@ -47,7 +47,7 @@ const Header1 = () => {
   return (
     <>
       <header
-        className="site-header header-transparent mo-left"
+        className={`site-header header-transparent mo-left ${isNFTDetails?"bg-black":""}`}
         id="fix-header"
       >
         <div className="sticky-header main-bar-wraper navbar-expand-lg">

@@ -1,47 +1,134 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import Header from '../Layout/Header1';
-import Footer from '../Layout/Footer1';
-import PageTitle from '../Layout/PageTitle';
-import ImgCarousel from '../Element/ImgCarousel'
-import ClientCarousel from '../Element/ClientCarousel'
-
-//Images 
-import bnr1 from './../../images/banner/bnr2.jpg';
-import NFTCard from '../Element/NFTCard';
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import Header from "../Layout/Header1";
+import Footer from "../Layout/Footer1";
+import PageTitle from "../Layout/PageTitle";
+import ImgCarousel from "../Element/ImgCarousel";
+import ClientCarousel from "../Element/ClientCarousel";
+import VINFTsTooltip from "../Element/Tooltip";
+import { TwitterIcon, TwitterShareButton } from "react-share";
+//Images
+import bnr1 from "./../../images/banner/bnr2.jpg";
+import NFTCard from "../Element/NFTCard";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { imageBlog } from "../NFTData";
 
-const NFTDetail =()=> {
-    const search = useLocation().search;
+const NFTDetail = () => {
+  const Iconimage = (props) => {
+    return (
+      <>
+        <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+      </>
+    );
+  };
+  const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
   const id = queryParams.get("id");
-  let item=imageBlog.filter((nft)=>(nft.id==id))
-        return (
-            <>
-                <Header />
-                <div className="page-content bg-white">
-                    {/* <!-- inner page banner --> */}
-                    <div className="dlab-bnr-inr overlay-primary" style={{ backgroundImage: "url(" + bnr1 + ")" }}>
-                        <PageTitle motherMenu='NFT Details' activeMenu='NFT Details' />  
-                    </div>
-                    {/* <!-- inner page banner END --> */}
-                    <div className="content-block">
-                        {/* <!-- Project Details --> */}
-                        <div className="section-full content-inner-2">
-                            <div className="container">
-                               <div className='row'>
-                                   <div className='col'>
-                                       <NFTCard item={item[0]}/>
-                                   </div>
-                               </div>
-                            </div>
-                        </div>
-                    </div>
-                    {/* <!-- contact area END --> */}
-                </div>
-                <Footer />
-            </>
-        )
-}
+  let item = imageBlog.filter((nft) => nft.id == id);
+  return (
+    <>
+      <Header isNFTDetails={true} />
+      <div className="page-content pb-0 bg-white pt-5">
+        <div className="content-block position-relative h-100vh">
+          {/* <!-- Project Details --> */}
+          <div className="section-full content-inner-2 h-100vh">
+            <div className="container h-100">
+              <div className="row h-100">
+                <div className="col text-center align-items-center align-content-center d-flex justify-content-center h-100">
+                    <img src={item[0].image} alt="" />
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div className="detail-page-caption p-3">
+            <div className="align-b text-white text-left">
+              <div className="text-white text-left port-box">
+                <h5>{item[0].name}</h5>
+                <p>Description: {item[0].description}</p>
+                <p>
+                  <b>Category: </b>
+                  {item[0].category}
+                  &nbsp;&nbsp;
+                  <b>Beneficiary: </b>
+                  <VINFTsTooltip
+                    title={`Click to see all NFTs for "${item[0].beneficiary}" beneficiary`}
+                  >
+                    <Link
+                      to={`./NFTs?beneficiary=${item[0].beneficiary}`}
+                      className="dez-page text-white"
+                    >
+                      {item[0].beneficiary}
+                    </Link>
+                  </VINFTsTooltip>
+                  <span className="bg-success text-white px-1 ml-1 border-raduis-2">
+                    {item[0].beneficiaryPercentage}%
+                  </span>
+                  &nbsp;&nbsp;
+                  <b>Campaign: </b>
+                  <VINFTsTooltip
+                    title={`Click to see all NFTs for "${item[0].campaign}" campaign`}
+                  >
+                    {item[0].beneficiary ? (
+                      <Link
+                        to={`./NFTs?beneficiary=${item[0].beneficiary}&campaign=${item[0].campaign}`}
+                        className="dez-page text-white"
+                      >
+                        {item[0].campaign}
+                      </Link>
+                    ) : (
+                      <Link
+                        to={`./NFTs?creator=${item[0].creator}&campaign=${item[0].campaign}`}
+                        className="dez-page text-white"
+                      >
+                        {item[0].campaign}
+                      </Link>
+                    )}
+                  </VINFTsTooltip>
+                  &nbsp;&nbsp;
+                  <b>Creator: </b>
+                  <VINFTsTooltip
+                    title={`Click to see all NFTs created by "${item[0].creator}"`}
+                  >
+                    <Link
+                      to={`./NFTs?creator=${item[0].creator}`}
+                      className="dez-page text-white"
+                    >
+                      {item[0].creator}
+                    </Link>
+                  </VINFTsTooltip>
+                  <span className="bg-info text-white px-1 ml-1 border-raduis-2">
+                    {item[0].creatorPercentage}%
+                  </span>
+                  &nbsp;&nbsp;
+                  <b>Collection: </b>
+                  {item[0].collection}
+                </p>
+                <p className="d-flex align-content-center align-items-center">
+                  <b>Price: </b>
+                  {item[0].price} {item[0].currency} &nbsp;&nbsp;
+                  <Iconimage />
+                  &nbsp;&nbsp; Let other people know about it &nbsp;&nbsp;
+                  <TwitterShareButton
+                    className="twitter-icon mfp-link portfolio-fullscreen"
+                    url={`https://verifiedimpactnfts.com/#/nft-detail?id=${item.id}`}
+                    title={`I liked this NFT for "${item.beneficiary}" beneficiary, "${item.collection}" collection, "${item.creator}" creator and "${item.campaign}" campaign`}
+                  >
+                    <TwitterIcon
+                      size={32}
+                      round
+                      iconFillColor="white"
+                      style={{ fill: "black" }}
+                    />
+                  </TwitterShareButton>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* <!-- contact area END --> */}
+      </div>
+      <Footer />
+    </>
+  );
+};
 export default NFTDetail;

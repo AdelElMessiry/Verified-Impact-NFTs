@@ -21,8 +21,9 @@ import { TwitterIcon, TwitterShareButton } from "react-share";
 //Light Gallery on icon click
 const Iconimage = (props) => {
   return (
-    <><i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
-  </>
+    <>
+      <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+    </>
   );
 };
 
@@ -152,11 +153,19 @@ const Index4 = () => {
           <p className="d-flex align-content-center align-items-center">
             <b>Price: </b>
             {data[item].price} {data[item].currency}
-            &nbsp;&nbsp; <Iconimage />  &nbsp;&nbsp;  Let other people know about it &nbsp;&nbsp; <TwitterShareButton className="twitter-icon mfp-link portfolio-fullscreen"
-    url={`https://verifiedimpactnfts.com/#/nft-detail?id=${data[item].id}`}
-    title={`I liked this NFT for "${data[item].beneficiary}" beneficiary, "${data[item].collection}" collection, "${data[item].creator}" creator and "${data[item].campaign}" campaign`}
+            &nbsp;&nbsp; <Iconimage /> &nbsp;&nbsp; Let other people know about
+            it &nbsp;&nbsp;{" "}
+            <TwitterShareButton
+              className="twitter-icon mfp-link portfolio-fullscreen"
+              url={`https://verifiedimpactnfts.com/#/nft-detail?id=${data[item].id}`}
+              title={`I liked this NFT for "${data[item].beneficiary}" beneficiary, "${data[item].collection}" collection, "${data[item].creator}" creator and "${data[item].campaign}" campaign`}
             >
-              <TwitterIcon size={32} round iconFillColor="white" style={{ fill: 'black' }} />
+              <TwitterIcon
+                size={32}
+                round
+                iconFillColor="white"
+                style={{ fill: "black" }}
+              />
             </TwitterShareButton>
           </p>
         </div>
@@ -196,19 +205,19 @@ const Index4 = () => {
 
     const Camp1Data = imageBlog.filter(
       (nft) => nft.campaign === "Stand With Ukraine"
-    );
+    ).slice(0, 4);;
     setCaptions(Camp1Data, 1);
-    const Camp2Data = imageBlog.filter((nft) => nft.campaign === "Refugees");
+    const Camp2Data = imageBlog.filter((nft) => nft.campaign === "Refugees").slice(0, 4);
     setCaptions(Camp2Data, 2);
 
     const Camp3Data = imageBlog.filter(
       (nft) => nft.campaign === "Reconstruction"
-    );
+    ).slice(0, 4);
     setCaptions(Camp3Data, 3);
 
     const Camp4Data = imageBlog.filter(
       (nft) => nft.campaign === "Forever Keys"
-    );
+    ).slice(0, 4);
     setCaptions(Camp4Data, 4);
   }, []);
 
@@ -294,25 +303,25 @@ const Index4 = () => {
           <LightBoxComponent
             Data={imageBlog.filter(
               (nft) => nft.campaign === "Stand With Ukraine"
-            )}
+            ).slice(0, 4)}
             camNumber="1"
           />
         )}
         {openSliderCamp2 && (
           <LightBoxComponent
-            Data={imageBlog.filter((nft) => nft.campaign === "Refugees")}
+            Data={imageBlog.filter((nft) => nft.campaign === "Refugees").slice(0, 4)}
             camNumber="2"
           />
         )}
         {openSliderCamp3 && (
           <LightBoxComponent
-            Data={imageBlog.filter((nft) => nft.campaign === "Reconstruction")}
+            Data={imageBlog.filter((nft) => nft.campaign === "Reconstruction").slice(0, 4)}
             camNumber="3"
           />
         )}
         {openSliderCamp4 && (
           <LightBoxComponent
-            Data={imageBlog.filter((nft) => nft.campaign === "Forever Keys")}
+            Data={imageBlog.filter((nft) => nft.campaign === "Forever Keys").slice(0, 4)}
             camNumber="4"
           />
         )}
@@ -333,7 +342,7 @@ const Index4 = () => {
                   imagesLoadedOptions={imagesLoadedOptions} // default {}
                 >
                   {imageBlog
-                    .filter((nft) => nft.campaign === "Stand With Ukraine")
+                    .filter((nft) => nft.campaign === "Stand With Ukraine").slice(0, 4)
                     .map((item, index) => (
                       <li
                         className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
@@ -370,7 +379,7 @@ const Index4 = () => {
                   imagesLoadedOptions={imagesLoadedOptions} // default {}
                 >
                   {imageBlog
-                    .filter((nft) => nft.campaign === "Refugees")
+                    .filter((nft) => nft.campaign === "Refugees").slice(0, 4)
                     .map((item, index) => (
                       <li
                         className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
@@ -407,7 +416,7 @@ const Index4 = () => {
                   imagesLoadedOptions={imagesLoadedOptions} // default {}
                 >
                   {imageBlog
-                    .filter((nft) => nft.campaign === "Reconstruction")
+                    .filter((nft) => nft.campaign === "Reconstruction").slice(0, 4)
                     .map((item, index) => (
                       <li
                         className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
@@ -444,7 +453,7 @@ const Index4 = () => {
                   imagesLoadedOptions={imagesLoadedOptions} // default {}
                 >
                   {imageBlog
-                    .filter((nft) => nft.campaign === "Forever Keys")
+                    .filter((nft) => nft.campaign === "Forever Keys").slice(0, 4)
                     .map((item, index) => (
                       <li
                         className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
