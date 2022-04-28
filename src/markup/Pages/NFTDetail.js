@@ -16,7 +16,7 @@ const NFTDetail =()=> {
     const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
   const id = queryParams.get("id");
-  let item=imageBlog.filter((nft)=>(nft.id=id))
+  let item=imageBlog.filter((nft)=>(nft.id==id))
         return (
             <>
                 <Header />
