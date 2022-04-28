@@ -28,10 +28,16 @@ const TagLi = ({ name, handlesettag, tagActive, type }) => {
     <VINFTsTooltip
       title={`Click to see all NFTs under the "${name}" ${
         type == "creator"
-          ? name=="All"?"creators":"creator"
+          ? name == "All"
+            ? "creators"
+            : "creator"
           : type == "campaign"
-          ?  name=="All"?"campaigns":"campaign"
-          :  name=="All"?"collections":"collection"
+          ? name == "All"
+            ? "campaigns"
+            : "campaign"
+          : name == "All"
+          ? "collections"
+          : "collection"
       } `}
     >
       <li
@@ -78,16 +84,146 @@ const NFTs = () => {
 
   const setSelectedCollectionTag = (tag, data = null) => {
     setTagCollection(tag);
+    if (tag !== "All") {
+      console.log(imageBlog)
+      let campaigns = imageBlog
+        .filter((d) => d.collection == tag)
+        .map((data) => ({ name: data.campaign }))
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((t) => t.name === value.name)
+        );
+      setCampaignTags([{ name: "All" }, ...campaigns]);
+      setTagCampaign("All")
+
+      let creators = imageBlog
+        .filter((d) => d.collection == tag)
+        .map((data) => ({ name: data.creator }))
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((t) => t.name === value.name)
+        );
+
+      setCreatorTags([{ name: "All" }, ...creators]);
+      setTagCreator("All")
+
+    } else {
+      let campaigns = imageBlog
+        .map((data) => ({ name: data.campaign }))
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((t) => t.name === value.name)
+        );
+
+      setCampaignTags([{ name: "All" }, ...campaigns]);
+      setTagCampaign("All")
+
+      let creators = imageBlog
+        .map((data) => ({ name: data.creator }))
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((t) => t.name === value.name)
+        );
+
+      setCreatorTags([{ name: "All" }, ...creators]);
+      setTagCreator("All")
+
+    }
     setSearchFlag(!searchFlag);
   };
 
   const setSelectedCampaignTag = (tag, data = null) => {
     setTagCampaign(tag);
+    if (tag !== "All") {
+      let collections = imageBlog
+        .filter((d) => d.campaign == tag)
+        .map((data) => ({ name: data.collection }))
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((t) => t.name === value.name)
+        );
+      setCollectionTags([{ name: "All" }, ...collections]);
+      setTagCollection("All")
+
+      let creators = imageBlog
+        .filter((d) => d.campaign == tag)
+        .map((data) => ({ name: data.creator }))
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((t) => t.name === value.name)
+        );
+
+      setCreatorTags([{ name: "All" }, ...creators]);
+      setTagCreator("All")
+
+    } else {
+      let collections = imageBlog
+        .map((data) => ({ name: data.collection }))
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((t) => t.name === value.name)
+        );
+
+      setCollectionTags([{ name: "All" }, ...collections]);
+      setTagCollection("All")
+
+      let creators = imageBlog
+        .map((data) => ({ name: data.creator }))
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((t) => t.name === value.name)
+        );
+
+      setCreatorTags([{ name: "All" }, ...creators]);
+      setTagCreator("All")
+    }
     setSearchFlag(!searchFlag);
   };
 
   const setSelectedCreatorTag = (tag, data = null) => {
     setTagCreator(tag);
+    if (tag !== "All") {
+      let campaigns = imageBlog
+        .filter((d) => d.creator == tag)
+        .map((data) => ({ name: data.campaign }))
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((t) => t.name === value.name)
+        );
+      setCampaignTags([{ name: "All" }, ...campaigns]);
+      setTagCampaign("All")
+
+      let collections = imageBlog
+        .filter((d) => d.creator == tag)
+        .map((data) => ({ name: data.collection }))
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((t) => t.name === value.name)
+        );
+
+      setCollectionTags([{ name: "All" }, ...collections]);
+      setTagCollection("All")
+    } else {
+      let campaigns = imageBlog
+        .map((data) => ({ name: data.campaign }))
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((t) => t.name === value.name)
+        );
+
+      setCampaignTags([{ name: "All" }, ...campaigns]);
+      setTagCampaign("All")
+      let collections = imageBlog
+        .map((data) => ({ name: data.collection }))
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((t) => t.name === value.name)
+        );
+
+      setCollectionTags([{ name: "All" }, ...collections]);
+      setTagCollection("All")
+
+    }
     setSearchFlag(!searchFlag);
   };
 
@@ -266,13 +402,13 @@ const NFTs = () => {
                 {creatorTags &&
                   creatorTags.length > 0 &&
                   creatorTags.map((singleTag, index) => (
-                      <TagLi
-                        key={index}
-                        name={singleTag.name}
-                        handlesettag={setSelectedCreatorTag}
-                        tagActive={tagCreator === singleTag.name ? true : false}
-                        type="creator"
-                      />
+                    <TagLi
+                      key={index}
+                      name={singleTag.name}
+                      handlesettag={setSelectedCreatorTag}
+                      tagActive={tagCreator === singleTag.name ? true : false}
+                      type="creator"
+                    />
                   ))}
               </ul>
             </div>
@@ -284,15 +420,13 @@ const NFTs = () => {
                 {campaignTags &&
                   campaignTags.length > 0 &&
                   campaignTags.map((singleTag, index) => (
-                      <TagLi
-                        key={index}
-                        name={singleTag.name}
-                        handlesettag={setSelectedCampaignTag}
-                        tagActive={
-                          tagCampaign === singleTag.name ? true : false
-                        }
+                    <TagLi
+                      key={index}
+                      name={singleTag.name}
+                      handlesettag={setSelectedCampaignTag}
+                      tagActive={tagCampaign === singleTag.name ? true : false}
                       type="campaign"
-                      />
+                    />
                   ))}
               </ul>
             </div>
@@ -303,15 +437,13 @@ const NFTs = () => {
               {collectionTags &&
                 collectionTags.length > 0 &&
                 collectionTags.map((singleTag, index) => (
-                    <TagLi
-                      key={index}
-                      name={singleTag.name}
-                      handlesettag={setSelectedCollectionTag}
-                      tagActive={
-                        tagCollection === singleTag.name ? true : false
-                      }
-                      type="collection"
-                    />
+                  <TagLi
+                    key={index}
+                    name={singleTag.name}
+                    handlesettag={setSelectedCollectionTag}
+                    tagActive={tagCollection === singleTag.name ? true : false}
+                    type="collection"
+                  />
                 ))}
             </ul>
           </div>
