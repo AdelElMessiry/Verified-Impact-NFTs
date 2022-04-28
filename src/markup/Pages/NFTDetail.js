@@ -13,7 +13,6 @@ import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { imageBlog } from "../NFTData";
 
 const NFTDetail =()=> {
-    debugger;
     const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
   const id = queryParams.get("id");
