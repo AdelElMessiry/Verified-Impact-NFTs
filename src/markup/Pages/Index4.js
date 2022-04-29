@@ -17,6 +17,8 @@ import { imageBlog } from "../NFTData";
 import Masonry from "react-masonry-component";
 import VINFTsTooltip from "../Element/Tooltip";
 import { TwitterIcon, TwitterShareButton } from "react-share";
+import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
+import CampaignTwitterShare from "../Element/TwitterShare/CampaignTwitterShare";
 
 //Light Gallery on icon click
 const Iconimage = (props) => {
@@ -156,20 +158,7 @@ const Index4 = () => {
           <p className="d-flex align-content-center align-items-center">
             <b>Price: </b>
             {data[item].price} {data[item].currency}
-            &nbsp;&nbsp; <Iconimage /> &nbsp;&nbsp; Let other people know about
-            it &nbsp;&nbsp;{" "}
-            <TwitterShareButton
-              className="twitter-icon mfp-link portfolio-fullscreen"
-              url={`https://verifiedimpactnfts.com/#/nft-detail?id=${data[item].id}`}
-              title={`I like "${data[item].name}" #NFT from "${data[item].collection}" collection By "${data[item].creator}"! [${data[item].creatorPercentage}%] of the proceeds go to the "${data[item].beneficiary}" in support of the "${data[item].campaign}" campaign!`}
-            >
-              <TwitterIcon
-                size={32}
-                round
-                iconFillColor="white"
-                style={{ fill: "black" }}
-              />
-            </TwitterShareButton>
+            &nbsp;&nbsp; <Iconimage /> &nbsp;&nbsp; <NFTTwitterShare item={data[item]}/> 
           </p>
         </div>
       );
@@ -339,21 +328,7 @@ const Index4 = () => {
         <h3 className="text-center mt-5">Latest Campaigns</h3>
         <h4 className="text-success text-center  d-flex align-items-center justify-content-center">
         <Link  to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Stand With Ukraine"}`} className="mr-1 text-success text-underline">Stand With Ukraine</Link>
-          <TwitterShareButton
-            className="twitter-icon mfp-link portfolio-fullscreen pt-2"
-            url={`https://verifiedimpactnfts.com/#/NFTs?beneficiary=${"Ukraine Gov".replace(
-              / /g,
-              "%20"
-            )}&campaign=${"Stand With Ukraine".replace(/ /g, "%20")}`}
-            title={`I support the #NFT "${"Stand With Ukraine"}" campaign, [80%] of the proceeds go to the "${"Ukraine Gov"}".Check it out at `}
-          >
-            <TwitterIcon
-              size={32}
-              round
-              iconFillColor="white"
-              style={{ fill: "black" }}
-            />
-          </TwitterShareButton>
+       <CampaignTwitterShare campaign={"Stand With Ukraine"} beneficiary={"Ukraine Gov"}/>
         </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
@@ -394,21 +369,7 @@ const Index4 = () => {
         </SimpleReactLightbox>
         <h4 className="text-success text-center  d-flex align-items-center justify-content-center mt-5">
         <Link  to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Refugees"}`} className="mr-1 text-success text-underline">Refugees</Link>
-          <TwitterShareButton
-            className="twitter-icon mfp-link portfolio-fullscreen pt-2"
-            url={`https://verifiedimpactnfts.com/#/NFTs?beneficiary=${"Ukraine Gov".replace(
-              / /g,
-              "%20"
-            )}&campaign=${"Refugees".replace(/ /g, "%20")}`}
-            title={`I support the #NFT "${"Refugees"}" campaign, [80%] of the proceeds go to the "${"Ukraine Gov"}".Check it out at `}
-          >
-            <TwitterIcon
-              size={32}
-              round
-              iconFillColor="white"
-              style={{ fill: "black" }}
-            />
-          </TwitterShareButton>
+          <CampaignTwitterShare campaign={"Refugees"} beneficiary={"Ukraine Gov"}/>
         </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
@@ -449,21 +410,7 @@ const Index4 = () => {
         </SimpleReactLightbox>
         <h4 className="text-success text-center  d-flex align-items-center justify-content-center mt-5">
         <Link  to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Reconstruction"}`} className="mr-1 text-success text-underline">Reconstruction</Link>
-          <TwitterShareButton
-            className="twitter-icon mfp-link portfolio-fullscreen pt-2"
-            url={`https://verifiedimpactnfts.com/#/NFTs?beneficiary=${"Ukraine Gov".replace(
-              / /g,
-              "%20"
-            )}&campaign=${"Reconstruction".replace(/ /g, "%20")}`}
-            title={`I support the #NFT "${"Reconstruction"}" campaign, [80%] of the proceeds go to the "${"Ukraine Gov"}".Check it out at `}
-          >
-            <TwitterIcon
-              size={32}
-              round
-              iconFillColor="white"
-              style={{ fill: "black" }}
-            />
-          </TwitterShareButton>
+        <CampaignTwitterShare campaign={"Reconstruction"} beneficiary={"Ukraine Gov"}/>
         </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
@@ -504,21 +451,7 @@ const Index4 = () => {
         </SimpleReactLightbox>
         <h4 className="text-success text-center  d-flex align-items-center justify-content-center mt-5">
         <Link  to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Forever Keys"}`} className="mr-1 text-success text-underline">Forever Keys</Link>
-          <TwitterShareButton
-            className="twitter-icon mfp-link portfolio-fullscreen pt-2"
-            url={`https://verifiedimpactnfts.com/#/NFTs?beneficiary=${"Ukraine Gov".replace(
-              / /g,
-              "%20"
-            )}&campaign=${"Forever Keys".replace(/ /g, "%20")}`}
-            title={`I support the #NFT "${"Forever Keys"}" campaign, [80%] of the proceeds go to the "${"Ukraine Gov"}".Check it out at `}
-          >
-            <TwitterIcon
-              size={32}
-              round
-              iconFillColor="white"
-              style={{ fill: "black" }}
-            />
-          </TwitterShareButton>
+        <CampaignTwitterShare campaign={"Forever Keys"} beneficiary={"Ukraine Gov"}/>
         </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
