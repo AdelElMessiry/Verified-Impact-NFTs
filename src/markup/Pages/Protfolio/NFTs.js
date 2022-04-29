@@ -354,7 +354,12 @@ const NFTs = () => {
             </span>
 
             <b className="ml-4">Collection: </b>
-            {Data[item].collection}
+            <Link
+                    to={`./collection?collection=${Data[item].collection}`}
+                    className="dez-page text-white"  onClick={() => {
+                      setOpenSlider(false);
+                    }}
+                  >{Data[item].collection}</Link>
           </p>
           <p className="d-flex align-content-center align-items-center">
             <b>Price: </b>

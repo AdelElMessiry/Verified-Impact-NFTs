@@ -103,7 +103,10 @@ const NFTCard = ({ index, item, openSlider }) => {
               </p>
               <p>
                 <b>Collection: </b>
-                {item.collection}
+                <Link
+                    to={`./collection?collection=${item.collection}`}
+                    className="dez-page text-white"
+                  >{item.collection}</Link>
               </p>
               <p>
                 <b>Price: </b>

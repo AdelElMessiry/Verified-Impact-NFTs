@@ -147,7 +147,10 @@ const Index4 = () => {
             </span>
 
             <b className="ml-4">Collection: </b>
-            {data[item].collection}
+            <Link
+                    to={`./collection?collection=${data[item].collection}`}
+                    className="dez-page text-white"
+                  > {data[item].collection}</Link>
           </p>
 
           <p className="d-flex align-content-center align-items-center">
