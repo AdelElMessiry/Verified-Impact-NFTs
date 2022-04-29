@@ -21,8 +21,9 @@ import { TwitterIcon, TwitterShareButton } from "react-share";
 //Light Gallery on icon click
 const Iconimage = (props) => {
   return (
-    <><i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
-  </>
+    <>
+      <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+    </>
   );
 };
 
@@ -146,17 +147,28 @@ const Index4 = () => {
             </span>
 
             <b className="ml-4">Collection: </b>
-            {data[item].collection}
+            <Link
+                    to={`./collection?collection=${data[item].collection}`}
+                    className="dez-page text-white"
+                  > {data[item].collection}</Link>
           </p>
 
           <p className="d-flex align-content-center align-items-center">
             <b>Price: </b>
             {data[item].price} {data[item].currency}
-            &nbsp;&nbsp; <Iconimage />  &nbsp;&nbsp;  Let other people know about it &nbsp;&nbsp; <TwitterShareButton className="twitter-icon mfp-link portfolio-fullscreen"
-    url={`https://verifiedimpactnfts.com/#/nft-detail?id=${data[item].id}`}
-    title={`I liked this NFT for "${data[item].beneficiary}" beneficiary, "${data[item].collection}" collection, "${data[item].creator}" creator and "${data[item].campaign}" campaign`}
+            &nbsp;&nbsp; <Iconimage /> &nbsp;&nbsp; Let other people know about
+            it &nbsp;&nbsp;{" "}
+            <TwitterShareButton
+              className="twitter-icon mfp-link portfolio-fullscreen"
+              url={`https://verifiedimpactnfts.com/#/nft-detail?id=${data[item].id}`}
+              title={`I like "${data[item].name}" #NFT from "${data[item].collection}" collection By "${data[item].creator}"! [${data[item].creatorPercentage}%] of the proceeds go to the "${data[item].beneficiary}" in support of the "${data[item].campaign}" campaign!`}
             >
-              <TwitterIcon size={32} round iconFillColor="white" style={{ fill: 'black' }} />
+              <TwitterIcon
+                size={32}
+                round
+                iconFillColor="white"
+                style={{ fill: "black" }}
+              />
             </TwitterShareButton>
           </p>
         </div>
@@ -194,21 +206,23 @@ const Index4 = () => {
       });
     }
 
-    const Camp1Data = imageBlog.filter(
-      (nft) => nft.campaign === "Stand With Ukraine"
-    );
+    const Camp1Data = imageBlog
+      .filter((nft) => nft.campaign === "Stand With Ukraine")
+      .slice(0, 4);
     setCaptions(Camp1Data, 1);
-    const Camp2Data = imageBlog.filter((nft) => nft.campaign === "Refugees");
+    const Camp2Data = imageBlog
+      .filter((nft) => nft.campaign === "Refugees")
+      .slice(0, 4);
     setCaptions(Camp2Data, 2);
 
-    const Camp3Data = imageBlog.filter(
-      (nft) => nft.campaign === "Reconstruction"
-    );
+    const Camp3Data = imageBlog
+      .filter((nft) => nft.campaign === "Reconstruction")
+      .slice(0, 4);
     setCaptions(Camp3Data, 3);
 
-    const Camp4Data = imageBlog.filter(
-      (nft) => nft.campaign === "Forever Keys"
-    );
+    const Camp4Data = imageBlog
+      .filter((nft) => nft.campaign === "Forever Keys")
+      .slice(0, 4);
     setCaptions(Camp4Data, 4);
   }, []);
 
@@ -292,32 +306,55 @@ const Index4 = () => {
 
         {openSliderCamp1 && (
           <LightBoxComponent
-            Data={imageBlog.filter(
-              (nft) => nft.campaign === "Stand With Ukraine"
-            )}
+            Data={imageBlog
+              .filter((nft) => nft.campaign === "Stand With Ukraine")
+              .slice(0, 4)}
             camNumber="1"
           />
         )}
         {openSliderCamp2 && (
           <LightBoxComponent
-            Data={imageBlog.filter((nft) => nft.campaign === "Refugees")}
+            Data={imageBlog
+              .filter((nft) => nft.campaign === "Refugees")
+              .slice(0, 4)}
             camNumber="2"
           />
         )}
         {openSliderCamp3 && (
           <LightBoxComponent
-            Data={imageBlog.filter((nft) => nft.campaign === "Reconstruction")}
+            Data={imageBlog
+              .filter((nft) => nft.campaign === "Reconstruction")
+              .slice(0, 4)}
             camNumber="3"
           />
         )}
         {openSliderCamp4 && (
           <LightBoxComponent
-            Data={imageBlog.filter((nft) => nft.campaign === "Forever Keys")}
+            Data={imageBlog
+              .filter((nft) => nft.campaign === "Forever Keys")
+              .slice(0, 4)}
             camNumber="4"
           />
         )}
         <h3 className="text-center mt-5">Latest Campaigns</h3>
-        <h4 className="text-success text-center">Stand With Ukraine</h4>
+        <h4 className="text-success text-center  d-flex align-items-center justify-content-center">
+        <Link  to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Stand With Ukraine"}`} className="mr-1 text-success text-underline">Stand With Ukraine</Link>
+          <TwitterShareButton
+            className="twitter-icon mfp-link portfolio-fullscreen pt-2"
+            url={`https://verifiedimpactnfts.com/#/NFTs?beneficiary=${"Ukraine Gov".replace(
+              / /g,
+              "%20"
+            )}&campaign=${"Stand With Ukraine".replace(/ /g, "%20")}`}
+            title={`I support the #NFT "${"Stand With Ukraine"}" campaign, [80%] of the proceeds go to the "${"Ukraine Gov"}".Check it out at `}
+          >
+            <TwitterIcon
+              size={32}
+              round
+              iconFillColor="white"
+              style={{ fill: "black" }}
+            />
+          </TwitterShareButton>
+        </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
             <div className="clearfix portfolio">
@@ -334,6 +371,7 @@ const Index4 = () => {
                 >
                   {imageBlog
                     .filter((nft) => nft.campaign === "Stand With Ukraine")
+                    .slice(0, 4)
                     .map((item, index) => (
                       <li
                         className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
@@ -354,7 +392,24 @@ const Index4 = () => {
             </div>
           </SRLWrapper>
         </SimpleReactLightbox>
-        <h4 className="mt-5 text-success text-center">Refugees</h4>
+        <h4 className="text-success text-center  d-flex align-items-center justify-content-center mt-5">
+        <Link  to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Refugees"}`} className="mr-1 text-success text-underline">Refugees</Link>
+          <TwitterShareButton
+            className="twitter-icon mfp-link portfolio-fullscreen pt-2"
+            url={`https://verifiedimpactnfts.com/#/NFTs?beneficiary=${"Ukraine Gov".replace(
+              / /g,
+              "%20"
+            )}&campaign=${"Refugees".replace(/ /g, "%20")}`}
+            title={`I support the #NFT "${"Refugees"}" campaign, [80%] of the proceeds go to the "${"Ukraine Gov"}".Check it out at `}
+          >
+            <TwitterIcon
+              size={32}
+              round
+              iconFillColor="white"
+              style={{ fill: "black" }}
+            />
+          </TwitterShareButton>
+        </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
             <div className="clearfix portfolio">
@@ -371,6 +426,7 @@ const Index4 = () => {
                 >
                   {imageBlog
                     .filter((nft) => nft.campaign === "Refugees")
+                    .slice(0, 4)
                     .map((item, index) => (
                       <li
                         className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
@@ -391,7 +447,24 @@ const Index4 = () => {
             </div>
           </SRLWrapper>
         </SimpleReactLightbox>
-        <h4 className="mt-5 text-success text-center">Reconstruction</h4>
+        <h4 className="text-success text-center  d-flex align-items-center justify-content-center mt-5">
+        <Link  to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Reconstruction"}`} className="mr-1 text-success text-underline">Reconstruction</Link>
+          <TwitterShareButton
+            className="twitter-icon mfp-link portfolio-fullscreen pt-2"
+            url={`https://verifiedimpactnfts.com/#/NFTs?beneficiary=${"Ukraine Gov".replace(
+              / /g,
+              "%20"
+            )}&campaign=${"Reconstruction".replace(/ /g, "%20")}`}
+            title={`I support the #NFT "${"Reconstruction"}" campaign, [80%] of the proceeds go to the "${"Ukraine Gov"}".Check it out at `}
+          >
+            <TwitterIcon
+              size={32}
+              round
+              iconFillColor="white"
+              style={{ fill: "black" }}
+            />
+          </TwitterShareButton>
+        </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
             <div className="clearfix portfolio">
@@ -408,6 +481,7 @@ const Index4 = () => {
                 >
                   {imageBlog
                     .filter((nft) => nft.campaign === "Reconstruction")
+                    .slice(0, 4)
                     .map((item, index) => (
                       <li
                         className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
@@ -428,7 +502,24 @@ const Index4 = () => {
             </div>
           </SRLWrapper>
         </SimpleReactLightbox>
-        <h4 className="mt-5 text-success text-center">Forever Keys</h4>
+        <h4 className="text-success text-center  d-flex align-items-center justify-content-center mt-5">
+        <Link  to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Forever Keys"}`} className="mr-1 text-success text-underline">Forever Keys</Link>
+          <TwitterShareButton
+            className="twitter-icon mfp-link portfolio-fullscreen pt-2"
+            url={`https://verifiedimpactnfts.com/#/NFTs?beneficiary=${"Ukraine Gov".replace(
+              / /g,
+              "%20"
+            )}&campaign=${"Forever Keys".replace(/ /g, "%20")}`}
+            title={`I support the #NFT "${"Forever Keys"}" campaign, [80%] of the proceeds go to the "${"Ukraine Gov"}".Check it out at `}
+          >
+            <TwitterIcon
+              size={32}
+              round
+              iconFillColor="white"
+              style={{ fill: "black" }}
+            />
+          </TwitterShareButton>
+        </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
             <div className="clearfix portfolio">
@@ -445,6 +536,7 @@ const Index4 = () => {
                 >
                   {imageBlog
                     .filter((nft) => nft.campaign === "Forever Keys")
+                    .slice(0, 4)
                     .map((item, index) => (
                       <li
                         className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"

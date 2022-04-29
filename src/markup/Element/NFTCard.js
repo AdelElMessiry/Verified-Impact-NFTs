@@ -19,12 +19,18 @@ const NFTCard = ({ index, item, openSlider }) => {
           <i className="ti-fullscreen icon-bx-xs"></i>
         </Link>
         <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
-        <TwitterShareButton className="twitter-icon mfp-link portfolio-fullscreen"
-            url={`https://verifiedimpactnfts.com/#/nft-detail?id=${item.id}`}
-            title={`I liked this NFT for "${item.beneficiary}" beneficiary, "${item.collection}" collection, "${item.creator}" creator and "${item.campaign}" campaign`}
-                    >
-                      <TwitterIcon size={32} round iconFillColor="white" style={{ fill: 'black' }} />
-                    </TwitterShareButton>
+        <TwitterShareButton
+          className="twitter-icon mfp-link portfolio-fullscreen"
+          url={`https://verifiedimpactnfts.com/#/nft-detail?id=${item.id}`}
+          title={`I like "${item.name}" #NFT from "${item.collection}" collection By "${item.creator}"! [${item.creatorPercentage}%] of the proceeds go to the "${item.beneficiary}" in support of the "${item.campaign}" campaign!`}
+        >
+          <TwitterIcon
+            size={32}
+            round
+            iconFillColor="white"
+            style={{ fill: "black" }}
+          />
+        </TwitterShareButton>
       </>
     );
   };
@@ -97,7 +103,10 @@ const NFTCard = ({ index, item, openSlider }) => {
               </p>
               <p>
                 <b>Collection: </b>
-                {item.collection}
+                <Link
+                    to={`./collection?collection=${item.collection}`}
+                    className="dez-page text-white"
+                  >{item.collection}</Link>
               </p>
               <p>
                 <b>Price: </b>

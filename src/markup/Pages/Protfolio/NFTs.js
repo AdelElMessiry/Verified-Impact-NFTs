@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import { imageBlog } from "../../NFTData";
 import VINFTsTooltip from "../../Element/Tooltip";
 import { TwitterIcon, TwitterShareButton } from "react-share";
+import { Row, Col, Container } from "reactstrap";
 
 // Masonry section
 const masonryOptions = {
@@ -79,7 +80,6 @@ const NFTs = () => {
     return (
       <>
         <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
-     
       </>
     );
   };
@@ -87,7 +87,7 @@ const NFTs = () => {
   const setSelectedCollectionTag = (tag, data = null) => {
     setTagCollection(tag);
     if (tag !== "All") {
-      console.log(imageBlog)
+      console.log(imageBlog);
       let campaigns = imageBlog
         .filter((d) => d.collection == tag)
         .map((data) => ({ name: data.campaign }))
@@ -96,7 +96,7 @@ const NFTs = () => {
             index === self.findIndex((t) => t.name === value.name)
         );
       setCampaignTags([{ name: "All" }, ...campaigns]);
-      setTagCampaign("All")
+      setTagCampaign("All");
 
       let creators = imageBlog
         .filter((d) => d.collection == tag)
@@ -107,8 +107,7 @@ const NFTs = () => {
         );
 
       setCreatorTags([{ name: "All" }, ...creators]);
-      setTagCreator("All")
-
+      setTagCreator("All");
     } else {
       let campaigns = imageBlog
         .map((data) => ({ name: data.campaign }))
@@ -118,7 +117,7 @@ const NFTs = () => {
         );
 
       setCampaignTags([{ name: "All" }, ...campaigns]);
-      setTagCampaign("All")
+      setTagCampaign("All");
 
       let creators = imageBlog
         .map((data) => ({ name: data.creator }))
@@ -128,8 +127,7 @@ const NFTs = () => {
         );
 
       setCreatorTags([{ name: "All" }, ...creators]);
-      setTagCreator("All")
-
+      setTagCreator("All");
     }
     setSearchFlag(!searchFlag);
   };
@@ -145,7 +143,7 @@ const NFTs = () => {
             index === self.findIndex((t) => t.name === value.name)
         );
       setCollectionTags([{ name: "All" }, ...collections]);
-      setTagCollection("All")
+      setTagCollection("All");
 
       let creators = imageBlog
         .filter((d) => d.campaign == tag)
@@ -156,8 +154,7 @@ const NFTs = () => {
         );
 
       setCreatorTags([{ name: "All" }, ...creators]);
-      setTagCreator("All")
-
+      setTagCreator("All");
     } else {
       let collections = imageBlog
         .map((data) => ({ name: data.collection }))
@@ -167,7 +164,7 @@ const NFTs = () => {
         );
 
       setCollectionTags([{ name: "All" }, ...collections]);
-      setTagCollection("All")
+      setTagCollection("All");
 
       let creators = imageBlog
         .map((data) => ({ name: data.creator }))
@@ -177,7 +174,7 @@ const NFTs = () => {
         );
 
       setCreatorTags([{ name: "All" }, ...creators]);
-      setTagCreator("All")
+      setTagCreator("All");
     }
     setSearchFlag(!searchFlag);
   };
@@ -193,7 +190,7 @@ const NFTs = () => {
             index === self.findIndex((t) => t.name === value.name)
         );
       setCampaignTags([{ name: "All" }, ...campaigns]);
-      setTagCampaign("All")
+      setTagCampaign("All");
 
       let collections = imageBlog
         .filter((d) => d.creator == tag)
@@ -204,7 +201,7 @@ const NFTs = () => {
         );
 
       setCollectionTags([{ name: "All" }, ...collections]);
-      setTagCollection("All")
+      setTagCollection("All");
     } else {
       let campaigns = imageBlog
         .map((data) => ({ name: data.campaign }))
@@ -214,7 +211,7 @@ const NFTs = () => {
         );
 
       setCampaignTags([{ name: "All" }, ...campaigns]);
-      setTagCampaign("All")
+      setTagCampaign("All");
       let collections = imageBlog
         .map((data) => ({ name: data.collection }))
         .filter(
@@ -223,8 +220,7 @@ const NFTs = () => {
         );
 
       setCollectionTags([{ name: "All" }, ...collections]);
-      setTagCollection("All")
-
+      setTagCollection("All");
     }
     setSearchFlag(!searchFlag);
   };
@@ -358,18 +354,30 @@ const NFTs = () => {
             </span>
 
             <b className="ml-4">Collection: </b>
-            {Data[item].collection}
+            <Link
+                    to={`./collection?collection=${Data[item].collection}`}
+                    className="dez-page text-white"  onClick={() => {
+                      setOpenSlider(false);
+                    }}
+                  >{Data[item].collection}</Link>
           </p>
           <p className="d-flex align-content-center align-items-center">
             <b>Price: </b>
             {Data[item].price} {Data[item].currency}
             &nbsp;&nbsp;
-            <Iconimage />{" "}  Let other people know about it &nbsp;&nbsp; <TwitterShareButton className="twitter-icon mfp-link portfolio-fullscreen"
-            url={`https://verifiedimpactnfts.com/#/nft-detail?id=${Data[item].id}`}
-            title={`I liked this NFT for "${Data[item].beneficiary}" beneficiary, "${Data[item].collection}" collection, "${Data[item].creator}" creator and "${Data[item].campaign}" campaign`}
-                    >
-                      <TwitterIcon size={32} round iconFillColor="white" style={{ fill: 'black' }} />
-                    </TwitterShareButton>
+            <Iconimage /> Let other people know about it &nbsp;&nbsp;{" "}
+            <TwitterShareButton
+              className="twitter-icon mfp-link portfolio-fullscreen"
+              url={`https://verifiedimpactnfts.com/#/nft-detail?id=${Data[item].id}`}
+              title={`I like "${Data[item].name}" #NFT from "${Data[item].collection}" collection By "${Data[item].creator}"! [${Data[item].creatorPercentage}%] of the proceeds go to the "${Data[item].beneficiary}" in support of the "${Data[item].campaign}" campaign!`}
+            >
+              <TwitterIcon
+                size={32}
+                round
+                iconFillColor="white"
+                style={{ fill: "black" }}
+              />
+            </TwitterShareButton>
           </p>
         </div>
       );
@@ -392,13 +400,39 @@ const NFTs = () => {
           className="dlab-bnr-inr dlab-bnr-inr-sm overlay-primary bg-pt"
           style={{ backgroundImage: "url(" + bnr1 + ")" }}
         >
-          <PageTitle
-            motherMenu={
-              campaign ? campaign : beneficiary ? beneficiary : creator
-            }
-            activeMenu={beneficiary ? beneficiary : creator}
-            secondMenu={campaign ? campaign : undefined}
-          />
+          <div className="container">
+            <div className="dlab-bnr-inr-entry">
+              <h1 className="text-white d-flex align-items-center">
+              <span className="mr-1"> {campaign ? campaign : beneficiary ? beneficiary : creator}</span> 
+                {campaign && (
+                  <TwitterShareButton
+                    className="twitter-icon mfp-link portfolio-fullscreen pt-2"
+                    url={beneficiary?`https://verifiedimpactnfts.com/#/NFTs?beneficiary=${beneficiary.replace(/ /g,"%20")}&campaign=${campaign.replace(/ /g,"%20")}`:`https://verifiedimpactnfts.com/#/NFTs?creator=${creator.replace(/ /g,"%20")}&campaign=${campaign.replace(/ /g,"%20")}`}
+                    title={`I support the #NFT "${campaign}" campaign, [80%] of the proceeds go to the "${beneficiary?beneficiary:creator}".Check it out at `}
+                  >
+                    <TwitterIcon
+                      size={32}
+                      round
+                      iconFillColor="white"
+                      style={{ fill: "black" }}
+                    />
+                  </TwitterShareButton>
+                )}
+              </h1>
+
+              <div className="breadcrumb-row">
+                <ul className="list-inline">
+                  <li>
+                    <Link to={"#"}>Home</Link>
+                  </li>
+                  <li className="ml-1">
+                    {beneficiary ? beneficiary : creator}
+                  </li>
+                  {campaign && <li className="ml-1">{campaign}</li>}
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
         {/*  Section-1 Start  */}
         <div className="section-full content-inner-1 portfolio text-uppercase">

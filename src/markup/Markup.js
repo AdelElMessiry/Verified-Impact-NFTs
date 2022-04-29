@@ -15,6 +15,7 @@ import Expertise from './Pages/Expertise';
 import ProjectManagement from './Pages/ProjectManagement';
 import OurProjects from './Pages/OurProjects';
 import NFTDetail from './Pages/NFTDetail';
+import SingleCollection from './Pages/singleCollection';
 import Team from './Pages/Team';
 import Faqs from './Pages/Faqs';
 import Login from './Pages/Login';
@@ -91,6 +92,7 @@ class Markup extends Component{
                         <Route path='/blog-list-right-sidebar' exact component={BlogListRightSidebar} />
                         <Route path='/blog-details' exact component={BlogDetails} />
                         <Route path='/NFTs' exact component={NFTs} />
+                        <Route path='/collection' exact component={SingleCollection} />
                         <Route path='/shop-columns' exact component={ShopColumns} />
                         <Route path='/shop-columns-sidebar' exact component={ShopColumnsSidebar} />
 						
