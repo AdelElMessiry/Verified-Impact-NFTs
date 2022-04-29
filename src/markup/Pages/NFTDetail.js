@@ -12,6 +12,7 @@ import bnr1 from "./../../images/banner/bnr2.jpg";
 import NFTCard from "../Element/NFTCard";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { imageBlog } from "../NFTData";
+import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
 
 const NFTDetail = () => {
   const Iconimage = (props) => {
@@ -35,7 +36,7 @@ const NFTDetail = () => {
             <div className="container h-100">
               <div className="row h-100">
                 <div className="col text-center align-items-center align-content-center d-flex justify-content-center h-100">
-                    <img src={item[0].image} alt="" />
+                    <img src={item[0].image} alt="" className="img img-fluid fit-img"/>
                   </div>
               </div>
             </div>
@@ -106,20 +107,8 @@ const NFTDetail = () => {
                 <p className="d-flex align-content-center align-items-center">
                   <b>Price: </b>
                   {item[0].price} {item[0].currency} &nbsp;&nbsp;
-                  <Iconimage />
-                  &nbsp;&nbsp; Let other people know about it &nbsp;&nbsp;
-                  <TwitterShareButton
-                    className="twitter-icon mfp-link portfolio-fullscreen"
-                    url={`https://verifiedimpactnfts.com/#/nft-detail?id=${item.id}`}
-                    title={`I like "${item.name}" #NFT from "${item.collection}" collection By "${item.creator}"! [${item.creatorPercentage}%] of the proceeds go to the "${item.beneficiary}" in support of the "${item.campaign}" campaign!`}
-                  >
-                    <TwitterIcon
-                      size={32}
-                      round
-                      iconFillColor="white"
-                      style={{ fill: "black" }}
-                    />
-                  </TwitterShareButton>
+                  <Iconimage />&nbsp;&nbsp;<NFTTwitterShare item={item[0]}/>
+                  
                 </p>
               </div>
             </div>

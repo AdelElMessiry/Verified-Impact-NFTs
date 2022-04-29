@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import VINFTsTooltip from "./Tooltip";
 import { TwitterIcon, TwitterShareButton } from "react-share";
+import NFTTwitterShare from "./TwitterShare/NFTTwitterShare";
 
 const NFTCard = ({ index, item, openSlider }) => {
   //Light Gallery on icon click
@@ -19,25 +20,14 @@ const NFTCard = ({ index, item, openSlider }) => {
           <i className="ti-fullscreen icon-bx-xs"></i>
         </Link>
         <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
-        <TwitterShareButton
-          className="twitter-icon mfp-link portfolio-fullscreen"
-          url={`https://verifiedimpactnfts.com/#/nft-detail?id=${item.id}`}
-          title={`I like "${item.name}" #NFT from "${item.collection}" collection By "${item.creator}"! [${item.creatorPercentage}%] of the proceeds go to the "${item.beneficiary}" in support of the "${item.campaign}" campaign!`}
-        >
-          <TwitterIcon
-            size={32}
-            round
-            iconFillColor="white"
-            style={{ fill: "black" }}
-          />
-        </TwitterShareButton>
+        <NFTTwitterShare item={item} isWithoutText={true}/>
       </>
     );
   };
   return (
     <div className="dlab-box dlab-gallery-box">
       <div className="dlab-media dlab-img-overlay1 dlab-img-effect">
-        <img src={item.image} alt="" />
+        <img src={item.image} alt="" className="img img-fluid fit-img fit-img-cover" />
         <div className="overlay-bx">
           <div className="overlay-icon align-b text-white text-left">
             <div className="text-white text-left port-box">

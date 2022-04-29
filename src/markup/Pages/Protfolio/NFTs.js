@@ -16,6 +16,8 @@ import { imageBlog } from "../../NFTData";
 import VINFTsTooltip from "../../Element/Tooltip";
 import { TwitterIcon, TwitterShareButton } from "react-share";
 import { Row, Col, Container } from "reactstrap";
+import NFTTwitterShare from "../../Element/TwitterShare/NFTTwitterShare";
+import CampaignTwitterShare from "../../Element/TwitterShare/CampaignTwitterShare";
 
 // Masonry section
 const masonryOptions = {
@@ -365,19 +367,8 @@ const NFTs = () => {
             <b>Price: </b>
             {Data[item].price} {Data[item].currency}
             &nbsp;&nbsp;
-            <Iconimage /> Let other people know about it &nbsp;&nbsp;{" "}
-            <TwitterShareButton
-              className="twitter-icon mfp-link portfolio-fullscreen"
-              url={`https://verifiedimpactnfts.com/#/nft-detail?id=${Data[item].id}`}
-              title={`I like "${Data[item].name}" #NFT from "${Data[item].collection}" collection By "${Data[item].creator}"! [${Data[item].creatorPercentage}%] of the proceeds go to the "${Data[item].beneficiary}" in support of the "${Data[item].campaign}" campaign!`}
-            >
-              <TwitterIcon
-                size={32}
-                round
-                iconFillColor="white"
-                style={{ fill: "black" }}
-              />
-            </TwitterShareButton>
+            <Iconimage /> &nbsp;&nbsp; <NFTTwitterShare item={Data[item]}/>
+         
           </p>
         </div>
       );
@@ -405,18 +396,8 @@ const NFTs = () => {
               <h1 className="text-white d-flex align-items-center">
               <span className="mr-1"> {campaign ? campaign : beneficiary ? beneficiary : creator}</span> 
                 {campaign && (
-                  <TwitterShareButton
-                    className="twitter-icon mfp-link portfolio-fullscreen pt-2"
-                    url={beneficiary?`https://verifiedimpactnfts.com/#/NFTs?beneficiary=${beneficiary.replace(/ /g,"%20")}&campaign=${campaign.replace(/ /g,"%20")}`:`https://verifiedimpactnfts.com/#/NFTs?creator=${creator.replace(/ /g,"%20")}&campaign=${campaign.replace(/ /g,"%20")}`}
-                    title={`I support the #NFT "${campaign}" campaign, [80%] of the proceeds go to the "${beneficiary?beneficiary:creator}".Check it out at `}
-                  >
-                    <TwitterIcon
-                      size={32}
-                      round
-                      iconFillColor="white"
-                      style={{ fill: "black" }}
-                    />
-                  </TwitterShareButton>
+                  <CampaignTwitterShare campaign={campaign} beneficiary={beneficiary?beneficiary:creator} url={beneficiary?`https://verifiedimpactnfts.com/#/NFTs?beneficiary=${beneficiary.replace(/ /g,"%20")}&campaign=${campaign.replace(/ /g,"%20")}`:`https://verifiedimpactnfts.com/#/NFTs?creator=${creator.replace(/ /g,"%20")}&campaign=${campaign.replace(/ /g,"%20")}`}/>
+              
                 )}
               </h1>
 

@@ -15,6 +15,7 @@ import { imageBlog } from "../NFTData";
 import VINFTsTooltip from "../Element/Tooltip";
 import { TwitterIcon, TwitterShareButton } from "react-share";
 import { Row, Col, Container } from "reactstrap";
+import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
 
 // Masonry section
 const masonryOptions = {
@@ -140,19 +141,7 @@ const SingleCollection = () => {
             <b>Price: </b>
             {Data[item].price} {Data[item].currency}
             &nbsp;&nbsp;
-            <Iconimage /> Let other people know about it &nbsp;&nbsp;{" "}
-            <TwitterShareButton
-              className="twitter-icon mfp-link portfolio-fullscreen"
-              url={`https://verifiedimpactnfts.com/#/nft-detail?id=${Data[item].id}`}
-              title={`I like "${Data[item].name}" #NFT from "${Data[item].collection}" collection By "${Data[item].creator}"! [${Data[item].creatorPercentage}%] of the proceeds go to the "${Data[item].beneficiary}" in support of the "${Data[item].campaign}" campaign!`}
-            >
-              <TwitterIcon
-                size={32}
-                round
-                iconFillColor="white"
-                style={{ fill: "black" }}
-              />
-            </TwitterShareButton>
+            <Iconimage /> &nbsp;&nbsp; <NFTTwitterShare item={Data[item]}/>
           </p>
         </div>
       );
@@ -181,7 +170,7 @@ const SingleCollection = () => {
                   <TwitterShareButton
                     className="twitter-icon mfp-link portfolio-fullscreen pt-2"
                     url={`https://verifiedimpactnfts.com/#/collection?collection=${collection.replace(/ /g,"%20")}`}
-                    title={`I support the #NFT "${collection}" collection, of the proceeds go to the "Ukraine Gov".Check it out at `}
+                    title={`I support the #NFT "${collection}" collection, of the proceeds go to the "Ukraine Gov". Check it out at `}
                   >
                     <TwitterIcon
                       size={32}
