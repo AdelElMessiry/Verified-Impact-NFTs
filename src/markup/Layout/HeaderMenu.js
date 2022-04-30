@@ -91,6 +91,11 @@ class HeaderMenu extends Component {
                   </li>
                 </ul>
               </li>
+              <li>
+            <Link to={"./NFTs?creator=Vic Guiza"} className="dez-page">
+            Vic Guiza <i className="fa fa-angle-right"></i>
+                </Link>
+              </li>
             </ul>
           </li>
 		  <li>
