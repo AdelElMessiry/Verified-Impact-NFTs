@@ -19,6 +19,7 @@ import VINFTsTooltip from "../Element/Tooltip";
 import { TwitterIcon, TwitterShareButton } from "react-share";
 import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
 import CampaignTwitterShare from "../Element/TwitterShare/CampaignTwitterShare";
+import Carousel from "react-elastic-carousel";
 
 //Light Gallery on icon click
 const Iconimage = (props) => {
@@ -39,6 +40,14 @@ const Index4 = () => {
   const [sliderCaptionsCamp2, setSliderCaptionsCamp2] = useState([]);
   const [sliderCaptionsCamp3, setSliderCaptionsCamp3] = useState([]);
   const [sliderCaptionsCamp4, setSliderCaptionsCamp4] = useState([]);
+
+  const breakPoints = [
+    { width: 1, itemsToShow: 1 },
+    { width: 550, itemsToShow: 2, itemsToScroll: 2 },
+    { width: 768, itemsToShow: 3 },
+    { width: 992, itemsToShow: 4 },
+    { width: 1200, itemsToShow: 4 },
+  ];
 
   const options = {
     buttons: { showDownloadButton: false },
@@ -150,15 +159,19 @@ const Index4 = () => {
 
             <b className="ml-4">Collection: </b>
             <Link
-                    to={`./collection?collection=${data[item].collection}`}
-                    className="dez-page text-white"
-                  > {data[item].collection}</Link>
+              to={`./collection?collection=${data[item].collection}`}
+              className="dez-page text-white"
+            >
+              {" "}
+              {data[item].collection}
+            </Link>
           </p>
 
           <p className="d-flex align-content-center align-items-center">
             <b>Price: </b>
             {data[item].price} {data[item].currency}
-            &nbsp;&nbsp; <Iconimage /> &nbsp;&nbsp; <NFTTwitterShare item={data[item]}/> 
+            &nbsp;&nbsp; <Iconimage /> &nbsp;&nbsp;{" "}
+            <NFTTwitterShare item={data[item]} />
           </p>
         </div>
       );
@@ -327,12 +340,21 @@ const Index4 = () => {
         )}
         <h3 className="text-center mt-5">Latest Campaigns</h3>
         <h4 className="text-success text-center  d-flex align-items-center justify-content-center">
-        <Link  to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Stand With Ukraine"}`} className="mr-1 text-success text-underline">Stand With Ukraine</Link>
-       <CampaignTwitterShare campaign={"Stand With Ukraine"} beneficiary={"Ukraine Gov"}/>
+          <Link
+            to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Stand With Ukraine"}`}
+            className="mr-1 text-success text-underline"
+          >
+            Top NFTs from the Stand With Ukraine Campaign, click to see all {imageBlog
+                      .filter((nft) => nft.campaign === "Stand With Ukraine").length} NFTs
+          </Link>
+          <CampaignTwitterShare
+            campaign={"Stand With Ukraine"}
+            beneficiary={"Ukraine Gov"}
+          />
         </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
-            <div className="clearfix portfolio">
+            <div className="clearfix portfolio nfts-slider">
               <ul
                 id="masonry"
                 className="dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1"
@@ -344,12 +366,14 @@ const Index4 = () => {
                   updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
                   imagesLoadedOptions={imagesLoadedOptions} // default {}
                 >
+                  <Carousel itemsToShow={4} breakPoints={breakPoints}>
+
                   {imageBlog
                     .filter((nft) => nft.campaign === "Stand With Ukraine")
-                    .slice(0, 4)
+                    .slice(0, 5)
                     .map((item, index) => (
                       <li
-                        className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
+                        className="web design card-container  p-a0"
                         key={index}
                       >
                         <NFTCard
@@ -361,19 +385,28 @@ const Index4 = () => {
                           index={index}
                         />
                       </li>
-                    ))}
+                    ))}</Carousel>
                 </Masonry>
               </ul>
             </div>
           </SRLWrapper>
         </SimpleReactLightbox>
         <h4 className="text-success text-center  d-flex align-items-center justify-content-center mt-5">
-        <Link  to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Refugees"}`} className="mr-1 text-success text-underline">Refugees</Link>
-          <CampaignTwitterShare campaign={"Refugees"} beneficiary={"Ukraine Gov"}/>
+          <Link
+            to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Refugees"}`}
+            className="mr-1 text-success text-underline"
+          >
+            Top NFTs from the Refugees Campaign, click to see all {imageBlog
+                      .filter((nft) => nft.campaign === "Refugees").length} NFTs
+          </Link>
+          <CampaignTwitterShare
+            campaign={"Refugees"}
+            beneficiary={"Ukraine Gov"}
+          />
         </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
-            <div className="clearfix portfolio">
+            <div className="clearfix portfolio nfts-slider">
               <ul
                 id="masonry"
                 className="dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1"
@@ -385,36 +418,46 @@ const Index4 = () => {
                   updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
                   imagesLoadedOptions={imagesLoadedOptions} // default {}
                 >
-                  {imageBlog
-                    .filter((nft) => nft.campaign === "Refugees")
-                    .slice(0, 4)
-                    .map((item, index) => (
-                      <li
-                        className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
-                        key={index}
-                      >
-                        <NFTCard
-                          item={item}
-                          openSlider={(newIndex) => {
-                            setPhotoIndex(newIndex);
-                            setOpenSliderCamp2(true);
-                          }}
-                          index={index}
-                        />
-                      </li>
-                    ))}
+                  <Carousel itemsToShow={4} breakPoints={breakPoints}>
+                    {imageBlog
+                      .filter((nft) => nft.campaign === "Refugees").slice(0,5)
+                      .map((item, index) => (
+                        <li
+                          className="web design card-container p-a0"
+                          key={index}
+                        >
+                          <NFTCard
+                            item={item}
+                            openSlider={(newIndex) => {
+                              setPhotoIndex(newIndex);
+                              setOpenSliderCamp2(true);
+                            }}
+                            index={index}
+                          />
+                        </li>
+                      ))}
+                  </Carousel>
                 </Masonry>
               </ul>
             </div>
           </SRLWrapper>
         </SimpleReactLightbox>
         <h4 className="text-success text-center  d-flex align-items-center justify-content-center mt-5">
-        <Link  to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Reconstruction"}`} className="mr-1 text-success text-underline">Reconstruction</Link>
-        <CampaignTwitterShare campaign={"Reconstruction"} beneficiary={"Ukraine Gov"}/>
+          <Link
+            to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Reconstruction"}`}
+            className="mr-1 text-success text-underline"
+          >
+             Top NFTs from the Reconstruction Campaign, click to see all {imageBlog
+                      .filter((nft) => nft.campaign === "Reconstruction").length} NFTs
+          </Link>
+          <CampaignTwitterShare
+            campaign={"Reconstruction"}
+            beneficiary={"Ukraine Gov"}
+          />
         </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
-            <div className="clearfix portfolio">
+            <div className="clearfix portfolio nfts-slider">
               <ul
                 id="masonry"
                 className="dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1"
@@ -426,12 +469,14 @@ const Index4 = () => {
                   updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
                   imagesLoadedOptions={imagesLoadedOptions} // default {}
                 >
+                  <Carousel itemsToShow={4} breakPoints={breakPoints}>
+
                   {imageBlog
                     .filter((nft) => nft.campaign === "Reconstruction")
-                    .slice(0, 4)
+                    .slice(0, 5)
                     .map((item, index) => (
                       <li
-                        className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
+                        className="web design card-container  p-a0"
                         key={index}
                       >
                         <NFTCard
@@ -443,19 +488,28 @@ const Index4 = () => {
                           index={index}
                         />
                       </li>
-                    ))}
+                    ))}</Carousel>
                 </Masonry>
               </ul>
             </div>
           </SRLWrapper>
         </SimpleReactLightbox>
         <h4 className="text-success text-center  d-flex align-items-center justify-content-center mt-5">
-        <Link  to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Forever Keys"}`} className="mr-1 text-success text-underline">Forever Keys</Link>
-        <CampaignTwitterShare campaign={"Forever Keys"} beneficiary={"Ukraine Gov"}/>
+          <Link
+            to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Forever Keys"}`}
+            className="mr-1 text-success text-underline"
+          >
+            Top NFTs from the Forever Keys Campaign, click to see all {imageBlog
+                      .filter((nft) => nft.campaign === "Forever Keys").length} NFTs
+          </Link>
+          <CampaignTwitterShare
+            campaign={"Forever Keys"}
+            beneficiary={"Ukraine Gov"}
+          />
         </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
-            <div className="clearfix portfolio">
+            <div className="clearfix portfolio nfts-slider">
               <ul
                 id="masonry"
                 className="dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1"
@@ -467,12 +521,13 @@ const Index4 = () => {
                   updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
                   imagesLoadedOptions={imagesLoadedOptions} // default {}
                 >
+                  <Carousel itemsToShow={4} breakPoints={breakPoints}>
                   {imageBlog
                     .filter((nft) => nft.campaign === "Forever Keys")
-                    .slice(0, 4)
+                    .slice(0, 5)
                     .map((item, index) => (
                       <li
-                        className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
+                        className="web design card-container  p-a0"
                         key={index}
                       >
                         <NFTCard
@@ -484,7 +539,7 @@ const Index4 = () => {
                           index={index}
                         />
                       </li>
-                    ))}
+                    ))}</Carousel>
                 </Masonry>
               </ul>
             </div>

@@ -56,3 +56,25 @@
     object-fit: cover;
     }
   }
+  .nfts-slider {
+    .rec-pagination {
+      .rec-dot_active {
+        background-color: #77ae40;
+        box-shadow: 0 0 1px 3px #77ae40;
+      }
+    }
+    .rec-arrow-right,
+    .rec-arrow-left {
+      background-color: #77ae40;
+      color: #fff;
+      &:hover {
+        background-color: #77ae40 !important;
+      }
+      &:disabled {
+        background-color: #becfad;
+        &:hover {
+          background-color: #becfad !important;
+        }
+      }
+    }
+  }
