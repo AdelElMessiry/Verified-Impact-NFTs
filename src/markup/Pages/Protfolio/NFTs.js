@@ -395,7 +395,7 @@ const NFTs = () => {
             <div className="dlab-bnr-inr-entry">
               <h1 className="text-white d-flex align-items-center">
               <span className="mr-1"> {campaign ? campaign : beneficiary ? beneficiary : creator}</span> 
-                {campaign && (
+                {campaign && process.env.REACT_APP_SHOW_TWITTER != "false" &&(
                   <CampaignTwitterShare campaign={campaign} beneficiary={beneficiary?beneficiary:creator} url={beneficiary?`https://verifiedimpactnfts.com/#/NFTs?beneficiary=${beneficiary.replace(/ /g,"%20")}&campaign=${campaign.replace(/ /g,"%20")}`:`https://verifiedimpactnfts.com/#/NFTs?creator=${creator.replace(/ /g,"%20")}&campaign=${campaign.replace(/ /g,"%20")}`}/>
               
                 )}
