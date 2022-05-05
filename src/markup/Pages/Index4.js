@@ -171,7 +171,9 @@ const Index4 = () => {
             <b>Price: </b>
             {data[item].price} {data[item].currency}
             &nbsp;&nbsp; <Iconimage /> &nbsp;&nbsp;{" "}
+            {process.env.REACT_APP_SHOW_TWITTER != "false" &&(
             <NFTTwitterShare item={data[item]} />
+            )}
           </p>
         </div>
       );
@@ -347,10 +349,12 @@ const Index4 = () => {
             Top NFTs from the Stand With Ukraine Campaign, click to see all {imageBlog
                       .filter((nft) => nft.campaign === "Stand With Ukraine").length} NFTs
           </Link>
-          <CampaignTwitterShare
+          {process.env.REACT_APP_SHOW_TWITTER != "false" &&(
+            <CampaignTwitterShare
             campaign={"Stand With Ukraine"}
             beneficiary={"Ukraine Gov"}
           />
+          )}
         </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
@@ -399,10 +403,11 @@ const Index4 = () => {
             Top NFTs from the Refugees Campaign, click to see all {imageBlog
                       .filter((nft) => nft.campaign === "Refugees").length} NFTs
           </Link>
+          {process.env.REACT_APP_SHOW_TWITTER != "false" &&(
           <CampaignTwitterShare
             campaign={"Refugees"}
             beneficiary={"Ukraine Gov"}
-          />
+          />)}
         </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
@@ -450,10 +455,11 @@ const Index4 = () => {
              Top NFTs from the Reconstruction Campaign, click to see all {imageBlog
                       .filter((nft) => nft.campaign === "Reconstruction").length} NFTs
           </Link>
+          {process.env.REACT_APP_SHOW_TWITTER != "false" &&(
           <CampaignTwitterShare
             campaign={"Reconstruction"}
             beneficiary={"Ukraine Gov"}
-          />
+          />)}
         </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>
@@ -502,10 +508,11 @@ const Index4 = () => {
             Top NFTs from the Forever Keys Campaign, click to see all {imageBlog
                       .filter((nft) => nft.campaign === "Forever Keys").length} NFTs
           </Link>
+          {process.env.REACT_APP_SHOW_TWITTER != "false" &&(
           <CampaignTwitterShare
             campaign={"Forever Keys"}
             beneficiary={"Ukraine Gov"}
-          />
+          />)}
         </h4>
         <SimpleReactLightbox>
           <SRLWrapper options={options}>

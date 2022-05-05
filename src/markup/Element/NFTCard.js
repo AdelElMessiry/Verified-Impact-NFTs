@@ -20,7 +20,9 @@ const NFTCard = ({ index, item, openSlider }) => {
           <i className="ti-fullscreen icon-bx-xs"></i>
         </Link>
         <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+        {process.env.REACT_APP_SHOW_TWITTER != "false" &&(
         <NFTTwitterShare item={item} isWithoutText={true}/>
+        )}
       </>
     );
   };
