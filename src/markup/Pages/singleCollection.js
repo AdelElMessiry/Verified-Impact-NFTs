@@ -166,7 +166,7 @@ const SingleCollection = () => {
             <div className="dlab-bnr-inr-entry">
               <h1 className="text-white d-flex align-items-center">
               <span className="mr-1"> {collection}</span> 
-                {collection && (
+                {collection && process.env.REACT_APP_SHOW_TWITTER != "false" &&(
                   <TwitterShareButton
                     className="twitter-icon mfp-link portfolio-fullscreen pt-2"
                     url={`https://verifiedimpactnfts.com/#/collection?collection=${collection.replace(/ /g,"%20")}`}
