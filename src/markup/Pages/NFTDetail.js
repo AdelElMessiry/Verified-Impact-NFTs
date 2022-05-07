@@ -55,7 +55,7 @@ const NFTDetail = () => {
                     title={`Click to see all NFTs for "${item[0].beneficiary}" beneficiary`}
                   >
                     <Link
-                      to={`./NFTs?beneficiary=${item[0].beneficiary}`}
+                      to={`./BenefeiciaryNFTs?beneficiary=${item[0].beneficiary}`}
                       className="dez-page text-white"
                     >
                       {item[0].beneficiary}
@@ -71,14 +71,14 @@ const NFTDetail = () => {
                   >
                     {item[0].beneficiary ? (
                       <Link
-                        to={`./NFTs?beneficiary=${item[0].beneficiary}&campaign=${item[0].campaign}`}
+                        to={`./BenefeiciaryNFTs?beneficiary=${item[0].beneficiary}&campaign=${item[0].campaign}`}
                         className="dez-page text-white"
                       >
                         {item[0].campaign}
                       </Link>
                     ) : (
                       <Link
-                        to={`./NFTs?creator=${item[0].creator}&campaign=${item[0].campaign}`}
+                        to={`./CreatorNFTs?creator=${item[0].creator}&collection=${item[0].collection}`}
                         className="dez-page text-white"
                       >
                         {item[0].campaign}
@@ -91,7 +91,7 @@ const NFTDetail = () => {
                     title={`Click to see all NFTs created by "${item[0].creator}"`}
                   >
                     <Link
-                      to={`./NFTs?creator=${item[0].creator}`}
+                      to={`./CreatorNFTs?creator=${item[0].creator}`}
                       className="dez-page text-white"
                     >
                       {item[0].creator}

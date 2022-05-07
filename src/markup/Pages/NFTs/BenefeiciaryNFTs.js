@@ -17,7 +17,7 @@ import VINFTsTooltip from "../../Element/Tooltip";
 import { TwitterIcon, TwitterShareButton } from "react-share";
 import { Row, Col, Container } from "reactstrap";
 import NFTTwitterShare from "../../Element/TwitterShare/NFTTwitterShare";
-import CampaignTwitterShare from "../../Element/TwitterShare/CampaignTwitterShare";
+import CampaignOrCollectionTwitterShare from "../../Element/TwitterShare/CampaignOrCollectionTwitterShare";
 
 // Masonry section
 const masonryOptions = {
@@ -59,7 +59,7 @@ const TagLi = ({ name, handlesettag, tagActive, type }) => {
   );
 };
 
-const NFTs = () => {
+const BenefeiciaryNFTs = () => {
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
   const beneficiary = queryParams.get("beneficiary");
@@ -246,12 +246,6 @@ const NFTs = () => {
       Data = imageBlog.filter(
         (nft) => nft.beneficiary === beneficiary && nft.campaign === campaign
       );
-    } else if (creator && !campaign) {
-      Data = imageBlog.filter((nft) => nft.creator === creator);
-    } else if (creator && campaign) {
-      Data = imageBlog.filter(
-        (nft) => nft.creator === creator && nft.campaign === campaign
-      );
     } else {
       Data = imageBlog;
     }
@@ -298,7 +292,7 @@ const NFTs = () => {
               title={`Click to see all NFTs for "${Data[item].beneficiary}" beneficiary`}
             >
               <Link
-                to={`./NFTs?beneficiary=${Data[item].beneficiary}`}
+                to={`./BenefeiciaryNFTs?beneficiary=${Data[item].beneficiary}`}
                 className="dez-page text-white"
                 onClick={() => {
                   setOpenSlider(false);
@@ -317,7 +311,7 @@ const NFTs = () => {
             >
               {Data[item].beneficiary ? (
                 <Link
-                  to={`./NFTs?beneficiary=${Data[item].beneficiary}&campaign=${Data[item].campaign}`}
+                  to={`./BenefeiciaryNFTs?beneficiary=${Data[item].beneficiary}&campaign=${Data[item].campaign}`}
                   className="dez-page text-white"
                   onClick={() => {
                     setOpenSlider(false);
@@ -327,7 +321,7 @@ const NFTs = () => {
                 </Link>
               ) : (
                 <Link
-                  to={`./NFTs?creator=${Data[item].creator}&campaign=${Data[item].campaign}`}
+                  to={`./CreatorNFTs?creator=${Data[item].creator}&collection=${Data[item].collection}`}
                   className="dez-page text-white"
                   onClick={() => {
                     setOpenSlider(false);
@@ -342,7 +336,7 @@ const NFTs = () => {
               title={`Click to see all NFTs created by "${Data[item].creator}"`}
             >
               <Link
-                to={`./NFTs?creator=${Data[item].creator}`}
+                to={`./CreatorNFTs?creator=${Data[item].creator}`}
                 className="dez-page text-white"
                 onClick={() => {
                   setOpenSlider(false);
@@ -396,7 +390,7 @@ const NFTs = () => {
               <h1 className="text-white d-flex align-items-center">
               <span className="mr-1"> {campaign ? campaign : beneficiary ? beneficiary : creator}</span> 
                 {campaign && process.env.REACT_APP_SHOW_TWITTER != "false" &&(
-                  <CampaignTwitterShare campaign={campaign} beneficiary={beneficiary?beneficiary:creator} url={beneficiary?`https://verifiedimpactnfts.com/#/NFTs?beneficiary=${beneficiary.replace(/ /g,"%20")}&campaign=${campaign.replace(/ /g,"%20")}`:`https://verifiedimpactnfts.com/#/NFTs?creator=${creator.replace(/ /g,"%20")}&campaign=${campaign.replace(/ /g,"%20")}`}/>
+                  <CampaignOrCollectionTwitterShare campaign={campaign} beneficiary={beneficiary?beneficiary:creator} url={beneficiary?`https://verifiedimpactnfts.com/#/BenefeiciaryNFTs?beneficiary=${beneficiary.replace(/ /g,"%20")}&campaign=${campaign.replace(/ /g,"%20")}`:`https://verifiedimpactnfts.com/#/CreatorNFTs?creator=${creator.replace(/ /g,"%20")}&collection=${campaign.replace(/ /g,"%20")}`}/>
               
                 )}
               </h1>
@@ -541,4 +535,4 @@ const NFTs = () => {
   );
 };
 export { imageBlog };
-export default NFTs;
+export default BenefeiciaryNFTs;
