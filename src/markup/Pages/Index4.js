@@ -18,7 +18,7 @@ import Masonry from "react-masonry-component";
 import VINFTsTooltip from "../Element/Tooltip";
 import { TwitterIcon, TwitterShareButton } from "react-share";
 import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
-import CampaignTwitterShare from "../Element/TwitterShare/CampaignTwitterShare";
+import CampaignOrCollectionTwitterShare from "../Element/TwitterShare/CampaignOrCollectionTwitterShare";
 import Carousel from "react-elastic-carousel";
 
 //Light Gallery on icon click
@@ -112,7 +112,7 @@ const Index4 = () => {
               title={`Click to see all NFTs for "${data[item].beneficiary}" beneficiary`}
             >
               <Link
-                to={`./NFTs?beneficiary=${data[item].beneficiary}`}
+                to={`./BenefeiciaryNFTs?beneficiary=${data[item].beneficiary}`}
                 className="dez-page text-white"
               >
                 {data[item].beneficiary}
@@ -128,14 +128,14 @@ const Index4 = () => {
             >
               {data[item].beneficiary ? (
                 <Link
-                  to={`./NFTs?beneficiary=${data[item].beneficiary}&campaign=${data[item].campaign}`}
+                  to={`./BenefeiciaryNFTs?beneficiary=${data[item].beneficiary}&campaign=${data[item].campaign}`}
                   className="dez-page text-white"
                 >
                   {data[item].campaign}
                 </Link>
               ) : (
                 <Link
-                  to={`./NFTs?creator=${data[item].creator}&campaign=${data[item].campaign}`}
+                  to={`./CreatorNFTs?creator=${data[item].creator}&collection=${data[item].collection}`}
                   className="dez-page text-white"
                 >
                   {data[item].campaign}
@@ -147,7 +147,7 @@ const Index4 = () => {
               title={`Click to see all NFTs created by "${data[item].creator}"`}
             >
               <Link
-                to={`./NFTs?creator=${data[item].creator}`}
+                to={`./CreatorNFTs?creator=${data[item].creator}`}
                 className="dez-page text-white"
               >
                 {data[item].creator}
@@ -343,14 +343,14 @@ const Index4 = () => {
         <h3 className="text-center mt-5">Latest Campaigns</h3>
         <h4 className="text-success text-center  d-flex align-items-center justify-content-center">
           <Link
-            to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Stand With Ukraine"}`}
+            to={`./BenefeiciaryNFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Stand With Ukraine"}`}
             className="mr-1 text-success text-underline"
           >
             Top NFTs from the Stand With Ukraine Campaign, click to see all {imageBlog
                       .filter((nft) => nft.campaign === "Stand With Ukraine").length} NFTs
           </Link>
           {process.env.REACT_APP_SHOW_TWITTER != "false" &&(
-            <CampaignTwitterShare
+            <CampaignOrCollectionTwitterShare
             campaign={"Stand With Ukraine"}
             beneficiary={"Ukraine Gov"}
           />
@@ -397,14 +397,14 @@ const Index4 = () => {
         </SimpleReactLightbox>
         <h4 className="text-success text-center  d-flex align-items-center justify-content-center mt-5">
           <Link
-            to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Refugees"}`}
+            to={`./BenefeiciaryNFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Refugees"}`}
             className="mr-1 text-success text-underline"
           >
             Top NFTs from the Refugees Campaign, click to see all {imageBlog
                       .filter((nft) => nft.campaign === "Refugees").length} NFTs
           </Link>
           {process.env.REACT_APP_SHOW_TWITTER != "false" &&(
-          <CampaignTwitterShare
+          <CampaignOrCollectionTwitterShare
             campaign={"Refugees"}
             beneficiary={"Ukraine Gov"}
           />)}
@@ -449,14 +449,14 @@ const Index4 = () => {
         </SimpleReactLightbox>
         <h4 className="text-success text-center  d-flex align-items-center justify-content-center mt-5">
           <Link
-            to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Reconstruction"}`}
+            to={`./BenefeiciaryNFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Reconstruction"}`}
             className="mr-1 text-success text-underline"
           >
              Top NFTs from the Reconstruction Campaign, click to see all {imageBlog
                       .filter((nft) => nft.campaign === "Reconstruction").length} NFTs
           </Link>
           {process.env.REACT_APP_SHOW_TWITTER != "false" &&(
-          <CampaignTwitterShare
+          <CampaignOrCollectionTwitterShare
             campaign={"Reconstruction"}
             beneficiary={"Ukraine Gov"}
           />)}
@@ -490,58 +490,6 @@ const Index4 = () => {
                           openSlider={(newIndex) => {
                             setPhotoIndex(newIndex);
                             setOpenSliderCamp3(true);
-                          }}
-                          index={index}
-                        />
-                      </li>
-                    ))}</Carousel>
-                </Masonry>
-              </ul>
-            </div>
-          </SRLWrapper>
-        </SimpleReactLightbox>
-        <h4 className="text-success text-center  d-flex align-items-center justify-content-center mt-5">
-          <Link
-            to={`./NFTs?beneficiary=${"Ukraine Gov"}&campaign=${"Forever Keys"}`}
-            className="mr-1 text-success text-underline"
-          >
-            Top NFTs from the Forever Keys Campaign, click to see all {imageBlog
-                      .filter((nft) => nft.campaign === "Forever Keys").length} NFTs
-          </Link>
-          {process.env.REACT_APP_SHOW_TWITTER != "false" &&(
-          <CampaignTwitterShare
-            campaign={"Forever Keys"}
-            beneficiary={"Ukraine Gov"}
-          />)}
-        </h4>
-        <SimpleReactLightbox>
-          <SRLWrapper options={options}>
-            <div className="clearfix portfolio nfts-slider">
-              <ul
-                id="masonry"
-                className="dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1"
-              >
-                <Masonry
-                  className={"my-gallery-class"} // default ''
-                  options={masonryOptions} // default {}
-                  disableImagesLoaded={false} // default false
-                  updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
-                  imagesLoadedOptions={imagesLoadedOptions} // default {}
-                >
-                  <Carousel itemsToShow={4} breakPoints={breakPoints}>
-                  {imageBlog
-                    .filter((nft) => nft.campaign === "Forever Keys")
-                    .slice(0, 5)
-                    .map((item, index) => (
-                      <li
-                        className="web design card-container  p-a0"
-                        key={index}
-                      >
-                        <NFTCard
-                          item={item}
-                          openSlider={(newIndex) => {
-                            setPhotoIndex(newIndex);
-                            setOpenSliderCamp4(true);
                           }}
                           index={index}
                         />
