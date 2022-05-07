@@ -12,7 +12,15 @@ import stopWar8 from './../images/stopWar8.png';
 import stopWar9 from './../images/stopWar9.png';
 import stopWar10 from './../images/stopWar10.png';
 import stopWar11 from './../images/stopWar11.png';
-import RescuingaFriend from './../images/RescuingaFriend.jpg';
+import Stamp from './../images/Stamp.jpg';
+import Stamp_1 from './../images/Stamp_1.png';
+import Stamp_2 from './../images/Stamp_2.png';
+import Stamp_3 from './../images/Stamp_3.png';
+import Stamp_4 from './../images/Stamp_4.png';
+import Stamp_5 from './../images/Stamp_5.png';
+import Stamp_6 from './../images/Stamp_6.png';
+import Stamp_7 from './../images/Stamp_7.png';
+import Stamp_8 from './../images/Stamp_8.png';
 export const imageBlog = [
     {
       id: 1,
@@ -269,7 +277,7 @@ export const imageBlog = [
       campaign: "Reconstruction",
       creator: "NFT Punks",
       creatorPercentage: "20",
-      collection: "Damaged Houses",
+      collection: "Forever Keys",
       price: "1000",
       currency: "CSPR",
       description:
@@ -283,10 +291,10 @@ export const imageBlog = [
       category: "4",
       beneficiary: "Ukraine Gov",
       beneficiaryPercentage: "80",
-      campaign: "Forever Keys",
+      campaign: "Reconstruction",
       creator: "NFT Punks",
       creatorPercentage: "20",
-      collection: "Damaged Houses",
+      collection: "Forever Keys",
       price: "1000",
       currency: "CSPR",
       description: "Childrens' second homes are a total mess ",
@@ -299,10 +307,10 @@ export const imageBlog = [
       category: "4",
       beneficiary: "Ukraine Gov",
       beneficiaryPercentage: "80",
-      campaign: "Forever Keys",
+      campaign: "Reconstruction",
       creator: "NFT Punks",
       creatorPercentage: "20",
-      collection: "Damaged Houses",
+      collection: "Forever Keys",
       price: "1000",
       currency: "CSPR",
       description:
@@ -316,10 +324,10 @@ export const imageBlog = [
       category: "4",
       beneficiary: "Ukraine Gov",
       beneficiaryPercentage: "80",
-      campaign: "Forever Keys",
+      campaign: "Reconstruction",
       creator: "NFT Punks",
       creatorPercentage: "20",
-      collection: "Damaged Houses",
+      collection: "Forever Keys",
       price: "1000",
       currency: "CSPR",
       description: "Stop war so our kids can find some assurance to play ",
@@ -332,10 +340,10 @@ export const imageBlog = [
       category: "4",
       beneficiary: "Ukraine Gov",
       beneficiaryPercentage: "80",
-      campaign: "Forever Keys",
+      campaign: "Reconstruction",
       creator: "NFT Punks",
       creatorPercentage: "20",
-      collection: "Damaged Houses",
+      collection: "Forever Keys",
       price: "1000",
       currency: "CSPR",
       description: "My home is gone but I will go back again ",
@@ -536,7 +544,7 @@ export const imageBlog = [
       id: 33,
       name: "Rescuing a Friend",
       image:
-        RescuingaFriend,
+        Stamp,
       category: "6",
       beneficiary: "Ukraine Gov",
       beneficiaryPercentage: "80",
@@ -552,7 +560,7 @@ export const imageBlog = [
       id: 34,
       name: "War Consequences",
       image:
-        RescuingaFriend,
+        Stamp_1,
       category: "6",
       beneficiary: "Ukraine Gov",
       beneficiaryPercentage: "80",
@@ -568,7 +576,7 @@ export const imageBlog = [
       id: 35,
       name: "Love!",
       image:
-        RescuingaFriend,
+        Stamp_2,
       category: "6",
       beneficiary: "Ukraine Gov",
       beneficiaryPercentage: "80",
@@ -584,7 +592,7 @@ export const imageBlog = [
       id: 36,
       name: "Soldiers on a Tank",
       image:
-        RescuingaFriend,
+        Stamp_3,
       category: "6",
       beneficiary: "Ukraine Gov",
       beneficiaryPercentage: "80",
@@ -600,7 +608,71 @@ export const imageBlog = [
       id: 37,
       name: "Sniper",
       image:
-        RescuingaFriend,
+        Stamp_4,
+      category: "6",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "NFT Punks",
+      creatorPercentage: "20",
+      collection: "A Hero's Stand",
+      price: "1000",
+      currency: "CSPR",
+      description: "Got Bitten By the Snake ",
+    },
+    {
+      id: 38,
+      name: "Sniper",
+      image:
+        Stamp_5,
+      category: "6",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "NFT Punks",
+      creatorPercentage: "20",
+      collection: "A Hero's Stand",
+      price: "1000",
+      currency: "CSPR",
+      description: "Got Bitten By the Snake ",
+    },
+    {
+      id: 39,
+      name: "Sniper",
+      image:
+        Stamp_6,
+      category: "6",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "NFT Punks",
+      creatorPercentage: "20",
+      collection: "A Hero's Stand",
+      price: "1000",
+      currency: "CSPR",
+      description: "Got Bitten By the Snake ",
+    },
+    {
+      id: 40,
+      name: "Sniper",
+      image:
+        Stamp_7,
+      category: "6",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "NFT Punks",
+      creatorPercentage: "20",
+      collection: "A Hero's Stand",
+      price: "1000",
+      currency: "CSPR",
+      description: "Got Bitten By the Snake ",
+    },
+    {
+      id: 41,
+      name: "Sniper",
+      image:
+        Stamp_8,
       category: "6",
       beneficiary: "Ukraine Gov",
       beneficiaryPercentage: "80",
