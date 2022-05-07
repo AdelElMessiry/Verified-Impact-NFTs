@@ -72,7 +72,7 @@ const SingleCollection = () => {
               title={`Click to see all NFTs for "${Data[item].beneficiary}" beneficiary`}
             >
               <Link
-                to={`./NFTs?beneficiary=${Data[item].beneficiary}`}
+                to={`./BenefeiciaryNFTs?beneficiary=${Data[item].beneficiary}`}
                 className="dez-page text-white"
                 onClick={() => {
                   setOpenSlider(false);
@@ -91,7 +91,7 @@ const SingleCollection = () => {
             >
               {Data[item].beneficiary ? (
                 <Link
-                  to={`./NFTs?beneficiary=${Data[item].beneficiary}&campaign=${Data[item].campaign}`}
+                  to={`./BenefeiciaryNFTs?beneficiary=${Data[item].beneficiary}&campaign=${Data[item].campaign}`}
                   className="dez-page text-white"
                   onClick={() => {
                     setOpenSlider(false);
@@ -101,7 +101,7 @@ const SingleCollection = () => {
                 </Link>
               ) : (
                 <Link
-                  to={`./NFTs?creator=${Data[item].creator}&campaign=${Data[item].campaign}`}
+                  to={`./CreatorNFTs?creator=${Data[item].creator}&collection=${Data[item].collection}`}
                   className="dez-page text-white"
                   onClick={() => {
                     setOpenSlider(false);
@@ -116,7 +116,7 @@ const SingleCollection = () => {
               title={`Click to see all NFTs created by "${Data[item].creator}"`}
             >
               <Link
-                to={`./NFTs?creator=${Data[item].creator}`}
+                to={`./CreatorNFTs?creator=${Data[item].creator}`}
                 className="dez-page text-white"
                 onClick={() => {
                   setOpenSlider(false);
