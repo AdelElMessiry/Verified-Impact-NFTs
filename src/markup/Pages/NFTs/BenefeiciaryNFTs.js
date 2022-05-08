@@ -284,7 +284,7 @@ const BenefeiciaryNFTs = () => {
         </p> */}
           <p>
             <b>Description: </b>
-            {imageBlog[item].description}
+            {Data[item].description}
           </p>
           <p>
             <b>Beneficiary: </b>

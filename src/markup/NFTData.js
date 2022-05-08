@@ -119,7 +119,7 @@ export const imageBlog = [
       price: "1000",
       currency: "CSPR",
       description:
-        "Children a re suffering from the new homeless routine far feom their homes and schools ",
+        "Children are suffering from the new homeless routine far feom their homes and schools ",
     },
     {
       id: 7,
@@ -542,7 +542,7 @@ export const imageBlog = [
     },
     {
       id: 33,
-      name: "Rescuing a Friend",
+      name: "Stamp 1",
       image:
         Stamp,
       category: "6",
@@ -558,7 +558,7 @@ export const imageBlog = [
     },
     {
       id: 34,
-      name: "War Consequences",
+      name: "Stamp 2",
       image:
         Stamp_1,
       category: "6",
@@ -574,7 +574,7 @@ export const imageBlog = [
     },
     {
       id: 35,
-      name: "Love!",
+      name: "Stamp 3",
       image:
         Stamp_2,
       category: "6",
@@ -590,7 +590,7 @@ export const imageBlog = [
     },
     {
       id: 36,
-      name: "Soldiers on a Tank",
+      name: "Stamp 4",
       image:
         Stamp_3,
       category: "6",
@@ -606,7 +606,7 @@ export const imageBlog = [
     },
     {
       id: 37,
-      name: "Sniper",
+      name: "Stamp 5",
       image:
         Stamp_4,
       category: "6",
@@ -622,7 +622,7 @@ export const imageBlog = [
     },
     {
       id: 38,
-      name: "Sniper",
+      name: "Stamp 6",
       image:
         Stamp_5,
       category: "6",
@@ -638,7 +638,7 @@ export const imageBlog = [
     },
     {
       id: 39,
-      name: "Sniper",
+      name: "Stamp 7",
       image:
         Stamp_6,
       category: "6",
@@ -654,7 +654,7 @@ export const imageBlog = [
     },
     {
       id: 40,
-      name: "Sniper",
+      name: "Stamp 8",
       image:
         Stamp_7,
       category: "6",
@@ -670,7 +670,7 @@ export const imageBlog = [
     },
     {
       id: 41,
-      name: "Sniper",
+      name: "Stamp 9",
       image:
         Stamp_8,
       category: "6",
