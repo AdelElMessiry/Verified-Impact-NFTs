@@ -64,7 +64,7 @@ const SingleCollection = () => {
         </p> */}
           <p>
             <b>Description: </b>
-            {imageBlog[item].description}
+            {Data[item].description}
           </p>
           <p>
             <b>Beneficiary: </b>
