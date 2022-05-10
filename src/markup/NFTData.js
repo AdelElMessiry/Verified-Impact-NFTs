@@ -188,7 +188,7 @@ export const imageBlog = [
     },
     {
       id: 11,
-      name: "Stop War1",
+      name: "Stop War 1",
       image:
         "https://vi-nfts-storage.s3.us-east-2.amazonaws.com/NFT+Punks/Never+Forget/NFTs/PNG/Flag+Maidan+Nezalezhnosti+Central+Square+Capital+City+Ukraine.png",
       category: "2",
@@ -204,7 +204,7 @@ export const imageBlog = [
     },
     {
       id: 12,
-      name: "Stop War2",
+      name: "Stop War 2",
       image:
         "https://vi-nfts-storage.s3.us-east-2.amazonaws.com/NFT+Punks/Never+Forget/NFTs/PNG/Heart+Maidan+Nezalezhnosti+Central+Square+Capital+City+Ukraine.png.png",
       category: "2",
@@ -220,7 +220,7 @@ export const imageBlog = [
     },
     {
       id: 13,
-      name: "Stop War3",
+      name: "Stop War 3",
       image:
         "https://vi-nfts-storage.s3.us-east-2.amazonaws.com/NFT+Punks/Never+Forget/NFTs/PNG/Open+Hand+Maidan+Nezalezhnosti+central+Square+Capital+City+Ukraine.png",
       category: "2",
@@ -236,7 +236,7 @@ export const imageBlog = [
     },
     {
       id: 14,
-      name: "Stop War4",
+      name: "Stop War 4",
       image:
         "https://vi-nfts-storage.s3.us-east-2.amazonaws.com/NFT+Punks/Never+Forget/NFTs/PNG/Fists+Aerial+View+Saint+Andrew_s+Church+Andreevska+Street+Kyiv.png",
       category: "2",
@@ -252,7 +252,7 @@ export const imageBlog = [
     },
     {
       id: 15,
-      name: "Stop War5",
+      name: "Stop War 5",
       image:
         "https://vi-nfts-storage.s3.us-east-2.amazonaws.com/NFT+Punks/Never+Forget/NFTs/PNG/Flag+Aerial+View+Saint+Andrew_s+Church+Andreevska+Street+Kyiv.png",
       category: "2",
@@ -268,7 +268,7 @@ export const imageBlog = [
     },
     {
       id: 16,
-      name: "Stop War6",
+      name: "Stop War 6",
       image:
         "https://vi-nfts-storage.s3.us-east-2.amazonaws.com/NFT+Punks/Never+Forget/NFTs/PNG/Open+Hand+Aerial+View+Saint+Andrew_s+Church+Andreevska+Street+Kyiv.png",
       category: "2",
@@ -284,7 +284,7 @@ export const imageBlog = [
     },
     {
       id: 17,
-      name: "Stop War7",
+      name: "Stop War 7",
       image:
         "https://vi-nfts-storage.s3.us-east-2.amazonaws.com/NFT+Punks/Never+Forget/NFTs/PNG/Heart+Aerial+View+Saint+Andrew_s+Church+Andreevska+Street+Kyiv.png",
       category: "2",
@@ -300,7 +300,7 @@ export const imageBlog = [
     },
     {
       id: 18,
-      name: "Stop War8",
+      name: "Stop War 8",
       image:
         "https://vi-nfts-storage.s3.us-east-2.amazonaws.com/NFT+Punks/Never+Forget/NFTs/PNG/Fists+Night+View+Opera+House+Odessa.png.png",
       category: "2",
@@ -316,7 +316,7 @@ export const imageBlog = [
     },
     {
       id: 19,
-      name: "Stop War9",
+      name: "Stop War 9",
       image:
         "https://vi-nfts-storage.s3.us-east-2.amazonaws.com/NFT+Punks/Never+Forget/NFTs/PNG/Open+Hand+Night+View+Opera+House+Odessa.png",
       category: "2",
@@ -332,7 +332,7 @@ export const imageBlog = [
     },
     {
       id: 20,
-      name: "Stop War10",
+      name: "Stop War 10",
       image:
         "https://vi-nfts-storage.s3.us-east-2.amazonaws.com/NFT+Punks/Never+Forget/NFTs/PNG/Heart+Night+View+Opera+House+Odessa.png.png",
       category: "2",
@@ -348,7 +348,7 @@ export const imageBlog = [
     },
     {
       id: 21,
-      name: "Stop War11",
+      name: "Stop War 11",
       image:
         "https://vi-nfts-storage.s3.us-east-2.amazonaws.com/NFT+Punks/Never+Forget/NFTs/PNG/Flag+Night+View+Opera+House+Odessa.png",
       category: "2",
