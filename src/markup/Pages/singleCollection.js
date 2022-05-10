@@ -11,7 +11,7 @@ import bnr1 from "./../../images/banner/bnr1.jpg";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import Lightbox from "react-image-lightbox";
 import { Link } from "react-router-dom";
-import { imageBlog } from "../NFTData";
+import { getNFTsList } from "../../api/nftInfo";
 import VINFTsTooltip from "../Element/Tooltip";
 import { TwitterIcon, TwitterShareButton } from "react-share";
 import { Row, Col, Container } from "reactstrap";
@@ -32,10 +32,11 @@ const SingleCollection = () => {
   const queryParams = new URLSearchParams(search);
   const collection = queryParams.get("collection");
   
-  const [selectedNfts, setSelectedNfts] = useState(imageBlog);
+  const [selectedNfts, setSelectedNfts] = useState([]);
   const [openSlider, setOpenSlider] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [sliderCaptions, setSliderCaptions] = useState([]);
+  const [allNfts, setAllNfts] = useState([]);
 
   const Iconimage = (props) => {
     return (
@@ -47,10 +48,12 @@ const SingleCollection = () => {
 
 
 
-  useEffect(() => {
+  useEffect(async () => {
+    const newNFTList = await getNFTsList();
+    setAllNfts(newNFTList);
     let Data=[]
     if (collection) {
-      Data = imageBlog.filter((nft) => nft.collection === collection);
+      Data = newNFTList.filter((nft) => nft.collection === collection);
       setSelectedNfts(Data);
     } 
     const captions = [];
@@ -64,7 +67,7 @@ const SingleCollection = () => {
         </p> */}
           <p>
             <b>Description: </b>
-            {imageBlog[item].description}
+            {Data[item].description}
           </p>
           <p>
             <b>Beneficiary: </b>
@@ -72,7 +75,7 @@ const SingleCollection = () => {
               title={`Click to see all NFTs for "${Data[item].beneficiary}" beneficiary`}
             >
               <Link
-                to={`./NFTs?beneficiary=${Data[item].beneficiary}`}
+                to={`./BenefeiciaryNFTs?beneficiary=${Data[item].beneficiary}`}
                 className="dez-page text-white"
                 onClick={() => {
                   setOpenSlider(false);
@@ -91,7 +94,7 @@ const SingleCollection = () => {
             >
               {Data[item].beneficiary ? (
                 <Link
-                  to={`./NFTs?beneficiary=${Data[item].beneficiary}&campaign=${Data[item].campaign}`}
+                  to={`./BenefeiciaryNFTs?beneficiary=${Data[item].beneficiary}&campaign=${Data[item].campaign}`}
                   className="dez-page text-white"
                   onClick={() => {
                     setOpenSlider(false);
@@ -101,7 +104,7 @@ const SingleCollection = () => {
                 </Link>
               ) : (
                 <Link
-                  to={`./NFTs?creator=${Data[item].creator}&campaign=${Data[item].campaign}`}
+                  to={`./CreatorNFTs?creator=${Data[item].creator}&collection=${Data[item].collection}`}
                   className="dez-page text-white"
                   onClick={() => {
                     setOpenSlider(false);
@@ -116,7 +119,7 @@ const SingleCollection = () => {
               title={`Click to see all NFTs created by "${Data[item].creator}"`}
             >
               <Link
-                to={`./NFTs?creator=${Data[item].creator}`}
+                to={`./CreatorNFTs?creator=${Data[item].creator}`}
                 className="dez-page text-white"
                 onClick={() => {
                   setOpenSlider(false);
@@ -166,7 +169,7 @@ const SingleCollection = () => {
             <div className="dlab-bnr-inr-entry">
               <h1 className="text-white d-flex align-items-center">
               <span className="mr-1"> {collection}</span> 
-                {collection && (
+                {collection && process.env.REACT_APP_SHOW_TWITTER != "false" &&(
                   <TwitterShareButton
                     className="twitter-icon mfp-link portfolio-fullscreen pt-2"
                     url={`https://verifiedimpactnfts.com/#/collection?collection=${collection.replace(/ /g,"%20")}`}
@@ -268,5 +271,4 @@ const SingleCollection = () => {
     </Fragment>
   );
 };
-export { imageBlog };
 export default SingleCollection;

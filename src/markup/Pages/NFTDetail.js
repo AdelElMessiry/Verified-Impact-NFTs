@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect ,useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../Layout/Header1";
 import Footer from "../Layout/Footer1";
@@ -11,7 +11,7 @@ import { TwitterIcon, TwitterShareButton } from "react-share";
 import bnr1 from "./../../images/banner/bnr2.jpg";
 import NFTCard from "../Element/NFTCard";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import { imageBlog } from "../NFTData";
+import { getNFTsList } from "../../api/nftInfo";
 import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
 
 const NFTDetail = () => {
@@ -25,7 +25,12 @@ const NFTDetail = () => {
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
   const id = queryParams.get("id");
-  let item = imageBlog.filter((nft) => nft.id == id);
+  const [item, setItem] = useState();
+  useEffect(async () => {
+    const newNFTList = await getNFTsList();
+    let nft = newNFTList.filter((nft) => nft.id == id);
+    setItem(nft)
+  }, []);
   return (
     <>
       <Header isNFTDetails={true} />
@@ -36,8 +41,12 @@ const NFTDetail = () => {
             <div className="container h-100">
               <div className="row h-100">
                 <div className="col text-center align-items-center align-content-center d-flex justify-content-center h-100">
-                    <img src={item[0].image} alt="" className="img img-fluid fit-img"/>
-                  </div>
+                  <img
+                    src={item[0].image}
+                    alt=""
+                    className="img img-fluid fit-img"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -55,7 +64,7 @@ const NFTDetail = () => {
                     title={`Click to see all NFTs for "${item[0].beneficiary}" beneficiary`}
                   >
                     <Link
-                      to={`./NFTs?beneficiary=${item[0].beneficiary}`}
+                      to={`./BenefeiciaryNFTs?beneficiary=${item[0].beneficiary}`}
                       className="dez-page text-white"
                     >
                       {item[0].beneficiary}
@@ -71,14 +80,14 @@ const NFTDetail = () => {
                   >
                     {item[0].beneficiary ? (
                       <Link
-                        to={`./NFTs?beneficiary=${item[0].beneficiary}&campaign=${item[0].campaign}`}
+                        to={`./BenefeiciaryNFTs?beneficiary=${item[0].beneficiary}&campaign=${item[0].campaign}`}
                         className="dez-page text-white"
                       >
                         {item[0].campaign}
                       </Link>
                     ) : (
                       <Link
-                        to={`./NFTs?creator=${item[0].creator}&campaign=${item[0].campaign}`}
+                        to={`./CreatorNFTs?creator=${item[0].creator}&collection=${item[0].collection}`}
                         className="dez-page text-white"
                       >
                         {item[0].campaign}
@@ -91,7 +100,7 @@ const NFTDetail = () => {
                     title={`Click to see all NFTs created by "${item[0].creator}"`}
                   >
                     <Link
-                      to={`./NFTs?creator=${item[0].creator}`}
+                      to={`./CreatorNFTs?creator=${item[0].creator}`}
                       className="dez-page text-white"
                     >
                       {item[0].creator}
@@ -107,8 +116,9 @@ const NFTDetail = () => {
                 <p className="d-flex align-content-center align-items-center">
                   <b>Price: </b>
                   {item[0].price} {item[0].currency} &nbsp;&nbsp;
-                  <Iconimage />&nbsp;&nbsp;<NFTTwitterShare item={item[0]}/>
-                  
+                  <Iconimage />
+                  &nbsp;&nbsp;
+                  <NFTTwitterShare item={item[0]} />
                 </p>
               </div>
             </div>
