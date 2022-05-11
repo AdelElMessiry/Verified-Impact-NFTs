@@ -1,8 +1,18 @@
-import React, { Component } from "react";
+import React, { Component ,useState,useEffect} from "react";
 import { Link } from "react-router-dom";
+import {getBeneficiariesCampaignsList} from "../../api/beneficiaryInfo"
+import {getCreatorsCollectionsList} from "../../api/creatorInfo"
+const HeaderMenu =()=> {
+  const[beneficiaries,setBeneficiaries]=useState();
+  const[creators,setCreators]=useState();
+  useEffect(() => { 
+    (async () => {
 
-class HeaderMenu extends Component {
-  render() {
+     let  beneficiaryList = await getBeneficiariesCampaignsList();
+       setBeneficiaries(beneficiaryList)
+       let  creatorsList = await getCreatorsCollectionsList();
+       setCreators(creatorsList)
+    })();},[])
     return (
       <>
         <ul className="nav navbar-nav">
@@ -16,29 +26,24 @@ class HeaderMenu extends Component {
               Beneficiaries <i className="fa fa-chevron-down"></i>
             </Link>
             <ul className="sub-menu">
+                {beneficiaries?.map((b)=>(
               <li>
-              <Link to={"./BenefeiciaryNFTs?beneficiary=Ukraine Gov"} className="dez-page">
-                Ukraine Gov <i className="fa fa-angle-right"></i>
-                </Link>
-                <ul className="sub-menu">
-                  <li>
-                    <Link to={"./BenefeiciaryNFTs?beneficiary=Ukraine Gov&campaign=Stand With Ukraine"} className="dez-page">
-                    Stand With Ukraine{" "}
+                   <Link to={`./BenefeiciaryNFTs?beneficiary=${b.name}`} className="dez-page">
+                    {b.name} <i className="fa fa-angle-right"></i>
                     </Link>
-                  </li>
-
-                  <li>
-                    <Link to={"./BenefeiciaryNFTs?beneficiary=Ukraine Gov&campaign=Refugees"} className="dez-page">
-                    Refugees{" "}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to={"./BenefeiciaryNFTs?beneficiary=Ukraine Gov&campaign=Reconstruction"} className="dez-page">
-                    Reconstruction{" "}
-                    </Link>
-                  </li>
-                </ul>
+                     <ul className="sub-menu">
+                   {b.campaigns?.map((c)=>(
+                     <li>
+                       <Link to={`./BenefeiciaryNFTs?beneficiary=${b.name}&campaign=${c.name}`} className="dez-page">
+                       {c.name}{" "}
+                       </Link>
+                     </li>
+                   ))}  
+                   </ul>
               </li>
+                ))}
+            
+               
             </ul>
           </li>
 		  <li>
@@ -46,56 +51,23 @@ class HeaderMenu extends Component {
               Creators <i className="fa fa-chevron-down"></i>
             </Link>
             <ul className="sub-menu">
-             
-            <li>
-            <Link to={"./CreatorNFTs?creator=Script Culture"} className="dez-page">
-            Script Culture <i className="fa fa-angle-right"></i>
-                </Link>
-                <ul className="sub-menu">
-                  <li>
-                    <Link to={"./CreatorNFTs?creator=Script Culture&collection=Ukraine Calligraphy"} className="dez-page">
-                    Ukraine Calligraphy{" "}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to={"./CreatorNFTs?creator=Script Culture&collection=English Calligraphy"} className="dez-page">
-                    English Calligraphy{" "}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to={"./CreatorNFTs?creator=Script Culture&collection=Arabic Calligraphy"} className="dez-page">
-                    Arabic Calligraphy{" "}
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-            <li>
-            <Link to={"./CreatorNFTs?creator=NFT Punks"} className="dez-page">
-                NFT Punks <i className="fa fa-angle-right"></i>
-                </Link>
-                <ul className="sub-menu">
-                  <li>
-                    <Link to={"./CreatorNFTs?creator=NFT Punks&collection=Forever Keys"} className="dez-page">
-                    Forever Keys{" "}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to={"./CreatorNFTs?creator=NFT Punks&collection=Never Forget"} className="dez-page">
-                    Never Forget{" "}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to={"./CreatorNFTs?creator=NFT Punks&collection=A Hero's Stand"} className="dez-page">
-                    A Hero’s Stand{" "}
-                    </Link>
-                  </li>
-                </ul>
-              </li>
+            {creators?.map((c)=>(
               <li>
-            <Link to={"./CreatorNFTs?creator=Vic Guiza"} className="dez-page">
-            Vic Guiza <i className="fa fa-angle-right"></i>
+                   <Link to={`./CreatorNFTs?creator=${c.name}`} className="dez-page">
+                {c.name} <i className="fa fa-angle-right"></i>
                 </Link>
+                     <ul className="sub-menu">
+                   {c.collections?.map((col)=>(
+                     <li>
+                       <Link to={`./CreatorNFTs?creator=${c.name}&collection=${col.name}`} className="dez-page">
+                       {col.name}{" "}
+                       </Link>
+                     </li>
+                   ))}  
+                   </ul>
               </li>
+                ))}
+        
             </ul>
           </li>
 		  <li>
@@ -118,6 +90,5 @@ class HeaderMenu extends Component {
         </ul>
       </>
     );
-  }
 }
 export default HeaderMenu;
