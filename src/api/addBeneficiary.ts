@@ -4,6 +4,7 @@ import { CLPublicKey } from 'casper-js-sdk';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import { signDeploy } from '../utils/signer';
 import { CONNECTION } from '../constants/blockchain';
+import { Description } from '@mui/icons-material';
 
 export interface IBeneficiaryOptions {
   beneficiary: string;
@@ -12,11 +13,15 @@ export interface IBeneficiaryOptions {
 }
 
 export async function addBeneficiary(
-  beneficiary: CLPublicKey,
+  name: string,
+  description: string,
+  address: CLPublicKey,
   deploySender: CLPublicKey
 ) {
   const beneficiaryDeploy = await cep47.addBeneficiary(
-    beneficiary,
+    name,
+    description,
+    address,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     deploySender
   );

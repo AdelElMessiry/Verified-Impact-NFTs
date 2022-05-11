@@ -9,9 +9,6 @@ export async function getCampaignDetails(campaignId: string) {
 }
 
 export async function parseCampaign(maybeValue: any) {
-  // const maybeValue: any = await this.getTokenMeta(campaignId);
-  // console.log(maybeValue);
-
   const jsMap: any = new Map();
 
   for (const [innerKey, value] of maybeValue) {

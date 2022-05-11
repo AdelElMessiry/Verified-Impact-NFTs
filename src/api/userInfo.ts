@@ -1,7 +1,7 @@
 import { CLPublicKey } from 'casper-js-sdk';
 
 import { cep47 } from '../lib/cep47';
-// import { INFT } from '../pages/dash';
+import { INFT } from '../pages/dash';
 import { HexToCLPublicKey } from '../utils/contract-utils';
 import { parseNFT } from '../utils/parsers';
 
@@ -35,11 +35,11 @@ export async function numberOfNFTsOwned(publicKeyHex: string): Promise<number> {
   return await numberOfNFTsOfPubCLvalue(HexToCLPublicKey(publicKeyHex));
 }
 
-export async function getNFTsOwned(publicKeyHex: string): Promise<any[]> {
+export async function getNFTsOwned(publicKeyHex: string): Promise<INFT[]> {
   const publicKeyCLValue = HexToCLPublicKey(publicKeyHex);
   const numOfNFTs = await numberOfNFTsOfPubCLvalue(publicKeyCLValue);
 
-  const nfts: any[] = [];
+  const nfts: INFT[] = [];
   for (let idx = 0; idx < numOfNFTs; idx++) {
     const nftID = await cep47.getTokenByIndex(publicKeyCLValue, String(idx));
     const rawNFT = await cep47.getTokenMeta(nftID);
