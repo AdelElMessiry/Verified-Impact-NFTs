@@ -37,10 +37,10 @@ export async function getNFTDetails(tokenID: string) {
 }
 
 export async function getNFTsList() {
-  const nftsCount = await cep47.totalSupply();
+  const nftsCount:any = await cep47.totalSupply();
 
   const nftsList: any = [];
-  for (const tokenID of [...(Array(nftsCount).keys() as any)]) {
+  for (const tokenID of [...(Array(parseInt(nftsCount)).keys() as any)]) {
     const nft_metadata = await cep47.getMappedTokenMeta(tokenID);
     nftsList.push(nft_metadata);
   }

@@ -44,7 +44,7 @@ const NFTCard = ({ index, item, openSlider }) => {
                   title={`Click to see all NFTs for "${item.beneficiary}" beneficiary`}
                 >
                   <Link
-                    to={`./NFTs?beneficiary=${item.beneficiary}`}
+                    to={`./BenefeiciaryNFTs?beneficiary=${item.beneficiary}`}
                     className="dez-page text-white"
                   >
                     {item.beneficiary}
@@ -60,21 +60,14 @@ const NFTCard = ({ index, item, openSlider }) => {
                 <VINFTsTooltip
                   title={`Click to see all NFTs for "${item.campaign}" campaign`}
                 >
-                  {item.beneficiary ? (
+                  {item.beneficiary && (
                     <Link
-                      to={`./NFTs?beneficiary=${item.beneficiary}&campaign=${item.campaign}`}
+                      to={`./BenefeiciaryNFTs?beneficiary=${item.beneficiary}&campaign=${item.campaign}`}
                       className="dez-page text-white"
                     >
                       {item.campaign}
                     </Link>
-                  ) : (
-                    <Link
-                      to={`./NFTs?creator=${item.creator}&campaign=${item.campaign}`}
-                      className="dez-page text-white"
-                    >
-                      {item.campaign}
-                    </Link>
-                  )}
+                  ) }
                 </VINFTsTooltip>
               </p>
               <p>
@@ -83,7 +76,7 @@ const NFTCard = ({ index, item, openSlider }) => {
                   title={`Click to see all NFTs created by "${item.creator}"`}
                 >
                   <Link
-                    to={`./NFTs?creator=${item.creator}`}
+                    to={`./CreatorNFTs?creator=${item.creator}`}
                     className="dez-page text-white"
                   >
                     {item.creator}

@@ -12711,7 +12711,7 @@ ol.commentlist li .star-rating {
     border: 0 none;
     box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.05);
     font-size: 14px;
-    height: 50px;
+    /* height: 50px; */
     padding: 0 20px;
 }
 .shop-account .site-button.button-lg {
