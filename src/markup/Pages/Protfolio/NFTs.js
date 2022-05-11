@@ -241,14 +241,10 @@ const NFTs = () => {
   };
 
   useEffect(async() => {
-    debugger;
   
      const newNFTList = await getNFTsList()
-     debugger;
-      console.log('Hello World',newNFTList);
       const fetchData = async () => {
         // this will log 'Hello Word' to the console
-       debugger;
       // return newNFTList;
       };
     
