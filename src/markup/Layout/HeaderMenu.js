@@ -104,12 +104,12 @@ class HeaderMenu extends Component {
             </Link>
             <ul className="sub-menu">
               <li>
-                <Link to={"./NFTs"}  className="dez-page">
+                <Link to={"./my-NFTs"}  className="dez-page">
                   My NFTs 
                 </Link>
               </li>
               <li>
-                <Link to={"./NFTs"}  className="dez-page">
+                <Link to={"./my-creations"}  className="dez-page">
                   My Creations
                 </Link>
               </li>
