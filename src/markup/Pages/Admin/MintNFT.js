@@ -348,7 +348,7 @@ const MintNFT = () => {
                       <p className="form-submit">
                         <input
                           type="button"
-                          value="Create"
+                          value="Mint"
                           className="btn btn-success"
                           name="submit"
                           onClick={mintNFT}
