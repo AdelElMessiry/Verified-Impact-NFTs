@@ -15,6 +15,12 @@ import ScrollToTop from './Element/ScrollToTop';
 import { HashRouter } from 'react-router-dom';
 import BenefeiciaryNFTs from './Pages/NFTs/BenefeiciaryNFTs';
 import CreatorNFTs from './Pages/NFTs/CreatorNFTs';
+import MyNFTs from './Pages/NFTs/MyNFTs';
+import AddBeneficiary from './Pages/Admin/AddBeneficiary';
+import BlogDetails from './Pages/BlogDetail/BlogDetails';
+import AddCampaign from './Pages/Admin/AddCampaign';
+import MyCreations from './Pages/NFTs/MyCreations';
+import MintNFT from './Pages/Admin/MintNFT';
 
 class Markup extends Component{
 	render(){
@@ -32,6 +38,11 @@ class Markup extends Component{
                         <Route path='/BenefeiciaryNFTs' exact component={BenefeiciaryNFTs} />
                         <Route path='/CreatorNFTs' exact component={CreatorNFTs} />
                         <Route path='/collection' exact component={SingleCollection} />
+                        <Route path='/my-NFTs' exact component={MyNFTs} />
+                        <Route path='/admin_beneficiary' exact component={AddBeneficiary} />
+                        <Route path='/admin_campaign' exact component={AddCampaign} />
+                        <Route path='/my-creations' exact component={MyCreations} />
+                        <Route path='/mint-nft' exact component={MintNFT} />
 											
 					</Switch>
                 </div>
