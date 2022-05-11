@@ -4,7 +4,6 @@ import { CLPublicKey } from 'casper-js-sdk';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import { signDeploy } from '../utils/signer';
 import { CONNECTION } from '../constants/blockchain';
-import { Description } from '@mui/icons-material';
 
 export interface IBeneficiaryOptions {
   beneficiary: string;
