@@ -115,8 +115,8 @@ class CEP47Client {
     // if (contractHash) {
     // this.contractClient.setContractHash(contractHash, contractPackageHash);
     this.contractClient.setContractHash(
-      'hash-a4e940115a9fd7b385a25af742fb5563dc1bd440176a8e158110a4724bee350d',
-      'hash-2ecc3bac7171ee1142d9ef0b03092a659e312bc85fc023d7075fd17e204af2a8'
+      'hash-eb748b269f43c8671303781e3109344f2fca62830f7567390b1d81eca49f4026',
+      'hash-bd0a99f3b8619e698e6aaae886f70364413f09ba06b25ba7d152e826e015e22d'
     );
     this.isContractIHashSetup = true;
     // }
@@ -174,6 +174,10 @@ class CEP47Client {
 
   public async totalCollections() {
     return this.contractClient.queryContractData(['total_collections']);
+  }
+
+  public async totalCreators() {
+    return this.contractClient.queryContractData(['total_creators']);
   }
 
   public async totalBeneficiaries() {
@@ -244,6 +248,17 @@ class CEP47Client {
     const result = await this.contractClient.queryContractDictionary(
       'collections',
       collectionId
+    );
+
+    const maybeValue = result.value().unwrap().value();
+
+    return fromCLMap(maybeValue);
+  }
+
+  public async getCreator(creatorId: string) {
+    const result = await this.contractClient.queryContractDictionary(
+      'creators',
+      creatorId
     );
 
     const maybeValue = result.value().unwrap().value();
@@ -488,7 +503,7 @@ class CEP47Client {
   }
 
   public async createCampaign(
-    ids: string[],
+    // ids: string[],
     name: string,
     description: string,
     wallet_address: string,
@@ -499,7 +514,7 @@ class CEP47Client {
     keys?: Keys.AsymmetricKey[]
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
-      token_id: CLValueBuilder.list(ids.map((id) => CLValueBuilder.u256(id))),
+      // token_id: CLValueBuilder.list(ids.map((id) => CLValueBuilder.u256(id))),
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
@@ -519,12 +534,17 @@ class CEP47Client {
   }
 
   public async addBeneficiary(
-    beneficiary: CLPublicKey,
+    name: string,
+    description: string,
+    address: CLPublicKey,
     paymentAmount: string,
     deploySender: CLPublicKey
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
-      beneficiary: CLValueBuilder.key(beneficiary),
+      mode: CLValueBuilder.string('ADD'),
+      name: CLValueBuilder.string(name),
+      description: CLValueBuilder.string(description),
+      address: CLValueBuilder.key(address),
     });
 
     return this.contractClient.callEntrypoint(
@@ -547,11 +567,36 @@ class CEP47Client {
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
+      creator: CLValueBuilder.key(deploySender),
       url: CLValueBuilder.string(url),
     });
 
     return this.contractClient.callEntrypoint(
       'add_collection',
+      runtimeArgs,
+      deploySender,
+      this.networkName,
+      paymentAmount
+    );
+  }
+
+  public async addCreator(
+    name: string,
+    description: string,
+    url: string,
+    paymentAmount: string,
+    deploySender: CLPublicKey
+  ) {
+    const runtimeArgs = RuntimeArgs.fromMap({
+      mode: CLValueBuilder.string('ADD'),
+      name: CLValueBuilder.string(name),
+      description: CLValueBuilder.string(description),
+      address: CLValueBuilder.key(deploySender),
+      url: CLValueBuilder.string(url),
+    });
+
+    return this.contractClient.callEntrypoint(
+      'add_creator',
       runtimeArgs,
       deploySender,
       this.networkName,
