@@ -10,9 +10,10 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { getBeneficiariesList } from '../../../api/beneficiaryInfo';
 import { createCampaign } from '../../../api/createCampaign';
 import { CLPublicKey } from 'casper-js-sdk';
+import PromptLogin from '../PromptLogin';
 
 const AddCampaign = () => {
-  const { entityInfo, refreshAuth } = useAuth();
+  const { entityInfo, refreshAuth,isLoggedIn } = useAuth();
   const [beneficiaries, setBeneficiaries] = React.useState([]);
   const [beneficiary, setBeneficiary] = React.useState();
   const handleChange = (e, isBeneficiary = false) => {
@@ -70,7 +71,7 @@ const AddCampaign = () => {
         </div>
         {/* <!-- inner page banner END --> */}
         {/* <!-- contact area --> */}
-        <div className='section-full content-inner shop-account'>
+        {!isLoggedIn ? <PromptLogin />:     <div className='section-full content-inner shop-account'>
           {/* <!-- Product --> */}
           <div className='container'>
             <div>
@@ -153,7 +154,7 @@ const AddCampaign = () => {
           </div>
           {/* <!-- Product END --> */}
         </div>
-
+}
         {/* <!-- contact area  END --> */}
       </div>
 

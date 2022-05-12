@@ -6,9 +6,15 @@ import HeaderMenu from "./HeaderMenu";
 import casper from "./../../images/icon/casper.png";
 import { useAuth } from "../../contexts/AuthContext";
 import VINFTsTooltip from "../Element/Tooltip";
+import { Avatar } from "@mui/material";
 
 const Header1 = ({isNFTDetails=false}) => {
   const { isLoggedIn, entityInfo, balance, login, logout } = useAuth();
+  const generateRandomCharacter = () => {
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
+    return alphabet[Math.floor(Math.random() * alphabet.length)];
+  };
   useEffect(() => {
     // sidebar open/close
 
@@ -89,7 +95,7 @@ const Header1 = ({isNFTDetails=false}) => {
               <div className="extra-nav">
                 <div className="extra-cell">
                   {isLoggedIn && entityInfo ? (
-                    <div className="m-2">
+                    <div className="m-2 float-left">
                       {entityInfo.publicKey?.slice(0, 3)} ...
                       {entityInfo.publicKey?.slice(
                         entityInfo.publicKey.length - 2
@@ -104,6 +110,19 @@ const Header1 = ({isNFTDetails=false}) => {
                         onClick={login}
                       />
                     </VINFTsTooltip>
+                  )}
+                         {isLoggedIn && entityInfo && (
+                    <>
+                      <VINFTsTooltip title="Open settings">
+                          {/* <Avatar alt='John Doe' src='/static/images/avatar/2.jpg' /> */}
+                         <><Avatar className="float-left"
+                            aria-label="avatar"
+                          >
+                            {generateRandomCharacter()}
+                          </Avatar>
+                       <span className="d-inline-block ml-2 mt-2">{balance} CSPR</span>{" "} </> 
+                      </VINFTsTooltip>
+                    </>
                   )}
                 </div>
               </div>

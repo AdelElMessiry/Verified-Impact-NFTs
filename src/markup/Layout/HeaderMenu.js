@@ -2,7 +2,11 @@ import React, { Component ,useState,useEffect} from "react";
 import { Link } from "react-router-dom";
 import {getBeneficiariesCampaignsList} from "../../api/beneficiaryInfo"
 import {getCreatorsCollectionsList} from "../../api/creatorInfo"
+import { useAuth } from '../../contexts/AuthContext';
+
 const HeaderMenu =()=> {
+  const { isLoggedIn } = useAuth();
+
   const[beneficiaries,setBeneficiaries]=useState();
   const[creators,setCreators]=useState();
   useEffect(() => { 
@@ -71,7 +75,7 @@ const HeaderMenu =()=> {
             </ul>
           </li>
 		  <li>
-            <Link to={"#"}>
+          {isLoggedIn&&<><Link to={"#"}>
               My Collection <i className="fa fa-chevron-down"></i>
             </Link>
             <ul className="sub-menu">
@@ -85,7 +89,7 @@ const HeaderMenu =()=> {
                   My Creations
                 </Link>
               </li>
-            </ul>
+            </ul></> }
           </li>
         </ul>
       </>
