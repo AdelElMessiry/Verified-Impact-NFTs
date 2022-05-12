@@ -13,12 +13,14 @@ import NFTCard from "../Element/NFTCard";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { getNFTsList } from "../../api/nftInfo";
 import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
+import BuyNFTModal from "../Element/BuyNFT";
+
 
 const NFTDetail = () => {
-  const Iconimage = (props) => {
+  const Iconimage = ({nft}) => {
     return (
       <>
-        <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+        <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen" onClick={()=>{setSelectedNFT(nft);setShowBuyModal(true)}}></i>
       </>
     );
   };
@@ -26,6 +28,8 @@ const NFTDetail = () => {
   const queryParams = new URLSearchParams(search);
   const id = queryParams.get("id");
   const [item, setItem] = useState();
+  const [showBuyModal,setShowBuyModal]=useState(false);
+const [selectedNFT,setSelectedNFT]=useState();
   useEffect(async () => {
     const newNFTList = await getNFTsList();
     let nft = newNFTList.filter((nft) => nft.id == id);
@@ -116,7 +120,7 @@ const NFTDetail = () => {
                 <p className="d-flex align-content-center align-items-center">
                   <b>Price: </b>
                   {item[0].price} {item[0].currency} &nbsp;&nbsp;
-                  <Iconimage />
+                  <Iconimage  nft={item[0]}/>
                   &nbsp;&nbsp;
                   <NFTTwitterShare item={item[0]} />
                 </p>
@@ -126,6 +130,13 @@ const NFTDetail = () => {
         </div>
         {/* <!-- contact area END --> */}
       </div>
+      {showBuyModal&& <BuyNFTModal
+            show={showBuyModal}
+            handleCloseParent={() => {
+              setShowBuyModal(false);
+            }}
+            data={selectedNFT}
+          />}
       <Footer />
     </>
   );
