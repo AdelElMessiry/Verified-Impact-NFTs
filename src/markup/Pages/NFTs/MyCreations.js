@@ -21,6 +21,7 @@ import { Row, Col, Container } from "reactstrap";
 import NFTTwitterShare from "../../Element/TwitterShare/NFTTwitterShare";
 import CampaignOrCollectionTwitterShare from "../../Element/TwitterShare/CampaignOrCollectionTwitterShare";
 import { useAuth } from '../../../contexts/AuthContext';
+import {getCreatorsList,getCreatorDetails} from "../../../api/creatorInfo"
 
 // Masonry section
 const masonryOptions = {
@@ -81,6 +82,7 @@ const MyCreations = () => {
   const [campaignTags, setCampaignTags] = useState([]);
   const [creatorTags, setCreatorTags] = useState([]);
   const [searchFlag, setSearchFlag] = useState(false);
+  
 
   const Iconimage = (props) => {
     return (
@@ -250,10 +252,15 @@ const MyCreations = () => {
     (async () => {
       if (!entityInfo.publicKey) return;
 
-       newNFTList = await getNFTsOwned(entityInfo.publicKey);
-      setAllNfts(newNFTList)
-      console.log(newNFTList);
-    })();
+      let  creatorsList = await getCreatorsList();
+      console.log(creatorsList)
+      let selectedCreator=creatorsList.filter((c)=>(c.address===entityInfo.publicKey))
+      debugger;
+       newNFTList = selectedCreator.length>0?await getCreatorDetails(selectedCreator[0].id):[];
+      setAllNfts("ertreretetetertertre",newNFTList)
+    
+    debugger;
+    console.log(newNFTList);
  
     let collection = newNFTList.map((data) => ({ name: data.collection })).filter(
       (value, index, self) =>
@@ -375,7 +382,7 @@ const MyCreations = () => {
         </div>
       );
     }
-    setSliderCaptions(captions);
+    setSliderCaptions(captions);})();
   }, [entityInfo]);
 
   const options = {
