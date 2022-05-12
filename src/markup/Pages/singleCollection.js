@@ -16,6 +16,7 @@ import VINFTsTooltip from "../Element/Tooltip";
 import { TwitterIcon, TwitterShareButton } from "react-share";
 import { Row, Col, Container } from "reactstrap";
 import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
+import BuyNFTModal from "../Element/BuyNFT";
 
 // Masonry section
 const masonryOptions = {
@@ -37,11 +38,12 @@ const SingleCollection = () => {
   const [photoIndex, setPhotoIndex] = useState(0);
   const [sliderCaptions, setSliderCaptions] = useState([]);
   const [allNfts, setAllNfts] = useState([]);
-
-  const Iconimage = (props) => {
+  const [showBuyModal,setShowBuyModal]=useState(false);
+const [selectedNFT,setSelectedNFT]=useState();
+  const Iconimage = ({nft}) => {
     return (
       <>
-        <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+        <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen" onClick={()=>{setSelectedNFT(nft);setShowBuyModal(true)}}></i>
       </>
     );
   };
@@ -144,7 +146,7 @@ const SingleCollection = () => {
             <b>Price: </b>
             {Data[item].price} {Data[item].currency}
             &nbsp;&nbsp;
-            <Iconimage /> &nbsp;&nbsp; <NFTTwitterShare item={Data[item]}/>
+            <Iconimage   nft={Data[item]}/> &nbsp;&nbsp; <NFTTwitterShare item={Data[item]}/>
           </p>
         </div>
       );
@@ -267,6 +269,13 @@ const SingleCollection = () => {
           )}
         </div>
       </div>
+      {showBuyModal&& <BuyNFTModal
+            show={showBuyModal}
+            handleCloseParent={() => {
+              setShowBuyModal(false);
+            }}
+            data={selectedNFT}
+          />}
       <Footer />
     </Fragment>
   );
