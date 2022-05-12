@@ -255,11 +255,8 @@ const MyCreations = () => {
       let  creatorsList = await getCreatorsList();
       console.log(creatorsList)
       let selectedCreator=creatorsList.filter((c)=>(c.address===entityInfo.publicKey))
-      debugger;
        newNFTList = selectedCreator.length>0?await getCreatorDetails(selectedCreator[0].id):[];
-      setAllNfts("ertreretetetertertre",newNFTList)
     
-    debugger;
     console.log(newNFTList);
  
     let collection = newNFTList.map((data) => ({ name: data.collection })).filter(
