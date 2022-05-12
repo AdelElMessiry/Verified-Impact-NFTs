@@ -273,6 +273,7 @@ const MintNFT = () => {
                         name="radio-buttons-group"
                         value="1"
                         id="existCollection"
+                        checked={collectionState===1}
                       />
                       <Form.Check
                         type={"radio"}
@@ -283,6 +284,7 @@ const MintNFT = () => {
                         name="radio-buttons-group"
                         value="2"
                         id="newCollection"
+                        checked={collectionState===2}
                       />
                     </Col>{" "}
                     <Col>

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "../../Layout/Header1";
 import Footer from "../../Layout/Footer1";
@@ -6,8 +6,38 @@ import PageTitle from "../../Layout/PageTitle";
 
 import bnr1 from "./../../../images/banner/bnr1.jpg";
 import { Col, Container, Row } from "react-bootstrap";
+import { CLPublicKey } from "casper-js-sdk";
+
+import { addBeneficiary } from "../../../api/addBeneficiary";
+import { numberOfNFTsOwned } from "../../../api/userInfo";
+import { useAuth } from "../../../contexts/AuthContext";
+import PromptLogin from '../PromptLogin';
 
 const AddBeneficiary = () => {
+  const { isLoggedIn,entityInfo } = useAuth();
+
+  const [beneficiaryInputs, setBeneficiaryInputs] = useState({
+    BeneficiaryInputs: { name: "", description: "", address: "" },
+  });
+
+  useEffect(() => {
+    (async () => {
+      setBeneficiaryInputs({
+        name: "",
+        description: "",
+        address: "",
+      });
+    })();
+  }, [entityInfo.publicKey]);
+
+  const saveBeneficiary = async () => {
+    const savedBeneficiary = await addBeneficiary(
+      beneficiaryInputs.name,
+      beneficiaryInputs.description,
+      CLPublicKey.fromHex(beneficiaryInputs.address),
+      CLPublicKey.fromHex(entityInfo.publicKey)
+    );
+  };
   return (
     <>
       <Header />
@@ -25,7 +55,7 @@ const AddBeneficiary = () => {
         </div>
         {/* <!-- inner page banner END --> */}
         {/* <!-- contact area --> */}
-        <div className="section-full content-inner shop-account">
+        {!isLoggedIn ? <PromptLogin />:   <div className="section-full content-inner shop-account">
           {/* <!-- Product --> */}
           <div className="container">
             <div>
@@ -35,19 +65,31 @@ const AddBeneficiary = () => {
                     <Col>
                       <input
                         type="text"
-                        value="Name"
-                        name="Name"
+                        name="name"
                         placeholder="Name"
                         className="form-control"
+                        value={beneficiaryInputs.name}
+                        onChange={(e) =>
+                          setBeneficiaryInputs({
+                            ...beneficiaryInputs,
+                            name: e.target.value,
+                          })
+                        }
                       />
                     </Col>
                     <Col>
                       <input
                         type="text"
-                        value="address"
                         placeholder="Address"
                         name="address"
                         className="form-control"
+                        value={beneficiaryInputs.address}
+                        onChange={(e) =>
+                          setBeneficiaryInputs({
+                            ...beneficiaryInputs,
+                            address: e.target.value,
+                          })
+                        }
                       />
                     </Col>
                   </Row>
@@ -58,6 +100,13 @@ const AddBeneficiary = () => {
                         name="description"
                         placeholder="Description"
                         className="form-control"
+                        value={beneficiaryInputs.description}
+                        onChange={(e) =>
+                          setBeneficiaryInputs({
+                            ...beneficiaryInputs,
+                            description: e.target.value,
+                          })
+                        }
                       ></textarea>
                     </Col>
                   </Row>
@@ -70,6 +119,7 @@ const AddBeneficiary = () => {
                           value="Create"
                           className="btn btn-success"
                           name="submit"
+                          onClick={saveBeneficiary}
                         />
                       </p>
                     </Col>
@@ -80,7 +130,7 @@ const AddBeneficiary = () => {
           </div>
           {/* <!-- Product END --> */}
         </div>
-
+}
         {/* <!-- contact area  END --> */}
       </div>
 
