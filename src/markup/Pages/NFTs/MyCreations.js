@@ -22,6 +22,7 @@ import NFTTwitterShare from "../../Element/TwitterShare/NFTTwitterShare";
 import CampaignOrCollectionTwitterShare from "../../Element/TwitterShare/CampaignOrCollectionTwitterShare";
 import { useAuth } from '../../../contexts/AuthContext';
 import {getCreatorsList,getCreatorDetails} from "../../../api/creatorInfo"
+import BuyNFTModal from "../../Element/BuyNFT";
 
 // Masonry section
 const masonryOptions = {
@@ -82,12 +83,13 @@ const MyCreations = () => {
   const [campaignTags, setCampaignTags] = useState([]);
   const [creatorTags, setCreatorTags] = useState([]);
   const [searchFlag, setSearchFlag] = useState(false);
-  
+  const [showBuyModal,setShowBuyModal]=useState(false);
+  const [selectedNFT,setSelectedNFT]=useState();
 
-  const Iconimage = (props) => {
+  const Iconimage = ({nft}) => {
     return (
       <>
-        <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+        <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen" onClick={()=>{setSelectedNFT(nft);setShowBuyModal(true)}}></i>
       </>
     );
   };
@@ -374,7 +376,7 @@ const MyCreations = () => {
             <b>Price: </b>
             {newNFTList[item].price} {newNFTList[item].currency}
             &nbsp;&nbsp;
-            <Iconimage /> &nbsp;&nbsp; <NFTTwitterShare item={newNFTList[item]} />
+            <Iconimage    nft={newNFTList[item]}/> &nbsp;&nbsp; <NFTTwitterShare item={newNFTList[item]} />
           </p>
         </div>
       );
@@ -541,6 +543,13 @@ const MyCreations = () => {
           )}
         </div>
       </div>
+      {showBuyModal&& <BuyNFTModal
+            show={showBuyModal}
+            handleCloseParent={() => {
+              setShowBuyModal(false);
+            }}
+            data={selectedNFT}
+          />}
       <Footer />
     </Fragment>
   );
