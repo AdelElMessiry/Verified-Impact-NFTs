@@ -252,8 +252,7 @@ const MyNFTs = () => {
        newNFTList = await getNFTsOwned(entityInfo.publicKey);
       setAllNfts(newNFTList)
       console.log(newNFTList);
-    })();
- 
+   
     let collection = newNFTList.map((data) => ({ name: data.collection })).filter(
       (value, index, self) =>
         index === self.findIndex((t) => t.name === value.name)
@@ -374,7 +373,7 @@ const MyNFTs = () => {
         </div>
       );
     }
-    setSliderCaptions(captions);
+    setSliderCaptions(captions); })();
   }, [entityInfo]);
 
   const options = {
