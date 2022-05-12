@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import VINFTsTooltip from "./Tooltip";
 import { TwitterIcon, TwitterShareButton } from "react-share";
 import NFTTwitterShare from "./TwitterShare/NFTTwitterShare";
+import BuyNFTModal from "./BuyNFT";
 
 const NFTCard = ({ index, item, openSlider }) => {
   //Light Gallery on icon click
+  const [showBuyModal,setShowBuyModal]=useState(false)
   const Iconimage = (props) => {
     return (
       <>
@@ -19,9 +21,16 @@ const NFTCard = ({ index, item, openSlider }) => {
         >
           <i className="ti-fullscreen icon-bx-xs"></i>
         </Link>
-        <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
-        {process.env.REACT_APP_SHOW_TWITTER != "false" &&(
-        <NFTTwitterShare item={item} isWithoutText={true}/>
+        <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen" onClick={()=>{setShowBuyModal(true)}}></i>
+       {showBuyModal&& <BuyNFTModal
+          show={showBuyModal}
+          handleCloseParent={() => {
+            setShowBuyModal(false);
+          }}
+          data={item}
+        />}
+        {process.env.REACT_APP_SHOW_TWITTER != "false" && (
+          <NFTTwitterShare item={item} isWithoutText={true} />
         )}
       </>
     );
@@ -29,7 +38,11 @@ const NFTCard = ({ index, item, openSlider }) => {
   return (
     <div className="dlab-box dlab-gallery-box">
       <div className="dlab-media dlab-img-overlay1 dlab-img-effect">
-        <img src={item.image} alt="" className="img img-fluid fit-img fit-img-cover" />
+        <img
+          src={item.image}
+          alt=""
+          className="img img-fluid fit-img fit-img-cover"
+        />
         <div className="overlay-bx">
           <div className="overlay-icon align-b text-white text-left">
             <div className="text-white text-left port-box">
@@ -67,7 +80,7 @@ const NFTCard = ({ index, item, openSlider }) => {
                     >
                       {item.campaign}
                     </Link>
-                  ) }
+                  )}
                 </VINFTsTooltip>
               </p>
               <p>
@@ -89,9 +102,11 @@ const NFTCard = ({ index, item, openSlider }) => {
               <p>
                 <b>Collection: </b>
                 <Link
-                    to={`./collection?collection=${item.collection}`}
-                    className="dez-page text-white"
-                  >{item.collection}</Link>
+                  to={`./collection?collection=${item.collection}`}
+                  className="dez-page text-white"
+                >
+                  {item.collection}
+                </Link>
               </p>
               <p>
                 <b>Price: </b>

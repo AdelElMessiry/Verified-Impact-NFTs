@@ -20,15 +20,10 @@ import { TwitterIcon, TwitterShareButton } from "react-share";
 import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
 import CampaignOrCollectionTwitterShare from "../Element/TwitterShare/CampaignOrCollectionTwitterShare";
 import Carousel from "react-elastic-carousel";
+import BuyNFTModal from "../Element/BuyNFT";
 
 //Light Gallery on icon click
-const Iconimage = (props) => {
-  return (
-    <>
-      <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
-    </>
-  );
-};
+
 
 const Index4 = () => {
   const [openSliderCamp1, setOpenSliderCamp1] = useState(false);
@@ -40,7 +35,15 @@ const Index4 = () => {
   const [sliderCaptionsCamp2, setSliderCaptionsCamp2] = useState([]);
   const [sliderCaptionsCamp3, setSliderCaptionsCamp3] = useState([]);
   const [sliderCaptionsCamp4, setSliderCaptionsCamp4] = useState([]);
-
+  const [showBuyModal,setShowBuyModal]=useState(false);
+  const [selectedNFT,setSelectedNFT]=useState();
+  const Iconimage = ({nft}) => {
+    return (
+      <>
+        <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen" onClick={()=>{setSelectedNFT(nft);setShowBuyModal(true)}}></i>
+      </>
+    );
+  };
   const breakPoints = [
     { width: 1, itemsToShow: 1 },
     { width: 550, itemsToShow: 2, itemsToScroll: 2 },
@@ -170,7 +173,7 @@ const Index4 = () => {
           <p className="d-flex align-content-center align-items-center">
             <b>Price: </b>
             {data[item].price} {data[item].currency}
-            &nbsp;&nbsp; <Iconimage /> &nbsp;&nbsp;{" "}
+            &nbsp;&nbsp; <Iconimage nft={data[item]}/> &nbsp;&nbsp;{" "}
             {process.env.REACT_APP_SHOW_TWITTER != "false" &&(
             <NFTTwitterShare item={data[item]} />
             )}
@@ -501,7 +504,13 @@ const Index4 = () => {
           </SRLWrapper>
         </SimpleReactLightbox>
       </div>
-
+      {showBuyModal&& <BuyNFTModal
+            show={showBuyModal}
+            handleCloseParent={() => {
+              setShowBuyModal(false);
+            }}
+            data={selectedNFT}
+          />}
       <Footer3 />
     </>
   );
