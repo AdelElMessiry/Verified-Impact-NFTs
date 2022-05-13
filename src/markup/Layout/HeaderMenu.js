@@ -9,14 +9,25 @@ const HeaderMenu =()=> {
 
   const[beneficiaries,setBeneficiaries]=useState();
   const[creators,setCreators]=useState();
-  useEffect(() => { 
-    (async () => {
+  const getBeneficiaries = React.useCallback(async () => {
+    const beneficiaries = await getBeneficiariesCampaignsList();
+    setBeneficiaries(beneficiaries);
+    debugger;
+  }, [beneficiaries]);
 
-     let  beneficiaryList = await getBeneficiariesCampaignsList();
-       setBeneficiaries(beneficiaryList)
-       let  creatorsList = await getCreatorsCollectionsList();
-       setCreators(creatorsList)
-    })();},[])
+  React.useEffect(() => {
+    !beneficiaries && getBeneficiaries();
+  }, [beneficiaries]);
+
+
+  const getCreators = React.useCallback(async () => {
+    const creators = await getCreatorsCollectionsList();
+    setCreators(creators);
+  }, [creators]);
+
+  React.useEffect(() => {
+    !creators && getCreators();
+  }, [creators]);
     return (
       <>
         <ul className="nav navbar-nav">
@@ -30,7 +41,7 @@ const HeaderMenu =()=> {
               Beneficiaries <i className="fa fa-chevron-down"></i>
             </Link>
             <ul className="sub-menu">
-                {beneficiaries?.map((b)=>(
+                {beneficiaries?.length>0&&beneficiaries?.map((b)=>(
               <li>
                    <Link to={`./BenefeiciaryNFTs?beneficiary=${b.name}`} className="dez-page">
                     {b.name} <i className="fa fa-angle-right"></i>
