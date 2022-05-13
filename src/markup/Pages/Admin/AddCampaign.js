@@ -31,7 +31,7 @@ const AddCampaign = () => {
   };
   const [state, setState] = useState({
     inputs: {
-      url: '',
+      campaignUrl: '',
       name: '',
       description: '',
       walletAddress: '',
@@ -51,7 +51,7 @@ const AddCampaign = () => {
       state.inputs.name,
       state.inputs.description,
       state.inputs.walletAddress,
-      state.inputs.url,
+      state.inputs.campaignUrl,
       state.inputs.requestedRoyalty,
       CLPublicKey.fromHex(entityInfo.publicKey)
     );
@@ -106,7 +106,7 @@ const AddCampaign = () => {
                       <input
                         type='text'
                         placeholder='Requested Royalty'
-                        name='name'
+                        name='requestedRoyalty'
                         className='form-control'
                         value={state.inputs.requestedRoyalty}
                         onChange={(e) => handleChange(e)}
@@ -116,9 +116,10 @@ const AddCampaign = () => {
                       <input
                         type='text'
                         placeholder='URL'
-                        name='name'
+                        name='campaignUrl'
                         className='form-control'
-                        value={state.inputs.url}
+                        value={state.inputs.campaignUrl}
+                        onChange={(e) => handleChange(e)}
                       />
                     </Col>
                   </Row>
