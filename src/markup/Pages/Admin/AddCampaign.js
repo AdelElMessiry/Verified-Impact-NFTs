@@ -14,6 +14,7 @@ import PromptLogin from '../PromptLogin';
 
 const AddCampaign = () => {
   const { entityInfo, refreshAuth,isLoggedIn } = useAuth();
+
   const [beneficiary, setBeneficiary] = React.useState();
   const handleChange = (e, isBeneficiary = false) => {
     if (isBeneficiary) {
@@ -34,7 +35,6 @@ const AddCampaign = () => {
       campaignUrl: '',
       name: '',
       description: '',
-      walletAddress: '',
       requestedRoyalty: '',
     },
   });
@@ -44,17 +44,25 @@ const AddCampaign = () => {
       let beneficiaryList =
         !beneficiaries && (await getBeneficiariesList());
       !beneficiaries && setBeneficiaries(beneficiaryList);
+      !beneficiaries && setBeneficiary(beneficiaryList[0].address);
     })();
   }, [ beneficiaries]);
   const saveCampaign = async () => {
     const savedCampaign = await createCampaign(
       state.inputs.name,
       state.inputs.description,
-      state.inputs.walletAddress,
+      beneficiary,
       state.inputs.campaignUrl,
       state.inputs.requestedRoyalty,
       CLPublicKey.fromHex(entityInfo.publicKey)
     );
+    console.log("save Result",savedCampaign)
+    console.log("save Result",state.inputs.name,
+    state.inputs.description,
+    beneficiary,
+    state.inputs.campaignUrl,
+    state.inputs.requestedRoyalty,
+    CLPublicKey.fromHex(entityInfo.publicKey))
   };
   return (
     <>
