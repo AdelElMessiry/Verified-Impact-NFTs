@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "../../Layout/Header1";
 import Footer from "../../Layout/Footer1";
@@ -18,11 +18,10 @@ import { Form } from "react-bootstrap";
 import { mint, NFTReference } from "../../../api/mint";
 import { getDeployDetails } from "../../../api/universal";
 import { numberOfNFTsOwned } from "../../../api/userInfo";
+import CreatableSelect from "react-select/creatable";
 
 const MintNFT = () => {
   const { entityInfo, refreshAuth } = useAuth();
-  const [beneficiaries, setBeneficiaries] = React.useState([]);
-  const [campaigns, setCampaigns] = React.useState([]);
   const [image, setImage] = useState([]);
   const [collectionState, setCollectionState] = useState(1);
   const [collections, setCollections] = useState([]);
@@ -30,6 +29,33 @@ const MintNFT = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [uploadingToCloud, setUploadingToCloud] = useState(false);
   const [validID, setValidID] = useState(false);
+  const [selectedCollectionValue, setSelectedCollectionValue] = useState(
+    {}
+  );
+  const [isLoading, setIsLoading] = useState(false);
+
+
+  let selectedOptions = [];
+  const [options, setOptions] = useState(selectedOptions);
+
+  const createOption = (label) => ({
+    label,
+    value: label.toLowerCase().replace(/\W/g, ""),
+  });
+
+  const handleCreate = (inputValue) => {
+    setIsLoading(true);
+    console.group("Option created");
+    console.log("Wait a moment...");
+    setTimeout(() => {
+      const newOption = createOption(inputValue);
+      console.log(newOption);
+      console.groupEnd();
+      setIsLoading(false);
+      setOptions([...options, newOption]);
+      setSelectedCollectionValue(newOption);
+    }, 1000);
+  };
 
   const handleChange = (e) => {
     const { value, name, checked, type } = e.target;
@@ -58,25 +84,20 @@ const MintNFT = () => {
       beneficiary: "",
       beneficiaryPercentage: "",
       collection: "",
-      isImageURL:false
+      isImageURL: false,
     },
   });
-  const getBeneficiaries = React.useCallback(async () => {
-    const beneficiaries = await getBeneficiariesList();
-    setBeneficiaries(beneficiaries);
-  }, [beneficiaries]);
+  const [beneficiaries, setBeneficiaries] = useState();
+  const [campaigns, setCampaigns] = React.useState();
 
-  React.useEffect(() => {
-    !beneficiaries && getBeneficiaries();
-  }, [beneficiaries]);
-  const getCampaigns = React.useCallback(async () => {
-    const campaigns = await getCampaignsList();
-    setCampaigns(campaigns);
-  }, [beneficiaries]);
-
-  React.useEffect(() => {
-    !campaigns && getCampaigns();
-  }, [campaigns]);
+  useEffect(() => {
+    (async () => {
+      let beneficiaryList = !beneficiaries && (await getBeneficiariesList());
+      !beneficiaries && setBeneficiaries(beneficiaryList);
+      let campaignsList = !campaigns && (await getCampaignsList());
+      !campaigns && setCampaigns(campaignsList);
+    })();
+  }, [beneficiaries, campaigns]);
 
   const onDrop = (picture) => {
     setImage(picture);
@@ -200,139 +221,164 @@ const MintNFT = () => {
             <div>
               <div className=" m-auto m-b30">
                 <Container>
-                  <Row className="form-group align-items-center">
-                  <Col>
-                      <Form.Check
-                        type={"checkbox"}
-                        id={"isImageURL"}
-                        label={`Already hosted image, enter direct url ?`}
-                        onChange={(e)=>handleChange(e)}
-                        value={state.inputs.isImageURL}
-                        name="isImageURL"
-                      />
-                    </Col>
-                    <Col>
-                    {state.inputs.isImageURL?  <input
-                        type="text"
-                        placeholder="Image URl"
-                        name="imageUrl"
-                        className="form-control"
-                        onChange={(e) => handleChange(e)}
-                        value={state.inputs.imageUrl}
-                      />:
-                      <ImageUploader
-                        singleImage
-                        withIcon={true}
-                        buttonText="Choose images"
-                        onChange={onDrop}
-                        imgExtension={[".jpg", ".gif", ".png"]}
-                        maxFileSize={20209230}
-                        withPreview={true}
-                        label={"Max file size: 20mb, accepted: jpg|gif|png"}
-                      />}
-                    </Col>
-                  </Row>
                   <Row className="form-group">
                     <Col>
-                    <label>Beneficiary</label>
-                      <select
-                        name="Beneficiary"
-                        placeholder="Beneficiary"
-                        className="form-control"
-                        onChange={(e) => handleChange(e)}
-                        value={state.inputs.beneficiary}
-                      >
-                        {beneficiaries.map(({ name, address }) => (
-                          <option value={address}> {name}</option>
-                        ))}
-                      </select>
+                      <Row className="form-group">
+                        <Col>
+                          <label>Select Beneficiary</label>
+                          <select
+                            name="Beneficiary"
+                            placeholder="Beneficiary"
+                            className="form-control"
+                            onChange={(e) => handleChange(e)}
+                            value={state.inputs.beneficiary}
+                          >
+                            {beneficiaries?.map(({ name, address }) => (
+                              <option key={address} value={address}>
+                                {name}
+                              </option>
+                            ))}
+                          </select>
+                        </Col>
+                      </Row>
+                      <Row className="form-group">
+                        <Col>
+                          <label>Select Campaign</label>
+                          <select
+                            name="Campaign"
+                            placeholder="Campaign"
+                            className="form-control"
+                            onChange={(e) => handleChange(e)}
+                            value={state.inputs.campaign}
+                          >
+                            {campaigns?.map(({ name, address }) => (
+                              <option value={address}> {name}</option>
+                            ))}
+                          </select>
+                        </Col>
+                      </Row>
+                      {/* <Row className="form-group">
+                        <Col>
+                          <Form.Check
+                            type={"radio"}
+                            label="Exist Collection"
+                            onChange={() => {
+                              setCollectionState(1);
+                            }}
+                            name="radio-buttons-group"
+                            value="1"
+                            id="existCollection"
+                            checked={collectionState === 1}
+                          />
+                          <Form.Check
+                            type={"radio"}
+                            label="New Collection"
+                            onChange={() => {
+                              setCollectionState(2);
+                            }}
+                            name="radio-buttons-group"
+                            value="2"
+                            id="newCollection"
+                            checked={collectionState === 2}
+                          />
+                        </Col>{" "}
+                      </Row> */}
+                      <Row className="form-group">
+                        <Col>
+                        <CreatableSelect
+                        isClearable
+                        isLoading={isLoading}
+                        onChange={(v) => setSelectedCollectionValue(v)}
+                        onCreateOption={(v) => handleCreate(v)}
+                        options={options}
+                        value={selectedCollectionValue}
+                        menuPortalTarget={document.body}
+                        placeholder="Select..."
+                      />
+                        </Col>
+                      </Row>
+                      <Row className="form-group">
+                        <Col>
+                          <input
+                            type="text"
+                            placeholder="Creator"
+                            name="creator"
+                            className="form-control"
+                            onChange={(e) => handleChange(e)}
+                            value={state.inputs.creator}
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="form-group">
+                        <Col>
+                          <input
+                            type="text"
+                            placeholder="Name"
+                            name="name"
+                            className="form-control"
+                            onChange={(e) => handleChange(e)}
+                            value={state.inputs.name}
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="form-group">
+                        <Col>
+                          <Form.Check
+                            type={"checkbox"}
+                            id={"isForSale"}
+                            label={`Is For Sale`}
+                            onChange={(e) => handleChange(e)}
+                            value={state.inputs.isForSale}
+                            name="isForSale"
+                          />
+                        </Col>
+                      </Row>
                     </Col>
                     <Col>
-                    <label>Campaign</label>
-                      <select
-                        name="Campaign"
-                        placeholder="Campaign"
-                        className="form-control"
-                        onChange={(e) => handleChange(e)}
-                        value={state.inputs.campaign}
-                      >
-                        {campaigns.map(({ name, address }) => (
-                          <option value={address}> {name}</option>
-                        ))}
-                      </select>
+                      <Row className="form-group">
+                        {" "}
+                        <Col>
+                          <Form.Check
+                            type={"checkbox"}
+                            id={"isImageURL"}
+                            label={`Already hosted image, enter direct url ?`}
+                            onChange={(e) => handleChange(e)}
+                            value={state.inputs.isImageURL}
+                            name="isImageURL"
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="form-group">
+                        {" "}
+                        <Col>
+                          {state.inputs.isImageURL ? (
+                            <input
+                              type="text"
+                              placeholder="Image URl"
+                              name="imageUrl"
+                              className="form-control"
+                              onChange={(e) => handleChange(e)}
+                              value={state.inputs.imageUrl}
+                            />
+                          ) : (
+                            <ImageUploader
+                              singleImage
+                              withIcon={true}
+                              buttonText="Choose images"
+                              onChange={onDrop}
+                              imgExtension={[".jpg", ".gif", ".png"]}
+                              maxFileSize={20209230}
+                              withPreview={true}
+                              label={
+                                "Max file size: 20mb, accepted: jpg|gif|png"
+                              }
+                            />
+                          )}
+                        </Col>
+                      </Row>
                     </Col>
                   </Row>
-                  <Row className="form-group">
-                    <Col>
-                      <Form.Check
-                        type={"radio"}
-                        label="Exist Collection"
-                        onChange={() => {
-                          setCollectionState(1);
-                        }}
-                        name="radio-buttons-group"
-                        value="1"
-                        id="existCollection"
-                        checked={collectionState===1}
-                      />
-                      <Form.Check
-                        type={"radio"}
-                        label="New Collection"
-                        onChange={() => {
-                          setCollectionState(2);
-                        }}
-                        name="radio-buttons-group"
-                        value="2"
-                        id="newCollection"
-                        checked={collectionState===2}
-                      />
-                    </Col>{" "}
-                    <Col>
-                      {collectionState == 1 ? (
-                        <select
-                          label="Collection"
-                          value={state.inputs.collection}
-                          onChange={(e) => handleChange(e)}
-                          className="form-control"
-                        >
-                          {collections.map(({ name, address }) => (
-                            <option key={address} value={name}>
-                              {name}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                   <> <label>Collection</label>
-                        <input
-                          value={state.inputs.collectionName}
-                          onChange={(e) => handleChange(e)}
-                          className="form-control"
-                        /></>
-                      )}
-                    </Col>
-                  </Row>
-                  <Row className="form-group">
-                    <Col>
-                      <input
-                        type="text"
-                        placeholder="Name"
-                        name="name"
-                        className="form-control"
-                        onChange={(e) => handleChange(e)}
-                        value={state.inputs.name}
-                      />
-                    </Col>
-                    <Col>
-                      <Form.Check
-                        type={"checkbox"}
-                        id={"isForSale"}
-                        label={`Is For Sale`}
-                        onChange={(e)=>handleChange(e)}
-                        value={state.inputs.isForSale}
-                        name="isForSale"
-                      />
-                    </Col>
-                  </Row>
+
                   <Row className="form-group">
                     <Col>
                       <textarea
