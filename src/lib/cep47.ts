@@ -268,7 +268,7 @@ class CEP47Client {
 
   public async getBeneficiary(beneficiaryId: string) {
     const result = await this.contractClient.queryContractDictionary(
-      'beneficiaries',
+      'beneficiaries_list',
       beneficiaryId
     );
 
