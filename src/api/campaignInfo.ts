@@ -4,7 +4,7 @@ export async function getCampaignDetails(campaignId: string) {
   console.log(campaignId);
 
   const campaignDetails = await cep47.getCampaign(campaignId);
-  console.log(`NFT ${campaignId} metadata: `, campaignDetails);
+  console.log(`NFT ${campaignId} campaign: `, campaignDetails);
   return campaignDetails;
 }
 
@@ -20,14 +20,15 @@ export async function parseCampaign(maybeValue: any) {
 }
 
 export async function getCampaignsList() {
-  const campaignCount = await cep47.totalCampaigns();
+  const campaignCount: any = await cep47.totalCampaigns();
 
   const campaignsList: any = [];
-  for (const id of [...(Array(campaignCount).keys() as any)]) {
-    await getCampaignDetails(id.toString())
-      .then((rawCampaign: any) => {
+  for (const id of [...(Array(parseInt(campaignCount)).keys() as any)]) {
+    await getCampaignDetails((id + 1).toString())
+      .then(async (rawCampaign: any) => {
         console.log(rawCampaign);
-        campaignsList.push(parseCampaign(rawCampaign));
+        const parsedCampaigns = await parseCampaign(rawCampaign);
+        campaignsList.push(parsedCampaigns);
       })
       .catch((err) => {
         console.log(err);
