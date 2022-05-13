@@ -70,7 +70,7 @@ const AddCampaign = () => {
         </div>
         {/* <!-- inner page banner END --> */}
         {/* <!-- contact area --> */}
-        {isLoggedIn ? <PromptLogin />:     <div className='section-full content-inner shop-account'>
+        {!isLoggedIn ? <PromptLogin />:     <div className='section-full content-inner shop-account'>
           {/* <!-- Product --> */}
           <div className='container'>
             <div>
