@@ -34,7 +34,6 @@ const AddCampaign = () => {
       campaignUrl: '',
       name: '',
       description: '',
-      walletAddress: '',
       requestedRoyalty: '',
     },
   });
@@ -44,13 +43,14 @@ const AddCampaign = () => {
       let beneficiaryList =
         !beneficiaries && (await getBeneficiariesList());
       !beneficiaries && setBeneficiaries(beneficiaryList);
+      !beneficiaries && setBeneficiary(beneficiaryList[0].address);
     })();
   }, [ beneficiaries]);
   const saveCampaign = async () => {
     const savedCampaign = await createCampaign(
       state.inputs.name,
       state.inputs.description,
-      state.inputs.walletAddress,
+      beneficiary,
       state.inputs.campaignUrl,
       state.inputs.requestedRoyalty,
       CLPublicKey.fromHex(entityInfo.publicKey)
