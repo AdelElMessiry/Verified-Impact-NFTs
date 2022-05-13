@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../../Layout/Header1';
 import Footer from '../../Layout/Footer1';
@@ -14,7 +14,6 @@ import PromptLogin from '../PromptLogin';
 
 const AddCampaign = () => {
   const { entityInfo, refreshAuth,isLoggedIn } = useAuth();
-  const [beneficiaries, setBeneficiaries] = React.useState([]);
   const [beneficiary, setBeneficiary] = React.useState();
   const handleChange = (e, isBeneficiary = false) => {
     if (isBeneficiary) {
@@ -39,14 +38,14 @@ const AddCampaign = () => {
       requestedRoyalty: '',
     },
   });
-  const getBeneficiaries = React.useCallback(async () => {
-    const beneficiaries = await getBeneficiariesList();
-    setBeneficiaries(beneficiaries);
-  }, [beneficiaries]);
-
-  React.useEffect(() => {
-    !beneficiaries && getBeneficiaries();
-  }, [beneficiaries]);
+  const [beneficiaries, setBeneficiaries] = useState();
+  useEffect(() => {
+    (async () => {
+      let beneficiaryList =
+        !beneficiaries && (await getBeneficiariesList());
+      !beneficiaries && setBeneficiaries(beneficiaryList);
+    })();
+  }, [ beneficiaries]);
   const saveCampaign = async () => {
     const savedCampaign = await createCampaign(
       state.inputs.name,
@@ -86,8 +85,8 @@ const AddCampaign = () => {
                         onChange={(e) => handleChange(e, true)}
                         value={beneficiary}
                       >
-                        {beneficiaries.map(({ name, address }) => (
-                          <option value={address}> {name}</option>
+                        {beneficiaries?.map(({ name, address }) => (
+                          <option key={address} value={address}> {name}</option>
                         ))}
                       </select>
                     </Col>
