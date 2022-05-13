@@ -19,6 +19,7 @@ import { Row, Col, Container } from "reactstrap";
 import NFTTwitterShare from "../../Element/TwitterShare/NFTTwitterShare";
 import CampaignOrCollectionTwitterShare from "../../Element/TwitterShare/CampaignOrCollectionTwitterShare";
 import BuyNFTModal from "../../Element/BuyNFT";
+import { getBeneficiariesList } from '../../../api/beneficiaryInfo';
 
 // Masonry section
 const masonryOptions = {
@@ -79,13 +80,28 @@ const BenefeiciaryNFTs = () => {
   const [campaignTags, setCampaignTags] = useState([]);
   const [creatorTags, setCreatorTags] = useState([]);
   const [searchFlag, setSearchFlag] = useState(false);
-  const [showBuyModal,setShowBuyModal]=useState(false);
-  const [selectedNFT,setSelectedNFT]=useState();
-
-  const Iconimage = ({nft}) => {
+  const [showBuyModal, setShowBuyModal] = useState(false);
+  const [selectedNFT, setSelectedNFT] = useState();
+  const [beneficiaryDescription, setBeneficiaryDescription] = useState();
+  useEffect(() => {
+    (async () => {
+      if (!campaign) {
+        let beneficiaryList = !beneficiaryDescription && (await getBeneficiariesList());
+       let selectedBeneficiary= !beneficiaryDescription && beneficiaryList.filter((b)=>(b.name===beneficiary));
+        !beneficiaryDescription && setBeneficiaryDescription(selectedBeneficiary[0].description);
+      }
+    })();
+  }, [beneficiaryDescription]);
+  const Iconimage = ({ nft }) => {
     return (
       <>
-        <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen" onClick={()=>{setSelectedNFT(nft);setShowBuyModal(true)}}></i>
+        <i
+          className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"
+          onClick={() => {
+            setSelectedNFT(nft);
+            setShowBuyModal(true);
+          }}
+        ></i>
       </>
     );
   };
@@ -370,7 +386,8 @@ const BenefeiciaryNFTs = () => {
             <b>Price: </b>
             {Data[item].price} {Data[item].currency}
             &nbsp;&nbsp;
-            <Iconimage   nft={Data[item]}/> &nbsp;&nbsp; <NFTTwitterShare item={Data[item]} />
+            <Iconimage nft={Data[item]} /> &nbsp;&nbsp;{" "}
+            <NFTTwitterShare item={Data[item]} />
           </p>
         </div>
       );
@@ -418,6 +435,7 @@ const BenefeiciaryNFTs = () => {
                   />
                 )}
               </h1>
+              <p className="text-white ben-desc">{(!campaign&&beneficiaryDescription)?beneficiaryDescription:""}</p>
 
               <div className="breadcrumb-row">
                 <ul className="list-inline">
@@ -554,13 +572,15 @@ const BenefeiciaryNFTs = () => {
           )}
         </div>
       </div>
-      {showBuyModal&& <BuyNFTModal
-            show={showBuyModal}
-            handleCloseParent={() => {
-              setShowBuyModal(false);
-            }}
-            data={selectedNFT}
-          />}
+      {showBuyModal && (
+        <BuyNFTModal
+          show={showBuyModal}
+          handleCloseParent={() => {
+            setShowBuyModal(false);
+          }}
+          data={selectedNFT}
+        />
+      )}
       <Footer />
     </Fragment>
   );
