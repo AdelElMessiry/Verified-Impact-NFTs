@@ -45,18 +45,20 @@ export async function getCreatorsCollectionsList() {
   const mappedCreatorsList: any = [];
 
   creatorsList.find((creator: any) =>
-    collectionsList.some(
-      (collection: any) =>
-        creator.address === collection.creator &&
-        mappedCreatorsList.find((newCreator: any) =>
-          creator.address === newCreator.address
-            ? newCreator.collections.push(creator)
-            : mappedCreatorsList.push({
-                ...creator,
-                collections: [collection],
-              })
+    collectionsList.length
+      ? collectionsList.some(
+          (collection: any) =>
+            creator.address === collection.creator &&
+            mappedCreatorsList.find((newCreator: any) =>
+              creator.address === newCreator.address
+                ? newCreator.collections.push(creator)
+                : mappedCreatorsList.push({
+                    ...creator,
+                    collections: [collection],
+                  })
+            )
         )
-    )
+      : mappedCreatorsList.push({ ...creator, collections: [] })
   );
 
   return mappedCreatorsList;
