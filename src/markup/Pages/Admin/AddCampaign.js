@@ -14,6 +14,7 @@ import PromptLogin from '../PromptLogin';
 
 const AddCampaign = () => {
   const { entityInfo, refreshAuth,isLoggedIn } = useAuth();
+
   const [beneficiary, setBeneficiary] = React.useState();
   const handleChange = (e, isBeneficiary = false) => {
     if (isBeneficiary) {
@@ -55,6 +56,13 @@ const AddCampaign = () => {
       state.inputs.requestedRoyalty,
       CLPublicKey.fromHex(entityInfo.publicKey)
     );
+    console.log("save Result",savedCampaign)
+    console.log("save Result",state.inputs.name,
+    state.inputs.description,
+    beneficiary,
+    state.inputs.campaignUrl,
+    state.inputs.requestedRoyalty,
+    CLPublicKey.fromHex(entityInfo.publicKey))
   };
   return (
     <>
