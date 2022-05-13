@@ -285,6 +285,8 @@ const MintNFT = () => {
                       </Row> */}
                       <Row className="form-group">
                         <Col>
+                        <label>Select Existing Collection or Create new one</label>
+
                         <CreatableSelect
                         isClearable
                         isLoading={isLoading}
