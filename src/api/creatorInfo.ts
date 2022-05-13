@@ -5,7 +5,7 @@ export async function getCreatorDetails(creatorId: string) {
   console.log(creatorId);
 
   const creatorDetails = await cep47.getCreator(creatorId);
-  console.log(`NFT ${creatorId} metadata: `, creatorDetails);
+  console.log(`NFT ${creatorId} creator: `, creatorDetails);
   return creatorDetails;
 }
 
@@ -21,14 +21,15 @@ export async function parseCreator(maybeValue: any) {
 }
 
 export async function getCreatorsList() {
-  const creatorCount = await cep47.totalCreators();
+  const creatorCount: any = await cep47.totalCreators();
 
   const creatorsList: any = [];
-  for (const id of [...(Array(creatorCount).keys() as any)]) {
-    await getCreatorDetails(id.toString())
-      .then((rawCreator: any) => {
+  for (const id of [...(Array(parseInt(creatorCount)).keys() as any)]) {
+    await getCreatorDetails((id + 1).toString())
+      .then(async (rawCreator: any) => {
         console.log(rawCreator);
-        creatorsList.push(parseCreator(rawCreator));
+        const parsedCreator = await parseCreator(rawCreator);
+        creatorsList.push(parsedCreator);
       })
       .catch((err) => {
         console.log(err);
@@ -44,18 +45,20 @@ export async function getCreatorsCollectionsList() {
   const mappedCreatorsList: any = [];
 
   creatorsList.find((creator: any) =>
-    collectionsList.some(
-      (collection: any) =>
-        creator.address === collection.creator &&
-        mappedCreatorsList.find((newCreator: any) =>
-          creator.address === newCreator.address
-            ? newCreator.collections.push(creator)
-            : mappedCreatorsList.push({
-                ...creator,
-                collections: [collection],
-              })
+    collectionsList.length
+      ? collectionsList.some(
+          (collection: any) =>
+            creator.address === collection.creator &&
+            mappedCreatorsList.find((newCreator: any) =>
+              creator.address === newCreator.address
+                ? newCreator.collections.push(creator)
+                : mappedCreatorsList.push({
+                    ...creator,
+                    collections: [collection],
+                  })
+            )
         )
-    )
+      : mappedCreatorsList.push({ ...creator, collections: [] })
   );
 
   return mappedCreatorsList;
