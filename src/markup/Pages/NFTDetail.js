@@ -2,11 +2,7 @@ import React, { useEffect ,useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../Layout/Header1";
 import Footer from "../Layout/Footer1";
-import PageTitle from "../Layout/PageTitle";
-import ImgCarousel from "../Element/ImgCarousel";
-import ClientCarousel from "../Element/ClientCarousel";
 import VINFTsTooltip from "../Element/Tooltip";
-import { TwitterIcon, TwitterShareButton } from "react-share";
 //Images
 import bnr1 from "./../../images/banner/bnr2.jpg";
 import NFTCard from "../Element/NFTCard";
