@@ -81,3 +81,9 @@
   .ben-desc{
     font-size: 14px;
   }
+  .creatable-select{
+    [class*="control"]{
+      background-color: #eee;
+      border: none;
+    } 
+  }

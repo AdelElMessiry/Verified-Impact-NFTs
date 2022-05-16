@@ -146,7 +146,7 @@ const MintNFT = () => {
         mintDeployHash = await mint(CLPublicKey.fromHex(entityInfo.publicKey), {
           title: state.inputs.name,
           description: state.inputs.description,
-          image: image,
+          image: state.inputs.isImageURL?state.inputs.imageUrl: image,
           price: state.inputs.price,
           isForSale: state.inputs.isForSale,
           campaign: state.inputscampaign,
@@ -221,7 +221,7 @@ const MintNFT = () => {
             <div>
               <div className=" m-auto m-b30">
                 <Container>
-                  <Row className="form-group">
+                  <Row>
                     <Col>
                       <Row className="form-group">
                         <Col>
@@ -296,6 +296,7 @@ const MintNFT = () => {
                         value={selectedCollectionValue}
                         menuPortalTarget={document.body}
                         placeholder="Select..."
+                        className="creatable-select"
                       />
                         </Col>
                       </Row>
@@ -338,7 +339,6 @@ const MintNFT = () => {
                     </Col>
                     <Col>
                       <Row className="form-group">
-                        {" "}
                         <Col>
                           <Form.Check
                             type={"checkbox"}
@@ -351,7 +351,6 @@ const MintNFT = () => {
                         </Col>
                       </Row>
                       <Row className="form-group">
-                        {" "}
                         <Col>
                           {state.inputs.isImageURL ? (
                             <input
@@ -402,6 +401,7 @@ const MintNFT = () => {
                           className="btn btn-success"
                           name="submit"
                           onClick={mintNFT}
+                          disabled={state.inputs.beneficiary===""||state.inputs.campaign===""||state.inputs.collection===""||state.inputs.creator===""||state.inputs.name===""}
                         />
                       </p>
                     </Col>
