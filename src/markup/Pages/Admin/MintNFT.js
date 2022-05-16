@@ -7,7 +7,7 @@ import PageTitle from '../../Layout/PageTitle';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useAuth } from '../../../contexts/AuthContext';
-import { getBeneficiariesList } from '../../../api/beneficiaryInfo';
+import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
 import { getCampaignsList } from '../../../api/campaignInfo';
 import { createCampaign } from '../../../api/createCampaign';
 import { CLPublicKey } from 'casper-js-sdk';
@@ -56,10 +56,13 @@ const MintNFT = () => {
     }, 1000);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e, isBeneficiary = false) => {
     const { value, name, checked, type } = e.target;
     const { inputs } = state;
-
+    if (isBeneficiary) {
+      let selectedBeneficiary = beneficiaries.filter((b) => b.address == value);
+      setCampaigns(selectedBeneficiary[0].campaigns);
+    }
     inputs[name] = type === 'checkbox' ? checked : value;
     setState({
       ...state,
@@ -94,18 +97,18 @@ const MintNFT = () => {
   //getting beneficiaries and campaigns lists
   useEffect(() => {
     (async () => {
-      let beneficiaryList = !beneficiaries && (await getBeneficiariesList());
+      let beneficiaryList =
+        !beneficiaries && (await getBeneficiariesCampaignsList());
       !beneficiaries && setBeneficiaries(beneficiaryList);
-      let campaignsList = !campaigns && (await getCampaignsList());
-      !campaigns && setCampaigns(campaignsList);
+      !beneficiaries && setCampaigns(beneficiaryList[0].campaigns);
     })();
-  }, [beneficiaries, campaigns]);
+  }, [beneficiaries]);
 
   //handling of selecting image in image control
   const onDrop = (picture) => {
     const newImageUrl = URL.createObjectURL(picture[0]);
     setImage(newImageUrl);
-    setUploadedFile(picture[0])
+    setUploadedFile(picture[0]);
   };
 
   //handling minting new NFT
@@ -197,7 +200,7 @@ const MintNFT = () => {
           collectionName: "",
           beneficiary: "",
           beneficiaryPercentage: "",
-          isImageURL:false
+          isImageURL: false,
         },
       });
       refreshAuth();
@@ -236,7 +239,7 @@ const MintNFT = () => {
                             name='Beneficiary'
                             placeholder='Beneficiary'
                             className='form-control'
-                            onChange={(e) => handleChange(e)}
+                            onChange={(e) => handleChange(e, true)}
                             value={state.inputs.beneficiary}
                           >
                             {beneficiaries?.map(({ name, address }) => (
@@ -251,7 +254,7 @@ const MintNFT = () => {
                         <Col>
                           <label>Select Campaign</label>
                           <select
-                            name='Campaign'
+                            name='campaign'
                             placeholder='Campaign'
                             className='form-control'
                             onChange={(e) => handleChange(e)}
@@ -263,32 +266,6 @@ const MintNFT = () => {
                           </select>
                         </Col>
                       </Row>
-                      {/* <Row className="form-group">
-                        <Col>
-                          <Form.Check
-                            type={"radio"}
-                            label="Exist Collection"
-                            onChange={() => {
-                              setCollectionState(1);
-                            }}
-                            name="radio-buttons-group"
-                            value="1"
-                            id="existCollection"
-                            checked={collectionState === 1}
-                          />
-                          <Form.Check
-                            type={"radio"}
-                            label="New Collection"
-                            onChange={() => {
-                              setCollectionState(2);
-                            }}
-                            name="radio-buttons-group"
-                            value="2"
-                            id="newCollection"
-                            checked={collectionState === 2}
-                          />
-                        </Col>{" "}
-                      </Row> */}
                       <Row className='form-group'>
                         <Col>
                           <label>
