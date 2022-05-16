@@ -9,7 +9,7 @@ import './plugins/slick/slick.min.css';
 import './plugins/slick/slick-theme.min.css';
 import 'react-modal-video/css/modal-video.min.css';
 import "react-image-lightbox/style.css";
-import './scss/_custom.scss';
+import './css/scss/_custom.scss';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
