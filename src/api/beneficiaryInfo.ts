@@ -42,45 +42,6 @@ export async function getBeneficiariesList() {
   return beneficiariesList;
 }
 
-export async function getBeneficiariesCampaignsLis() {
-  const beneficiariesList = await getBeneficiariesList();
-  const campaignsList = await getCampaignsList();
-  const mappedBeneficiariesList: any = [];
-
-  beneficiariesList.find(
-    (beneficiary: any) =>
-      campaignsList.some((campaign: any) => {
-        console.log(campaign);
-
-        return (
-          beneficiary.address === campaign.wallet_address &&
-          mappedBeneficiariesList.find((newBeneficiary: any) => {
-            console.log(newBeneficiary);
-
-            return beneficiary.id === newBeneficiary.id
-              ? newBeneficiary.campaigns.push(campaign)
-              : mappedBeneficiariesList.push({
-                  ...beneficiary,
-                  campaigns: [campaign],
-                });
-          })
-        );
-      })
-    // mappedBeneficiariesList.reduce((a: any, b: any) => {
-    //   const found = a.find((e: any) => e.id == b.id);
-    //   return (
-    //     found
-    //       ? mappedBeneficiariesList.campaigns.push(b)
-    //       : a.push({ ...newBeneficiary, campaigns: [campaign] }),
-    //     a
-    //   );
-    // }, [])
-  );
-  console.log(mappedBeneficiariesList);
-
-  return mappedBeneficiariesList;
-}
-
 export async function getBeneficiariesCampaignsList() {
   const beneficiariesList = await getBeneficiariesList();
   const campaignsList = await getCampaignsList();
@@ -107,6 +68,45 @@ export async function getBeneficiariesCampaignsList() {
             );
           })
         : mappedBeneficiariesList.push({ ...beneficiary, campaigns: [] })
+    // mappedBeneficiariesList.reduce((a: any, b: any) => {
+    //   const found = a.find((e: any) => e.id == b.id);
+    //   return (
+    //     found
+    //       ? mappedBeneficiariesList.campaigns.push(b)
+    //       : a.push({ ...newBeneficiary, campaigns: [campaign] }),
+    //     a
+    //   );
+    // }, [])
+  );
+  console.log(mappedBeneficiariesList);
+
+  return mappedBeneficiariesList;
+}
+
+export async function getBeneficiariesCampaignsLis() {
+  const beneficiariesList = await getBeneficiariesList();
+  const campaignsList = await getCampaignsList();
+  const mappedBeneficiariesList: any = [];
+
+  beneficiariesList.find(
+    (beneficiary: any) =>
+      campaignsList.some((campaign: any) => {
+        console.log(campaign);
+
+        return (
+          beneficiary.address === campaign.wallet_address &&
+          mappedBeneficiariesList.find((newBeneficiary: any) => {
+            console.log(newBeneficiary);
+
+            return beneficiary.id === newBeneficiary.id
+              ? newBeneficiary.campaigns.push(campaign)
+              : mappedBeneficiariesList.push({
+                  ...beneficiary,
+                  campaigns: [campaign],
+                });
+          })
+        );
+      })
     // mappedBeneficiariesList.reduce((a: any, b: any) => {
     //   const found = a.find((e: any) => e.id == b.id);
     //   return (

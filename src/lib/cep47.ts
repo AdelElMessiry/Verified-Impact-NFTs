@@ -115,8 +115,8 @@ class CEP47Client {
     // if (contractHash) {
     // this.contractClient.setContractHash(contractHash, contractPackageHash);
     this.contractClient.setContractHash(
-      'hash-8c756449c04c1f5b61da1f61c83c0a7c84f739019fd97c0bef92ac77c2a3ab17',
-      'hash-f09f30facdc2639ebd23004ab35e932e250163c6d44c933e9251a1d16107f2ac'
+      'hash-3a9b454f9081ac3611854082862d1626a3cc54e9ee52761c91a2ccadc0249761',
+      'hash-bcc596f7fa71ca43680116779d56bd63c0e207c36a92fbba3d7f4c7a3301fe0f'
     );
     this.isContractIHashSetup = true;
     // }
@@ -519,7 +519,8 @@ class CEP47Client {
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       url: CLValueBuilder.string(url),
-      recipient: CLValueBuilder.key(CLPublicKey.fromHex(wallet_address)),
+      recipient: CLValueBuilder.string(wallet_address),
+      // recipient: CLValueBuilder.key(CLPublicKey.fromHex(wallet_address)),
       requested_royalty: CLValueBuilder.string(requested_royalty),
     });
 
@@ -536,7 +537,7 @@ class CEP47Client {
   public async addBeneficiary(
     name: string,
     description: string,
-    address: CLPublicKey,
+    address: string,
     paymentAmount: string,
     deploySender: CLPublicKey
   ) {
@@ -544,7 +545,7 @@ class CEP47Client {
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
-      address: CLValueBuilder.key(address),
+      address: CLValueBuilder.string(address),
     });
 
     return this.contractClient.callEntrypoint(
@@ -559,6 +560,7 @@ class CEP47Client {
   public async addCollection(
     name: string,
     description: string,
+    creator: string,
     url: string,
     paymentAmount: string,
     deploySender: CLPublicKey
@@ -567,7 +569,7 @@ class CEP47Client {
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
-      creator: CLValueBuilder.key(deploySender),
+      creator: CLValueBuilder.string(creator),
       url: CLValueBuilder.string(url),
     });
 
@@ -583,6 +585,7 @@ class CEP47Client {
   public async addCreator(
     name: string,
     description: string,
+    address: string,
     url: string,
     paymentAmount: string,
     deploySender: CLPublicKey
@@ -591,7 +594,7 @@ class CEP47Client {
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
-      address: CLValueBuilder.key(deploySender),
+      address: CLValueBuilder.string(address),
       url: CLValueBuilder.string(url),
     });
 
@@ -620,8 +623,9 @@ export async function setupContractHash() {
   console.log(`NFT Contract Hash: \n${contractHash}`);
   return contractHash;
 }
-setupContractHash()
-  .then((contractHash) => {
-    cep47.setContractHash(contractHash);
-  })
-  .catch((err) => console.log(err));
+
+// setupContractHash()
+//   .then((contractHash) => {
+//     cep47.setContractHash(contractHash);
+//   })
+//   .catch((err) => console.log(err));
