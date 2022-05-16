@@ -18,7 +18,7 @@ import { TwitterIcon, TwitterShareButton } from "react-share";
 import { Row, Col, Container } from "reactstrap";
 import NFTTwitterShare from "../../Element/TwitterShare/NFTTwitterShare";
 import CampaignOrCollectionTwitterShare from "../../Element/TwitterShare/CampaignOrCollectionTwitterShare";
-
+import ReactGA from 'react-ga';
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -239,6 +239,7 @@ const BenefeiciaryNFTs = () => {
   };
 
   useEffect(() => {
+    ReactGA.pageview(window.location.pathname +"BenefeiciaryNFTs");
     let Data = [];
     if (beneficiary && !campaign) {
       Data = imageBlog.filter((nft) => nft.beneficiary === beneficiary);

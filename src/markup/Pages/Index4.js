@@ -20,6 +20,7 @@ import { TwitterIcon, TwitterShareButton } from "react-share";
 import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
 import CampaignOrCollectionTwitterShare from "../Element/TwitterShare/CampaignOrCollectionTwitterShare";
 import Carousel from "react-elastic-carousel";
+import ReactGA from 'react-ga';
 
 //Light Gallery on icon click
 const Iconimage = (props) => {
@@ -188,7 +189,7 @@ const Index4 = () => {
   };
   useEffect(() => {
     var i = 0;
-
+    ReactGA.pageview(window.location.pathname +"HOME");
     // Placeholder Animation Start
     var inputSelector = document.querySelectorAll("input, textarea");
 

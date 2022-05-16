@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "../Layout/Header1";
 import Footer from "../Layout/Footer1";
@@ -13,8 +13,11 @@ import NFTCard from "../Element/NFTCard";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { imageBlog } from "../NFTData";
 import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
-
+import ReactGA from 'react-ga';
 const NFTDetail = () => {
+  useEffect(()=>{
+    ReactGA.pageview(window.location.pathname +"NFTDetail");
+  },[])
   const Iconimage = (props) => {
     return (
       <>
