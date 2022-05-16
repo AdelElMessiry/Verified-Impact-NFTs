@@ -60,7 +60,7 @@ const Header6 = () => {
         <div className="sticky-header main-bar-wraper navbar-expand-lg">
           <div className="main-bar clearfix">
             <div className="container clearfix">
-              <div className="logo-header mostion">
+              <div className="logo-header mostion py-2">
                 <Link to={"./"} className="dez-page">
                   <img src={logo} alt="" />
                 </Link>
