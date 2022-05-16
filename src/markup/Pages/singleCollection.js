@@ -40,6 +40,8 @@ const SingleCollection = () => {
   const [allNfts, setAllNfts] = useState([]);
   const [showBuyModal,setShowBuyModal]=useState(false);
 const [selectedNFT,setSelectedNFT]=useState();
+
+  //function returns button of buying NFT
   const Iconimage = ({nft}) => {
     return (
       <>

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { TwitterIcon, TwitterShareButton } from "react-share";
+//shared component for twitter used in case of want to share NFT
 
 const NFTTwitterShare = ({ item ,isWithoutText=false}) => {
   //Light Gallery on icon click

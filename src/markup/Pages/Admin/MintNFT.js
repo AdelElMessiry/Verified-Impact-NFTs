@@ -19,6 +19,7 @@ import { mint, NFTReference } from "../../../api/mint";
 import { getDeployDetails } from "../../../api/universal";
 import { numberOfNFTsOwned } from "../../../api/userInfo";
 import CreatableSelect from "react-select/creatable";
+import { setupContractHash } from "../../../lib/cep47";
 
 const MintNFT = () => {
   const { entityInfo, refreshAuth } = useAuth();
@@ -35,11 +36,13 @@ const MintNFT = () => {
   let selectedOptions = [];
   const [options, setOptions] = useState(selectedOptions);
 
+  //handling of creating new option in creatable select control
   const createOption = (label) => ({
     label,
     value: label.toLowerCase().replace(/\W/g, ""),
   });
 
+  //handling of adding new option to the existing options in creatable select
   const handleCreate = (inputValue) => {
     setIsLoading(true);
     console.group("Option created");
@@ -64,6 +67,8 @@ const MintNFT = () => {
       inputs,
     });
   };
+
+  //intialize of controls values
   const [state, setState] = useState({
     inputs: {
       imageUrl: "",
@@ -87,6 +92,7 @@ const MintNFT = () => {
   const [beneficiaries, setBeneficiaries] = useState();
   const [campaigns, setCampaigns] = React.useState();
 
+  //getting beneficiaries and campaigns lists
   useEffect(() => {
     (async () => {
       let beneficiaryList = !beneficiaries && (await getBeneficiariesList());
@@ -96,15 +102,14 @@ const MintNFT = () => {
     })();
   }, [beneficiaries, campaigns]);
 
+  //handling of selecting image in image control
   const onDrop = (picture) => {
-    var binaryData = [];
-    binaryData.push(picture[0]);
-    const newImageUrl = window.URL.createObjectURL(
-      new Blob(binaryData, { type: "application/image" })
-    );
+    const newImageUrl = URL.createObjectURL(picture[0]);
     setImage(newImageUrl);
+    setUploadedFile(picture[0])
   };
 
+  //handling minting new NFT
   async function mintNFT() {
     if (!uploadedImageURL) {
       return VIToast.error("Please upload image or enter direct URL");
@@ -114,7 +119,7 @@ const MintNFT = () => {
     }
 
     let cloudURL = uploadedImageURL;
-    if (!state.inputs.directImgURL && uploadedFile) {
+    if (!state.inputs.imgURL && uploadedFile) {
       console.log("Img", uploadedFile);
       console.log("Img url", uploadedImageURL);
       setUploadingToCloud(true);
@@ -148,7 +153,7 @@ const MintNFT = () => {
         mintDeployHash = await mint(CLPublicKey.fromHex(entityInfo.publicKey), {
           title: state.inputs.name,
           description: state.inputs.description,
-          image: state.inputs.isImageURL ? state.inputs.imageUrl : image,
+          image: imgURL,
           price: state.inputs.price,
           isForSale: state.inputs.isForSale,
           campaign: state.inputscampaign,
@@ -183,7 +188,6 @@ const MintNFT = () => {
         inputs: {
           title: "",
           description: "",
-          directImgURL: false,
           price: "",
           isForSale: false,
           category: "",
@@ -194,6 +198,7 @@ const MintNFT = () => {
           collectionName: "",
           beneficiary: "",
           beneficiaryPercentage: "",
+          isImageURL:false
         },
       });
       refreshAuth();

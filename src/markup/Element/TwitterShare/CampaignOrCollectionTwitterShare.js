@@ -1,10 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { TwitterIcon, TwitterShareButton } from "react-share";
-
+//shared component for twitter used in case of want to share campaign or collection
 const CampaignOrCollectionTwitterShare = ({ campaign="",beneficiary="",url="",creator="",collection="" }) => {
-  //Light Gallery on icon click
-
   return (
     <TwitterShareButton
     className="twitter-icon mfp-link portfolio-fullscreen pt-2"

@@ -11,7 +11,7 @@ import { getNFTsList } from "../../api/nftInfo";
 import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
 import BuyNFTModal from "../Element/BuyNFT";
 
-
+//nft details component
 const NFTDetail = () => {
   const Iconimage = ({nft}) => {
     return (
