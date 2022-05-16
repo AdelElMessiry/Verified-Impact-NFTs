@@ -1,0 +1,96 @@
+metadata{
+  title,
+  description,
+  price,
+  isForSale,
+  creatorName,
+  creatorCollection,
+  viAddress,
+  beneficiary
+}
+
+Beneficiary{
+   name,
+   description,
+   url,
+   campaignName,
+   requestedRoyalty,
+   walletAddress
+}
+
+
+mainContract:
+==============x`
+addBeneficiary => WhiteList
+createCampaign
+
+
+SecondContract:
+================
+createCollection => based on campaign
+mint
+setForSale
+
+
+    function getAllOnSale() public view virtual returns (TokenMeta[] memory) {
+        TokenMeta[] memory tokensOnSale = new TokenMeta[](_tokenIds.current());
+        uint256 counter = 0;
+
+        for (uint256 i = 1; i < _tokenIds.current() + 1; i++) {
+            if (_tokenMeta[i].sale == true) {
+                tokensOnSale[counter] = _tokenMeta[i];
+                counter++;
+            }
+        }
+        return tokensOnSale;
+    }
+
+    function getAllTokens() public view virtual returns (TokenMeta[] memory) {
+        TokenMeta[] memory allTokens = new TokenMeta[](_tokenIds.current());
+        uint256 counter = 0;
+
+        for (uint256 i = 1; i < _tokenIds.current() + 1; i++) {
+            allTokens[counter] = _tokenMeta[i];
+            counter++;
+        }
+        return allTokens;
+    }
+
+    function getOwnerTokens(address _owner) public view virtual returns (TokenMeta[] memory) {
+        TokenMeta[] memory tokensOwnerMeta = new TokenMeta[](_tokenIds.current());
+        uint256 i;
+
+        for (i = 0; i < ERC721.balanceOf(_owner); i++) {
+            tokensOwnerMeta[i] = _tokenMeta[tokenOfOwnerByIndex(_owner, i)];
+        }
+        return (tokensOwnerMeta);
+    }
+
+    function tokenPrice(uint256 tokenId) public view virtual returns (uint256) {
+        require(_exists(tokenId), "ERC721Metadata: Price query for nonexistent token");
+        return _tokenMeta[tokenId].price;
+    }
+
+    function tokenMeta(uint256 _tokenId) public view returns (TokenMeta memory) {
+        require(_exists(_tokenId), "ERC721Metadata: Meta query for nonexistent token");
+        return _tokenMeta[_tokenId];
+    }
+
+    function purchaseToken(uint256 _tokenId) public payable nonReentrant {
+        require(msg.sender != address(0) && msg.sender != ownerOf(_tokenId), "Purchaser can't be the owner");
+        require(
+            msg.value >= _tokenMeta[_tokenId].price,
+            "Please submit the asking price in order to complete the purchase"
+        );
+        address tokenSeller = ownerOf(_tokenId);
+
+        payable(tokenSeller).transfer(msg.value);
+
+        setApprovalForAll(tokenSeller, true);
+        _transfer(tokenSeller, msg.sender, _tokenId);
+        // if (!_isExcludedFromVesting[msg.sender]) {
+        //     _erc20VestingRobe.createVestingSchedule(tokenSeller, msg.sender, _tokenId);
+        // }
+        _tokenMeta[_tokenId].sale = false;
+    }
+
