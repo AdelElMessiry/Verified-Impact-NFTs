@@ -514,7 +514,7 @@ class CEP47Client {
     keys?: Keys.AsymmetricKey[]
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
-      // token_id: CLValueBuilder.list(ids.map((id) => CLValueBuilder.u256(id))),
+      token_id: CLValueBuilder.list([]),
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
