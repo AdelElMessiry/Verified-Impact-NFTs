@@ -29,11 +29,8 @@ const MintNFT = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [uploadingToCloud, setUploadingToCloud] = useState(false);
   const [validID, setValidID] = useState(false);
-  const [selectedCollectionValue, setSelectedCollectionValue] = useState(
-    {}
-  );
+  const [selectedCollectionValue, setSelectedCollectionValue] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-
 
   let selectedOptions = [];
   const [options, setOptions] = useState(selectedOptions);
@@ -100,7 +97,12 @@ const MintNFT = () => {
   }, [beneficiaries, campaigns]);
 
   const onDrop = (picture) => {
-    setImage(picture);
+    var binaryData = [];
+    binaryData.push(picture[0]);
+    const newImageUrl = window.URL.createObjectURL(
+      new Blob(binaryData, { type: "application/image" })
+    );
+    setImage(newImageUrl);
   };
 
   async function mintNFT() {
@@ -146,7 +148,7 @@ const MintNFT = () => {
         mintDeployHash = await mint(CLPublicKey.fromHex(entityInfo.publicKey), {
           title: state.inputs.name,
           description: state.inputs.description,
-          image: state.inputs.isImageURL?state.inputs.imageUrl: image,
+          image: state.inputs.isImageURL ? state.inputs.imageUrl : image,
           price: state.inputs.price,
           isForSale: state.inputs.isForSale,
           campaign: state.inputscampaign,
@@ -285,19 +287,21 @@ const MintNFT = () => {
                       </Row> */}
                       <Row className="form-group">
                         <Col>
-                        <label>Select Existing Collection or Create new one</label>
+                          <label>
+                            Select Existing Collection or Create new one
+                          </label>
 
-                        <CreatableSelect
-                        isClearable
-                        isLoading={isLoading}
-                        onChange={(v) => setSelectedCollectionValue(v)}
-                        onCreateOption={(v) => handleCreate(v)}
-                        options={options}
-                        value={selectedCollectionValue}
-                        menuPortalTarget={document.body}
-                        placeholder="Select..."
-                        className="creatable-select"
-                      />
+                          <CreatableSelect
+                            isClearable
+                            isLoading={isLoading}
+                            onChange={(v) => setSelectedCollectionValue(v)}
+                            onCreateOption={(v) => handleCreate(v)}
+                            options={options}
+                            value={selectedCollectionValue}
+                            menuPortalTarget={document.body}
+                            placeholder="Select..."
+                            className="creatable-select"
+                          />
                         </Col>
                       </Row>
                       <Row className="form-group">
@@ -401,7 +405,13 @@ const MintNFT = () => {
                           className="btn btn-success"
                           name="submit"
                           onClick={mintNFT}
-                          disabled={state.inputs.beneficiary===""||state.inputs.campaign===""||state.inputs.collection===""||state.inputs.creator===""||state.inputs.name===""}
+                          disabled={
+                            state.inputs.beneficiary === "" ||
+                            state.inputs.campaign === "" ||
+                            state.inputs.collection === "" ||
+                            state.inputs.creator === "" ||
+                            state.inputs.name === ""
+                          }
                         />
                       </p>
                     </Col>
