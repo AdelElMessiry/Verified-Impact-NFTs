@@ -35,11 +35,13 @@ const MintNFT = () => {
   let selectedOptions = [];
   const [options, setOptions] = useState(selectedOptions);
 
+  //handling of creating new option in creatable select control
   const createOption = (label) => ({
     label,
     value: label.toLowerCase().replace(/\W/g, ''),
   });
 
+  //handling of adding new option to the existing options in creatable select
   const handleCreate = (inputValue) => {
     setIsLoading(true);
     console.group('Option created');
@@ -64,6 +66,8 @@ const MintNFT = () => {
       inputs,
     });
   };
+
+  //intialize of controls values
   const [state, setState] = useState({
     inputs: {
       imageUrl: '',
@@ -87,6 +91,7 @@ const MintNFT = () => {
   const [beneficiaries, setBeneficiaries] = useState();
   const [campaigns, setCampaigns] = React.useState();
 
+  //getting beneficiaries and campaigns lists
   useEffect(() => {
     (async () => {
       let beneficiaryList = !beneficiaries && (await getBeneficiariesList());
@@ -96,10 +101,14 @@ const MintNFT = () => {
     })();
   }, [beneficiaries, campaigns]);
 
+  //handling of selecting image in image control
   const onDrop = (picture) => {
-    setImage(picture);
+    const newImageUrl = URL.createObjectURL(picture[0]);
+    setImage(newImageUrl);
+    setUploadedFile(picture[0])
   };
 
+  //handling minting new NFT
   async function mintNFT() {
     if (!uploadedImageURL) {
       return VIToast.error('Please upload image or enter direct URL');
@@ -109,9 +118,9 @@ const MintNFT = () => {
     }
 
     let cloudURL = uploadedImageURL;
-    if (!state.inputs.directImgURL && uploadedFile) {
-      console.log('Img', uploadedFile);
-      console.log('Img url', uploadedImageURL);
+    if (!state.inputs.imgURL && uploadedFile) {
+      console.log("Img", uploadedFile);
+      console.log("Img url", uploadedImageURL);
       setUploadingToCloud(true);
       try {
         cloudURL = await uploadImg(uploadedFile);
@@ -143,7 +152,7 @@ const MintNFT = () => {
         mintDeployHash = await mint(CLPublicKey.fromHex(entityInfo.publicKey), {
           title: state.inputs.name,
           description: state.inputs.description,
-          image: state.inputs.isImageURL ? state.inputs.imageUrl : image, //make sure sending imageUrl
+          image: imgURL,
           price: state.inputs.price,
           isForSale: state.inputs.isForSale,
           campaign: state.inputs.campaign,
@@ -176,19 +185,19 @@ const MintNFT = () => {
       //  setMintStage(MintingStages.TX_SUCCESS);
       setState({
         inputs: {
-          title: '',
-          description: '',
-          directImgURL: false,
-          price: '',
+          title: "",
+          description: "",
+          price: "",
           isForSale: false,
-          category: '',
-          currency: '',
-          campaign: '',
-          creator: '',
-          creatorPercentage: '',
-          collectionName: '',
-          beneficiary: '',
-          beneficiaryPercentage: '',
+          category: "",
+          currency: "",
+          campaign: "",
+          creator: "",
+          creatorPercentage: "",
+          collectionName: "",
+          beneficiary: "",
+          beneficiaryPercentage: "",
+          isImageURL:false
         },
       });
       refreshAuth();
@@ -294,8 +303,8 @@ const MintNFT = () => {
                             options={options}
                             value={selectedCollectionValue}
                             menuPortalTarget={document.body}
-                            placeholder='Select...'
-                            className='creatable-select'
+                            placeholder="Select..."
+                            className="creatable-select"
                           />
                         </Col>
                       </Row>
@@ -401,11 +410,11 @@ const MintNFT = () => {
                           name='submit'
                           onClick={mintNFT}
                           disabled={
-                            state.inputs.beneficiary === '' ||
-                            state.inputs.campaign === '' ||
-                            state.inputs.collection === '' ||
-                            state.inputs.creator === '' ||
-                            state.inputs.name === ''
+                            state.inputs.beneficiary === "" ||
+                            state.inputs.campaign === "" ||
+                            state.inputs.collection === "" ||
+                            state.inputs.creator === "" ||
+                            state.inputs.name === ""
                           }
                         />
                       </p>

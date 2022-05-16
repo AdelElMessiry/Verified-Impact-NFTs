@@ -9,6 +9,7 @@ import { CLPublicKey } from 'casper-js-sdk';
 import { Row, Col } from "react-bootstrap";
 import { isTemplateExpression } from "typescript";
 
+//buying NFT Modal
 const BuyNFTModal = ({ show, handleCloseParent,data }) => {
     const IntialInputs = () => ({
         inputs: {
@@ -19,9 +20,9 @@ const BuyNFTModal = ({ show, handleCloseParent,data }) => {
   const [toAddress, setToAddress] = React.useState("");
   const [showModal, setShowModal] = useState(show);
   const [state, setState] = useState(IntialInputs());
-  const [showErrors, setShowErrors] = useState();
   if (!data) return <></>;
 
+  //transfer NFT Function
   const makeTransfer = async () => {
     const nftID = data.id;
 
@@ -61,13 +62,13 @@ const BuyNFTModal = ({ show, handleCloseParent,data }) => {
     }
   };
 
-
-
+//handle closing modal
   const handleClose = () => {
     setShowModal(false);
     handleCloseParent();
   };
 
+  //handling changing in controls
   const handleChange = (e) => {
     const { value, name, checked, type } = e.target;
     const { inputs } = state;
