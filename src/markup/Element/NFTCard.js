@@ -5,9 +5,11 @@ import { TwitterIcon, TwitterShareButton } from "react-share";
 import NFTTwitterShare from "./TwitterShare/NFTTwitterShare";
 import BuyNFTModal from "./BuyNFT";
 
+//NFT Card component
 const NFTCard = ({ index, item, openSlider }) => {
-  //Light Gallery on icon click
   const [showBuyModal,setShowBuyModal]=useState(false)
+
+  //function which return buttons (buy NFT) & (expand NFT) on nft card
   const Iconimage = (props) => {
     return (
       <>
