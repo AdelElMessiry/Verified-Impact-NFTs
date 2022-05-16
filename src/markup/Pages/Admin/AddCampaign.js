@@ -16,6 +16,7 @@ const AddCampaign = () => {
   const { entityInfo, refreshAuth,isLoggedIn } = useAuth();
 
   const [beneficiary, setBeneficiary] = React.useState();
+
   const handleChange = (e, isBeneficiary = false) => {
     if (isBeneficiary) {
       setBeneficiary(e.target.value);
@@ -30,6 +31,8 @@ const AddCampaign = () => {
       });
     }
   };
+
+  //setting initial values of controls
   const [state, setState] = useState({
     inputs: {
       campaignUrl: '',
@@ -38,7 +41,9 @@ const AddCampaign = () => {
       requestedRoyalty: '',
     },
   });
+
   const [beneficiaries, setBeneficiaries] = useState();
+  //getting beneficiary list 
   useEffect(() => {
     (async () => {
       let beneficiaryList =
@@ -47,6 +52,8 @@ const AddCampaign = () => {
       !beneficiaries && setBeneficiary(beneficiaryList[0].address);
     })();
   }, [ beneficiaries]);
+
+  //saving new campaign related to beneficiary component
   const saveCampaign = async () => {
     const savedCampaign = await createCampaign(
       state.inputs.name,
@@ -64,6 +71,7 @@ const AddCampaign = () => {
     state.inputs.requestedRoyalty,
     CLPublicKey.fromHex(entityInfo.publicKey))
   };
+
   return (
     <>
       <Header />

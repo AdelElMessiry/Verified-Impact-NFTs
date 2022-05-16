@@ -32,6 +32,7 @@ const masonryOptions = {
 const imagesLoadedOptions = { background: ".my-bg-image-el" };
 // Masonry section end
 
+//handling filteration markup
 const TagLi = ({ name, handlesettag, tagActive, type }) => {
   return (
     <VINFTsTooltip
@@ -86,6 +87,7 @@ const MyCreations = () => {
   const [showBuyModal,setShowBuyModal]=useState(false);
   const [selectedNFT,setSelectedNFT]=useState();
 
+   //function returns button of buying NFT
   const Iconimage = ({nft}) => {
     return (
       <>
@@ -94,6 +96,7 @@ const MyCreations = () => {
     );
   };
 
+  //set selected collections in filteration
   const setSelectedCollectionTag = (tag, data = null) => {
     setTagCollection(tag);
     if (tag !== "All") {
@@ -142,6 +145,7 @@ const MyCreations = () => {
     setSearchFlag(!searchFlag);
   };
 
+  //set selected campaigns in filteration
   const setSelectedCampaignTag = (tag, data = null) => {
     setTagCampaign(tag);
     if (tag !== "All") {
@@ -189,6 +193,7 @@ const MyCreations = () => {
     setSearchFlag(!searchFlag);
   };
 
+  //set selected creators in filteration
   const setSelectedCreatorTag = (tag, data = null) => {
     setTagCreator(tag);
     if (tag !== "All") {
@@ -235,6 +240,7 @@ const MyCreations = () => {
     setSearchFlag(!searchFlag);
   };
 
+  //handling of filter nfts according to selected criteria
   const handleSearch = (collectionFilter, creatorFilter, campaignFilter) => {
     let filteredAllData = selectedNfts?.filter((nft) => {
       return (

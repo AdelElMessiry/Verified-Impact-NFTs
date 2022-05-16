@@ -30,6 +30,7 @@ const AddBeneficiary = () => {
     })();
   }, [entityInfo.publicKey]);
 
+  //saving new beneficiary function
   const saveBeneficiary = async () => {
     const savedBeneficiary = await addBeneficiary(
       beneficiaryInputs.name,
