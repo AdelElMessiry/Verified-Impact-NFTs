@@ -40,8 +40,8 @@ const HeaderMenu = () => {
                   {b.name} <i className='fa fa-angle-right'></i>
                 </Link>
                 <ul className='sub-menu'>
-                  {b.campaigns?.map((c) => (
-                    <li>
+                  {b.campaigns?.map((c, key) => (
+                    <li key={index}>
                       <Link
                         to={`./BenefeiciaryNFTs?beneficiary=${b.name}&campaign=${c.name}`}
                         className='dez-page'
@@ -60,8 +60,8 @@ const HeaderMenu = () => {
             Creators <i className='fa fa-chevron-down'></i>
           </Link>
           <ul className='sub-menu'>
-            {creators?.map((c) => (
-              <li>
+            {creators?.map((c, index) => (
+              <li key={index}>
                 <Link
                   to={`./CreatorNFTs?creator=${c.name}`}
                   className='dez-page'
@@ -69,8 +69,8 @@ const HeaderMenu = () => {
                   {c.name} <i className='fa fa-angle-right'></i>
                 </Link>
                 <ul className='sub-menu'>
-                  {c.collections?.map((col) => (
-                    <li>
+                  {c.collections?.map((col, index) => (
+                    <li key={index}>
                       <Link
                         to={`./CreatorNFTs?creator=${c.name}&collection=${col.name}`}
                         className='dez-page'

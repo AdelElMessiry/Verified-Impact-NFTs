@@ -115,8 +115,10 @@ class CEP47Client {
     // if (contractHash) {
     // this.contractClient.setContractHash(contractHash, contractPackageHash);
     this.contractClient.setContractHash(
-      'hash-1ce535a817567f91626302e8521f795231624542315fe31a20581f4f7edebd67',
-      'hash-53ff35b59cd71b596889a0cda8f605c1bfa4c88b45f85fa27464e80e75d52cdf'
+      'hash-1fbc96ca2b4cf6ae8a2d1e9f041d691cb7be97ea11102185f35c2a360a0d1310',
+      'hash-8ccad0920692f66be68a9c5af8312a3d60c1f6ad39e81e6cfe8ea3a9e825260e'
+      // 'hash-1ce535a817567f91626302e8521f795231624542315fe31a20581f4f7edebd67',
+      // 'hash-53ff35b59cd71b596889a0cda8f605c1bfa4c88b45f85fa27464e80e75d52cdf'
     );
     this.isContractIHashSetup = true;
     // }
@@ -514,7 +516,7 @@ class CEP47Client {
     keys?: Keys.AsymmetricKey[]
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
-      token_ids: CLValueBuilder.list([0].map((id) => CLValueBuilder.u256(id))),
+      collection_ids: CLValueBuilder.list([CLValueBuilder.u256(0)]),
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
@@ -566,6 +568,7 @@ class CEP47Client {
     deploySender: CLPublicKey
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
+      token_ids: CLValueBuilder.list([CLValueBuilder.u256(0)]),
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
