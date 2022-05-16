@@ -8,12 +8,14 @@ import { CONNECTION } from '../constants/blockchain';
 export async function addCreator(
   name: string,
   description: string,
+  address: string,
   url: string,
   deploySender: CLPublicKey
 ) {
   const creatorDeploy = await cep47.addCreator(
     name,
     description,
+    address,
     url,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     deploySender
