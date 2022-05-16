@@ -518,8 +518,8 @@ class CEP47Client {
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
+      wallet_address: CLValueBuilder.string(wallet_address),
       url: CLValueBuilder.string(url),
-      recipient: CLValueBuilder.string(wallet_address),
       // recipient: CLValueBuilder.key(CLPublicKey.fromHex(wallet_address)),
       requested_royalty: CLValueBuilder.string(requested_royalty),
     });
