@@ -32,6 +32,8 @@ const Index4 = () => {
   const [sliderCaptionsCamp4, setSliderCaptionsCamp4] = useState([]);
   const [showBuyModal,setShowBuyModal]=useState(false);
   const [selectedNFT,setSelectedNFT]=useState();
+
+   //function returns button of buying NFT
   const Iconimage = ({nft}) => {
     return (
       <>
