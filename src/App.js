@@ -10,6 +10,8 @@ import './plugins/slick/slick-theme.min.css';
 import 'react-modal-video/css/modal-video.min.css';
 import "react-image-lightbox/style.css";
 import './scss/_custom.scss';
+import ReactGA from 'react-ga';
+
 
 function App() {
 	const [body_, setbody_] = useState();
@@ -18,6 +20,7 @@ function App() {
 	let scrollPosition = useScrollPosition();
 
 	useEffect(() => {
+		ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_TRACKING_ID);
 		setbody_(document.querySelector("body"));
 		//setHeader_(document.getElementsByClassName("main-bar-wraper"));
 	  }, []);

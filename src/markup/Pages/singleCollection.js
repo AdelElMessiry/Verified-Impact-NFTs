@@ -16,7 +16,7 @@ import VINFTsTooltip from "../Element/Tooltip";
 import { TwitterIcon, TwitterShareButton } from "react-share";
 import { Row, Col, Container } from "reactstrap";
 import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
-
+import ReactGA from 'react-ga';
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -49,6 +49,7 @@ const SingleCollection = () => {
 
   useEffect(() => {
     let Data=[]
+    ReactGA.pageview(window.location.pathname +"SingleCollection");
     if (collection) {
       Data = imageBlog.filter((nft) => nft.collection === collection);
       setSelectedNfts(Data);
