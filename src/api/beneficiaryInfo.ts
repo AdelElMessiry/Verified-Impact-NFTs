@@ -2,10 +2,10 @@ import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from './campaignInfo';
 
 export async function getBeneficiaryDetails(beneficiaryId: string) {
-  console.log(beneficiaryId);
+  // console.log(beneficiaryId);
 
   const beneficiaryDetails = await cep47.getBeneficiary('1');
-  console.log(`NFT ${beneficiaryId} beneficiary: `, beneficiaryDetails);
+  // console.log(`NFT ${beneficiaryId} beneficiary: `, beneficiaryDetails);
   return beneficiaryDetails;
 }
 
@@ -25,11 +25,11 @@ export async function getBeneficiariesList() {
 
   const beneficiariesList: any = [];
   for (const id of [...(Array(parseInt(beneficiaryCount)).keys() as any)]) {
-    console.log((id + 1).toString());
+    // console.log((id + 1).toString());
 
     await getBeneficiaryDetails((id + 1).toString())
       .then(async (rawBeneficiary: any) => {
-        console.log(rawBeneficiary);
+        // console.log(rawBeneficiary);
         const parsedBeneficiary = await parseBeneficiary(rawBeneficiary);
         beneficiariesList.push(parsedBeneficiary);
       })
@@ -52,11 +52,18 @@ export async function getBeneficiariesCampaignsList() {
       campaignsList.length
         ? campaignsList.some((campaign: any) => {
             console.log(campaign);
-
+            console.log(beneficiary.address === campaign.wallet_address);
+            console.log(beneficiary.address);
+            console.log(campaign.wallet_address);
+            !mappedBeneficiariesList.length &&
+              mappedBeneficiariesList.push({ ...beneficiary, campaigns: [] });
             return (
               beneficiary.address === campaign.wallet_address &&
               mappedBeneficiariesList.find((newBeneficiary: any) => {
+                console.log(beneficiary.id === newBeneficiary.id);
                 console.log(newBeneficiary);
+                console.log(beneficiary.id);
+                console.log(newBeneficiary.id);
 
                 return beneficiary.id === newBeneficiary.id
                   ? newBeneficiary.campaigns.push(campaign)
