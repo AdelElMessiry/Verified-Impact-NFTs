@@ -9,11 +9,13 @@ export async function addCollection(
   name: string,
   description: string,
   url: string,
+  creator: string,
   deploySender: CLPublicKey
 ) {
   const collectionDeploy = await cep47.addCollection(
     name,
     description,
+    creator,
     url,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     deploySender

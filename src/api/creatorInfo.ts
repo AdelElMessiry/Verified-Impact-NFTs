@@ -13,7 +13,7 @@ export async function parseCreator(maybeValue: any) {
   const jsMap: any = new Map();
 
   for (const [innerKey, value] of maybeValue) {
-    jsMap.set(innerKey, value);
+    jsMap.set(innerKey.replace(/\s/g, '').replace(/[':]+/g, ''), value);
   }
   let mapObj = Object.fromEntries(jsMap);
 

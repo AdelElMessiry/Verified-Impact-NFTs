@@ -5,16 +5,10 @@ import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import { signDeploy } from '../utils/signer';
 import { CONNECTION } from '../constants/blockchain';
 
-export interface IBeneficiaryOptions {
-  beneficiary: string;
-  paymentAmount: string;
-  deploySender: CLPublicKey;
-}
-
 export async function addBeneficiary(
   name: string,
   description: string,
-  address: CLPublicKey,
+  address: string,
   deploySender: CLPublicKey
 ) {
   const beneficiaryDeploy = await cep47.addBeneficiary(
