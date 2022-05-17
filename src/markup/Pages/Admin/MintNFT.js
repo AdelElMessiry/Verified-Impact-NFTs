@@ -18,15 +18,16 @@ import Footer from '../../Layout/Footer1';
 import PageTitle from '../../Layout/PageTitle';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
+import PromptLogin from '../PromptLogin';
 
 const MintNFT = () => {
-  const { entityInfo, refreshAuth } = useAuth();
+  const { entityInfo, refreshAuth ,isLoggedIn} = useAuth();
   const [image, setImage] = useState([]);
   const [collectionState, setCollectionState] = useState(1);
   const [uploadedImageURL, setUploadedImage] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [uploadingToCloud, setUploadingToCloud] = useState(false);
-  const [validID, setValidID] = useState(false);
+  const [validID, setValidID] = useState();
   const [selectedCollectionValue, setSelectedCollectionValue] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [beneficiary, setBeneficiary] = useState();
@@ -107,7 +108,7 @@ const MintNFT = () => {
   //handling of selecting image in image control
   const onDrop = (picture) => {
     const newImageUrl = URL.createObjectURL(picture[0]);
-    setImage(newImageUrl);
+    setUploadedImage(newImageUrl);
     setUploadedFile(picture[0]);
   };
 
@@ -116,12 +117,12 @@ const MintNFT = () => {
     if (!uploadedImageURL) {
       return VIToast.error('Please upload image or enter direct URL');
     }
-    if (!validID) {
-      return VIToast.error('Please enter an id that is not already occupied');
+    if (!entityInfo.publicKey) {
+      return VIToast.error('Please enter sign in First');
     }
 
     let cloudURL = uploadedImageURL;
-    if (!state.inputs.imgURL && uploadedFile) {
+    if (!state.inputs.isImageURL && uploadedFile) {
       console.log('Img', uploadedFile);
       console.log('Img url', uploadedImageURL);
       setUploadingToCloud(true);
@@ -218,7 +219,10 @@ const MintNFT = () => {
         </div>
         {/* <!-- inner page banner END --> */}
         {/* <!-- contact area --> */}
-        <div className='section-full content-inner shop-account'>
+        {!isLoggedIn ? (
+          <PromptLogin />
+        ) : (
+           <div className='section-full content-inner shop-account'>
           {/* <!-- Product --> */}
           <div className='container'>
             <div>
@@ -337,8 +341,8 @@ const MintNFT = () => {
                               placeholder='Image URl'
                               name='imageUrl'
                               className='form-control'
-                              onChange={(e) => handleChange(e)}
-                              value={state.inputs.imageUrl}
+                              onChange={(e)=>setUploadedImage(e.target.value)}
+                              value={uploadedImageURL}
                             />
                           ) : (
                             <ImageUploader
@@ -396,7 +400,7 @@ const MintNFT = () => {
             </div>
           </div>
           {/* <!-- Product END --> */}
-        </div>
+        </div>)}
 
         {/* <!-- contact area  END --> */}
       </div>
