@@ -50,9 +50,12 @@ export async function getNFTsList() {
   for (const tokenID of [...(Array(parseInt(nftsCount)).keys() as any)]) {
     console.log(tokenID);
 
-    const nft_metadata = await cep47.getMappedTokenMeta(tokenID);
+    const nft_metadata = await cep47.getMappedTokenMeta(
+      (tokenID + 1).toString()
+    );
     nftsList.push(nft_metadata);
   }
+  console.log(nftsList);
 
   return nftsList;
 }
