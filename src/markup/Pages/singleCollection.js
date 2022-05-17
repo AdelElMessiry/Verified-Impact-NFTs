@@ -49,7 +49,8 @@ const SingleCollection = () => {
 
   useEffect(() => {
     let Data=[]
-    ReactGA.pageview(window.location.pathname +"SingleCollection");
+    let location = window.location.href.split("/#/")
+    ReactGA.pageview(window.location.pathname +location[1]);
     if (collection) {
       Data = imageBlog.filter((nft) => nft.collection === collection);
       setSelectedNfts(Data);

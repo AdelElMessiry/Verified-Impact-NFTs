@@ -238,7 +238,8 @@ const CreatorNFTs = () => {
   };
 
   useEffect(() => {
-    ReactGA.pageview(window.location.pathname +"CreatorNFTs");
+    let location = window.location.href.split("/#/")
+    ReactGA.pageview(window.location.pathname +location[1]);
     let Data = [];
  if (creator && !collection) {
       Data = imageBlog.filter((nft) => nft.creator === creator);
