@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 
 import { getBeneficiariesCampaignsList } from '../../api/beneficiaryInfo';
 import { getCreatorsCollectionsList } from '../../api/creatorInfo';
-import { getNFTsList } from '../../api/nftInfo';
 import { useAuth } from '../../contexts/AuthContext';
 
 const HeaderMenu = () => {
@@ -13,7 +12,8 @@ const HeaderMenu = () => {
   const [creators, setCreators] = useState();
   useEffect(() => {
     (async () => {
-      let beneficiaryList = !beneficiaries && (await getNFTsList());
+      let beneficiaryList =
+        !beneficiaries && (await getBeneficiariesCampaignsList());
       !beneficiaries && setBeneficiaries(beneficiaryList);
       let creatorsList = !creators && (await getCreatorsCollectionsList());
       !creators && setCreators(creatorsList);
