@@ -23,6 +23,7 @@ import CampaignOrCollectionTwitterShare from "../../Element/TwitterShare/Campaig
 import { useAuth } from '../../../contexts/AuthContext';
 import {getCreatorsList,getCreatorDetails} from "../../../api/creatorInfo"
 import BuyNFTModal from "../../Element/BuyNFT";
+import PromptLogin from '../PromptLogin';
 
 // Masonry section
 const masonryOptions = {
@@ -429,7 +430,10 @@ const MyCreations = () => {
           </div>
         </div>
         {/*  Section-1 Start  */}
-        <div className="section-full content-inner-1 portfolio text-uppercase">
+        {!isLoggedIn ? (
+          <PromptLogin />
+        ) : (
+           <div className="section-full content-inner-1 portfolio text-uppercase">
           {(creator === undefined || creator === null) && (
             <div className="site-filters clearfix  left mx-5   m-b40">
               <ul className="filters" data-toggle="buttons">
@@ -547,7 +551,7 @@ const MyCreations = () => {
               You Don't have NFTS yet!
             </h4>
           )}
-        </div>
+        </div>)}
       </div>
       {showBuyModal&& <BuyNFTModal
             show={showBuyModal}

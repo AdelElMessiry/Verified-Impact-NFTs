@@ -21,7 +21,7 @@ import bnr1 from './../../../images/banner/bnr1.jpg';
 import PromptLogin from '../PromptLogin';
 
 const MintNFT = () => {
-  const { entityInfo, refreshAuth ,isLoggedIn} = useAuth();
+  const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
   const [image, setImage] = useState([]);
   const [collectionState, setCollectionState] = useState(1);
   const [uploadedImageURL, setUploadedImage] = useState(null);
@@ -100,8 +100,8 @@ const MintNFT = () => {
         !beneficiaries && (await getBeneficiariesCampaignsList());
       !beneficiaries && setBeneficiaries(beneficiaryList);
       !beneficiaries && setCampaigns(beneficiaryList[0]?.campaigns);
-      !beneficiaries &&setBeneficiary(beneficiaryList[0]?.address)
-      !beneficiaries &&setCampaign(beneficiaryList[0]?.campaigns[0]?.id)
+      !beneficiaries && setBeneficiary(beneficiaryList[0]?.address);
+      !beneficiaries && setCampaign(beneficiaryList[0]?.campaigns[0]?.id);
     })();
   }, [beneficiaries]);
 
@@ -209,198 +209,243 @@ const MintNFT = () => {
     <>
       <Header />
 
-      <div className='page-content bg-white'>
+      <div className="page-content bg-white">
         {/* <!-- inner page banner --> */}
         <div
-          className='dlab-bnr-inr overlay-primary bg-pt'
+          className="dlab-bnr-inr overlay-primary bg-pt"
           style={{ backgroundImage: 'url(' + bnr1 + ')' }}
         >
-          <PageTitle motherMenu='Mint NFT' activeMenu='Mint NFT' />
+          <PageTitle motherMenu="Mint NFT" activeMenu="Mint NFT" />
         </div>
         {/* <!-- inner page banner END --> */}
         {/* <!-- contact area --> */}
         {!isLoggedIn ? (
           <PromptLogin />
         ) : (
-           <div className='section-full content-inner shop-account'>
-          {/* <!-- Product --> */}
-          <div className='container'>
-            <div>
-              <div className=' m-auto m-b30'>
-                <Container>
-                  <Row>
-                    <Col>
-                      <Row className='form-group'>
-                        <Col>
-                          <label>Select Beneficiary</label>
-                          <select
-                            name='beneficiary'
-                            placeholder='Beneficiary'
-                            className='form-control'
-                            onChange={(e) => {handleChange(e, true);setBeneficiary(e.target.value)}}
-                            value={beneficiary}
-                          >
-                            {beneficiaries?.map(({ name, address }) => (
-                              <option key={address} value={address}>
-                                {name}
-                              </option>
-                            ))}
-                          </select>
-                        </Col>
-                      </Row>
-                      <Row className='form-group'>
-                        <Col>
-                          <label>Select Campaign</label>
-                          <select
-                            name='campaign'
-                            placeholder='Campaign'
-                            className='form-control'
-                            onChange={(e) =>setCampaign(e.target.value)}
-                            value={campaign}
-                          >
-                            {campaigns?.map(({ name, id }) => (
-                              <option key={id} value={id}> {name}</option>
-                            ))}
-                          </select>
-                        </Col>
-                      </Row>
-                      <Row className='form-group'>
-                        <Col>
-                          <label>
-                            Select Existing Collection or Create new one
-                          </label>
+          <div className="section-full content-inner shop-account">
+            {/* <!-- Product --> */}
+            <div className="container">
+              <div>
+                <div className=" m-auto m-b30">
+                  <Container>
+                    <Row>
+                      <Col>
+                        <Row className="form-group">
+                          <Col>
+                            <label>Select Beneficiary</label>
+                            <select
+                              name="beneficiary"
+                              placeholder="Beneficiary"
+                              className="form-control"
+                              onChange={(e) => {
+                                handleChange(e, true);
+                                setBeneficiary(e.target.value);
+                              }}
+                              value={beneficiary}
+                            >
+                              {beneficiaries?.map(({ name, address }) => (
+                                <option key={address} value={address}>
+                                  {name}
+                                </option>
+                              ))}
+                            </select>
+                          </Col>
+                        </Row>
+                        <Row className="form-group">
+                          <Col>
+                            <label>Select Campaign</label>
+                            <select
+                              name="campaign"
+                              placeholder="Campaign"
+                              className="form-control"
+                              onChange={(e) => setCampaign(e.target.value)}
+                              value={campaign}
+                            >
+                              {campaigns?.map(({ name, id }) => (
+                                <option key={id} value={id}>
+                                  {' '}
+                                  {name}
+                                </option>
+                              ))}
+                            </select>
+                          </Col>
+                        </Row>
+                        <Row className="form-group">
+                          <Col>
+                            <label>
+                              Select Existing Collection or Create new one
+                            </label>
 
-                          <CreatableSelect
-                            isClearable
-                            isLoading={isLoading}
-                            onChange={(v) => setSelectedCollectionValue(v)}
-                            onCreateOption={(v) => handleCreate(v)}
-                            options={options}
-                            value={selectedCollectionValue}
-                            menuPortalTarget={document.body}
-                            placeholder='Select...'
-                            className='creatable-select'
-                          />
-                        </Col>
-                      </Row>
-                      <Row className='form-group'>
-                        <Col>
-                          <input
-                            type='text'
-                            placeholder='Creator'
-                            name='creator'
-                            className='form-control'
-                            onChange={(e) => handleChange(e)}
-                            value={state.inputs.creator}
-                          />
-                        </Col>
-                      </Row>
-                      <Row className='form-group'>
-                        <Col>
-                          <input
-                            type='text'
-                            placeholder='Name'
-                            name='name'
-                            className='form-control'
-                            onChange={(e) => handleChange(e)}
-                            value={state.inputs.name}
-                          />
-                        </Col>
-                      </Row>
-                      <Row className='form-group'>
-                        <Col>
-                          <Form.Check
-                            type={'checkbox'}
-                            id={'isForSale'}
-                            label={`Is For Sale`}
-                            onChange={(e) => handleChange(e)}
-                            value={state.inputs.isForSale}
-                            name='isForSale'
-                          />
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col>
-                      <Row className='form-group'>
-                        <Col>
-                          <Form.Check
-                            type={'checkbox'}
-                            id={'isImageURL'}
-                            label={`Already hosted image, enter direct url ?`}
-                            onChange={(e) => handleChange(e)}
-                            value={state.inputs.isImageURL}
-                            name='isImageURL'
-                          />
-                        </Col>
-                      </Row>
-                      <Row className='form-group'>
-                        <Col>
-                          {state.inputs.isImageURL ? (
+                            <CreatableSelect
+                              isClearable
+                              isLoading={isLoading}
+                              onChange={(v) => setSelectedCollectionValue(v)}
+                              onCreateOption={(v) => handleCreate(v)}
+                              options={options}
+                              value={selectedCollectionValue}
+                              menuPortalTarget={document.body}
+                              placeholder="Select..."
+                              className="creatable-select"
+                            />
+                          </Col>
+                        </Row>
+                        <Row className="form-group">
+                          <Col>
                             <input
-                              type='text'
-                              placeholder='Image URl'
-                              name='imageUrl'
-                              className='form-control'
-                              onChange={(e)=>setUploadedImage(e.target.value)}
-                              value={uploadedImageURL}
+                              type="text"
+                              placeholder="Creator"
+                              name="creator"
+                              className="form-control"
+                              onChange={(e) => handleChange(e)}
+                              value={state.inputs.creator}
                             />
-                          ) : (
-                            <ImageUploader
-                              singleImage
-                              withIcon={true}
-                              buttonText='Choose images'
-                              onChange={onDrop}
-                              imgExtension={['.jpg', '.gif', '.png']}
-                              maxFileSize={20209230}
-                              withPreview={true}
-                              label={
-                                'Max file size: 20mb, accepted: jpg|gif|png'
-                              }
+                          </Col>
+                        </Row>
+                        <Row className="form-group">
+                          <Col>
+                            <input
+                              type="text"
+                              placeholder="Name"
+                              name="name"
+                              className="form-control"
+                              onChange={(e) => handleChange(e)}
+                              value={state.inputs.name}
                             />
-                          )}
-                        </Col>
-                      </Row>
-                    </Col>
-                  </Row>
-
-                  <Row className='form-group'>
-                    <Col>
-                      <textarea
-                        rows={4}
-                        name='description'
-                        placeholder='Description'
-                        className='form-control'
-                        onChange={(e) => handleChange(e)}
-                        value={state.inputs.description}
-                      ></textarea>
-                    </Col>
-                  </Row>
-                  <Row className='form-group'>
-                    <Col>
-                      <p className='form-submit'>
-                        <input
-                          type='button'
-                          value='Mint'
-                          className='btn btn-success'
-                          name='submit'
-                          onClick={mintNFT}
-                          disabled={
-                            beneficiary === '' ||
-                            campaign === '' ||
-                            selectedCollectionValue.value === '' ||
-                            state.inputs.creator === '' ||
-                            state.inputs.name === ''
-                          }
-                        />
-                      </p>
-                    </Col>
-                  </Row>
-                </Container>
+                          </Col>
+                        </Row>
+                      
+                      </Col>
+                      <Col>
+                        <Row className="form-group">
+                          <Col>
+                            <Form.Check
+                              type={'checkbox'}
+                              id={'isImageURL'}
+                              label={`Already hosted image, enter direct url ?`}
+                              onChange={(e) => handleChange(e)}
+                              value={state.inputs.isImageURL}
+                              name="isImageURL"
+                            />
+                          </Col>
+                        </Row>
+                        <Row className="form-group">
+                          <Col>
+                            {state.inputs.isImageURL ? (
+                              <input
+                                type="text"
+                                placeholder="Image URl"
+                                name="imageUrl"
+                                className="form-control"
+                                onChange={(e) =>
+                                  setUploadedImage(e.target.value)
+                                }
+                                value={uploadedImageURL}
+                              />
+                            ) : (
+                              <ImageUploader
+                                singleImage
+                                withIcon={true}
+                                buttonText="Choose images"
+                                onChange={onDrop}
+                                imgExtension={['.jpg', '.gif', '.png']}
+                                maxFileSize={20209230}
+                                withPreview={true}
+                                label={
+                                  'Max file size: 20mb, accepted: jpg|gif|png'
+                                }
+                              />
+                            )}
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                    <Row className="form-group">
+                          <Col>
+                            <Form.Check
+                              type={'checkbox'}
+                              id={'isForSale'}
+                              label={`Is For Sale`}
+                              onChange={(e) => handleChange(e)}
+                              value={state.inputs.isForSale}
+                              name="isForSale"
+                            />
+                          </Col>
+                        </Row>
+                        {state.inputs.isForSale && (
+                          <>
+                            <Row className="form-group">
+                              <Col>
+                                <input
+                                  type="text"
+                                  placeholder="Price"
+                                  name="price"
+                                  className="form-control"
+                                  onChange={(e) => handleChange(e)}
+                                  value={state.inputs.price}
+                                />
+                              </Col>
+                              <Col>
+                                <input
+                                  type="text"
+                                  placeholder="Creator Percentage"
+                                  name="creatorPercentage"
+                                  className="form-control"
+                                  onChange={(e) => handleChange(e)}
+                                  value={state.inputs.creatorPercentage}
+                                />
+                              </Col>
+                              <Col>
+                                <input
+                                  type="text"
+                                  placeholder="Currency"
+                                  name="currency"
+                                  className="form-control"
+                                  onChange={(e) => handleChange(e)}
+                                  value={state.inputs.currency}
+                                />
+                              </Col>
+                            </Row>
+                          </>
+                        )}
+                    <Row className="form-group">
+                      <Col>
+                        <textarea
+                          rows={4}
+                          name="description"
+                          placeholder="Description"
+                          className="form-control"
+                          onChange={(e) => handleChange(e)}
+                          value={state.inputs.description}
+                        ></textarea>
+                      </Col>
+                    </Row>
+                    <Row className="form-group">
+                      <Col>
+                        <p className="form-submit">
+                          <input
+                            type="button"
+                            value="Mint"
+                            className="btn btn-success"
+                            name="submit"
+                            onClick={mintNFT}
+                            disabled={
+                              beneficiary === '' ||
+                              campaign === '' ||
+                              selectedCollectionValue.value === '' ||
+                              state.inputs.creator === '' ||
+                              state.inputs.name === ''
+                            }
+                          />
+                        </p>
+                      </Col>
+                    </Row>
+                  </Container>
+                </div>
               </div>
             </div>
+            {/* <!-- Product END --> */}
           </div>
-          {/* <!-- Product END --> */}
-        </div>)}
+        )}
 
         {/* <!-- contact area  END --> */}
       </div>
