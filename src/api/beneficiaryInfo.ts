@@ -45,45 +45,36 @@ export async function getBeneficiariesCampaignsList() {
   const campaignsList = await getCampaignsList();
   const mappedBeneficiariesList: any = [];
 
-  beneficiariesList.find(
-    (beneficiary: any) =>
-      campaignsList.length
-        ? campaignsList.some((campaign: any) => {
-            console.log(campaign);
-            console.log(beneficiary.address === campaign.wallet_address);
-            console.log(beneficiary.address);
-            console.log(campaign.wallet_address);
-            !mappedBeneficiariesList.length &&
-              mappedBeneficiariesList.push({ ...beneficiary, campaigns: [] });
-            return (
-              beneficiary.address === campaign.wallet_address &&
-              mappedBeneficiariesList.find((newBeneficiary: any) => {
-                console.log(beneficiary.id === newBeneficiary.id);
-                console.log(newBeneficiary);
-                console.log(beneficiary.id);
-                console.log(newBeneficiary.id);
-
-                return beneficiary.id === newBeneficiary.id
-                  ? newBeneficiary.campaigns.push(campaign)
-                  : mappedBeneficiariesList.push({
-                      ...beneficiary,
-                      campaigns: [campaign],
-                    });
-              })
-            );
-          })
-        : mappedBeneficiariesList.push({ ...beneficiary, campaigns: [] })
-    // mappedBeneficiariesList.reduce((a: any, b: any) => {
-    //   const found = a.find((e: any) => e.id == b.id);
-    //   return (
-    //     found
-    //       ? mappedBeneficiariesList.campaigns.push(b)
-    //       : a.push({ ...newBeneficiary, campaigns: [campaign] }),
-    //     a
-    //   );
-    // }, [])
+  beneficiariesList.find((beneficiary: any, index: any) =>
+    campaignsList.length
+      ? campaignsList.map((campaign: any) => {
+          !mappedBeneficiariesList.length &&
+            mappedBeneficiariesList.push({ ...beneficiary, campaigns: [] });
+          return (
+            beneficiary.address === campaign.wallet_address &&
+            mappedBeneficiariesList.find((newBeneficiary: any) => {
+              return beneficiary.id === newBeneficiary.id
+                ? mappedBeneficiariesList[index].campaigns.push(campaign)
+                : mappedBeneficiariesList.push({
+                    ...beneficiary,
+                    campaigns: [campaign],
+                  });
+            })
+          );
+        })
+      : mappedBeneficiariesList.push({ ...beneficiary, campaigns: [] })
   );
   console.log(mappedBeneficiariesList);
 
   return mappedBeneficiariesList;
 }
+
+// mappedBeneficiariesList.reduce((a: any, b: any) => {
+//   const found = a.find((e: any) => e.id == b.id);
+//   return (
+//     found
+//       ? mappedBeneficiariesList.campaigns.push(b)
+//       : a.push({ ...newBeneficiary, campaigns: [campaign] }),
+//     a
+//   );
+// }, [])
