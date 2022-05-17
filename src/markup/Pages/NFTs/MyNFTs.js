@@ -74,7 +74,7 @@ const MyNFTs = () => {
   const [tagCampaign, setTagCampaign] = useState("All");
   const [filteredImages, setFilterdImages] = useState([]);
   const [selectedNfts, setSelectedNfts] = useState([]);
-  const [allNfts, setAllNfts] = useState([]);
+  const [allNfts, setAllNfts] = useState();
   const [openSlider, setOpenSlider] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [sliderCaptions, setSliderCaptions] = useState([]);
@@ -259,7 +259,7 @@ const MyNFTs = () => {
       if (!entityInfo.publicKey) return;
 
        newNFTList = await getNFTsOwned(entityInfo.publicKey);
-      setAllNfts(newNFTList)
+     !allNfts&& setAllNfts(newNFTList)
       console.log(newNFTList);
    
     let collection = newNFTList.map((data) => ({ name: data.collection })).filter(
@@ -383,7 +383,7 @@ const MyNFTs = () => {
       );
     }
     setSliderCaptions(captions); })();
-  }, [entityInfo]);
+  }, [entityInfo,allNfts]);
 
   const options = {
     buttons: { showDownloadButton: false },
