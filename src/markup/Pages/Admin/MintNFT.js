@@ -29,6 +29,8 @@ const MintNFT = () => {
   const [validID, setValidID] = useState(false);
   const [selectedCollectionValue, setSelectedCollectionValue] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [beneficiary, setBeneficiary] = useState();
+  const [campaign, setCampaign] = useState();
 
   let selectedOptions = [];
   const [options, setOptions] = useState(selectedOptions);
@@ -76,15 +78,12 @@ const MintNFT = () => {
       imageUrl: '',
       name: '',
       description: '',
-      beneficiary: '',
-      campaign: '',
       price: '',
       isForSale: false,
       category: '',
       currency: '',
       creator: '',
       creatorPercentage: '',
-      collectionName: '',
       beneficiaryPercentage: '',
       collection: '',
       isImageURL: false,
@@ -100,6 +99,8 @@ const MintNFT = () => {
         !beneficiaries && (await getBeneficiariesCampaignsList());
       !beneficiaries && setBeneficiaries(beneficiaryList);
       !beneficiaries && setCampaigns(beneficiaryList[0]?.campaigns);
+      !beneficiaries &&setBeneficiary(beneficiaryList[0].address)
+      !beneficiaries &&setCampaign(beneficiaryList[0]?.campaigns[0]?.id)
     })();
   }, [beneficiaries]);
 
@@ -157,16 +158,13 @@ const MintNFT = () => {
           image: imgURL,
           price: state.inputs.price,
           isForSale: state.inputs.isForSale,
-          campaign: state.inputs.campaign,
+          campaign: campaign,
           category: state.inputs.category,
           currency: state.inputs.currency,
-          collectionName:
-            collectionState === 1
-              ? state.inputs.collection
-              : state.inputs.collectionName,
+          collectionName: selectedCollectionValue.value,
           creator: state.inputs.creator,
           creatorPercentage: state.inputs.creatorPercentage,
-          beneficiary: state.inputs.beneficiary,
+          beneficiary: beneficiary,
           beneficiaryPercentage: state.inputs.beneficiaryPercentage,
         });
       } catch (err) {
@@ -193,11 +191,8 @@ const MintNFT = () => {
           isForSale: false,
           category: '',
           currency: '',
-          campaign: '',
           creator: '',
           creatorPercentage: '',
-          collectionName: '',
-          beneficiary: '',
           beneficiaryPercentage: '',
           isImageURL: false,
         },
@@ -235,11 +230,11 @@ const MintNFT = () => {
                         <Col>
                           <label>Select Beneficiary</label>
                           <select
-                            name='Beneficiary'
+                            name='beneficiary'
                             placeholder='Beneficiary'
                             className='form-control'
-                            onChange={(e) => handleChange(e, true)}
-                            value={state.inputs.beneficiary}
+                            onChange={(e) => {handleChange(e, true);setBeneficiary(e.target.value)}}
+                            value={beneficiary}
                           >
                             {beneficiaries?.map(({ name, address }) => (
                               <option key={address} value={address}>
@@ -256,11 +251,11 @@ const MintNFT = () => {
                             name='campaign'
                             placeholder='Campaign'
                             className='form-control'
-                            onChange={(e) => handleChange(e)}
-                            value={state.inputs.campaign}
+                            onChange={(e) =>setCampaign(e.target.value)}
+                            value={campaign}
                           >
-                            {campaigns?.map(({ name, address }) => (
-                              <option value={address}> {name}</option>
+                            {campaigns?.map(({ name, id }) => (
+                              <option key={id} value={id}> {name}</option>
                             ))}
                           </select>
                         </Col>
@@ -386,9 +381,9 @@ const MintNFT = () => {
                           name='submit'
                           onClick={mintNFT}
                           disabled={
-                            state.inputs.beneficiary === '' ||
-                            state.inputs.campaign === '' ||
-                            state.inputs.collection === '' ||
+                            beneficiary === '' ||
+                            campaign === '' ||
+                            selectedCollectionValue.value === '' ||
                             state.inputs.creator === '' ||
                             state.inputs.name === ''
                           }

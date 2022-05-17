@@ -13,6 +13,7 @@ import Footer from '../../Layout/Footer1';
 import PageTitle from '../../Layout/PageTitle';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
+import { toast as VIToast } from 'react-toastify';
 
 const AddCampaign = () => {
   const { entityInfo, isLoggedIn } = useAuth();
@@ -67,6 +68,7 @@ const AddCampaign = () => {
 
     const deployResult = await getDeployDetails(savedCampaign);
     console.log('...... Campaign saved successfully', deployResult);
+    VIToast.success("Campaign saved successfully");
 
     setState({
       inputs: {
