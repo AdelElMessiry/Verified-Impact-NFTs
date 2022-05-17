@@ -21,6 +21,7 @@ import NFTTwitterShare from "../../Element/TwitterShare/NFTTwitterShare";
 import CampaignOrCollectionTwitterShare from "../../Element/TwitterShare/CampaignOrCollectionTwitterShare";
 import { useAuth } from '../../../contexts/AuthContext';
 import BuyNFTModal from "../../Element/BuyNFT";
+import PromptLogin from '../PromptLogin';
 
 // Masonry section
 const masonryOptions = {
@@ -254,40 +255,39 @@ const MyNFTs = () => {
 
   useEffect(() => {
     if (!entityInfo.publicKey) return;
-    let newNFTList ; 
     (async () => {
       if (!entityInfo.publicKey) return;
-
-       newNFTList = await getNFTsOwned(entityInfo.publicKey);
+       let newNFTList =  !allNfts && (await getNFTsOwned(entityInfo.publicKey));
+       debugger;
      !allNfts&& setAllNfts(newNFTList)
       console.log(newNFTList);
    
-    let collection = newNFTList.map((data) => ({ name: data.collection })).filter(
+    let collection = newNFTList?.map((data) => ({ name: data.collection })).filter(
       (value, index, self) =>
         index === self.findIndex((t) => t.name === value.name)
     );
     setCollectionTags([{ name: "All" }, ...collection]);
 
-    let campaigns = newNFTList.map((data) => ({ name: data.campaign })).filter(
+    let campaigns = newNFTList?.map((data) => ({ name: data.campaign })).filter(
       (value, index, self) =>
         index === self.findIndex((t) => t.name === value.name)
     );
 
     setCampaignTags([{ name: "All" }, ...campaigns]);
 
-    let creators = newNFTList.map((data) => ({ name: data.creator })).filter(
+    let creators = newNFTList?.map((data) => ({ name: data.creator })).filter(
       (value, index, self) =>
         index === self.findIndex((t) => t.name === value.name)
     );
 
     setCreatorTags([{ name: "All" }, ...creators]);
-    setSelectedNfts(newNFTList);
+    !allNfts&&setSelectedNfts(newNFTList);
     setTagCampaign("All");
     setTagCollection("All");
     setTagCreator("All");
     setSearchFlag(!searchFlag);
     const captions = [];
-    for (let item = 0; item < newNFTList.length; item++) {
+    for (let item = 0; item < newNFTList?.length; item++) {
       captions.push(
         <div className="text-white text-left port-box">
           <h5>{newNFTList[item].name}</h5>
@@ -422,7 +422,10 @@ const MyNFTs = () => {
           </div>
         </div>
         {/*  Section-1 Start  */}
-        <div className="section-full content-inner-1 portfolio text-uppercase">
+        {!isLoggedIn ? (
+          <PromptLogin />
+        ) : (
+           <div className="section-full content-inner-1 portfolio text-uppercase">
           {(creator === undefined || creator === null) && (
             <div className="site-filters clearfix  left mx-5   m-b40">
               <ul className="filters" data-toggle="buttons">
@@ -540,7 +543,7 @@ const MyNFTs = () => {
               You Don't have NFTS yet!
             </h4>
           )}
-        </div>
+        </div>)}
       </div>
       {showBuyModal&& <BuyNFTModal
             show={showBuyModal}
