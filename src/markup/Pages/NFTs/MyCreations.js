@@ -286,7 +286,7 @@ const MyCreations = () => {
     );
 
     setCreatorTags([{ name: "All" }, ...creators]);
-    setSelectedNfts(newNFTList);
+   !selectedNfts&&setSelectedNfts(newNFTList);
     setTagCampaign("All");
     setTagCollection("All");
     setTagCreator("All");
@@ -388,7 +388,7 @@ const MyCreations = () => {
       );
     }
     setSliderCaptions(captions);})();
-  }, [entityInfo]);
+  }, [entityInfo,selectedNfts]);
 
   const options = {
     buttons: { showDownloadButton: false },
