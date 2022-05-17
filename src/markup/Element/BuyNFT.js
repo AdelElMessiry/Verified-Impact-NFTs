@@ -1,23 +1,23 @@
-import React, { useState } from "react";
-import Modal from "react-bootstrap/Modal";
+import React, { useState } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import { CLPublicKey } from 'casper-js-sdk';
+import { Row, Col } from 'react-bootstrap';
+
 import { transferFees } from '../../utils/contract-utils';
 import { transfer } from '../../api/transfer';
 import { approve } from '../../api/approve';
 import { getDeployDetails } from '../../api/universal';
 import { useAuth } from '../../contexts/AuthContext';
-import { CLPublicKey } from 'casper-js-sdk';
-import { Row, Col } from "react-bootstrap";
-import { isTemplateExpression } from "typescript";
 
 //buying NFT Modal
-const BuyNFTModal = ({ show, handleCloseParent,data }) => {
-    const IntialInputs = () => ({
-        inputs: {
-          address: "",
-        },
-      });
+const BuyNFTModal = ({ show, handleCloseParent, data }) => {
+  const IntialInputs = () => ({
+    inputs: {
+      address: '',
+    },
+  });
   const { entityInfo } = useAuth();
-  const [toAddress, setToAddress] = React.useState("");
+  const [toAddress, setToAddress] = React.useState('');
   const [showModal, setShowModal] = useState(show);
   const [state, setState] = useState(IntialInputs());
   if (!data) return <></>;
@@ -34,7 +34,7 @@ const BuyNFTModal = ({ show, handleCloseParent,data }) => {
     try {
       const deployApproveResult = await getDeployDetails(approveTransfer);
       console.log(
-        "...... Token approve transferred successfully",
+        '...... Token approve transferred successfully',
         deployApproveResult
       );
 
@@ -45,24 +45,24 @@ const BuyNFTModal = ({ show, handleCloseParent,data }) => {
       );
       const deployTransferResult = await getDeployDetails(transferDeployHash);
       console.log(
-        "...... Token fees transferred successfully",
+        '...... Token fees transferred successfully',
         deployTransferResult
       );
     } catch (err) {
-      console.log("Transfer Err " + err);
+      console.log('Transfer Err ' + err);
     }
 
     try {
       const transferFeesHash = await transferFees(entityInfo.publicKey, nftID);
       const deployFeesResult = await getDeployDetails(transferFeesHash);
 
-      console.log("...... Token transferred successfully", deployFeesResult);
+      console.log('...... Token transferred successfully', deployFeesResult);
     } catch (err) {
-      console.log("Transfer Err " + err);
+      console.log('Transfer Err ' + err);
     }
   };
 
-//handle closing modal
+  //handle closing modal
   const handleClose = () => {
     setShowModal(false);
     handleCloseParent();
@@ -73,7 +73,7 @@ const BuyNFTModal = ({ show, handleCloseParent,data }) => {
     const { value, name, checked, type } = e.target;
     const { inputs } = state;
 
-    inputs[name] = type === "checkbox" ? checked : value;
+    inputs[name] = type === 'checkbox' ? checked : value;
     setState({
       ...state,
       inputs,
@@ -85,27 +85,27 @@ const BuyNFTModal = ({ show, handleCloseParent,data }) => {
       show={showModal}
       onHide={handleClose}
       scrollable={true}
-      size="lg"
-      backdrop="static"
+      size='lg'
+      backdrop='static'
     >
       <Modal.Header closeButton>
         <Modal.Title>Buy {data.name} NFT</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="reserve-form">
-            <Row>
-                <Col>
-                <h5>{data.name}</h5>
-                <p className="text-muted">{data.description}</p>
-                </Col>
-            </Row>
-          <div className="row form-group justify-content-center">
-            <div className="col-6">
+        <div className='reserve-form'>
+          <Row>
+            <Col>
+              <h5>{data.name}</h5>
+              <p className='text-muted'>{data.description}</p>
+            </Col>
+          </Row>
+          <div className='row form-group justify-content-center'>
+            <div className='col-6'>
               <input
-                type="text"
-                className="form-control"
-                name="address"
-                placeholder="Transfer To*"
+                type='text'
+                className='form-control'
+                name='address'
+                placeholder='Transfer To*'
                 onChange={(e) => handleChange(e)}
                 value={state.inputs.address}
               />
@@ -114,10 +114,10 @@ const BuyNFTModal = ({ show, handleCloseParent,data }) => {
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <button className="btn" onClick={handleClose}>
+        <button className='btn' onClick={handleClose}>
           Close
         </button>
-        <button className="btn btn-success" onClick={() => makeTransfer()}>
+        <button className='btn btn-success' onClick={() => makeTransfer()}>
           Buy
         </button>
       </Modal.Footer>

@@ -1,30 +1,28 @@
-import React, { Component, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
+import { CLPublicKey } from 'casper-js-sdk';
+import ImageUploader from 'react-images-upload';
+import { toast as VIToast } from 'react-toastify';
+import { Form } from 'react-bootstrap';
+import CreatableSelect from 'react-select/creatable';
+
+import { useAuth } from '../../../contexts/AuthContext';
+import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
+import { uploadImg } from '../../../api/imageCDN';
+import { mint } from '../../../api/mint';
+import { getDeployDetails } from '../../../api/universal';
+import { numberOfNFTsOwned } from '../../../api/userInfo';
+
 import Header from '../../Layout/Header1';
 import Footer from '../../Layout/Footer1';
 import PageTitle from '../../Layout/PageTitle';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
-import { Col, Container, Row } from 'react-bootstrap';
-import { useAuth } from '../../../contexts/AuthContext';
-import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
-import { getCampaignsList } from '../../../api/campaignInfo';
-import { createCampaign } from '../../../api/createCampaign';
-import { CLPublicKey } from 'casper-js-sdk';
-import ImageUploader from 'react-images-upload';
-import { toast as VIToast } from 'react-toastify';
-import { uploadImg } from '../../../api/imageCDN';
-import { Form } from 'react-bootstrap';
-import { mint, NFTReference } from '../../../api/mint';
-import { getDeployDetails } from '../../../api/universal';
-import { numberOfNFTsOwned } from '../../../api/userInfo';
-import CreatableSelect from 'react-select/creatable';
 
 const MintNFT = () => {
   const { entityInfo, refreshAuth } = useAuth();
   const [image, setImage] = useState([]);
   const [collectionState, setCollectionState] = useState(1);
-  const [collections, setCollections] = useState([]);
   const [uploadedImageURL, setUploadedImage] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [uploadingToCloud, setUploadingToCloud] = useState(false);
@@ -60,7 +58,9 @@ const MintNFT = () => {
     const { value, name, checked, type } = e.target;
     const { inputs } = state;
     if (isBeneficiary) {
-      let selectedBeneficiary = beneficiaries.filter((b) => b.address == value);
+      let selectedBeneficiary = beneficiaries.filter(
+        (b) => b.address === value
+      );
       setCampaigns(selectedBeneficiary[0].campaigns);
     }
     inputs[name] = type === 'checkbox' ? checked : value;
@@ -85,7 +85,6 @@ const MintNFT = () => {
       creator: '',
       creatorPercentage: '',
       collectionName: '',
-      beneficiary: '',
       beneficiaryPercentage: '',
       collection: '',
       isImageURL: false,
@@ -162,7 +161,7 @@ const MintNFT = () => {
           category: state.inputs.category,
           currency: state.inputs.currency,
           collectionName:
-            collectionState == 1
+            collectionState === 1
               ? state.inputs.collection
               : state.inputs.collectionName,
           creator: state.inputs.creator,
