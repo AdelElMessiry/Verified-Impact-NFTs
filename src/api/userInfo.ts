@@ -38,15 +38,14 @@ export async function numberOfNFTsOwned(publicKeyHex: string): Promise<number> {
 export async function getNFTsOwned(publicKeyHex: string): Promise<any[]> {
   const publicKeyCLValue = HexToCLPublicKey(publicKeyHex);
   const numOfNFTs = await numberOfNFTsOfPubCLvalue(publicKeyCLValue);
-  console.log(numOfNFTs);
 
   const nfts: any[] = [];
-  for (let idx = 1; idx < numOfNFTs; idx++) {
+  for (let idx = 0; idx < numOfNFTs; idx++) {
     const nftID = await cep47.getTokenByIndex(publicKeyCLValue, String(idx));
-    const rawNFT = await cep47.getTokenMeta(nftID);
-    nfts.push(parseNFT(rawNFT, nftID));
+
+    const rawNFT = await cep47.getMappedTokenMeta(nftID);
+    nfts.push(rawNFT);
   }
-  console.log(nfts);
 
   return nfts;
 }
