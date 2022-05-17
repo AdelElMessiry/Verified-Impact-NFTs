@@ -3,7 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { toast } from "react-toastify";
 
+toast.configure({
+	position: "top-center",
+	autoClose: false,
+	draggable: false,
+	mode:"dark"
+  });
 ReactDOM.render(
 	<><App /></>,document.getElementById('root')
 );
