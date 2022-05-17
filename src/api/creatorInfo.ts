@@ -44,22 +44,26 @@ export async function getCreatorsCollectionsList() {
   const collectionsList = await getCampaignsList();
   const mappedCreatorsList: any = [];
 
-  creatorsList.find((creator: any) =>
+  creatorsList.find((creator: any, index: any) =>
     collectionsList.length
-      ? collectionsList.some(
-          (collection: any) =>
+      ? collectionsList.map((collection: any) => {
+          !mappedCreatorsList.length &&
+            mappedCreatorsList.push({ ...creator, collections: [] });
+          return (
             creator.address === collection.creator &&
-            mappedCreatorsList.find((newCreator: any) =>
-              creator.address === newCreator.address
-                ? newCreator.collections.push(creator)
+            mappedCreatorsList.find((newCreator: any) => {
+              return creator.id === newCreator.id
+                ? mappedCreatorsList[index].collections.push(creator)
                 : mappedCreatorsList.push({
                     ...creator,
-                    collections: [collection],
-                  })
-            )
-        )
+                    collections: [creator],
+                  });
+            })
+          );
+        })
       : mappedCreatorsList.push({ ...creator, collections: [] })
   );
+  console.log(mappedCreatorsList);
 
   return mappedCreatorsList;
 }
