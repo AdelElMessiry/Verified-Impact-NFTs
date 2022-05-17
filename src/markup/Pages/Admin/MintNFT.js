@@ -100,7 +100,7 @@ const MintNFT = () => {
       let beneficiaryList =
         !beneficiaries && (await getBeneficiariesCampaignsList());
       !beneficiaries && setBeneficiaries(beneficiaryList);
-      !beneficiaries && setCampaigns(beneficiaryList[0].campaigns);
+      !beneficiaries && setCampaigns(beneficiaryList[0]?.campaigns);
     })();
   }, [beneficiaries]);
 
@@ -122,8 +122,8 @@ const MintNFT = () => {
 
     let cloudURL = uploadedImageURL;
     if (!state.inputs.imgURL && uploadedFile) {
-      console.log("Img", uploadedFile);
-      console.log("Img url", uploadedImageURL);
+      console.log('Img', uploadedFile);
+      console.log('Img url', uploadedImageURL);
       setUploadingToCloud(true);
       try {
         cloudURL = await uploadImg(uploadedFile);
@@ -188,18 +188,18 @@ const MintNFT = () => {
       //  setMintStage(MintingStages.TX_SUCCESS);
       setState({
         inputs: {
-          title: "",
-          description: "",
-          price: "",
+          title: '',
+          description: '',
+          price: '',
           isForSale: false,
-          category: "",
-          currency: "",
-          campaign: "",
-          creator: "",
-          creatorPercentage: "",
-          collectionName: "",
-          beneficiary: "",
-          beneficiaryPercentage: "",
+          category: '',
+          currency: '',
+          campaign: '',
+          creator: '',
+          creatorPercentage: '',
+          collectionName: '',
+          beneficiary: '',
+          beneficiaryPercentage: '',
           isImageURL: false,
         },
       });
@@ -280,8 +280,8 @@ const MintNFT = () => {
                             options={options}
                             value={selectedCollectionValue}
                             menuPortalTarget={document.body}
-                            placeholder="Select..."
-                            className="creatable-select"
+                            placeholder='Select...'
+                            className='creatable-select'
                           />
                         </Col>
                       </Row>
@@ -387,11 +387,11 @@ const MintNFT = () => {
                           name='submit'
                           onClick={mintNFT}
                           disabled={
-                            state.inputs.beneficiary === "" ||
-                            state.inputs.campaign === "" ||
-                            state.inputs.collection === "" ||
-                            state.inputs.creator === "" ||
-                            state.inputs.name === ""
+                            state.inputs.beneficiary === '' ||
+                            state.inputs.campaign === '' ||
+                            state.inputs.collection === '' ||
+                            state.inputs.creator === '' ||
+                            state.inputs.name === ''
                           }
                         />
                       </p>
