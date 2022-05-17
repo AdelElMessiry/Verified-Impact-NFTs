@@ -99,7 +99,7 @@ const MintNFT = () => {
         !beneficiaries && (await getBeneficiariesCampaignsList());
       !beneficiaries && setBeneficiaries(beneficiaryList);
       !beneficiaries && setCampaigns(beneficiaryList[0]?.campaigns);
-      !beneficiaries &&setBeneficiary(beneficiaryList[0].address)
+      !beneficiaries &&setBeneficiary(beneficiaryList[0]?.address)
       !beneficiaries &&setCampaign(beneficiaryList[0]?.campaigns[0]?.id)
     })();
   }, [beneficiaries]);
