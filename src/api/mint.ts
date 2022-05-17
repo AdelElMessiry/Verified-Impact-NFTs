@@ -54,7 +54,6 @@ export async function mint(
 
   console.log('Final nft info:', {
     publicKeyCLValue,
-    // id: [String(mintOptions.id)],
     metas,
     payments: PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
   });
