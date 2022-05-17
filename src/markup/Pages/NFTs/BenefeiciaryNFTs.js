@@ -239,7 +239,8 @@ const BenefeiciaryNFTs = () => {
   };
 
   useEffect(() => {
-    ReactGA.pageview(window.location.pathname +"BenefeiciaryNFTs");
+    let location = window.location.href.split("/#/")
+    ReactGA.pageview(window.location.pathname + location[1]);
     let Data = [];
     if (beneficiary && !campaign) {
       Data = imageBlog.filter((nft) => nft.beneficiary === beneficiary);

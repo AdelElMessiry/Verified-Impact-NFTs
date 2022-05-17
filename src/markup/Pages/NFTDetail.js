@@ -16,7 +16,8 @@ import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
 import ReactGA from 'react-ga';
 const NFTDetail = () => {
   useEffect(()=>{
-    ReactGA.pageview(window.location.pathname +"NFTDetail");
+    let location = window.location.href.split("/#/")
+    ReactGA.pageview(window.location.pathname +location[1]);
   },[])
   const Iconimage = (props) => {
     return (
