@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Markup from './markup/Markup';
 // import useScrollPosition from "use-scroll-position";
+import "bootstrap/scss/bootstrap.scss";
 import './css/plugins.css';
 import './css/style.css';
 import './css/templete.css';

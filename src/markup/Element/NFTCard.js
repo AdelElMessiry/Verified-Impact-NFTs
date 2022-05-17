@@ -8,7 +8,6 @@ import BuyNFTModal from './BuyNFT';
 //NFT Card component
 const NFTCard = ({ index, item, openSlider }) => {
   const [showBuyModal, setShowBuyModal] = useState(false);
-
   //function which return buttons (buy NFT) & (expand NFT) on nft card
   const Iconimage = () => {
     return (
@@ -55,7 +54,7 @@ const NFTCard = ({ index, item, openSlider }) => {
         <div className='overlay-bx'>
           <div className='overlay-icon align-b text-white text-left'>
             <div className='text-white text-left port-box'>
-              <h5>{item.name}</h5>
+              <h5>{item.title}</h5>
               <p>
                 <b>Category: </b>
                 {item.category}
@@ -63,13 +62,13 @@ const NFTCard = ({ index, item, openSlider }) => {
               <p>
                 <b>Beneficiary: </b>
                 <VINFTsTooltip
-                  title={`Click to see all NFTs for "${item.beneficiary}" beneficiary`}
+                  title={`Click to see all NFTs for "${item.beneficiaryName}" beneficiary`}
                 >
                   <Link
-                    to={`./BenefeiciaryNFTs?beneficiary=${item.beneficiary}`}
+                    to={`./BenefeiciaryNFTs?beneficiary=${item.beneficiaryName}`}
                     className='dez-page text-white'
                   >
-                    {item.beneficiary}
+                    {item.beneficiaryName}
                   </Link>
                 </VINFTsTooltip>
                 <span className='bg-success text-white px-1 ml-1 border-raduis-2'>
@@ -80,14 +79,14 @@ const NFTCard = ({ index, item, openSlider }) => {
                 <b>Campaign: </b>
 
                 <VINFTsTooltip
-                  title={`Click to see all NFTs for "${item.campaign}" campaign`}
+                  title={`Click to see all NFTs for "${item.campaignName}" campaign`}
                 >
                   {item.beneficiary && (
                     <Link
-                      to={`./BenefeiciaryNFTs?beneficiary=${item.beneficiary}&campaign=${item.campaign}`}
+                      to={`./BenefeiciaryNFTs?beneficiary=${item.beneficiaryName}&campaign=${item.campaignName}`}
                       className='dez-page text-white'
                     >
-                      {item.campaign}
+                      {item.campaignName}
                     </Link>
                   )}
                 </VINFTsTooltip>
@@ -111,10 +110,10 @@ const NFTCard = ({ index, item, openSlider }) => {
               <p>
                 <b>Collection: </b>
                 <Link
-                  to={`./collection?collection=${item.collection}`}
+                  to={`./collection?collection=${item.collectionName}`}
                   className='dez-page text-white'
                 >
-                  {item.collection}
+                  {item.collectionName}
                 </Link>
               </p>
               <p>
