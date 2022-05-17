@@ -1,17 +1,17 @@
-import React, { Component, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
+import { CLPublicKey } from 'casper-js-sdk';
+
+import { getDeployDetails } from '../../../api/universal';
+import { addBeneficiary } from '../../../api/addBeneficiary';
+import { useAuth } from '../../../contexts/AuthContext';
+import PromptLogin from '../PromptLogin';
+
 import Header from '../../Layout/Header1';
 import Footer from '../../Layout/Footer1';
 import PageTitle from '../../Layout/PageTitle';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
-import { Col, Container, Row } from 'react-bootstrap';
-import { CLPublicKey } from 'casper-js-sdk';
-
-import { addBeneficiary } from '../../../api/addBeneficiary';
-import { numberOfNFTsOwned } from '../../../api/userInfo';
-import { useAuth } from '../../../contexts/AuthContext';
-import PromptLogin from '../PromptLogin';
 
 const AddBeneficiary = () => {
   const { isLoggedIn, entityInfo } = useAuth();
@@ -38,7 +38,17 @@ const AddBeneficiary = () => {
       beneficiaryInputs.address,
       CLPublicKey.fromHex(entityInfo.publicKey)
     );
+
+    const deployResult = await getDeployDetails(savedBeneficiary);
+    console.log('...... Beneficiary saved successfully', deployResult);
+
+    setBeneficiaryInputs({
+      name: '',
+      description: '',
+      address: '',
+    });
   };
+
   return (
     <>
       <Header />

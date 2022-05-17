@@ -1,19 +1,21 @@
-import React, { Component, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
+import { CLPublicKey } from 'casper-js-sdk';
+
+import { useAuth } from '../../../contexts/AuthContext';
+import { getDeployDetails } from '../../../api/universal';
+import { getBeneficiariesList } from '../../../api/beneficiaryInfo';
+import { createCampaign } from '../../../api/createCampaign';
+import PromptLogin from '../PromptLogin';
+
 import Header from '../../Layout/Header1';
 import Footer from '../../Layout/Footer1';
 import PageTitle from '../../Layout/PageTitle';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
-import { Col, Container, Row } from 'react-bootstrap';
-import { useAuth } from '../../../contexts/AuthContext';
-import { getBeneficiariesList } from '../../../api/beneficiaryInfo';
-import { createCampaign } from '../../../api/createCampaign';
-import { CLPublicKey } from 'casper-js-sdk';
-import PromptLogin from '../PromptLogin';
 
 const AddCampaign = () => {
-  const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
+  const { entityInfo, isLoggedIn } = useAuth();
 
   const [beneficiary, setBeneficiary] = React.useState();
 
@@ -62,6 +64,19 @@ const AddCampaign = () => {
       state.inputs.requestedRoyalty,
       CLPublicKey.fromHex(entityInfo.publicKey)
     );
+
+    const deployResult = await getDeployDetails(savedCampaign);
+    console.log('...... Campaign saved successfully', deployResult);
+
+    setState({
+      inputs: {
+        campaignUrl: '',
+        name: '',
+        description: '',
+        requestedRoyalty: '',
+      },
+    });
+
     console.log('save Result', savedCampaign);
     console.log(
       'save Result',

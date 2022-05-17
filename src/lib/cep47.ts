@@ -1,7 +1,6 @@
 import {
   CLValue,
   CLPublicKey,
-  CLKey,
   CLMap,
   RuntimeArgs,
   CasperClient,

@@ -1,16 +1,17 @@
-import React, { Component, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Avatar } from '@mui/material';
 
-import logo from "./../../images/logov.png";
-import casper from "./../../images/icon/casper.png";
-import logo2 from "./../../images/logo-black.png";
-import HeaderMenu from "./HeaderMenu";
-import { useAuth } from "../../contexts/AuthContext";
-import { Avatar } from "@mui/material";
-import VINFTsTooltip from "../Element/Tooltip";
+import { useAuth } from '../../contexts/AuthContext';
+import HeaderMenu from './HeaderMenu';
+import VINFTsTooltip from '../Element/Tooltip';
+
+import logo from './../../images/logov.png';
+import casper from './../../images/icon/casper.png';
+import logo2 from './../../images/logo-black.png';
 
 const Header6 = () => {
-  const { isLoggedIn, entityInfo, balance, login, logout } = useAuth();
+  const { isLoggedIn, entityInfo, balance, login } = useAuth();
   const generateRandomCharacter = () => {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
@@ -19,34 +20,34 @@ const Header6 = () => {
   useEffect(() => {
     // sidebar open/close
 
-    var Navicon = document.querySelector(".navicon");
-    var sidebarmenu = document.querySelector(".myNavbar ");
+    var Navicon = document.querySelector('.navicon');
+    var sidebarmenu = document.querySelector('.myNavbar ');
 
     function toggleFunc() {
-      sidebarmenu.classList.toggle("show");
-      Navicon.classList.toggle("open");
+      sidebarmenu.classList.toggle('show');
+      Navicon.classList.toggle('open');
     }
-    Navicon.addEventListener("click", toggleFunc);
+    Navicon.addEventListener('click', toggleFunc);
 
     // Sidenav li open close
     var navUl = [].slice.call(
-      document.querySelectorAll(".navbar-nav > li > a, .sub-menu > li > a")
+      document.querySelectorAll('.navbar-nav > li > a, .sub-menu > li > a')
     );
     for (var y = 0; y < navUl.length; y++) {
-      navUl[y].addEventListener("click", function () {
+      navUl[y].addEventListener('click', function () {
         checkLi(this);
       });
     }
 
     function checkLi(current) {
       current.parentElement.parentElement
-        .querySelectorAll("li")
+        .querySelectorAll('li')
         .forEach((el) =>
-          current.parentElement !== el ? el.classList.remove("open") : ""
+          current.parentElement !== el ? el.classList.remove('open') : ''
         );
 
       setTimeout(() => {
-        current.parentElement.classList.toggle("open");
+        current.parentElement.classList.toggle('open');
       }, 100);
     }
   }, []);
@@ -54,26 +55,26 @@ const Header6 = () => {
   return (
     <>
       <header
-        className="site-header header mo-left header-transparent"
-        id="fix-header"
+        className='site-header header mo-left header-transparent'
+        id='fix-header'
       >
-        <div className="sticky-header main-bar-wraper navbar-expand-lg">
-          <div className="main-bar clearfix">
-            <div className="container clearfix">
-              <div className="logo-header mostion py-2">
-                <Link to={"./"} className="dez-page">
-                  <img src={logo} alt="" />
+        <div className='sticky-header main-bar-wraper navbar-expand-lg'>
+          <div className='main-bar clearfix'>
+            <div className='container clearfix'>
+              <div className='logo-header mostion py-2'>
+                <Link to={'./'} className='dez-page'>
+                  <img src={logo} alt='' />
                 </Link>
               </div>
 
               <button
-                className="navbar-toggler collapsed navicon justify-content-end"
-                type="button"
-                data-toggle="collapse"
-                data-target="#navbarNavDropdown"
-                aria-controls="navbarNavDropdown"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
+                className='navbar-toggler collapsed navicon justify-content-end'
+                type='button'
+                data-toggle='collapse'
+                data-target='#navbarNavDropdown'
+                aria-controls='navbarNavDropdown'
+                aria-expanded='false'
+                aria-label='Toggle navigation'
               >
                 <span></span>
                 <span></span>
@@ -81,47 +82,50 @@ const Header6 = () => {
               </button>
 
               <div
-                className="header-nav navbar-collapse collapse myNavbar justify-content-end"
-                id="navbarNavDropdown"
+                className='header-nav navbar-collapse collapse myNavbar justify-content-end'
+                id='navbarNavDropdown'
               >
-                <div className="logo-header mostion d-md-block d-lg-none">
-                  <Link to={"./"} className="dez-page">
-                    <img src={logo2} alt="" />
+                <div className='logo-header mostion d-md-block d-lg-none'>
+                  <Link to={'./'} className='dez-page'>
+                    <img src={logo2} alt='' />
                   </Link>
                 </div>
                 {/*  Header Menu Contents  */}
                 <HeaderMenu />
                 {/*  Header Menu Contents End */}
               </div>
-              <div className="extra-nav">
-                <div className="extra-cell">
+              <div className='extra-nav'>
+                <div className='extra-cell'>
                   {isLoggedIn && entityInfo ? (
-                    <div className="m-2 float-left">
+                    <div className='m-2 float-left'>
                       {entityInfo.publicKey?.slice(0, 3)} ...
                       {entityInfo.publicKey?.slice(
                         entityInfo.publicKey.length - 2
                       )}
                     </div>
                   ) : (
-                    <VINFTsTooltip title="Connect signer" className="mx-4">
+                    <VINFTsTooltip title='Connect signer' className='mx-4'>
                       <img
+                        alt='casper'
                         src={casper}
-                        className="img img-fluid"
-                        width={"50px"}
+                        className='img img-fluid'
+                        width={'50px'}
                         onClick={login}
                       />
                     </VINFTsTooltip>
                   )}
                   {isLoggedIn && entityInfo && (
                     <>
-                      <VINFTsTooltip title="Open settings">
-                          {/* <Avatar alt='John Doe' src='/static/images/avatar/2.jpg' /> */}
-                         <><Avatar className="float-left"
-                            aria-label="avatar"
-                          >
+                      <VINFTsTooltip title='Open settings'>
+                        {/* <Avatar alt='John Doe' src='/static/images/avatar/2.jpg' /> */}
+                        <>
+                          <Avatar className='float-left' aria-label='avatar'>
                             {generateRandomCharacter()}
                           </Avatar>
-                       <span className="d-inline-block ml-2 mt-2">{balance} CSPR</span>{" "} </> 
+                          <span className='d-inline-block ml-2 mt-2'>
+                            {balance} CSPR
+                          </span>{' '}
+                        </>
                       </VINFTsTooltip>
                     </>
                   )}
