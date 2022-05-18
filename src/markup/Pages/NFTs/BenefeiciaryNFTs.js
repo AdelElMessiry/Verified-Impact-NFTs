@@ -613,6 +613,7 @@ const BenefeiciaryNFTs = () => {
               <div className="vinft-page-loader">
                 <div className="vinft-spinner-body">
                   <Spinner animation="border" variant="success" />
+              <p>Fetching NFTs Please wait...</p>
                 </div>
               </div>
             )}
