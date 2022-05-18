@@ -19,7 +19,6 @@ const BuyNFTModal = ({ show, handleCloseParent, data ,isTransfer=false}) => {
   });
 
   const { entityInfo } = useAuth();
-  const [toAddress, setToAddress] = React.useState('');
   const [showModal, setShowModal] = useState(show);
   const [state, setState] = useState(IntialInputs());
   if (!data) return <></>;
@@ -72,7 +71,7 @@ const transferNFT=async()=>{
   const nftID = data.tokenId;
   try{const transferDeployHash= await  transfer(
     {signer: CLPublicKey.fromHex(entityInfo.publicKey),
-    recipient: CLPublicKey.fromHex(toAddress),
+    recipient: CLPublicKey.fromHex(state.inputs.address),
     nftId: nftID}
   )
   if(transferDeployHash){
