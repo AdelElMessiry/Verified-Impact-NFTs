@@ -8,14 +8,16 @@ import { transfer } from '../../api/transfer';
 import { approve } from '../../api/approve';
 import { getDeployDetails } from '../../api/universal';
 import { useAuth } from '../../contexts/AuthContext';
+import { toast as VIToast } from 'react-toastify';
 
 //buying NFT Modal
-const BuyNFTModal = ({ show, handleCloseParent, data }) => {
+const BuyNFTModal = ({ show, handleCloseParent, data ,isTransfer=false}) => {
   const IntialInputs = () => ({
     inputs: {
       address: '',
     },
   });
+
   const { entityInfo } = useAuth();
   const [toAddress, setToAddress] = React.useState('');
   const [showModal, setShowModal] = useState(show);
@@ -23,11 +25,11 @@ const BuyNFTModal = ({ show, handleCloseParent, data }) => {
   if (!data) return <></>;
 
   //transfer NFT Function
-  const makeTransfer = async () => {
-    const nftID = data.id;
+  const buyNFT = async () => {
+    const nftID = data.tokenId;
 
     const approveTransfer = await approve(
-      CLPublicKey.fromHex(toAddress),
+      CLPublicKey.fromHex(entityInfo.publicKey),
       nftID
     );
 
@@ -37,10 +39,10 @@ const BuyNFTModal = ({ show, handleCloseParent, data }) => {
         '...... Token approve transferred successfully',
         deployApproveResult
       );
-
+      VIToast.success("Token approve transferred successfully")
       const transferDeployHash = await transfer(
         CLPublicKey.fromHex(entityInfo.publicKey),
-        CLPublicKey.fromHex(toAddress),
+        CLPublicKey.fromHex(entityInfo.publicKey),
         nftID
       );
       const deployTransferResult = await getDeployDetails(transferDeployHash);
@@ -48,6 +50,8 @@ const BuyNFTModal = ({ show, handleCloseParent, data }) => {
         '...... Token fees transferred successfully',
         deployTransferResult
       );
+      VIToast.success("Token fees transferred successfully")
+
     } catch (err) {
       console.log('Transfer Err ' + err);
     }
@@ -57,10 +61,32 @@ const BuyNFTModal = ({ show, handleCloseParent, data }) => {
       const deployFeesResult = await getDeployDetails(transferFeesHash);
 
       console.log('...... Token transferred successfully', deployFeesResult);
+      VIToast.success("transaction ended successfully")
     } catch (err) {
       console.log('Transfer Err ' + err);
+      VIToast.error("Error happend please try again later")
     }
   };
+
+const transferNFT=async()=>{
+  const nftID = data.tokenId;
+  try{const transferDeployHash= await  transfer(
+    {signer: CLPublicKey.fromHex(entityInfo.publicKey),
+    recipient: CLPublicKey.fromHex(toAddress),
+    nftId: nftID}
+  )
+  if(transferDeployHash){
+    VIToast.success("NFT transfered successfully")
+  }else{
+    VIToast.error("Error happend please try again later")
+
+  }
+}
+  catch (err){
+    console.log('Transfer Err ' + err);
+    VIToast.error("Error happend please try again later")
+  }
+}
 
   //handle closing modal
   const handleClose = () => {
@@ -89,17 +115,17 @@ const BuyNFTModal = ({ show, handleCloseParent, data }) => {
       backdrop='static'
     >
       <Modal.Header closeButton>
-        <Modal.Title>Buy {data.name} NFT</Modal.Title>
+        <Modal.Title>Buy {data.title} NFT</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div className='reserve-form'>
           <Row>
             <Col>
-              <h5>{data.name}</h5>
+              <h5>{data.title}</h5>
               <p className='text-muted'>{data.description}</p>
             </Col>
           </Row>
-          <div className='row form-group justify-content-center'>
+          {isTransfer?   <div className='row form-group justify-content-center'>
             <div className='col-6'>
               <input
                 type='text'
@@ -110,14 +136,14 @@ const BuyNFTModal = ({ show, handleCloseParent, data }) => {
                 value={state.inputs.address}
               />
             </div>
-          </div>
+          </div>:<span>Are you sure want to buy {data.title} NFT?</span>}
         </div>
       </Modal.Body>
       <Modal.Footer>
         <button className='btn' onClick={handleClose}>
           Close
         </button>
-        <button className='btn btn-success' onClick={() => makeTransfer()}>
+        <button className='btn btn-success' onClick={() => {isTransfer? buyNFT():transferNFT()}}>
           Buy
         </button>
       </Modal.Footer>
