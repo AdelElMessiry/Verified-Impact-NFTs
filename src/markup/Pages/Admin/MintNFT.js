@@ -90,11 +90,11 @@ const MintNFT = () => {
     },
   });
   const [beneficiaries, setBeneficiaries] = useState();
-  const [campaigns, setCampaigns] = React.useState();
-  const [creators, setCreators] = React.useState();
-  const [creator, setCreator] = React.useState('');
-  const [isCreatorExist, setIsCreatorExist] = React.useState(false);
-  const [creatorPercentage, setCreatorPercentage] = React.useState(false);
+  const [campaigns, setCampaigns] = useState();
+  const [creators, setCreators] = useState();
+  const [creator, setCreator] = useState('');
+  const [isCreatorExist, setIsCreatorExist] = useState(false);
+  const [creatorPercentage, setCreatorPercentage] = useState();
 
   //getting beneficiaries and campaigns lists
   useEffect(() => {
