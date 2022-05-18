@@ -47,8 +47,8 @@ use collection_data::Collections;
 
 pub type Collection = BTreeMap<String, String>;
 
-mod creator_data;
-use creator_data::Creators;
+mod creator_control;
+use creator_control::CreatorControl;
 
 pub type Creator = BTreeMap<String, String>;
 
@@ -65,6 +65,7 @@ impl CEP47<OnChainContractStorage> for ViToken {}
 impl AdminControl<OnChainContractStorage> for ViToken {}
 impl MinterControl<OnChainContractStorage> for ViToken {}
 impl BeneficiaryControl<OnChainContractStorage> for ViToken {}
+impl CreatorControl<OnChainContractStorage> for ViToken {}
 
 impl ViToken {
     fn constructor(&mut self, name: String, symbol: String, meta: Meta) {
@@ -72,21 +73,17 @@ impl ViToken {
         AdminControl::init(self);
         MinterControl::init(self);
         BeneficiaryControl::init(self);
+        CreatorControl::init(self);
         Collections::init();
-        Creators::init();
         Campaigns::init();
         campaign_data::set_total_campaigns(U256::zero());
-        creator_data::set_total_creators(U256::zero());
         collection_data::set_total_collections(U256::zero());
         beneficiaries_control::set_total_beneficiaries(U256::zero());
+        creator_control::set_total_creators(U256::zero());
     }
 
     fn beneficiary_campaign(&self, index: U256) -> Option<Campaign> {
         Campaigns::instance().get(index)
-    }
-
-    fn get_creator(&self, index: U256) -> Option<Creator> {
-        Creators::instance().get(index)
     }
 
     fn get_collection(&self, index: U256) -> Option<Collection> {
@@ -97,12 +94,12 @@ impl ViToken {
         BeneficiaryControl::get_beneficiary(self, index)
     }
 
-    fn total_campaigns(&self) -> U256 {
-        campaign_data::total_campaigns()
+    fn get_creator(&self, index: U256) -> Option<Creator> {
+        CreatorControl::get_creator(self, index)
     }
 
-    fn total_creators(&self) -> U256 {
-        creator_data::total_creators()
+    fn total_campaigns(&self) -> U256 {
+        campaign_data::total_campaigns()
     }
 
     fn total_collections(&self) -> U256 {
@@ -111,6 +108,10 @@ impl ViToken {
 
     fn total_beneficiaries(&self) -> U256 {
         beneficiaries_control::total_beneficiaries()
+    }
+
+    fn total_creators(&self) -> U256 {
+        creator_control::total_creators()
     }
 
     fn set_beneficiary_campaign(
@@ -211,46 +212,6 @@ impl ViToken {
         Ok(())
     }
 
-    fn set_creator(
-        &mut self,
-        mode: String,
-        name: String,
-        description: String,
-        address: String,
-        url: String,
-    ) -> Result<(), Error> {
-        let creators_dict = Creators::instance();
-
-        match mode.as_str() {
-            "ADD" | "UPDATE" => {
-                let new_creator_count = creator_data::total_creators()
-                    .checked_add(U256::one())
-                    .unwrap();
-                let mut creator = creators_dict.get(new_creator_count).unwrap_or_default();
-
-                creator.insert(format!("id: "), new_creator_count.to_string());
-                creator.insert(format!("name: "), name);
-                creator.insert(format!("description: "), description);
-                creator.insert(format!("url: "), url);
-                creator.insert(format!("address: "), address);
-
-                creators_dict.set(new_creator_count, creator);
-                creator_data::set_total_creators(new_creator_count);
-            }
-            // "DELETE" => {
-            //     let new_creator_count = creator_data::total_creators()
-            //         .checked_sub(U256::one())
-            //         .unwrap();
-            //     creators_dict.remove(caller);
-            //     creator_data::set_total_creators(new_creator_count);
-            // }
-            _ => {
-                return Err(Error::WrongArguments);
-            }
-        }
-        Ok(())
-    }
-
     fn set_beneficiary(
         &mut self,
         mode: String,
@@ -259,10 +220,11 @@ impl ViToken {
         address: String,
     ) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
+
         if !ViToken::default().is_admin(caller) {
             revert(ApiError::User(20));
         }
-        // let beneficiaries_dict = Beneficiaries::instance();
+
         match mode.as_str() {
             "ADD" | "UPDATE" => {
                 let new_beneficiary_count = beneficiaries_control::total_beneficiaries()
@@ -280,6 +242,40 @@ impl ViToken {
 
                 BeneficiaryControl::add_beneficiary(self, new_beneficiary_count, beneficiary);
                 beneficiaries_control::set_total_beneficiaries(new_beneficiary_count);
+            }
+            _ => {
+                return Err(Error::WrongArguments);
+            }
+        }
+        Ok(())
+    }
+
+    fn set_creator(
+        &mut self,
+        mode: String,
+        name: String,
+        description: String,
+        address: String,
+        url: String,
+    ) -> Result<(), Error> {
+        match mode.as_str() {
+            "ADD" | "UPDATE" => {
+                let caller = ViToken::default().get_caller();
+                let new_creator_count = creator_control::total_creators()
+                    .checked_add(U256::one())
+                    .unwrap();
+
+                let mut creator =
+                    CreatorControl::get_creator(self, new_creator_count).unwrap_or_default();
+
+                creator.insert(format!("id: "), new_creator_count.to_string());
+                creator.insert(format!("name: "), name);
+                creator.insert(format!("description: "), description);
+                creator.insert(format!("url: "), url);
+                creator.insert(format!("address: "), address);
+
+                CreatorControl::add_creator(self, new_creator_count, caller, creator);
+                creator_control::set_total_creators(new_creator_count);
             }
             _ => {
                 return Err(Error::WrongArguments);
@@ -407,6 +403,19 @@ impl ViToken {
         Ok(())
     }
 
+    fn create_creator(
+        &mut self,
+        mode: String,
+        name: String,
+        description: String,
+        address: String,
+        url: String,
+    ) -> Result<(), Error> {
+        self.set_creator(mode, name, description, address, url)
+            .unwrap_or_revert();
+        Ok(())
+    }
+
     fn add_collection(
         &mut self,
         token_ids: Vec<TokenId>,
@@ -417,19 +426,6 @@ impl ViToken {
         url: String,
     ) -> Result<(), Error> {
         self.set_collection(token_ids, mode, name, description, creator, url)
-            .unwrap_or_revert();
-        Ok(())
-    }
-
-    fn add_creator(
-        &mut self,
-        mode: String,
-        name: String,
-        description: String,
-        address: String,
-        url: String,
-    ) -> Result<(), Error> {
-        self.set_creator(mode, name, description, address, url)
             .unwrap_or_revert();
         Ok(())
     }
@@ -606,19 +602,6 @@ fn add_collection() {
 }
 
 #[no_mangle]
-fn add_creator() {
-    let mode = runtime::get_named_arg::<String>("mode");
-    let name = runtime::get_named_arg::<String>("name");
-    let description = runtime::get_named_arg::<String>("description");
-    let address = runtime::get_named_arg::<String>("address");
-    let url = runtime::get_named_arg::<String>("url");
-
-    ViToken::default()
-        .add_creator(mode, name, description, address, url)
-        .unwrap_or_revert();
-}
-
-#[no_mangle]
 fn mint() {
     let recipient = runtime::get_named_arg::<Key>("recipient");
     // let token_ids = runtime::get_named_arg::<Vec<TokenId>>("token_ids");
@@ -696,6 +679,19 @@ fn add_beneficiary() {
 
     ViToken::default()
         .create_beneficiary(mode, name, description, address)
+        .unwrap_or_revert();
+}
+
+#[no_mangle]
+fn add_creator() {
+    let mode = runtime::get_named_arg::<String>("mode");
+    let name = runtime::get_named_arg::<String>("name");
+    let description = runtime::get_named_arg::<String>("description");
+    let address = runtime::get_named_arg::<String>("address");
+    let url = runtime::get_named_arg::<String>("url");
+
+    ViToken::default()
+        .create_creator(mode, name, description, address, url)
         .unwrap_or_revert();
 }
 
