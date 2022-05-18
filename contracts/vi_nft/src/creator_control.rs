@@ -17,7 +17,7 @@ pub trait CreatorControl<Storage: ContractStorage>: ContractContext<Storage> {
         Creators::instance().add_creator(index, &address, value);
     }
 
-    fn is_creator(&self, address: Key) -> bool {
+    fn is_creator(&mut self, address: Key) -> bool {
         Creators::instance().is_creator(&address)
     }
 
