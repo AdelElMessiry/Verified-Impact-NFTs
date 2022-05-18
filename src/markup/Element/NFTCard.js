@@ -4,10 +4,19 @@ import { Link } from 'react-router-dom';
 import VINFTsTooltip from './Tooltip';
 import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
 import BuyNFTModal from './BuyNFT';
+import plusicon from '../../images/icon/plus.png';
+import ListForSaleNFTModal from './ListForSaleNFT';
 
 //NFT Card component
-const NFTCard = ({ index, item, openSlider, isTransfer = false }) => {
+const NFTCard = ({
+  index,
+  item,
+  openSlider,
+  isTransfer = false,
+  isCreation = false,
+}) => {
   const [showBuyModal, setShowBuyModal] = useState(false);
+  const [showListForSaleModal, setShowListForSaleModal] = useState(false);
   //function which return buttons (buy NFT) & (expand NFT) on nft card
   const Iconimage = () => {
     return (
@@ -24,11 +33,11 @@ const NFTCard = ({ index, item, openSlider, isTransfer = false }) => {
         </Link>
         {isTransfer ? (
           <i
-          className="ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"
-          onClick={() => {
-            setShowBuyModal(true);
-          }}
-        ></i>
+            className="ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"
+            onClick={() => {
+              setShowBuyModal(true);
+            }}
+          ></i>
         ) : (
           <i
             className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"
@@ -36,6 +45,26 @@ const NFTCard = ({ index, item, openSlider, isTransfer = false }) => {
               setShowBuyModal(true);
             }}
           ></i>
+        )}
+        {isCreation && (
+          <VINFTsTooltip
+            title={
+              item.isForSale == 'true'
+                ? 'Unlist NFT for Sale'
+                : 'List NFT for sale'
+            }
+          >
+            <div
+              onClick={() => {
+                setShowListForSaleModal(true);
+              }}
+            >
+              {item.isForSale == 'true' && (
+                <i className="ti-close sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+              )}
+              <i className="ti-money sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+            </div>
+          </VINFTsTooltip>
         )}
         {showBuyModal && (
           <BuyNFTModal
@@ -45,6 +74,15 @@ const NFTCard = ({ index, item, openSlider, isTransfer = false }) => {
             }}
             data={item}
             isTransfer={isTransfer}
+          />
+        )}
+        {showListForSaleModal && (
+          <ListForSaleNFTModal
+            show={showListForSaleModal}
+            handleCloseParent={() => {
+              setShowListForSaleModal(false);
+            }}
+            data={item}
           />
         )}
         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
