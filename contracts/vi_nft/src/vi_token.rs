@@ -271,8 +271,8 @@ impl ViToken {
                 creator.insert(format!("id: "), new_creator_count.to_string());
                 creator.insert(format!("name: "), name);
                 creator.insert(format!("description: "), description);
-                creator.insert(format!("url: "), url);
                 creator.insert(format!("address: "), address);
+                creator.insert(format!("url: "), url);
 
                 CreatorControl::add_creator(self, new_creator_count, caller, creator);
                 creator_control::set_total_creators(new_creator_count);
@@ -287,13 +287,21 @@ impl ViToken {
     fn mint(
         &mut self,
         recipient: Key,
-        // token_ids: Vec<TokenId>,
+        creator_name: String,
+        creator_address: String,
         token_metas: Vec<Meta>,
     ) -> Result<Vec<TokenId>, Error> {
-        // let caller = ViToken::default().get_caller();
-        // if !ViToken::default().is_minter() && !ViToken::default().is_admin(caller) {
-        //     revert(ApiError::User(20));
-        // }
+        let caller = ViToken::default().get_caller();
+        if !ViToken::default().is_creator(caller) {
+            self.set_creator(
+                "ADD".to_string(),
+                "".to_string(),
+                creator_name,
+                creator_address,
+                "".to_string(),
+            )
+            .unwrap_or_revert();
+        }
         let token_id = vec![ViToken::default()
             .total_supply()
             .checked_add(U256::one())
@@ -604,12 +612,12 @@ fn add_collection() {
 #[no_mangle]
 fn mint() {
     let recipient = runtime::get_named_arg::<Key>("recipient");
-    // let token_ids = runtime::get_named_arg::<Vec<TokenId>>("token_ids");
-    // let token_id = vec![ViToken::default().total_supply()];
+    let creator_name = runtime::get_named_arg::<String>("recipient");
+    let creator_address = runtime::get_named_arg::<String>("recipient");
     let token_metas = runtime::get_named_arg::<Vec<Meta>>("token_metas");
 
     ViToken::default()
-        .mint(recipient, token_metas)
+        .mint(recipient, creator_name, creator_address, token_metas)
         .unwrap_or_revert();
 }
 
@@ -961,7 +969,8 @@ fn get_entry_points() -> EntryPoints {
         "mint",
         vec![
             Parameter::new("recipient", Key::cl_type()),
-            // Parameter::new("token_ids", CLType::List(Box::new(TokenId::cl_type()))),
+            Parameter::new("creator_name", String::cl_type()),
+            Parameter::new("creator_address", String::cl_type()),
             Parameter::new("token_metas", CLType::List(Box::new(Meta::cl_type()))),
         ],
         <()>::cl_type(),
