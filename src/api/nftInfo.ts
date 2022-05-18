@@ -60,7 +60,7 @@ export async function getNFTsList() {
 
 export async function getCreatorNftList(address: string) {
   const nftList = await getNFTsList();
-  const creatorList = nftList.find((nft: any) => nft.creator === address);
+  const creatorList = nftList.filter((nft: any) => nft.creator === address);
 
   return creatorList || [];
 }
