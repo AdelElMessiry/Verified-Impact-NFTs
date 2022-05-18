@@ -8,6 +8,7 @@ import CreatableSelect from 'react-select/creatable';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
+import { getCreatorsList } from '../../../api/creatorInfo';
 import { uploadImg } from '../../../api/imageCDN';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
@@ -82,16 +83,18 @@ const MintNFT = () => {
       price: '',
       isForSale: false,
       category: '',
-      currency: '',
-      creator: '',
-      creatorPercentage: '',
+      currency: 'CSPR',
       beneficiaryPercentage: '',
       collection: '',
       isImageURL: false,
     },
   });
   const [beneficiaries, setBeneficiaries] = useState();
-  const [campaigns, setCampaigns] = React.useState();
+  const [campaigns, setCampaigns] = useState();
+  const [creators, setCreators] = useState();
+  const [creator, setCreator] = useState('');
+  const [isCreatorExist, setIsCreatorExist] = useState(false);
+  const [creatorPercentage, setCreatorPercentage] = useState();
 
   //getting beneficiaries and campaigns lists
   useEffect(() => {
@@ -104,6 +107,22 @@ const MintNFT = () => {
       !beneficiaries && setCampaign(beneficiaryList[0]?.campaigns[0]?.id);
     })();
   }, [beneficiaries]);
+
+  useEffect(() => {
+    (async () => {
+      let creatorList = !creators && (await getCreatorsList());
+      !creators && setCreators(creatorList);
+      if (creatorList.length > 0) {
+        let selectedCreator = creatorList.filter(
+          (c) => c.address === entityInfo.publicKey
+        );
+        if (selectedCreator.length > 0) {
+          setCreator(selectedCreator[0].name);
+          setIsCreatorExist(true);
+        }
+      }
+    })();
+  }, [creators]);
 
   //handling of selecting image in image control
   const onDrop = (picture) => {
@@ -163,8 +182,8 @@ const MintNFT = () => {
           category: state.inputs.category,
           currency: state.inputs.currency,
           collectionName: selectedCollectionValue.value,
-          creator: state.inputs.creator,
-          creatorPercentage: state.inputs.creatorPercentage,
+          creator: creator,
+          creatorPercentage: creatorPercentage,
           beneficiary: beneficiary,
           beneficiaryPercentage: state.inputs.beneficiaryPercentage,
         });
@@ -192,8 +211,6 @@ const MintNFT = () => {
           isForSale: false,
           category: '',
           currency: '',
-          creator: '',
-          creatorPercentage: '',
           beneficiaryPercentage: '',
           isImageURL: false,
         },
@@ -204,6 +221,13 @@ const MintNFT = () => {
       console.log('...... No. of NFTs in your account: ', newBalance);
     }
   }
+
+  const setCampaignSelectedData = (e) => {
+    setCampaign(e.target.value);
+    let creatorPercentage = campaigns.filter((c) => c.id == e.target.value)[0]
+      .requested_royalty;
+    setCreatorPercentage(100 - creatorPercentage);
+  };
 
   return (
     <>
@@ -258,15 +282,17 @@ const MintNFT = () => {
                               name="campaign"
                               placeholder="Campaign"
                               className="form-control"
-                              onChange={(e) => setCampaign(e.target.value)}
+                              onChange={(e) => setCampaignSelectedData(e)}
                               value={campaign}
                             >
-                              {campaigns?.map(({ name, id }) => (
-                                <option key={id} value={id}>
-                                  {' '}
-                                  {name}
-                                </option>
-                              ))}
+                              {campaigns?.map(
+                                ({ name, id, requested_royalty }) => (
+                                  <option key={id} value={id}>
+                                    {name} (creator Percentage is{' '}
+                                    {100 - requested_royalty})
+                                  </option>
+                                )
+                              )}
                             </select>
                           </Col>
                         </Row>
@@ -291,13 +317,18 @@ const MintNFT = () => {
                         </Row>
                         <Row className="form-group">
                           <Col>
+                            <label>
+                              Please enter your creator name the name can not be
+                              changed
+                            </label>
                             <input
                               type="text"
                               placeholder="Creator"
                               name="creator"
                               className="form-control"
-                              onChange={(e) => handleChange(e)}
-                              value={state.inputs.creator}
+                              onChange={(e) => setCreator(e.target.value)}
+                              value={creator}
+                              disabled={isCreatorExist}
                             />
                           </Col>
                         </Row>
@@ -313,7 +344,6 @@ const MintNFT = () => {
                             />
                           </Col>
                         </Row>
-                      
                       </Col>
                       <Col>
                         <Row className="form-group">
@@ -360,53 +390,44 @@ const MintNFT = () => {
                       </Col>
                     </Row>
                     <Row className="form-group">
+                      <Col>
+                        <Form.Check
+                          type={'checkbox'}
+                          id={'isForSale'}
+                          label={`Is For Sale`}
+                          onChange={(e) => handleChange(e)}
+                          value={state.inputs.isForSale}
+                          name="isForSale"
+                        />
+                      </Col>
+                    </Row>
+                    {state.inputs.isForSale && (
+                      <>
+                        <Row className="form-group">
                           <Col>
-                            <Form.Check
-                              type={'checkbox'}
-                              id={'isForSale'}
-                              label={`Is For Sale`}
+                            <input
+                              type="text"
+                              placeholder="Price"
+                              name="price"
+                              className="form-control"
                               onChange={(e) => handleChange(e)}
-                              value={state.inputs.isForSale}
-                              name="isForSale"
+                              value={state.inputs.price}
                             />
                           </Col>
+                          <Col>
+                            <select
+                              placeholder="Currency"
+                              name="currency"
+                              className="form-control"
+                              onChange={(e) => handleChange(e)}
+                              value={state.inputs.currency}
+                            >
+                              <option value={'CSPR'}>CSPR</option>
+                            </select>
+                          </Col>
                         </Row>
-                        {state.inputs.isForSale && (
-                          <>
-                            <Row className="form-group">
-                              <Col>
-                                <input
-                                  type="text"
-                                  placeholder="Price"
-                                  name="price"
-                                  className="form-control"
-                                  onChange={(e) => handleChange(e)}
-                                  value={state.inputs.price}
-                                />
-                              </Col>
-                              <Col>
-                                <input
-                                  type="text"
-                                  placeholder="Creator Percentage"
-                                  name="creatorPercentage"
-                                  className="form-control"
-                                  onChange={(e) => handleChange(e)}
-                                  value={state.inputs.creatorPercentage}
-                                />
-                              </Col>
-                              <Col>
-                                <input
-                                  type="text"
-                                  placeholder="Currency"
-                                  name="currency"
-                                  className="form-control"
-                                  onChange={(e) => handleChange(e)}
-                                  value={state.inputs.currency}
-                                />
-                              </Col>
-                            </Row>
-                          </>
-                        )}
+                      </>
+                    )}
                     <Row className="form-group">
                       <Col>
                         <textarea
@@ -432,7 +453,7 @@ const MintNFT = () => {
                               beneficiary === '' ||
                               campaign === '' ||
                               selectedCollectionValue.value === '' ||
-                              state.inputs.creator === '' ||
+                              creator === '' ||
                               state.inputs.name === ''
                             }
                           />

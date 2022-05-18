@@ -577,6 +577,7 @@ const MyNFTs = () => {
               <div className="vinft-page-loader">
                 <div className="vinft-spinner-body">
                   <Spinner animation="border" variant="success" />
+                  <p>Fetching your NFTs Please wait...</p>
                 </div>
               </div>
             )}
