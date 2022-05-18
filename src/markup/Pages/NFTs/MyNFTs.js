@@ -264,7 +264,8 @@ const MyNFTs = () => {
     if (!entityInfo.publicKey) return;
     (async () => {
       if (!entityInfo.publicKey) return;
-      let newNFTList = !allNfts ? (await getNFTsOwned(entityInfo.publicKey)):[];
+      if(!allNfts){
+      let newNFTList = (await getNFTsOwned(entityInfo.publicKey));
       let nftList = [];
       let beneficiaryList =
         !beneficiaries ?(await getBeneficiariesCampaignsList()):[];
@@ -280,7 +281,9 @@ const MyNFTs = () => {
         });
       !allNfts && setAllNfts(nftList);
       !allNfts && setSelectedNfts(nftList);
-      console.log(newNFTList);
+      console.log("eretetreeeeeeeeee",newNFTList);
+        }else{
+           setAllNfts([]);
         }
       if (nftList.length>0) {
         let collection = nftList
@@ -411,6 +414,7 @@ const MyNFTs = () => {
         }
         setSliderCaptions(captions);
       }
+    }
     })();
   }, [entityInfo, allNfts, beneficiaries]);
 
