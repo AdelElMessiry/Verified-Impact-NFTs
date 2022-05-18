@@ -217,8 +217,10 @@ const BenefeiciaryNFTs = () => {
   const setSelectedCreatorTag = (tag, data = null) => {
     setTagCreator(tag);
     if (tag !== 'All') {
+     // const selectedCreator = creatorsList.find(creator=> creator.name === tag);
+      //const filteredNfts = allNfts.filter(nft => nft.creator === selectedCreator.address);
       let campaigns = allNfts
-        .filter((d) => d.creator == tag)
+      .filter((d) => d.creator == tag)
         .map((data) => ({ name: data.campaignName }))
         .filter(
           (value, index, self) =>
