@@ -12,8 +12,8 @@ const NFTTwitterShare = ({ item, isWithoutText = false }) => {
       )}{' '}
       <TwitterShareButton
         className='twitter-icon mfp-link portfolio-fullscreen'
-        url={`https://verifiedimpactnfts.com/#/nft-detail?id=${item.id}`}
-        title={`I like "${item.name}" #NFT from "${item.collection}" collection By "${item.creator}"! ${item.beneficiaryPercentage}% of the proceeds go to the "${item.beneficiary}" in support of the "${item.campaign}" campaign!`}
+        url={`https://verifiedimpactnfts.com/#/nft-detail?id=${item.tokenId}`}
+        title={`I like "${item.title}" #NFT from "${item.collectionName}" collection By "${item.creator}"! ${item.beneficiaryPercentage}% of the proceeds go to the "${item.beneficiaryName}" in support of the "${item.campaignName}" campaign!`}
       >
         <TwitterIcon
           size={32}

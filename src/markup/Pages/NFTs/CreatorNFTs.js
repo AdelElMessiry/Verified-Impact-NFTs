@@ -578,6 +578,7 @@ const CreatorNFTs = () => {
               setShowBuyModal(false);
             }}
             data={selectedNFT}
+            isTransfer={false}
           />}
       <Footer />
     </Fragment>

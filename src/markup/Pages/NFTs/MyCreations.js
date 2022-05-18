@@ -95,7 +95,12 @@ const MyCreations = () => {
   const Iconimage = ({nft}) => {
     return (
       <>
-        <i className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen" onClick={()=>{setSelectedNFT(nft);setShowBuyModal(true)}}></i>
+               <i
+          className="ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"
+          onClick={() => {
+            setSelectedNFT(nft);
+            setShowBuyModal(true);
+          }}></i>
       </>
     );
   };
@@ -553,6 +558,7 @@ const MyCreations = () => {
                               setPhotoIndex(newIndex);
                               setOpenSlider(true);
                             }}
+                            isTransfer={true}
                           />
                         </li>
                       ))}
@@ -574,6 +580,7 @@ const MyCreations = () => {
               setShowBuyModal(false);
             }}
             data={selectedNFT}
+            isTransfer={true}
           />}
       <Footer />
     </Fragment>

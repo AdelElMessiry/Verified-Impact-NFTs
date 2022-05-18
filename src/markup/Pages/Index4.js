@@ -524,6 +524,7 @@ const Index4 = () => {
             setShowBuyModal(false);
           }}
           data={selectedNFT}
+          isTransfer={false}
         />
       )}
       <Footer3 />

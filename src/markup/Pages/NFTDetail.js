@@ -35,7 +35,7 @@ const NFTDetail = () => {
   useEffect(() => {
     (async () => {
       const newNFTList = await getNFTsList();
-      let nft = newNFTList.filter((nft) => nft.id == id);
+      let nft = newNFTList.filter((nft) => nft.tokenId == id);
       setItem(nft);
     })();
   }, [id]);
@@ -62,7 +62,7 @@ const NFTDetail = () => {
           <div className='detail-page-caption p-3'>
             <div className='align-b text-white text-left'>
               <div className='text-white text-left port-box'>
-                <h5>{item[0].name}</h5>
+                <h5>{item[0].title}</h5>
                 <p>Description: {item[0].description}</p>
                 <p>
                   <b>Category: </b>
@@ -70,13 +70,13 @@ const NFTDetail = () => {
                   &nbsp;&nbsp;
                   <b>Beneficiary: </b>
                   <VINFTsTooltip
-                    title={`Click to see all NFTs for "${item[0].beneficiary}" beneficiary`}
+                    title={`Click to see all NFTs for "${item[0].beneficiaryName}" beneficiary`}
                   >
                     <Link
-                      to={`./BenefeiciaryNFTs?beneficiary=${item[0].beneficiary}`}
+                      to={`./BenefeiciaryNFTs?beneficiary=${item[0].beneficiaryName}`}
                       className='dez-page text-white'
                     >
-                      {item[0].beneficiary}
+                      {item[0].beneficiaryName}
                     </Link>
                   </VINFTsTooltip>
                   <span className='bg-success text-white px-1 ml-1 border-raduis-2'>
@@ -85,21 +85,21 @@ const NFTDetail = () => {
                   &nbsp;&nbsp;
                   <b>Campaign: </b>
                   <VINFTsTooltip
-                    title={`Click to see all NFTs for "${item[0].campaign}" campaign`}
+                    title={`Click to see all NFTs for "${item[0].campaignName}" campaign`}
                   >
                     {item[0].beneficiary ? (
                       <Link
-                        to={`./BenefeiciaryNFTs?beneficiary=${item[0].beneficiary}&campaign=${item[0].campaign}`}
+                        to={`./BenefeiciaryNFTs?beneficiary=${item[0].beneficiaryName}&campaign=${item[0].campaignName}`}
                         className='dez-page text-white'
                       >
                         {item[0].campaign}
                       </Link>
                     ) : (
                       <Link
-                        to={`./CreatorNFTs?creator=${item[0].creator}&collection=${item[0].collection}`}
+                        to={`./CreatorNFTs?creator=${item[0].creator}&collection=${item[0].collectionName}`}
                         className='dez-page text-white'
                       >
-                        {item[0].campaign}
+                        {item[0].campaignName}
                       </Link>
                     )}
                   </VINFTsTooltip>
@@ -120,7 +120,7 @@ const NFTDetail = () => {
                   </span>
                   &nbsp;&nbsp;
                   <b>Collection: </b>
-                  {item[0].collection}
+                  {item[0].collectionName}
                 </p>
                 <p className='d-flex align-content-center align-items-center'>
                   <b>Price: </b>
@@ -142,6 +142,7 @@ const NFTDetail = () => {
             setShowBuyModal(false);
           }}
           data={selectedNFT}
+          isTransfer={false}
         />
       )}
       <Footer />
