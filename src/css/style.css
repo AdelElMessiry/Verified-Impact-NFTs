@@ -13076,6 +13076,9 @@ ol.commentlist li .star-rating {
 .portfolio  .buy-icon{
     right: 65px;
 }
+.portfolio  .sale-icon {
+    right: 110px;
+}
 .portfolio  .twitter-icon{
     right:120px;
     opacity: 1;
