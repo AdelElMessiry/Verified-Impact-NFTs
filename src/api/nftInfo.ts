@@ -47,13 +47,11 @@ export async function getNFTsList() {
   console.log(parseInt(nftsCount));
 
   const nftsList: any = [];
-  for (const tokenID of [...(Array(parseInt(nftsCount)).keys() as any)]) {
-    console.log(tokenID);
+  for (let tokenId of [...(Array(parseInt(nftsCount)).keys() as any)]) {
+    tokenId = tokenId + 1;
 
-    const nft_metadata = await cep47.getMappedTokenMeta(
-      (tokenID + 1).toString()
-    );
-    nftsList.push(nft_metadata);
+    const nft_metadata = await cep47.getMappedTokenMeta(tokenId.toString());
+    nftsList.push({ ...nft_metadata, tokenId });
   }
   console.log(nftsList);
 
@@ -64,7 +62,7 @@ export async function getCreatorNftList(address: string) {
   const nftList = await getNFTsList();
   const creatorList = nftList.find((nft: any) => nft.creator === address);
 
-  return creatorList;
+  return creatorList || [];
 }
 
 export async function setIsTokenForSale(
