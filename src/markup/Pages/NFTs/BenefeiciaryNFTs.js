@@ -271,7 +271,6 @@ const BenefeiciaryNFTs = () => {
     });
     setFilterdImages(filteredAllData);
   };
-
   useEffect(() => {
     (async () => {
     let newNFTList = !allNfts ? (await getNFTsList()):[];
@@ -280,7 +279,7 @@ const BenefeiciaryNFTs = () => {
         !beneficiaries ?(await getBeneficiariesCampaignsList()):[];
       !beneficiaries &&
         setbeneficiaries(beneficiaryList);
-        if(beneficiaries?.length>0 && newNFTList?.length>0) {
+        if(beneficiaries?.length>0 && ((newNFTList?.length>0)||(allNfts?.length>0))) {
         newNFTList.forEach(async (element) => {
          let selectedBene= beneficiaries.filter((b) => b.address === element.beneficiary);
          let selectedCampaign=selectedBene[0]?.campaigns?.filter((c=>(c.id===element.campaign)))
@@ -289,19 +288,21 @@ const BenefeiciaryNFTs = () => {
           nftList.push(element);
         });
       !allNfts && setAllNfts(nftList);
-      !allNfts && setSelectedNfts(nftList);
       console.log(newNFTList);
-        
+        }
+  })()}, [allNfts,beneficiaries]);
+  useEffect(() => {
+    (async () => {
+        if(beneficiaries?.length>0 && allNfts?.length>0) {    
     let Data = [];
     if (beneficiary && !campaign) {
-      Data = nftList.filter((nft) => nft.beneficiaryName === beneficiary);
+      Data = allNfts.filter((nft) => nft.beneficiaryName === beneficiary);
     } else if (beneficiary && campaign) {
-      debugger;
-      Data = nftList.filter(
+      Data = allNfts.filter(
         (nft) => nft.beneficiaryName === beneficiary && nft.campaignName === campaign
       );
     } else {
-      Data = nftList;
+      Data = allNfts;
     }
     let collection = Data.map((data) => ({ name: data.collectionName })).filter(
       (value, index, self) =>
@@ -427,7 +428,7 @@ const BenefeiciaryNFTs = () => {
     }
     setSliderCaptions(captions);
         }
-  })()}, [beneficiary, campaign, creator,allNfts,beneficiaries]);
+  })()}, [campaign,beneficiary,creator, allNfts]);
 
   const options = {
     buttons: { showDownloadButton: false },
