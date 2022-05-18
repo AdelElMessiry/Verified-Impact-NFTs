@@ -172,7 +172,7 @@ const MintNFT = () => {
       let mintDeployHash;
 
       try {
-        mintDeployHash = await mint(CLPublicKey.fromHex(entityInfo.publicKey), {
+        mintDeployHash = await mint(entityInfo.publicKey,creator, {
           title: state.inputs.name,
           description: state.inputs.description,
           image: imgURL,
@@ -182,7 +182,7 @@ const MintNFT = () => {
           category: state.inputs.category,
           currency: state.inputs.currency,
           collectionName: selectedCollectionValue.value,
-          creator: creator,
+          creator: entityInfo.publicKey,
           creatorPercentage: creatorPercentage,
           beneficiary: beneficiary,
           beneficiaryPercentage: state.inputs.beneficiaryPercentage,

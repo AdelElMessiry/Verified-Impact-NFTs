@@ -26,6 +26,7 @@ import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
 import BuyNFTModal from '../../Element/BuyNFT';
 import PromptLogin from '../PromptLogin';
 import ListForSaleNFTModal from '../../Element/ListForSaleNFT';
+import {Spinner} from 'react-bootstrap';
 
 // Masonry section
 const masonryOptions = {
@@ -79,7 +80,7 @@ const MyCreations = () => {
   const [tagCampaign, setTagCampaign] = useState('All');
   const [filteredImages, setFilterdImages] = useState([]);
   const [selectedNfts, setSelectedNfts] = useState([]);
-  const [allNfts, setAllNfts] = useState([]);
+  const [allNfts, setAllNfts] = useState();
   const [openSlider, setOpenSlider] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [sliderCaptions, setSliderCaptions] = useState([]);
@@ -292,9 +293,9 @@ const MyCreations = () => {
 
     (async () => {
       if (!entityInfo.publicKey) return;
-      let newNFTList = !allNfts
-        ? await getCreatorNftList(entityInfo.publicKey)
-        : [];
+      if(!allNfts){
+      let newNFTList =  (await getCreatorNftList(entityInfo.publicKey))
+        
       let nftList = [];
       let beneficiaryList = !beneficiaries
         ? await getBeneficiariesCampaignsList()
@@ -315,7 +316,9 @@ const MyCreations = () => {
         !allNfts && setAllNfts(nftList);
         !allNfts && setSelectedNfts(nftList);
         console.log(newNFTList);
-      }
+      }else{
+        setAllNfts([]);
+     }
       console.log(newNFTList);
       if (nftList.length > 0) {
         let collection = nftList
@@ -446,6 +449,7 @@ const MyCreations = () => {
         }
         setSliderCaptions(captions);
       }
+    }
     })();
   }, [entityInfo, selectedNfts, allNfts, beneficiaries]);
 
@@ -578,7 +582,7 @@ const MyCreations = () => {
                 imageCaption={sliderCaptions[photoIndex]}
               />
             )}
-            {filteredImages.length > 0 ? (
+            {allNfts?(filteredImages.length > 0 ? (
               <SimpleReactLightbox>
                 <SRLWrapper options={options}>
                   <div className="clearfix">
@@ -619,6 +623,13 @@ const MyCreations = () => {
               <h4 className="text-muted text-center mb-5">
                 You Don't have NFTS yet!
               </h4>
+             )):  ( 
+              <div className="vinft-page-loader">
+                <div className="vinft-spinner-body">
+                  <Spinner animation="border" variant="success" />
+                  <p>Fetching your NFTs Please wait...</p>
+                </div>
+              </div>
             )}
           </div>
         )}
