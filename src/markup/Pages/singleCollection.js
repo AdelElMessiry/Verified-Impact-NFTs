@@ -277,6 +277,7 @@ const [selectedNFT,setSelectedNFT]=useState();
               setShowBuyModal(false);
             }}
             data={selectedNFT}
+            isTransfer={false}
           />}
       <Footer />
     </Fragment>
