@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from './../../images/logov.png';
-import logo2 from './../../images/logo-black.png';
 import HeaderMenu from './HeaderMenu';
 import casper from './../../images/icon/casper.png';
 import { useAuth } from '../../contexts/AuthContext';
@@ -87,7 +86,7 @@ const Header1 = ({ isNFTDetails = false }) => {
               >
                 <div className='logo-header mostion d-md-block d-lg-none'>
                   <Link to={'./'} className='dez-page'>
-                    <img src={logo2} alt='logo2' />
+                    <img src={logo} alt='logo2' />
                   </Link>
                 </div>
                 {/*  Header Menu Contents  */}
