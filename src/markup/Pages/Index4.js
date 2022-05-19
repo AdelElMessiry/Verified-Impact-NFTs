@@ -9,11 +9,8 @@ import NFTCard from '../Element/NFTCard';
 //Images..
 import bgimg from './../../images/main-slider/slide6.jpg';
 import Lightbox from 'react-image-lightbox';
-import { imageBlog } from '../NFTData';
 import Masonry from 'react-masonry-component';
 import VINFTsTooltip from '../Element/Tooltip';
-import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
-import CampaignOrCollectionTwitterShare from '../Element/TwitterShare/CampaignOrCollectionTwitterShare';
 import Carousel from 'react-elastic-carousel';
 import BuyNFTModal from '../Element/BuyNFT';
 import {
@@ -203,10 +200,7 @@ const Index4 = () => {
           <p className="d-flex align-content-center align-items-center">
             <b>Price: </b>
             {data[item].price} {data[item].currency}
-            &nbsp;&nbsp; <Iconimage nft={data[item]} /> &nbsp;&nbsp;{' '}
-            {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
-              <NFTTwitterShare item={data[item]} />
-            )}
+            &nbsp;&nbsp; <Iconimage nft={data[item]} /> 
           </p>
         </div>
       );
@@ -408,12 +402,6 @@ const Index4 = () => {
                 }{' '}
                 NFTs
               </Link>
-              {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
-                <CampaignOrCollectionTwitterShare
-                  campaign={'Stand With Ukraine'}
-                  beneficiary={'Ukraine Gov'}
-                />
-              )}
             </h4>
             <SimpleReactLightbox>
               <SRLWrapper options={options}>
@@ -468,12 +456,6 @@ const Index4 = () => {
                 }{' '}
                 NFTs
               </Link>
-              {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
-                <CampaignOrCollectionTwitterShare
-                  campaign={'Refugees'}
-                  beneficiary={'Ukraine Gov'}
-                />
-              )}
             </h4>
             <SimpleReactLightbox>
               <SRLWrapper options={options}>
@@ -527,12 +509,6 @@ const Index4 = () => {
                 }{' '}
                 NFTs
               </Link>
-              {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
-                <CampaignOrCollectionTwitterShare
-                  campaign={'Reconstruction'}
-                  beneficiary={'Ukraine Gov'}
-                />
-              )}
             </h4>
             <SimpleReactLightbox>
               <SRLWrapper options={options}>
