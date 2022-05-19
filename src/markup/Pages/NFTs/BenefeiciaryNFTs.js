@@ -275,13 +275,14 @@ const BenefeiciaryNFTs = () => {
   };
   useEffect(() => {
     (async () => {
-    let newNFTList = !allNfts ? (await getNFTsList()):[];
+      if(!allNfts){
+    let newNFTList = await getNFTsList();
       let nftList = [];
       let beneficiaryList =
         !beneficiaries ?(await getBeneficiariesCampaignsList()):[];
       !beneficiaries &&
         setbeneficiaries(beneficiaryList);
-        if(beneficiaries?.length>0 && ((newNFTList?.length>0)||(allNfts?.length>0))) {
+        if(beneficiaries?.length>0 && newNFTList?.length>0){
         newNFTList.filter((n)=>(n.isForSale=="true")).forEach(async (element) => {
          let selectedBene= beneficiaries.filter((b) => b.address === element.beneficiary);
          let selectedCampaign=selectedBene[0]?.campaigns?.filter((c=>(c.id===element.campaign)))
@@ -291,7 +292,9 @@ const BenefeiciaryNFTs = () => {
         });
       !allNfts && setAllNfts(nftList);
       console.log(newNFTList);
-        }
+        }else{
+          setAllNfts([]);
+       }}
   })()}, [allNfts,beneficiaries]);
   useEffect(() => {
     (async () => {

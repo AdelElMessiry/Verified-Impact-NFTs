@@ -68,10 +68,7 @@ const Index4 = () => {
           ? await getBeneficiariesCampaignsList()
           : [];
         !beneficiaries && setbeneficiaries(beneficiaryList);
-        if (
-          beneficiaries?.length > 0 &&
-          (newNFTList?.length > 0 || allNfts?.length > 0)
-        ) {
+        if (beneficiaries?.length > 0 &&newNFTList?.length > 0 ) {
           newNFTList
             .filter((n) => n.isForSale == 'true')
             .forEach(async (element) => {
@@ -121,7 +118,9 @@ const Index4 = () => {
             ?.filter((nft) => nft.campaignName === 'Forever Keys')
             .slice(0, 4);
           setCaptions(Camp4Data, 4);
-        }
+        }else{
+          setAllNfts([]);
+       }
       }
     })();
   }, [allNfts, beneficiaries]);
@@ -393,8 +392,8 @@ const Index4 = () => {
           />
         )}
         {allNfts ? (
+          allNfts.length>0?(
           <>
-            {' '}
             <h3 className="text-center mt-5">Latest Campaigns</h3>
             <h4 className="text-success text-center  d-flex align-items-center justify-content-center">
               <Link
@@ -577,7 +576,10 @@ const Index4 = () => {
               </SRLWrapper>
             </SimpleReactLightbox>
           </>
-        ) : (
+          ) : (
+            <h4 className='text-muted text-center my-5'>
+              We are working hard to add more NFTs
+            </h4>) ): (
           <div className="vinft-section-loader">
             <div className="vinft-spinner-body">
               <Spinner animation="border" variant="success" />
