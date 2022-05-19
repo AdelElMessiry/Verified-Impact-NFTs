@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { toast } from "react-toastify";
 
 toast.configure({
-	position: "top-center",
+	position: "bottom-right",
 	autoClose: false,
 	draggable: false,
 	mode:"dark"
