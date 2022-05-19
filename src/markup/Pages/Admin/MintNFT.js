@@ -172,25 +172,21 @@ const MintNFT = () => {
       let mintDeployHash;
 
       try {
-        mintDeployHash = await mint(
-          entityInfo.publicKey,
-          // state.inputs.creator,
-          {
-            title: state.inputs.name,
-            description: state.inputs.description,
-            image: imgURL,
-            price: state.inputs.price,
-            isForSale: state.inputs.isForSale,
-            campaign: campaign,
-            category: state.inputs.category,
-            currency: state.inputs.currency,
-            collectionName: selectedCollectionValue.value,
-            creator: entityInfo.publicKey,
-            creatorPercentage: creatorPercentage,
-            beneficiary: beneficiary,
-            beneficiaryPercentage: state.inputs.beneficiaryPercentage,
-          }
-        );
+        mintDeployHash = await mint(entityInfo.publicKey, creator, {
+          title: state.inputs.name,
+          description: state.inputs.description,
+          image: imgURL,
+          price: state.inputs.price,
+          isForSale: state.inputs.isForSale,
+          campaign: campaign,
+          category: state.inputs.category,
+          currency: state.inputs.currency,
+          collectionName: selectedCollectionValue.value,
+          creator: entityInfo.publicKey,
+          creatorPercentage: creatorPercentage,
+          beneficiary: beneficiary,
+          beneficiaryPercentage: state.inputs.beneficiaryPercentage,
+        });
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           // setErrStage(MintingStages.STARTED);
