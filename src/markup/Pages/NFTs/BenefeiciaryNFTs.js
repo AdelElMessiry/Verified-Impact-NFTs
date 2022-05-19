@@ -17,6 +17,7 @@ import {Spinner} from "react-bootstrap";
 import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
+import { getCreatorsList } from '../../../api/creatorInfo';
 
 // Masonry section
 const masonryOptions = {
@@ -84,7 +85,8 @@ const BenefeiciaryNFTs = () => {
   const [selectedNFT, setSelectedNFT] = useState();
   const [beneficiaryDescription, setBeneficiaryDescription] = useState();
   const [beneficiaries, setbeneficiaries] = useState();
-
+  const [allCreators, setCreators] = useState();
+  
   useEffect(() => {
     (async () => {
       if (!campaign) {
@@ -131,7 +133,7 @@ const BenefeiciaryNFTs = () => {
 
       let creators = allNfts
         .filter((d) => d.collectionName == tag)
-        .map((data) => ({ name: data.creator }))
+        .map((data) => ({ name: data.creatorName }))
         .filter(
           (value, index, self) =>
             index === self.findIndex((t) => t.name === value.name)
@@ -151,7 +153,7 @@ const BenefeiciaryNFTs = () => {
       setTagCampaign('All');
 
       let creators = allNfts
-        .map((data) => ({ name: data.creator }))
+        .map((data) => ({ name: data.creatorName }))
         .filter(
           (value, index, self) =>
             index === self.findIndex((t) => t.name === value.name)
@@ -179,7 +181,7 @@ const BenefeiciaryNFTs = () => {
 
       let creators = allNfts
         .filter((d) => d.campaignName == tag)
-        .map((data) => ({ name: data.creator }))
+        .map((data) => ({ name: data.creatorName }))
         .filter(
           (value, index, self) =>
             index === self.findIndex((t) => t.name === value.name)
@@ -199,7 +201,7 @@ const BenefeiciaryNFTs = () => {
       setTagCollection('All');
 
       let creators = allNfts
-        .map((data) => ({ name: data.creator }))
+        .map((data) => ({ name: data.creatorName }))
         .filter(
           (value, index, self) =>
             index === self.findIndex((t) => t.name === value.name)
@@ -218,7 +220,7 @@ const BenefeiciaryNFTs = () => {
      // const selectedCreator = creatorsList.find(creator=> creator.name === tag);
       //const filteredNfts = allNfts.filter(nft => nft.creator === selectedCreator.address);
       let campaigns = allNfts
-      .filter((d) => d.creator == tag)
+      .filter((d) => d.creatorName == tag)
         .map((data) => ({ name: data.campaignName }))
         .filter(
           (value, index, self) =>
@@ -228,7 +230,7 @@ const BenefeiciaryNFTs = () => {
       setTagCampaign('All');
 
       let collections = allNfts
-        .filter((d) => d.creator == tag)
+        .filter((d) => d.creatorName == tag)
         .map((data) => ({ name: data.collectionName }))
         .filter(
           (value, index, self) =>
@@ -265,7 +267,7 @@ const BenefeiciaryNFTs = () => {
     let filteredAllData = selectedNfts?.filter((nft) => {
       return (
         (collectionFilter === nft.collectionName || collectionFilter === 'All') &&
-        (creatorFilter === nft.creator || creatorFilter === 'All') &&
+        (creatorFilter === nft.creatorName || creatorFilter === 'All') &&
         (campaignFilter === nft.campaignName || campaignFilter === 'All')
       );
     });
@@ -280,12 +282,21 @@ const BenefeiciaryNFTs = () => {
         !beneficiaries ?(await getBeneficiariesCampaignsList()):[];
       !beneficiaries &&
         setbeneficiaries(beneficiaryList);
-        if(beneficiaries?.length>0 && newNFTList?.length>0){
+        let creatorsList =
+        !allCreators &&await getCreatorsList();
+      !allCreators &&
+        setCreators(creatorsList);
+
+        if(creatorsList?.length>0&&beneficiaries?.length>0 && newNFTList?.length>0){
         newNFTList.filter((n)=>(n.isForSale=="true")).forEach(async (element) => {
          let selectedBene= beneficiaries.filter((b) => b.address === element.beneficiary);
          let selectedCampaign=selectedBene[0]?.campaigns?.filter((c=>(c.id===element.campaign)))
+         let selectedCreator=creatorsList?.filter((c=>(c.address===element.creator)))
+
           element['beneficiaryName'] = selectedBene[0].name;
           element['campaignName'] = selectedCampaign[0].name;
+          element['creatorName'] = selectedCreator[0].name;
+
           nftList.push(element);
         });
       !allNfts && setAllNfts(nftList);
@@ -293,10 +304,10 @@ const BenefeiciaryNFTs = () => {
         }else{
           setAllNfts([]);
        }}
-  })()}, [allNfts,beneficiaries]);
+  })()}, [allNfts,beneficiaries,allCreators]);
   useEffect(() => {
     (async () => {
-        if(beneficiaries?.length>0 && allNfts?.length>0) {    
+        if(beneficiaries?.length>0 && allNfts?.length>0&& allCreators?.length>0) {    
     let Data = [];
     if (beneficiary && !campaign) {
       Data = allNfts.filter((nft) => nft.beneficiaryName === beneficiary);
@@ -320,7 +331,7 @@ const BenefeiciaryNFTs = () => {
 
     setCampaignTags([{ name: 'All' }, ...campaigns]);
 
-    let creators = Data.map((data) => ({ name: data.creator })).filter(
+    let creators = Data.map((data) => ({ name: data.creatorName })).filter(
       (value, index, self) =>
         index === self.findIndex((t) => t.name === value.name)
     );
@@ -380,7 +391,7 @@ const BenefeiciaryNFTs = () => {
                 </Link>
               ) : (
                 <Link
-                  to={`./CreatorNFTs?creator=${Data[item].creator}&collection=${Data[item].collectionName}`}
+                  to={`./CreatorNFTs?creator=${Data[item].creatorName}&collection=${Data[item].collectionName}`}
                   className='dez-page text-white'
                   onClick={() => {
                     setOpenSlider(false);
@@ -392,16 +403,16 @@ const BenefeiciaryNFTs = () => {
             </VINFTsTooltip>
             <b className='ml-4'>Creator: </b>
             <VINFTsTooltip
-              title={`Click to see all NFTs created by "${Data[item].creator}"`}
+              title={`Click to see all NFTs created by "${Data[item].creatorName}"`}
             >
               <Link
-                to={`./CreatorNFTs?creator=${Data[item].creator}`}
+                to={`./CreatorNFTs?creator=${Data[item].creatorName}`}
                 className='dez-page text-white'
                 onClick={() => {
                   setOpenSlider(false);
                 }}
               >
-                {Data[item].creator}
+                {Data[item].creatorName}
               </Link>
             </VINFTsTooltip>
             <span className='bg-info text-white px-1 ml-1 border-raduis-2'>
@@ -554,7 +565,7 @@ const BenefeiciaryNFTs = () => {
               imageCaption={sliderCaptions[photoIndex]}
             />
           )}
-         {allNfts?(
+         {(allNfts&&filteredImages)?(
             filteredImages?.length > 0 ? (
             <SimpleReactLightbox>
               <SRLWrapper options={options}>

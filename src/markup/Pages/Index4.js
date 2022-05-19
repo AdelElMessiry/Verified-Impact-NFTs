@@ -43,6 +43,7 @@ const Index4 = () => {
   const [csprSum, setCsprSum] = useState();
   const [allNfts, setAllNfts] = useState();
   const [beneficiaries, setbeneficiaries] = useState();
+  const [allCreators, setCreators] = useState();
 
   useEffect(() => {
     (async () => {
@@ -65,7 +66,11 @@ const Index4 = () => {
           ? await getBeneficiariesCampaignsList()
           : [];
         !beneficiaries && setbeneficiaries(beneficiaryList);
-        if (beneficiaries?.length > 0 &&newNFTList?.length > 0 ) {
+        let creatorsList =
+        !allCreators &&await getCreatorsList();
+      !allCreators &&
+        setCreators(creatorsList);
+        if (creatorsList?.length>0&& beneficiaries?.length > 0 &&newNFTList?.length > 0 ) {
           newNFTList
             .filter((n) => n.isForSale == 'true')
             .forEach(async (element) => {
@@ -75,11 +80,15 @@ const Index4 = () => {
               let selectedCampaign = selectedBene[0]?.campaigns?.filter(
                 (c) => c.id === element.campaign
               );
+              let selectedCreator=creatorsList?.filter((c=>(c.address===element.creator)))
               element['beneficiaryName'] = selectedBene[0].name;
               element['campaignName'] = selectedCampaign[0].name;
+              element['creatorName'] = selectedCreator[0].name;
+
               nftList.push(element);
             });
           !allNfts && setAllNfts(nftList);
+          !allNfts && setSelectedNFT(nftList);
           console.log(newNFTList);
           setCollectionLength(
             nftList
@@ -120,7 +129,7 @@ const Index4 = () => {
        }
       }
     })();
-  }, [allNfts, beneficiaries]);
+  }, [allNfts, beneficiaries,allCreators]);
 
   const setCaptions = (data, camNumber) => {
     const captionsCamp = [];
@@ -165,7 +174,7 @@ const Index4 = () => {
                 </Link>
               ) : (
                 <Link
-                  to={`./CreatorNFTs?creator=${data[item].creator}&collection=${data[item].collectionName}`}
+                  to={`./CreatorNFTs?creator=${data[item].creatorName}&collection=${data[item].collectionName}`}
                   className="dez-page text-white"
                 >
                   {data[item].campaignName}
@@ -174,13 +183,13 @@ const Index4 = () => {
             </VINFTsTooltip>
             <b className="ml-4">Creator: </b>
             <VINFTsTooltip
-              title={`Click to see all NFTs created by "${data[item].creator}"`}
+              title={`Click to see all NFTs created by "${data[item].creatorName}"`}
             >
               <Link
-                to={`./CreatorNFTs?creator=${data[item].creator}`}
+                to={`./CreatorNFTs?creator=${data[item].creatorName}`}
                 className="dez-page text-white"
               >
-                {data[item].creator}
+                {data[item].creatorName}
               </Link>
             </VINFTsTooltip>
             <span className="bg-info text-white px-1 ml-1 border-raduis-2">
@@ -385,8 +394,8 @@ const Index4 = () => {
             camNumber="4"
           />
         )}
-        {allNfts ? (
-          allNfts.length>0?(
+        {(allNfts&&selectedNFT) ? (
+          selectedNFT.length>0?(
           <>
             <h3 className="text-center mt-5">Latest Campaigns</h3>
             <h4 className="text-success text-center  d-flex align-items-center justify-content-center">
