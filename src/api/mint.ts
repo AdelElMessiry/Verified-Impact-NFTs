@@ -48,7 +48,7 @@ export async function mint(
   metas[0].set('currency', mintOptions.currency);
   metas[0].set('campaign', mintOptions.campaign);
   metas[0].set('creator', mintOptions.creator);
-  metas[0].set('creatorPercentage', mintOptions.creatorPercentage);
+  metas[0].set('creatorPercentage', mintOptions.creatorPercentage || '');
   metas[0].set('collectionName', mintOptions.collectionName);
   metas[0].set('beneficiary', mintOptions.beneficiary);
   metas[0].set('beneficiaryPercentage', mintOptions.beneficiaryPercentage);
