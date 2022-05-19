@@ -30,9 +30,11 @@ export interface IMintOptions {
 }
 
 export async function mint(
-  publicKeyCLValue: CLPublicKey,
+  creatorAddress: string,
+  creatorName: string,
   mintOptions: IMintOptions
 ) {
+  const publicKeyCLValue = CLPublicKey.fromHex(creatorAddress);
   const oldBalance = await numberOfNFTsOfPubCLvalue(publicKeyCLValue);
   console.log('...... No. of NFTs in your account before mint: ', oldBalance);
 
@@ -60,7 +62,8 @@ export async function mint(
 
   const mintDeploy = await cep47.mint(
     publicKeyCLValue,
-    // [String(mintOptions.id)],
+    creatorName,
+    creatorAddress,
     metas,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     publicKeyCLValue
