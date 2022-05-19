@@ -282,7 +282,7 @@ const BenefeiciaryNFTs = () => {
       !beneficiaries &&
         setbeneficiaries(beneficiaryList);
         if(beneficiaries?.length>0 && ((newNFTList?.length>0)||(allNfts?.length>0))) {
-        newNFTList.forEach(async (element) => {
+        newNFTList.filter((n)=>(n.isForSale=="true")).forEach(async (element) => {
          let selectedBene= beneficiaries.filter((b) => b.address === element.beneficiary);
          let selectedCampaign=selectedBene[0]?.campaigns?.filter((c=>(c.id===element.campaign)))
           element['beneficiaryName'] = selectedBene[0].name;
