@@ -7,7 +7,6 @@ import Footer from '../Layout/Footer1';
 import VINFTsTooltip from '../Element/Tooltip';
 
 import { getNFTsList } from '../../api/nftInfo';
-import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
 import BuyNFTModal from '../Element/BuyNFT';
 
 //nft details component
@@ -126,8 +125,6 @@ const NFTDetail = () => {
                   <b>Price: </b>
                   {item[0].price} {item[0].currency} &nbsp;&nbsp;
                   <Iconimage nft={item[0]} />
-                  &nbsp;&nbsp;
-                  <NFTTwitterShare item={item[0]} />
                 </p>
               </div>
             </div>

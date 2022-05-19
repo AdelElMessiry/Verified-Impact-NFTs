@@ -10,8 +10,6 @@ import { getBeneficiariesList } from '../../../api/beneficiaryInfo';
 import { getNFTsList } from '../../../api/nftInfo';
 import VINFTsTooltip from '../../Element/Tooltip';
 import NFTCard from '../../Element/NFTCard';
-import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
-import CampaignOrCollectionTwitterShare from '../../Element/TwitterShare/CampaignOrCollectionTwitterShare';
 import BuyNFTModal from '../../Element/BuyNFT';
 import Header from '../../Layout/Header1';
 import Footer from '../../Layout/Footer1';
@@ -425,8 +423,7 @@ const BenefeiciaryNFTs = () => {
             <b>Price: </b>
             {Data[item].price} {Data[item].currency}
             &nbsp;&nbsp;
-            <Iconimage nft={Data[item]} /> &nbsp;&nbsp;{' '}
-            <NFTTwitterShare item={Data[item]} />
+            <Iconimage nft={Data[item]} /> 
           </p>
         </div>
       );
@@ -457,23 +454,6 @@ const BenefeiciaryNFTs = () => {
                   {' '}
                   {campaign ? campaign : beneficiary ? beneficiary : creator}
                 </span>
-                {campaign && process.env.REACT_APP_SHOW_TWITTER != 'false' && (
-                  <CampaignOrCollectionTwitterShare
-                    campaign={campaign}
-                    beneficiary={beneficiary ? beneficiary : creator}
-                    url={
-                      beneficiary
-                        ? `https://verifiedimpactnfts.com/#/BenefeiciaryNFTs?beneficiary=${beneficiary.replace(
-                            / /g,
-                            '%20'
-                          )}&campaign=${campaign.replace(/ /g, '%20')}`
-                        : `https://verifiedimpactnfts.com/#/CreatorNFTs?creator=${creator.replace(
-                            / /g,
-                            '%20'
-                          )}&collection=${campaign.replace(/ /g, '%20')}`
-                    }
-                  />
-                )}
               </h1>
               <p className='text-white ben-desc'>
                 {!campaign && beneficiaryDescription
