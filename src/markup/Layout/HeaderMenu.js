@@ -64,7 +64,18 @@ class HeaderMenu extends Component {
                 >
                   USA for Ukraine <i className="fa fa-angle-right"></i>
                 </Link>
-                <ul className="sub-menu"></ul>
+                <ul className="sub-menu">
+                <li>
+                    <Link
+                      to={
+                        "./BenefeiciaryNFTs?beneficiary=USA for Ukraine&campaign=Selfies for Ukraine"
+                      }
+                      className="dez-page"
+                    >
+                      Selfies for Ukraine{" "}
+                    </Link>
+                  </li>
+                </ul>
               </li>
             </ul>
           </li>
