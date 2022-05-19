@@ -125,10 +125,12 @@ impl ViToken {
         requested_royalty: String,
     ) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
+        let campaigns_dict = Campaigns::instance();
+
         if !ViToken::default().is_beneficiary() && !ViToken::default().is_admin(caller) {
             revert(ApiError::User(20));
         }
-        let campaigns_dict = Campaigns::instance();
+
         match mode.as_str() {
             "ADD" | "UPDATE" => {
                 let new_campaign_count = campaign_data::total_campaigns()
@@ -379,9 +381,11 @@ impl ViToken {
         requested_royalty: String,
     ) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
+
         if !ViToken::default().is_admin(caller) {
             revert(ApiError::User(20));
         }
+
         self.set_beneficiary_campaign(
             collection_ids,
             mode,
