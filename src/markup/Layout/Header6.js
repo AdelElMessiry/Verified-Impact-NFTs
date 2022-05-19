@@ -8,7 +8,6 @@ import VINFTsTooltip from '../Element/Tooltip';
 
 import logo from './../../images/logov.png';
 import casper from './../../images/icon/casper.png';
-import logo2 from './../../images/logo-black.png';
 
 const Header6 = () => {
   const { isLoggedIn, entityInfo, balance, login } = useAuth();
@@ -87,7 +86,7 @@ const Header6 = () => {
               >
                 <div className='logo-header mostion d-md-block d-lg-none'>
                   <Link to={'./'} className='dez-page'>
-                    <img src={logo2} alt='' />
+                    <img src={logo} alt='' />
                   </Link>
                 </div>
                 {/*  Header Menu Contents  */}

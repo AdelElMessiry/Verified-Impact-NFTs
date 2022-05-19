@@ -453,7 +453,10 @@ const MintNFT = () => {
                             disabled={
                               beneficiary === '' ||
                               campaign === '' ||
-                              selectedCollectionValue.value === '' ||
+                              selectedCollectionValue === {} ||
+                              selectedCollectionValue === undefined ||
+                              selectedCollectionValue === null ||
+                              selectedCollectionValue?.value === '' ||
                               creator === '' ||
                               state.inputs.name === ''
                             }

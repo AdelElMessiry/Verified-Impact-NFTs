@@ -14,10 +14,6 @@ import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import Lightbox from "react-image-lightbox";
 import { Link } from "react-router-dom";
 import VINFTsTooltip from "../../Element/Tooltip";
-import { TwitterIcon, TwitterShareButton } from "react-share";
-import { Row, Col, Container } from "reactstrap";
-import NFTTwitterShare from "../../Element/TwitterShare/NFTTwitterShare";
-import CampaignOrCollectionTwitterShare from "../../Element/TwitterShare/CampaignOrCollectionTwitterShare";
 import BuyNFTModal from "../../Element/BuyNFT";
 import {Spinner} from "react-bootstrap";
 import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
@@ -311,10 +307,6 @@ const CreatorNFTs = () => {
       captions.push(
         <div className="text-white text-left port-box">
           <h5>{Data[item].name}</h5>
-          {/* <p>
-          <b>Category: </b>
-          {imageBlog[item].category}
-        </p> */}
           <p>
             <b>Description: </b>
             {Data[item].description}
@@ -394,7 +386,7 @@ const CreatorNFTs = () => {
             <b>Price: </b>
             {Data[item].price} {Data[item].currency}
             &nbsp;&nbsp;
-            <Iconimage    nft={Data[item]}/> &nbsp;&nbsp; <NFTTwitterShare item={Data[item]}/>
+            <Iconimage    nft={Data[item]}/>
          
           </p>
         </div>
@@ -422,11 +414,7 @@ const CreatorNFTs = () => {
           <div className="container">
             <div className="dlab-bnr-inr-entry">
               <h1 className="text-white d-flex align-items-center">
-              <span className="mr-1"> {collection ? collection : creator}</span> 
-                {collection && process.env.REACT_APP_SHOW_TWITTER != "false" &&(
-                  <CampaignOrCollectionTwitterShare campaign={""} beneficiary={""} creator={creator} url={`https://verifiedimpactnfts.com/#/CreatorNFTs?creator=${creator.replace(/ /g,"%20")}&collection=${collection.replace(/ /g,"%20")}`}/>
-              
-                )}
+              <span className="mr-1"> {collection ? collection : creator}</span>
               </h1>
 
               <div className="breadcrumb-row">
