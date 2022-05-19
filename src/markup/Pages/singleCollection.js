@@ -17,6 +17,8 @@ import { TwitterIcon, TwitterShareButton } from "react-share";
 import { Row, Col, Container } from "reactstrap";
 import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
 import BuyNFTModal from "../Element/BuyNFT";
+import { getBeneficiariesCampaignsList } from "../../api/beneficiaryInfo";
+import { Spinner } from "react-bootstrap";
 
 // Masonry section
 const masonryOptions = {
@@ -37,9 +39,10 @@ const SingleCollection = () => {
   const [openSlider, setOpenSlider] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [sliderCaptions, setSliderCaptions] = useState([]);
-  const [allNfts, setAllNfts] = useState([]);
+  const [allNfts, setAllNfts] = useState();
   const [showBuyModal,setShowBuyModal]=useState(false);
 const [selectedNFT,setSelectedNFT]=useState();
+const [beneficiaries,setbeneficiaries]=useState();
 
   //function returns button of buying NFT
   const Iconimage = ({nft}) => {
@@ -52,14 +55,36 @@ const [selectedNFT,setSelectedNFT]=useState();
 
 
 
-  useEffect(async () => {
+  useEffect( () => {
+    (async () => {
+    if(!allNfts){
     const newNFTList = await getNFTsList();
-    setAllNfts(newNFTList);
     let Data=[]
     if (collection) {
-      Data = newNFTList.filter((nft) => nft.collection === collection);
+      let beneficiaryList = !beneficiaries
+      ? await getBeneficiariesCampaignsList()
+      : [];
+    !beneficiaries && setbeneficiaries(beneficiaryList);
+    if (
+      beneficiaries?.length > 0 &&
+      (newNFTList?.length > 0 || allNfts?.length > 0)
+    ) {
+      newNFTList
+        .filter((n) => n.isForSale == 'true'&&n.collectionName === collection)
+        .forEach(async (element) => {
+          let selectedBene = beneficiaries.filter(
+            (b) => b.address === element.beneficiary
+          );
+          let selectedCampaign = selectedBene[0]?.campaigns?.filter(
+            (c) => c.id === element.campaign
+          );
+          element['beneficiaryName'] = selectedBene[0].name;
+          element['campaignName'] = selectedCampaign[0].name;
+          Data.push(element);
+        });
       setSelectedNfts(Data);
-    } 
+      setAllNfts(Data);
+    
     const captions = [];
     for (let item = 0; item < Data.length; item++) {
       captions.push(
@@ -154,7 +179,8 @@ const [selectedNFT,setSelectedNFT]=useState();
       );
     }
     setSliderCaptions(captions);
-  }, []);
+  }} }
+})()}, [allNfts,beneficiaries]);
 
   const options = {
     buttons: { showDownloadButton: false },
@@ -229,7 +255,7 @@ const [selectedNFT,setSelectedNFT]=useState();
               imageCaption={sliderCaptions[photoIndex]}
             />
           )}
-          {selectedNfts.length > 0 ? (
+          {allNfts?(selectedNfts.length > 0 ? (
             <SimpleReactLightbox>
               <SRLWrapper options={options}>
                 <div className="clearfix">
@@ -268,7 +294,14 @@ const [selectedNFT,setSelectedNFT]=useState();
             <h4 className="text-muted text-center mb-5">
               There is No Data With this Filter
             </h4>
-          )}
+             )):  ( 
+              <div className="vinft-page-loader">
+                <div className="vinft-spinner-body">
+                  <Spinner animation="border" variant="success" />
+              <p>Fetching NFTs Please wait...</p>
+                </div>
+              </div>
+            )}
         </div>
       </div>
       {showBuyModal&& <BuyNFTModal
