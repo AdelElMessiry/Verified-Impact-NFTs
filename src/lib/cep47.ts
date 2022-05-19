@@ -114,10 +114,10 @@ class CEP47Client {
     // if (contractHash) {
     // this.contractClient.setContractHash(contractHash, contractPackageHash);
     this.contractClient.setContractHash(
-      // 'hash-1fbc96ca2b4cf6ae8a2d1e9f041d691cb7be97ea11102185f35c2a360a0d1310',
-      // 'hash-8ccad0920692f66be68a9c5af8312a3d60c1f6ad39e81e6cfe8ea3a9e825260e'
-      'hash-b8d0904bcea32cc9ad7b3ea57e9bcb3c7c9ff587aed16a0d2d54515c8e3b7707',
-      'hash-9b415c680433078b16531c4127093b03fc12024c10368ae39fe113839d3f0812'
+      'hash-92ea9d1a263f50c18f3786dcd94f580a5cd0ba5ca089031669867f8beb7dc64d',
+      'hash-9e0705f217ba1082851eaed4e6afa7b35052b58b555fcc092a80afe20c4f732a'
+      // 'hash-b8d0904bcea32cc9ad7b3ea57e9bcb3c7c9ff587aed16a0d2d54515c8e3b7707',
+      // 'hash-9b415c680433078b16531c4127093b03fc12024c10368ae39fe113839d3f0812'
     );
     this.isContractIHashSetup = true;
     // }
@@ -258,7 +258,7 @@ class CEP47Client {
 
   public async getCreator(creatorId: string) {
     const result = await this.contractClient.queryContractDictionary(
-      'creators',
+      'creators_list',
       creatorId
     );
 
@@ -348,7 +348,7 @@ class CEP47Client {
   }
 
   public async mint(
-    recipient: CLKeyParameters,
+    recipient: CLPublicKey,
     creatorName: string,
     creatorAddress: string,
     metas: Map<string, string>[],

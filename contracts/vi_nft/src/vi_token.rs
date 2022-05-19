@@ -616,8 +616,8 @@ fn add_collection() {
 #[no_mangle]
 fn mint() {
     let recipient = runtime::get_named_arg::<Key>("recipient");
-    let creator_name = runtime::get_named_arg::<String>("recipient");
-    let creator_address = runtime::get_named_arg::<String>("recipient");
+    let creator_name = runtime::get_named_arg::<String>("creator_name");
+    let creator_address = runtime::get_named_arg::<String>("creator_address");
     let token_metas = runtime::get_named_arg::<Vec<Meta>>("token_metas");
 
     ViToken::default()
@@ -850,6 +850,13 @@ fn get_entry_points() -> EntryPoints {
     ));
     entry_points.add_entry_point(EntryPoint::new(
         "total_creators",
+        vec![],
+        U256::cl_type(),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "total_beneficiaries",
         vec![],
         U256::cl_type(),
         EntryPointAccess::Public,
