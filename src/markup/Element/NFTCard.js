@@ -137,13 +137,13 @@ const NFTCard = ({
               <p>
                 <b>Creator: </b>
                 <VINFTsTooltip
-                  title={`Click to see all NFTs created by "${item.creator}"`}
+                  title={`Click to see all NFTs created by "${item.creatorName}"`}
                 >
                   <Link
-                    to={`./CreatorNFTs?creator=${item.creator}`}
+                    to={`./CreatorNFTs?creator=${item.creatorName}`}
                     className="dez-page text-white"
                   >
-                    {item.creator}
+                    {item.creatorName}
                   </Link>
                 </VINFTsTooltip>
                 <span className="bg-info text-white px-1 ml-1 border-raduis-2">
