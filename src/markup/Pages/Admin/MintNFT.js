@@ -199,6 +199,7 @@ const MintNFT = () => {
       try {
         const deployResult = await getDeployDetails(mintDeployHash);
         console.log('...... Token minted successfully', deployResult);
+        window.location.reload();
       } catch (err) {
         //   setErrStage(MintingStages.TX_PENDING);
       }
