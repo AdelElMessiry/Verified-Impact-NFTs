@@ -172,21 +172,25 @@ const MintNFT = () => {
       let mintDeployHash;
 
       try {
-        mintDeployHash = await mint(entityInfo.publicKey,creator, {
-          title: state.inputs.name,
-          description: state.inputs.description,
-          image: imgURL,
-          price: state.inputs.price,
-          isForSale: state.inputs.isForSale,
-          campaign: campaign,
-          category: state.inputs.category,
-          currency: state.inputs.currency,
-          collectionName: selectedCollectionValue.value,
-          creator: entityInfo.publicKey,
-          creatorPercentage: creatorPercentage,
-          beneficiary: beneficiary,
-          beneficiaryPercentage: state.inputs.beneficiaryPercentage,
-        });
+        mintDeployHash = await mint(
+          entityInfo.publicKey,
+          // state.inputs.creator,
+          {
+            title: state.inputs.name,
+            description: state.inputs.description,
+            image: imgURL,
+            price: state.inputs.price,
+            isForSale: state.inputs.isForSale,
+            campaign: campaign,
+            category: state.inputs.category,
+            currency: state.inputs.currency,
+            collectionName: selectedCollectionValue.value,
+            creator: entityInfo.publicKey,
+            creatorPercentage: creatorPercentage,
+            beneficiary: beneficiary,
+            beneficiaryPercentage: state.inputs.beneficiaryPercentage,
+          }
+        );
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           // setErrStage(MintingStages.STARTED);
@@ -233,34 +237,34 @@ const MintNFT = () => {
     <>
       <Header />
 
-      <div className="page-content bg-white">
+      <div className='page-content bg-white'>
         {/* <!-- inner page banner --> */}
         <div
-          className="dlab-bnr-inr overlay-primary bg-pt"
+          className='dlab-bnr-inr overlay-primary bg-pt'
           style={{ backgroundImage: 'url(' + bnr1 + ')' }}
         >
-          <PageTitle motherMenu="Mint NFT" activeMenu="Mint NFT" />
+          <PageTitle motherMenu='Mint NFT' activeMenu='Mint NFT' />
         </div>
         {/* <!-- inner page banner END --> */}
         {/* <!-- contact area --> */}
         {!isLoggedIn ? (
           <PromptLogin />
         ) : (
-          <div className="section-full content-inner shop-account">
+          <div className='section-full content-inner shop-account'>
             {/* <!-- Product --> */}
-            <div className="container">
+            <div className='container'>
               <div>
-                <div className=" m-auto m-b30">
+                <div className=' m-auto m-b30'>
                   <Container>
                     <Row>
                       <Col>
-                        <Row className="form-group">
+                        <Row className='form-group'>
                           <Col>
                             <label>Select Beneficiary</label>
                             <select
-                              name="beneficiary"
-                              placeholder="Beneficiary"
-                              className="form-control"
+                              name='beneficiary'
+                              placeholder='Beneficiary'
+                              className='form-control'
                               onChange={(e) => {
                                 handleChange(e, true);
                                 setBeneficiary(e.target.value);
@@ -275,13 +279,13 @@ const MintNFT = () => {
                             </select>
                           </Col>
                         </Row>
-                        <Row className="form-group">
+                        <Row className='form-group'>
                           <Col>
                             <label>Select Campaign</label>
                             <select
-                              name="campaign"
-                              placeholder="Campaign"
-                              className="form-control"
+                              name='campaign'
+                              placeholder='Campaign'
+                              className='form-control'
                               onChange={(e) => setCampaignSelectedData(e)}
                               value={campaign}
                             >
@@ -296,7 +300,7 @@ const MintNFT = () => {
                             </select>
                           </Col>
                         </Row>
-                        <Row className="form-group">
+                        <Row className='form-group'>
                           <Col>
                             <label>
                               Select Existing Collection or Create new one
@@ -310,35 +314,35 @@ const MintNFT = () => {
                               options={options}
                               value={selectedCollectionValue}
                               menuPortalTarget={document.body}
-                              placeholder="Select..."
-                              className="creatable-select"
+                              placeholder='Select...'
+                              className='creatable-select'
                             />
                           </Col>
                         </Row>
-                        <Row className="form-group">
+                        <Row className='form-group'>
                           <Col>
                             <label>
                               Please enter your creator name the name can not be
                               changed
                             </label>
                             <input
-                              type="text"
-                              placeholder="Creator"
-                              name="creator"
-                              className="form-control"
+                              type='text'
+                              placeholder='Creator'
+                              name='creator'
+                              className='form-control'
                               onChange={(e) => setCreator(e.target.value)}
                               value={creator}
                               disabled={isCreatorExist}
                             />
                           </Col>
                         </Row>
-                        <Row className="form-group">
+                        <Row className='form-group'>
                           <Col>
                             <input
-                              type="text"
-                              placeholder="Name"
-                              name="name"
-                              className="form-control"
+                              type='text'
+                              placeholder='Name'
+                              name='name'
+                              className='form-control'
                               onChange={(e) => handleChange(e)}
                               value={state.inputs.name}
                             />
@@ -346,7 +350,7 @@ const MintNFT = () => {
                         </Row>
                       </Col>
                       <Col>
-                        <Row className="form-group">
+                        <Row className='form-group'>
                           <Col>
                             <Form.Check
                               type={'checkbox'}
@@ -354,18 +358,18 @@ const MintNFT = () => {
                               label={`Already hosted image, enter direct url ?`}
                               onChange={(e) => handleChange(e)}
                               value={state.inputs.isImageURL}
-                              name="isImageURL"
+                              name='isImageURL'
                             />
                           </Col>
                         </Row>
-                        <Row className="form-group">
+                        <Row className='form-group'>
                           <Col>
                             {state.inputs.isImageURL ? (
                               <input
-                                type="text"
-                                placeholder="Image URl"
-                                name="imageUrl"
-                                className="form-control"
+                                type='text'
+                                placeholder='Image URl'
+                                name='imageUrl'
+                                className='form-control'
                                 onChange={(e) =>
                                   setUploadedImage(e.target.value)
                                 }
@@ -375,7 +379,7 @@ const MintNFT = () => {
                               <ImageUploader
                                 singleImage
                                 withIcon={true}
-                                buttonText="Choose images"
+                                buttonText='Choose images'
                                 onChange={onDrop}
                                 imgExtension={['.jpg', '.gif', '.png']}
                                 maxFileSize={20209230}
@@ -389,7 +393,7 @@ const MintNFT = () => {
                         </Row>
                       </Col>
                     </Row>
-                    <Row className="form-group">
+                    <Row className='form-group'>
                       <Col>
                         <Form.Check
                           type={'checkbox'}
@@ -397,28 +401,28 @@ const MintNFT = () => {
                           label={`Is For Sale`}
                           onChange={(e) => handleChange(e)}
                           value={state.inputs.isForSale}
-                          name="isForSale"
+                          name='isForSale'
                         />
                       </Col>
                     </Row>
                     {state.inputs.isForSale && (
                       <>
-                        <Row className="form-group">
+                        <Row className='form-group'>
                           <Col>
                             <input
-                              type="text"
-                              placeholder="Price"
-                              name="price"
-                              className="form-control"
+                              type='text'
+                              placeholder='Price'
+                              name='price'
+                              className='form-control'
                               onChange={(e) => handleChange(e)}
                               value={state.inputs.price}
                             />
                           </Col>
                           <Col>
                             <select
-                              placeholder="Currency"
-                              name="currency"
-                              className="form-control"
+                              placeholder='Currency'
+                              name='currency'
+                              className='form-control'
                               onChange={(e) => handleChange(e)}
                               value={state.inputs.currency}
                             >
@@ -428,26 +432,26 @@ const MintNFT = () => {
                         </Row>
                       </>
                     )}
-                    <Row className="form-group">
+                    <Row className='form-group'>
                       <Col>
                         <textarea
                           rows={4}
-                          name="description"
-                          placeholder="Description"
-                          className="form-control"
+                          name='description'
+                          placeholder='Description'
+                          className='form-control'
                           onChange={(e) => handleChange(e)}
                           value={state.inputs.description}
                         ></textarea>
                       </Col>
                     </Row>
-                    <Row className="form-group">
+                    <Row className='form-group'>
                       <Col>
-                        <p className="form-submit">
+                        <p className='form-submit'>
                           <input
-                            type="button"
-                            value="Mint"
-                            className="btn btn-success"
-                            name="submit"
+                            type='button'
+                            value='Mint'
+                            className='btn btn-success'
+                            name='submit'
                             onClick={mintNFT}
                             disabled={
                               beneficiary === '' ||

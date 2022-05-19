@@ -114,10 +114,10 @@ class CEP47Client {
     // if (contractHash) {
     // this.contractClient.setContractHash(contractHash, contractPackageHash);
     this.contractClient.setContractHash(
-      'hash-1fbc96ca2b4cf6ae8a2d1e9f041d691cb7be97ea11102185f35c2a360a0d1310',
-      'hash-8ccad0920692f66be68a9c5af8312a3d60c1f6ad39e81e6cfe8ea3a9e825260e'
-      // 'hash-1ce535a817567f91626302e8521f795231624542315fe31a20581f4f7edebd67',
-      // 'hash-53ff35b59cd71b596889a0cda8f605c1bfa4c88b45f85fa27464e80e75d52cdf'
+      // 'hash-1fbc96ca2b4cf6ae8a2d1e9f041d691cb7be97ea11102185f35c2a360a0d1310',
+      // 'hash-8ccad0920692f66be68a9c5af8312a3d60c1f6ad39e81e6cfe8ea3a9e825260e'
+      'hash-1ce535a817567f91626302e8521f795231624542315fe31a20581f4f7edebd67',
+      'hash-53ff35b59cd71b596889a0cda8f605c1bfa4c88b45f85fa27464e80e75d52cdf'
     );
     this.isContractIHashSetup = true;
     // }
@@ -349,7 +349,8 @@ class CEP47Client {
 
   public async mint(
     recipient: CLKeyParameters,
-    // ids: string[],
+    creatorName: string,
+    creatorAddress: string,
     metas: Map<string, string>[],
     paymentAmount: string,
     deploySender: CLPublicKey,
@@ -357,7 +358,8 @@ class CEP47Client {
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       recipient: CLValueBuilder.key(recipient),
-      // token_ids: CLValueBuilder.list(ids.map((id) => CLValueBuilder.u256(id))),
+      creator_name: CLValueBuilder.string(creatorName),
+      creator_address: CLValueBuilder.string(creatorAddress),
       token_metas: CLValueBuilder.list(metas.map((meta) => toCLMap(meta))),
     });
 
