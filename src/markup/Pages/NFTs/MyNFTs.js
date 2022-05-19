@@ -16,10 +16,6 @@ import { getNFTsOwned } from '../../../api/userInfo';
 import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
 
 import VINFTsTooltip from '../../Element/Tooltip';
-import { TwitterIcon, TwitterShareButton } from 'react-share';
-import { Row, Col, Container } from 'reactstrap';
-import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
-import CampaignOrCollectionTwitterShare from '../../Element/TwitterShare/CampaignOrCollectionTwitterShare';
 import { useAuth } from '../../../contexts/AuthContext';
 import BuyNFTModal from '../../Element/BuyNFT';
 import PromptLogin from '../PromptLogin';
@@ -406,8 +402,7 @@ const MyNFTs = () => {
                 <b>Price: </b>
                 {nftList[item].price} {nftList[item].currency}
                 &nbsp;&nbsp;
-                <Iconimage nft={nftList[item]} /> &nbsp;&nbsp;{' '}
-                <NFTTwitterShare item={nftList[item]} />
+                <Iconimage nft={nftList[item]} /> 
               </p>
             </div>
           );

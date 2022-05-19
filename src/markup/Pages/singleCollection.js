@@ -13,9 +13,6 @@ import Lightbox from "react-image-lightbox";
 import { Link } from "react-router-dom";
 import { getNFTsList } from "../../api/nftInfo";
 import VINFTsTooltip from "../Element/Tooltip";
-import { TwitterIcon, TwitterShareButton } from "react-share";
-import { Row, Col, Container } from "reactstrap";
-import NFTTwitterShare from "../Element/TwitterShare/NFTTwitterShare";
 import BuyNFTModal from "../Element/BuyNFT";
 import { getBeneficiariesCampaignsList } from "../../api/beneficiaryInfo";
 import { Spinner } from "react-bootstrap";
@@ -90,10 +87,6 @@ const [beneficiaries,setbeneficiaries]=useState();
       captions.push(
         <div className="text-white text-left port-box">
           <h5>{Data[item].name}</h5>
-          {/* <p>
-          <b>Category: </b>
-          {imageBlog[item].category}
-        </p> */}
           <p>
             <b>Description: </b>
             {Data[item].description}
@@ -173,7 +166,7 @@ const [beneficiaries,setbeneficiaries]=useState();
             <b>Price: </b>
             {Data[item].price} {Data[item].currency}
             &nbsp;&nbsp;
-            <Iconimage   nft={Data[item]}/> &nbsp;&nbsp; <NFTTwitterShare item={Data[item]}/>
+            <Iconimage   nft={Data[item]}/>
           </p>
         </div>
       );
@@ -198,21 +191,7 @@ const [beneficiaries,setbeneficiaries]=useState();
           <div className="container">
             <div className="dlab-bnr-inr-entry">
               <h1 className="text-white d-flex align-items-center">
-              <span className="mr-1"> {collection}</span> 
-                {collection && process.env.REACT_APP_SHOW_TWITTER != "false" &&(
-                  <TwitterShareButton
-                    className="twitter-icon mfp-link portfolio-fullscreen pt-2"
-                    url={`https://verifiedimpactnfts.com/#/collection?collection=${collection.replace(/ /g,"%20")}`}
-                    title={`I support the #NFT "${collection}" collection, of the proceeds go to the "Ukraine Gov". Check it out at `}
-                  >
-                    <TwitterIcon
-                      size={32}
-                      round
-                      iconFillColor="white"
-                      style={{ fill: "black" }}
-                    />
-                  </TwitterShareButton>
-                )}
+              <span className="mr-1"> {collection}</span>
               </h1>
 
               <div className="breadcrumb-row">
