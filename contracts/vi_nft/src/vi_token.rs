@@ -297,8 +297,8 @@ impl ViToken {
         if !ViToken::default().is_creator(caller) {
             self.set_creator(
                 "ADD".to_string(),
-                "".to_string(),
                 creator_name,
+                "".to_string(),
                 creator_address,
                 "".to_string(),
             )
@@ -924,7 +924,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("mode", String::cl_type()),
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
-            Parameter::new("wallet_address", Key::cl_type()),
+            Parameter::new("wallet_address", String::cl_type()),
             Parameter::new("url", String::cl_type()),
             Parameter::new("requested_royalty", String::cl_type()),
         ],
@@ -938,7 +938,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("mode", String::cl_type()),
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
-            Parameter::new("creator", Key::cl_type()),
+            Parameter::new("creator", String::cl_type()),
             Parameter::new("url", String::cl_type()),
         ],
         <()>::cl_type(),
@@ -951,7 +951,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("mode", String::cl_type()),
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
-            Parameter::new("address", Key::cl_type()),
+            Parameter::new("address", String::cl_type()),
             Parameter::new("url", String::cl_type()),
         ],
         <()>::cl_type(),
