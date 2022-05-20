@@ -73,7 +73,6 @@ const BenefeiciaryNFTs = () => {
   const [selectedNfts, setSelectedNfts] = useState();
   
   const [allNfts, setAllNfts] = useState();
-  const [loader, setLoader] = useState(true);
   const [openSlider, setOpenSlider] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [sliderCaptions, setSliderCaptions] = useState([]);
@@ -87,6 +86,7 @@ const BenefeiciaryNFTs = () => {
   const [beneficiaries, setbeneficiaries] = useState();
   const [allCreators, setCreators] = useState();
   
+  //getting beneficiary details
   useEffect(() => {
     (async () => {
       if (!campaign) {
@@ -273,6 +273,8 @@ const BenefeiciaryNFTs = () => {
     });
     setFilterdImages(filteredAllData);
   };
+
+  //getting list of NFTs
   useEffect(() => {
     (async () => {
       if(!allNfts){
@@ -287,6 +289,7 @@ const BenefeiciaryNFTs = () => {
       !allCreators &&
         setCreators(creatorsList);
 
+        //mappign nft details addresses and ids to names
         if(creatorsList?.length>0&&beneficiaries?.length>0 && newNFTList?.length>0){
         newNFTList.filter((n)=>(n.isForSale=="true")).forEach(async (element) => {
          let selectedBene= beneficiaries.filter((b) => b.address === element.beneficiary);
@@ -305,6 +308,8 @@ const BenefeiciaryNFTs = () => {
           setAllNfts([]);
        }}
   })()}, [allNfts,beneficiaries,allCreators]);
+
+  //setting nft list according to user selection from menu
   useEffect(() => {
     (async () => {
         if(beneficiaries?.length>0 && allNfts?.length>0&& allCreators?.length>0) {    
@@ -343,6 +348,7 @@ const BenefeiciaryNFTs = () => {
     setTagCreator('All');
     setSearchFlag(!searchFlag);
         
+    //setting captions of nfts full screen mode
     const captions = [];
     for (let item = 0; item < Data.length; item++) {
       captions.push(
@@ -446,9 +452,12 @@ const BenefeiciaryNFTs = () => {
   const options = {
     buttons: { showDownloadButton: false },
   };
+
+  //calling of handling nfts filteration
   useEffect(() => {
     handleSearch(tagCollection, tagCreator, tagCampaign);
   }, [searchFlag]);
+
   return (
     <Fragment>
       <Header />
