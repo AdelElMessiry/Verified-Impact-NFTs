@@ -3,7 +3,6 @@ import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper, useLightbox } from 'simple-react-lightbox';
 import Header from '../../Layout/Header1';
 import Footer from '../../Layout/Footer1';
-import PageTitle from '../../Layout/PageTitle';
 import Masonry from 'react-masonry-component';
 import NFTCard from '../../Element/NFTCard';
 //images
@@ -258,6 +257,7 @@ const MyNFTs = () => {
 
   const { isLoggedIn, entityInfo } = useAuth();
 
+  //getting list of NFTs
   useEffect(() => {
     if (!entityInfo.publicKey) return;
     (async () => {
@@ -273,6 +273,8 @@ const MyNFTs = () => {
         !allCreators &&await getCreatorsList();
       !allCreators &&
         setCreators(creatorsList);
+
+        //mappign nft details addresses and ids to names
         if(creatorsList?.length>0&& beneficiaries?.length>0 && newNFTList?.length>0) {
         newNFTList.forEach(async (element) => {
          let selectedBene= beneficiaries.filter((b) => b.address === element.beneficiary);
@@ -320,6 +322,8 @@ const MyNFTs = () => {
         setTagCollection('All');
         setTagCreator('All');
         setSearchFlag(!searchFlag);
+
+      //setting captions of nfts full screen mode
         const captions = [];
         for (let item = 0; item < nftList?.length; item++) {
           captions.push(
@@ -425,9 +429,12 @@ const MyNFTs = () => {
   const options = {
     buttons: { showDownloadButton: false },
   };
+
+  //calling of handling nfts filteration
   useEffect(() => {
     handleSearch(tagCollection, tagCreator, tagCampaign);
   }, [searchFlag]);
+
   return (
     <Fragment>
       <Header />

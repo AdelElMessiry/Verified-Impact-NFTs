@@ -15,6 +15,7 @@ import PageTitle from '../../Layout/PageTitle';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { toast as VIToast } from 'react-toastify';
 
+//adding new campaign page
 const AddCampaign = () => {
   const { entityInfo, isLoggedIn } = useAuth();
 
@@ -46,6 +47,7 @@ const AddCampaign = () => {
   });
 
   const [beneficiaries, setBeneficiaries] = useState();
+
   //getting beneficiary list
   useEffect(() => {
     (async () => {
@@ -55,7 +57,7 @@ const AddCampaign = () => {
     })();
   }, [beneficiaries]);
 
-  //saving new campaign related to beneficiary component
+  //saving new campaign related to beneficiary funcation
   const saveCampaign = async () => {
     const savedCampaign = await createCampaign(
       state.inputs.name,

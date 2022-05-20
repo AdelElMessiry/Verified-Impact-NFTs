@@ -57,6 +57,7 @@ const Index4 = () => {
     })();
   }, [beneficiariesLength, campaignsLength, creatorsLength]);
 
+  //getting list of NFTs
   useEffect(() => {
     (async () => {
       if (!allNfts) {
@@ -70,6 +71,8 @@ const Index4 = () => {
         !allCreators &&await getCreatorsList();
       !allCreators &&
         setCreators(creatorsList);
+        
+        //mappign nft details addresses and ids to names
         if (creatorsList?.length>0&& beneficiaries?.length > 0 &&newNFTList?.length > 0 ) {
           newNFTList
             .filter((n) => n.isForSale == 'true')

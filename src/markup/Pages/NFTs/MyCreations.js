@@ -3,7 +3,6 @@ import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper, useLightbox } from 'simple-react-lightbox';
 import Header from '../../Layout/Header1';
 import Footer from '../../Layout/Footer1';
-import PageTitle from '../../Layout/PageTitle';
 import Masonry from 'react-masonry-component';
 import NFTCard from '../../Element/NFTCard';
 //images
@@ -13,7 +12,6 @@ import plusIcon from './../../../images/icon/plus.png';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Lightbox from 'react-image-lightbox';
 import { Link } from 'react-router-dom';
-import { getNFTsOwned } from '../../../api/userInfo';
 
 import VINFTsTooltip from '../../Element/Tooltip';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -22,7 +20,7 @@ import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
 import BuyNFTModal from '../../Element/BuyNFT';
 import PromptLogin from '../PromptLogin';
 import ListForSaleNFTModal from '../../Element/ListForSaleNFT';
-import {Spinner} from 'react-bootstrap';
+import { Spinner } from 'react-bootstrap';
 import { getCreatorsList } from '../../../api/creatorInfo';
 
 // Masonry section
@@ -96,13 +94,15 @@ const MyCreations = () => {
   const Iconimage = ({ nft }) => {
     return (
       <>
-        <i
-          className="ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"
-          onClick={() => {
-            setSelectedNFT(nft);
-            setShowBuyModal(true);
-          }}
-        ></i>
+        <VINFTsTooltip title={'Transfer NFT'}>
+          <i
+            className="ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"
+            onClick={() => {
+              setSelectedNFT(nft);
+              setShowBuyModal(true);
+            }}
+          ></i>
+        </VINFTsTooltip>
         <VINFTsTooltip
           title={
             nft.isForSale == 'true'
@@ -116,10 +116,15 @@ const MyCreations = () => {
               setShowListForSaleModal(true);
             }}
           >
-            {nft.isForSale == 'true' && (
-              <i className="ti-close sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+            {nft.isForSale == 'true' ? (
+              <div>
+                {' '}
+                <i className="ti-close sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen position-absolute"></i>
+                <i className="ti-money transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+              </div>
+            ) : (
+              <i className="ti-money transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
             )}
-            <i className="ti-money transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
           </div>
         </VINFTsTooltip>
       </>
@@ -285,184 +290,192 @@ const MyCreations = () => {
 
   const { isLoggedIn, entityInfo } = useAuth();
 
+  //getting list of NFTs
   useEffect(() => {
     if (!entityInfo.publicKey) return;
 
     (async () => {
       if (!entityInfo.publicKey) return;
-      if(!allNfts){
-      let newNFTList =  (await getCreatorNftList(entityInfo.publicKey))
-        
-      let nftList = [];
-      let beneficiaryList = !beneficiaries
-        ? await getBeneficiariesCampaignsList()
-        : [];
-      !beneficiaries && setbeneficiaries(beneficiaryList);
-      let creatorsList =
-      !allCreators &&await getCreatorsList();
-    !allCreators &&
-      setCreators(creatorsList);
-      if (creatorsList?.length>0 &&beneficiaries?.length > 0 && newNFTList?.length > 0) {
-        newNFTList.forEach(async (element) => {
-          let selectedBene = beneficiaries.filter(
-            (b) => b.address === element.beneficiary
-          );
-          let selectedCampaign = selectedBene[0]?.campaigns?.filter(
-            (c) => c.id === element.campaign
-          );
-         let selectedCreator=creatorsList?.filter((c=>(c.address===element.creator)))
+      if (!allNfts) {
+        let newNFTList = await getCreatorNftList(entityInfo.publicKey);
 
-          element['beneficiaryName'] = selectedBene[0].name;
-          element['campaignName'] = selectedCampaign[0].name;
-          element['creatorName'] = selectedCreator[0].name;
+        let nftList = [];
+        let beneficiaryList = !beneficiaries
+          ? await getBeneficiariesCampaignsList()
+          : [];
+        !beneficiaries && setbeneficiaries(beneficiaryList);
+        let creatorsList = !allCreators && (await getCreatorsList());
+        !allCreators && setCreators(creatorsList);
 
-          nftList.push(element);
-        });
-        !allNfts && setAllNfts(nftList);
-        console.log(newNFTList);
-      }else{
-        setAllNfts([]);
-     }
-      console.log(newNFTList);
-      if (nftList.length > 0) {
-        let collection = nftList
-          .map((data) => ({ name: data.collectionName }))
-          .filter(
-            (value, index, self) =>
-              index === self.findIndex((t) => t.name === value.name)
-          );
-        setCollectionTags([{ name: 'All' }, ...collection]);
+        //mappign nft details addresses and ids to names
+        if (
+          creatorsList?.length > 0 &&
+          beneficiaries?.length > 0 &&
+          newNFTList?.length > 0
+        ) {
+          newNFTList.forEach(async (element) => {
+            let selectedBene = beneficiaries.filter(
+              (b) => b.address === element.beneficiary
+            );
+            let selectedCampaign = selectedBene[0]?.campaigns?.filter(
+              (c) => c.id === element.campaign
+            );
+            let selectedCreator = creatorsList?.filter(
+              (c) => c.address === element.creator
+            );
 
-        let campaigns = nftList
-          .map((data) => ({ name: data.campaignName }))
-          .filter(
-            (value, index, self) =>
-              index === self.findIndex((t) => t.name === value.name)
-          );
+            element['beneficiaryName'] = selectedBene[0].name;
+            element['campaignName'] = selectedCampaign[0].name;
+            element['creatorName'] = selectedCreator[0].name;
 
-        setCampaignTags([{ name: 'All' }, ...campaigns]);
-
-        let creators = nftList
-          .map((data) => ({ name: data.creatorName }))
-          .filter(
-            (value, index, self) =>
-              index === self.findIndex((t) => t.name === value.name)
-          );
-
-        !allNfts && setSelectedNfts(nftList);
-        setCreatorTags([{ name: 'All' }, ...creators]);
-        setTagCampaign('All');
-        setTagCollection('All');
-        setTagCreator('All');
-        setSearchFlag(!searchFlag);
-        const captions = [];
-        for (let item = 0; item < nftList?.length; item++) {
-          captions.push(
-            <div className="text-white text-left port-box">
-              <h5>{nftList[item].title}</h5>
-              {/* <p>
-          <b>Category: </b>
-          {GetNFTs[item].category}
-        </p> */}
-              <p>
-                <b>Description: </b>
-                {nftList[item].description}
-              </p>
-              <p>
-                <b>Beneficiary: </b>
-                <VINFTsTooltip
-                  title={`Click to see all NFTs for "${nftList[item].beneficiaryName}" beneficiary`}
-                >
-                  <Link
-                    to={`./BenefeiciaryNFTs?beneficiary=${nftList[item].beneficiaryName}`}
-                    className="dez-page text-white"
-                    onClick={() => {
-                      setOpenSlider(false);
-                    }}
-                  >
-                    {nftList[item].beneficiaryName}
-                  </Link>
-                </VINFTsTooltip>
-                <span className="bg-success text-white px-1 ml-1 border-raduis-2">
-                  {nftList[item].beneficiaryPercentage}%
-                </span>
-
-                <b className="ml-4">Campaign: </b>
-                <VINFTsTooltip
-                  title={`Click to see all NFTs for "${nftList[item].campaignName}" campaign`}
-                >
-                  {nftList[item].beneficiary ? (
-                    <Link
-                      to={`./BenefeiciaryNFTs?beneficiary=${nftList[item].beneficiaryName}&campaign=${nftList[item].campaignName}`}
-                      className="dez-page text-white"
-                      onClick={() => {
-                        setOpenSlider(false);
-                      }}
-                    >
-                      {nftList[item].campaignName}
-                    </Link>
-                  ) : (
-                    <Link
-                      to={`./CreatorNFTs?creator=${nftList[item].creatorName}&collection=${nftList[item].collectionName}`}
-                      className="dez-page text-white"
-                      onClick={() => {
-                        setOpenSlider(false);
-                      }}
-                    >
-                      {nftList[item].campaignName}
-                    </Link>
-                  )}
-                </VINFTsTooltip>
-                <b className="ml-4">Creator: </b>
-                <VINFTsTooltip
-                  title={`Click to see all NFTs created by "${nftList[item].creatorName}"`}
-                >
-                  <Link
-                    to={`./CreatorNFTs?creator=${nftList[item].creatorName}`}
-                    className="dez-page text-white"
-                    onClick={() => {
-                      setOpenSlider(false);
-                    }}
-                  >
-                    {nftList[item].creatorName}
-                  </Link>
-                </VINFTsTooltip>
-                <span className="bg-info text-white px-1 ml-1 border-raduis-2">
-                  {nftList[item].creatorPercentage}%
-                </span>
-
-                <b className="ml-4">Collection: </b>
-                <Link
-                  to={`./collection?collection=${nftList[item].collectionName}`}
-                  className="dez-page text-white"
-                  onClick={() => {
-                    setOpenSlider(false);
-                  }}
-                >
-                  {nftList[item].collectionName}
-                </Link>
-              </p>
-              <p className="d-flex align-content-center align-items-center">
-                <b>Price: </b>
-                {nftList[item].price} {nftList[item].currency}
-                &nbsp;&nbsp;
-                <Iconimage nft={nftList[item]} /> 
-              </p>
-            </div>
-          );
+            nftList.push(element);
+          });
+          !allNfts && setAllNfts(nftList);
+          console.log(newNFTList);
+        } else {
+          setAllNfts([]);
         }
-        setSliderCaptions(captions);
+        console.log(newNFTList);
+        if (nftList.length > 0) {
+          let collection = nftList
+            .map((data) => ({ name: data.collectionName }))
+            .filter(
+              (value, index, self) =>
+                index === self.findIndex((t) => t.name === value.name)
+            );
+          setCollectionTags([{ name: 'All' }, ...collection]);
+
+          let campaigns = nftList
+            .map((data) => ({ name: data.campaignName }))
+            .filter(
+              (value, index, self) =>
+                index === self.findIndex((t) => t.name === value.name)
+            );
+
+          setCampaignTags([{ name: 'All' }, ...campaigns]);
+
+          let creators = nftList
+            .map((data) => ({ name: data.creatorName }))
+            .filter(
+              (value, index, self) =>
+                index === self.findIndex((t) => t.name === value.name)
+            );
+
+          !allNfts && setSelectedNfts(nftList);
+          setCreatorTags([{ name: 'All' }, ...creators]);
+          setTagCampaign('All');
+          setTagCollection('All');
+          setTagCreator('All');
+          setSearchFlag(!searchFlag);
+
+          //setting captions of nfts full screen mode
+          const captions = [];
+          for (let item = 0; item < nftList?.length; item++) {
+            captions.push(
+              <div className="text-white text-left port-box">
+                <h5>{nftList[item].title}</h5>
+                <p>
+                  <b>Description: </b>
+                  {nftList[item].description}
+                </p>
+                <p>
+                  <b>Beneficiary: </b>
+                  <VINFTsTooltip
+                    title={`Click to see all NFTs for "${nftList[item].beneficiaryName}" beneficiary`}
+                  >
+                    <Link
+                      to={`./BenefeiciaryNFTs?beneficiary=${nftList[item].beneficiaryName}`}
+                      className="dez-page text-white"
+                      onClick={() => {
+                        setOpenSlider(false);
+                      }}
+                    >
+                      {nftList[item].beneficiaryName}
+                    </Link>
+                  </VINFTsTooltip>
+                  <span className="bg-success text-white px-1 ml-1 border-raduis-2">
+                    {nftList[item].beneficiaryPercentage}%
+                  </span>
+
+                  <b className="ml-4">Campaign: </b>
+                  <VINFTsTooltip
+                    title={`Click to see all NFTs for "${nftList[item].campaignName}" campaign`}
+                  >
+                    {nftList[item].beneficiary ? (
+                      <Link
+                        to={`./BenefeiciaryNFTs?beneficiary=${nftList[item].beneficiaryName}&campaign=${nftList[item].campaignName}`}
+                        className="dez-page text-white"
+                        onClick={() => {
+                          setOpenSlider(false);
+                        }}
+                      >
+                        {nftList[item].campaignName}
+                      </Link>
+                    ) : (
+                      <Link
+                        to={`./CreatorNFTs?creator=${nftList[item].creatorName}&collection=${nftList[item].collectionName}`}
+                        className="dez-page text-white"
+                        onClick={() => {
+                          setOpenSlider(false);
+                        }}
+                      >
+                        {nftList[item].campaignName}
+                      </Link>
+                    )}
+                  </VINFTsTooltip>
+                  <b className="ml-4">Creator: </b>
+                  <VINFTsTooltip
+                    title={`Click to see all NFTs created by "${nftList[item].creatorName}"`}
+                  >
+                    <Link
+                      to={`./CreatorNFTs?creator=${nftList[item].creatorName}`}
+                      className="dez-page text-white"
+                      onClick={() => {
+                        setOpenSlider(false);
+                      }}
+                    >
+                      {nftList[item].creatorName}
+                    </Link>
+                  </VINFTsTooltip>
+                  <span className="bg-info text-white px-1 ml-1 border-raduis-2">
+                    {nftList[item].creatorPercentage}%
+                  </span>
+
+                  <b className="ml-4">Collection: </b>
+                  <Link
+                    to={`./collection?collection=${nftList[item].collectionName}`}
+                    className="dez-page text-white"
+                    onClick={() => {
+                      setOpenSlider(false);
+                    }}
+                  >
+                    {nftList[item].collectionName}
+                  </Link>
+                </p>
+                <p className="d-flex align-content-center align-items-center">
+                  <b>Price: </b>
+                  {nftList[item].price} {nftList[item].currency}
+                  &nbsp;&nbsp;
+                  <Iconimage nft={nftList[item]} />
+                </p>
+              </div>
+            );
+          }
+          setSliderCaptions(captions);
+        }
       }
-    }
     })();
-  }, [entityInfo, selectedNfts, allNfts, beneficiaries,allCreators]);
+  }, [entityInfo, selectedNfts, allNfts, beneficiaries, allCreators]);
 
   const options = {
     buttons: { showDownloadButton: false },
   };
+
+  //calling of handling nfts filteration
   useEffect(() => {
     handleSearch(tagCollection, tagCreator, tagCampaign);
   }, [searchFlag]);
+
   return (
     <Fragment>
       <Header />
@@ -586,48 +599,50 @@ const MyCreations = () => {
                 imageCaption={sliderCaptions[photoIndex]}
               />
             )}
-            {(allNfts)?(filteredImages?.length > 0 ? (
-              <SimpleReactLightbox>
-                <SRLWrapper options={options}>
-                  <div className="clearfix">
-                    <ul
-                      id="masonry"
-                      className="dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1"
-                    >
-                      <Masonry
-                        className={'my-gallery-class'} // default ''
-                        options={masonryOptions} // default {}
-                        disableImagesLoaded={false} // default false
-                        updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
-                        imagesLoadedOptions={imagesLoadedOptions} // default {}
+            {allNfts ? (
+              filteredImages?.length > 0 ? (
+                <SimpleReactLightbox>
+                  <SRLWrapper options={options}>
+                    <div className="clearfix">
+                      <ul
+                        id="masonry"
+                        className="dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1"
                       >
-                        {filteredImages.map((item, index) => (
-                          <li
-                            className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
-                            key={index}
-                          >
-                            <NFTCard
-                              item={item}
-                              index={index}
-                              openSlider={(newIndex) => {
-                                setPhotoIndex(newIndex);
-                                setOpenSlider(true);
-                              }}
-                              isTransfer={true}
-                              isCreation={true}
-                            />
-                          </li>
-                        ))}
-                      </Masonry>
-                    </ul>
-                  </div>
-                </SRLWrapper>
-              </SimpleReactLightbox>
+                        <Masonry
+                          className={'my-gallery-class'} // default ''
+                          options={masonryOptions} // default {}
+                          disableImagesLoaded={false} // default false
+                          updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
+                          imagesLoadedOptions={imagesLoadedOptions} // default {}
+                        >
+                          {filteredImages.map((item, index) => (
+                            <li
+                              className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0"
+                              key={index}
+                            >
+                              <NFTCard
+                                item={item}
+                                index={index}
+                                openSlider={(newIndex) => {
+                                  setPhotoIndex(newIndex);
+                                  setOpenSlider(true);
+                                }}
+                                isTransfer={true}
+                                isCreation={true}
+                              />
+                            </li>
+                          ))}
+                        </Masonry>
+                      </ul>
+                    </div>
+                  </SRLWrapper>
+                </SimpleReactLightbox>
+              ) : (
+                <h4 className="text-muted text-center mb-5">
+                  You Don't have NFTS yet!
+                </h4>
+              )
             ) : (
-              <h4 className="text-muted text-center mb-5">
-                You Don't have NFTS yet!
-              </h4>
-             )):  ( 
               <div className="vinft-page-loader">
                 <div className="vinft-spinner-body">
                   <Spinner animation="border" variant="success" />

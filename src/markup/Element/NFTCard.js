@@ -86,6 +86,7 @@ const NFTCard = ({
       </>
     );
   };
+
   return (
     <div className="dlab-box dlab-gallery-box">
       <div className="dlab-media dlab-img-overlay1 dlab-img-effect">
