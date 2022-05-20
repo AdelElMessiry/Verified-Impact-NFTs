@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
-import { CLPublicKey } from 'casper-js-sdk';
 import ImageUploader from 'react-images-upload';
 import { toast as VIToast } from 'react-toastify';
 import { Form } from 'react-bootstrap';
@@ -8,7 +7,7 @@ import CreatableSelect from 'react-select/creatable';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
-import { getCreatorsList } from '../../../api/creatorInfo';
+import { getCreatorsCollectionsList } from '../../../api/creatorInfo';
 import { uploadImg } from '../../../api/imageCDN';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
@@ -21,21 +20,18 @@ import PageTitle from '../../Layout/PageTitle';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import PromptLogin from '../PromptLogin';
 
+//minting new nft page
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
-  const [image, setImage] = useState([]);
-  const [collectionState, setCollectionState] = useState(1);
   const [uploadedImageURL, setUploadedImage] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [uploadingToCloud, setUploadingToCloud] = useState(false);
-  const [validID, setValidID] = useState();
   const [selectedCollectionValue, setSelectedCollectionValue] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [beneficiary, setBeneficiary] = useState();
   const [campaign, setCampaign] = useState();
 
-  let selectedOptions = [];
-  const [options, setOptions] = useState(selectedOptions);
+  const [options, setOptions] = useState();
 
   //handling of creating new option in creatable select control
   const createOption = (label) => ({
@@ -110,7 +106,7 @@ const MintNFT = () => {
 
   useEffect(() => {
     (async () => {
-      let creatorList = !creators && (await getCreatorsList());
+      let creatorList = !creators && (await getCreatorsCollectionsList());
       !creators && setCreators(creatorList);
       if (creatorList.length > 0) {
         let selectedCreator = creatorList.filter(
@@ -118,11 +114,30 @@ const MintNFT = () => {
         );
         if (selectedCreator.length > 0) {
           setCreator(selectedCreator[0].name);
+          if(selectedCreator[0].collections){
+          let selectedOptions = [];
+          selectedCreator[0].collections
+            .forEach((col) => {
+              let singleoption = {
+                value: col.id,
+                label: (
+                  <div>
+                    &nbsp;{col.name}{" "}
+                  </div>
+                ),
+              };
+              selectedOptions.push(singleoption);
+            });
+           setOptions(selectedOptions);
+          }else{
+           setOptions([]);
+          }
           setIsCreatorExist(true);
         }
+
       }
     })();
-  }, [creators]);
+  }, [creators,entityInfo]);
 
   //handling of selecting image in image control
   const onDrop = (picture) => {
