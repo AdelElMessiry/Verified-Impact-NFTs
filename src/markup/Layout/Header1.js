@@ -116,7 +116,6 @@ const Header1 = ({ isNFTDetails = false }) => {
                   {isLoggedIn && entityInfo && (
                     <>
                       <VINFTsTooltip title='Open settings'>
-                        {/* <Avatar alt='John Doe' src='/static/images/avatar/2.jpg' /> */}
                         <>
                           <Avatar className='float-left' aria-label='avatar'>
                             {generateRandomCharacter()}

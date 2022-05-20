@@ -14,6 +14,7 @@ import PageTitle from '../../Layout/PageTitle';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { toast as VIToast } from 'react-toastify';
 
+//add new beneficiary page
 const AddBeneficiary = () => {
   const { isLoggedIn, entityInfo } = useAuth();
 

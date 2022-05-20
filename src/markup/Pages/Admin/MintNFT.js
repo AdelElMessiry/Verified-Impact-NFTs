@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
-import { CLPublicKey } from 'casper-js-sdk';
 import ImageUploader from 'react-images-upload';
 import { toast as VIToast } from 'react-toastify';
 import { Form } from 'react-bootstrap';
@@ -21,14 +20,12 @@ import PageTitle from '../../Layout/PageTitle';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import PromptLogin from '../PromptLogin';
 
+//minting new nft page
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
-  const [image, setImage] = useState([]);
-  const [collectionState, setCollectionState] = useState(1);
   const [uploadedImageURL, setUploadedImage] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [uploadingToCloud, setUploadingToCloud] = useState(false);
-  const [validID, setValidID] = useState();
   const [selectedCollectionValue, setSelectedCollectionValue] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [beneficiary, setBeneficiary] = useState();
