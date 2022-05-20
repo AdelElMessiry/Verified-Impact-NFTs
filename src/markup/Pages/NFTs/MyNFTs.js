@@ -71,7 +71,7 @@ const MyNFTs = () => {
   const [tagCollection, setTagCollection] = useState('All');
   const [tagCreator, setTagCreator] = useState('All');
   const [tagCampaign, setTagCampaign] = useState('All');
-  const [filteredImages, setFilterdImages] = useState();
+  const [filteredImages, setFilterdImages] = useState([]);
   const [selectedNfts, setSelectedNfts] = useState();
   const [allNfts, setAllNfts] = useState();
   const [openSlider, setOpenSlider] = useState(false);
@@ -540,8 +540,8 @@ const MyNFTs = () => {
                 imageCaption={sliderCaptions[photoIndex]}
               />
             )}
-            {(allNfts&&filteredImages)?(
-            filteredImages.length > 0 ? (
+            {(allNfts)?(
+            filteredImages?.length > 0 ? (
               <SimpleReactLightbox>
                 <SRLWrapper options={options}>
                   <div className="clearfix">
