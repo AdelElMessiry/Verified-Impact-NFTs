@@ -32,39 +32,39 @@ export interface IMintOptions {
 export async function mint(
   creatorAddress: string,
   creatorName: string,
-  mintOptions: IMintOptions
+  mintOptions: any
 ) {
   const publicKeyCLValue = CLPublicKey.fromHex(creatorAddress);
   const oldBalance = await numberOfNFTsOfPubCLvalue(publicKeyCLValue);
   console.log('...... No. of NFTs in your account before mint: ', oldBalance);
 
-  const metas = [new Map()];
+  // const metas = [new Map()];
 
-  metas[0].set('title', mintOptions.title);
-  metas[0].set('description', mintOptions.description);
-  metas[0].set('image', mintOptions.image);
-  metas[0].set('price', mintOptions.price);
-  metas[0].set('isForSale', String(mintOptions.isForSale));
-  metas[0].set('currency', mintOptions.currency);
-  metas[0].set('campaign', mintOptions.campaign);
-  metas[0].set('creator', mintOptions.creator);
-  metas[0].set('creatorPercentage', mintOptions.creatorPercentage || '');
-  metas[0].set('collectionName', mintOptions.collectionName);
-  metas[0].set('beneficiary', mintOptions.beneficiary);
-  metas[0].set('beneficiaryPercentage', mintOptions.beneficiaryPercentage);
-  console.log(metas);
+  // metas[0].set('title', mintOptions.title);
+  // metas[0].set('description', mintOptions.description);
+  // metas[0].set('image', mintOptions.image);
+  // metas[0].set('price', mintOptions.price);
+  // metas[0].set('isForSale', String(mintOptions.isForSale));
+  // metas[0].set('currency', mintOptions.currency);
+  // metas[0].set('campaign', mintOptions.campaign);
+  // metas[0].set('creator', mintOptions.creator);
+  // metas[0].set('creatorPercentage', mintOptions.creatorPercentage || '');
+  // metas[0].set('collectionName', mintOptions.collectionName);
+  // metas[0].set('beneficiary', mintOptions.beneficiary);
+  // metas[0].set('beneficiaryPercentage', mintOptions.beneficiaryPercentage);
+  // console.log(metas);
 
   console.log('Final nft info:', {
     publicKeyCLValue,
-    metas,
+    // metas,
+    mintOptions,
     payments: PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
   });
 
   const mintDeploy = await cep47.mint(
     publicKeyCLValue,
     creatorName,
-    creatorAddress,
-    metas,
+    mintOptions,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     publicKeyCLValue
   );
