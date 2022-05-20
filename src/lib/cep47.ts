@@ -383,7 +383,7 @@ class CEP47Client {
       campaign: CLValueBuilder.string(campaign),
       creator: CLValueBuilder.string(creator),
       creatorPercentage: CLValueBuilder.string(creatorPercentage),
-      collection: CLValueBuilder.string(collection || ''),
+      collection: CLValueBuilder.u256(collection || 0),
       collectionName: CLValueBuilder.string(collectionName || ''),
       beneficiary: CLValueBuilder.string(beneficiary),
       beneficiaryPercentage: CLValueBuilder.string(beneficiaryPercentage),
