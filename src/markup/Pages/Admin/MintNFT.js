@@ -8,7 +8,7 @@ import CreatableSelect from 'react-select/creatable';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
-import { getCreatorsList } from '../../../api/creatorInfo';
+import { getCreatorsCollectionsList } from '../../../api/creatorInfo';
 import { uploadImg } from '../../../api/imageCDN';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
@@ -34,8 +34,7 @@ const MintNFT = () => {
   const [beneficiary, setBeneficiary] = useState();
   const [campaign, setCampaign] = useState();
 
-  let selectedOptions = [];
-  const [options, setOptions] = useState(selectedOptions);
+  const [options, setOptions] = useState();
 
   //handling of creating new option in creatable select control
   const createOption = (label) => ({
@@ -110,7 +109,7 @@ const MintNFT = () => {
 
   useEffect(() => {
     (async () => {
-      let creatorList = !creators && (await getCreatorsList());
+      let creatorList = !creators && (await getCreatorsCollectionsList());
       !creators && setCreators(creatorList);
       if (creatorList.length > 0) {
         let selectedCreator = creatorList.filter(
@@ -118,11 +117,30 @@ const MintNFT = () => {
         );
         if (selectedCreator.length > 0) {
           setCreator(selectedCreator[0].name);
+          if(selectedCreator[0].collections){
+          let selectedOptions = [];
+          selectedCreator[0].collections
+            .forEach((col) => {
+              let singleoption = {
+                value: col.id,
+                label: (
+                  <div>
+                    &nbsp;{col.name}{" "}
+                  </div>
+                ),
+              };
+              selectedOptions.push(singleoption);
+            });
+           setOptions(selectedOptions);
+          }else{
+           setOptions([]);
+          }
           setIsCreatorExist(true);
         }
+
       }
     })();
-  }, [creators]);
+  }, [creators,entityInfo]);
 
   //handling of selecting image in image control
   const onDrop = (picture) => {
