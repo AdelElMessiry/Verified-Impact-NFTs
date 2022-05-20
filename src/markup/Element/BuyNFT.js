@@ -142,7 +142,7 @@ const transferNFT=async()=>{
         <button className='btn' onClick={handleClose}>
           Close
         </button>
-        <button className='btn btn-success' onClick={() => {isTransfer? buyNFT():transferNFT()}}>
+        <button className='btn btn-success' onClick={() => {isTransfer? transferNFT():buyNFT()}}>
           Buy
         </button>
       </Modal.Footer>
