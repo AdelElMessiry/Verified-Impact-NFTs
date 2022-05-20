@@ -69,7 +69,7 @@ const BenefeiciaryNFTs = () => {
   const [tagCollection, setTagCollection] = useState('All');
   const [tagCreator, setTagCreator] = useState('All');
   const [tagCampaign, setTagCampaign] = useState('All');
-  const [filteredImages, setFilterdImages] = useState();
+  const [filteredImages, setFilterdImages] = useState([]);
   const [selectedNfts, setSelectedNfts] = useState();
   
   const [allNfts, setAllNfts] = useState();
