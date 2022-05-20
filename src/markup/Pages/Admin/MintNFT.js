@@ -114,30 +114,24 @@ const MintNFT = () => {
         );
         if (selectedCreator.length > 0) {
           setCreator(selectedCreator[0].name);
-          if(selectedCreator[0].collections){
-          let selectedOptions = [];
-          selectedCreator[0].collections
-            .forEach((col) => {
+          if (selectedCreator[0].collections) {
+            let selectedOptions = [];
+            selectedCreator[0].collections.forEach((col) => {
               let singleoption = {
                 value: col.id,
-                label: (
-                  <div>
-                    &nbsp;{col.name}{" "}
-                  </div>
-                ),
+                label: <div>&nbsp;{col.name} </div>,
               };
               selectedOptions.push(singleoption);
             });
-           setOptions(selectedOptions);
-          }else{
-           setOptions([]);
+            setOptions(selectedOptions);
+          } else {
+            setOptions([]);
           }
           setIsCreatorExist(true);
         }
-
       }
     })();
-  }, [creators,entityInfo]);
+  }, [creators, entityInfo]);
 
   //handling of selecting image in image control
   const onDrop = (picture) => {
@@ -196,6 +190,7 @@ const MintNFT = () => {
           campaign: campaign,
           category: state.inputs.category,
           currency: state.inputs.currency,
+          collection: selectedCollectionValue.value,
           collectionName: selectedCollectionValue.value,
           creator: entityInfo.publicKey,
           creatorPercentage: creatorPercentage,

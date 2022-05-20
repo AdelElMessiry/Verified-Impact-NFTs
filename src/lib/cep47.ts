@@ -350,17 +350,43 @@ class CEP47Client {
   public async mint(
     recipient: CLPublicKey,
     creatorName: string,
-    creatorAddress: string,
-    metas: Map<string, string>[],
+    metas: any,
     paymentAmount: string,
     deploySender: CLPublicKey,
     keys?: Keys.AsymmetricKey[]
   ) {
+    const {
+      title,
+      description,
+      image,
+      price,
+      isForSale,
+      currency,
+      campaign,
+      creator,
+      creatorPercentage,
+      collection,
+      collectionName,
+      beneficiary,
+      beneficiaryPercentage,
+    } = metas;
+
     const runtimeArgs = RuntimeArgs.fromMap({
       recipient: CLValueBuilder.key(recipient),
-      creator_name: CLValueBuilder.string(creatorName),
-      creator_address: CLValueBuilder.string(creatorAddress),
-      token_metas: CLValueBuilder.list(metas.map((meta) => toCLMap(meta))),
+      creatorName: CLValueBuilder.string(creatorName),
+      title: CLValueBuilder.string(title),
+      description: CLValueBuilder.string(description),
+      image: CLValueBuilder.string(image),
+      price: CLValueBuilder.string(price),
+      isForSale: CLValueBuilder.string(isForSale),
+      currency: CLValueBuilder.string(currency),
+      campaign: CLValueBuilder.string(campaign),
+      creator: CLValueBuilder.string(creator),
+      creatorPercentage: CLValueBuilder.string(creatorPercentage),
+      collection: CLValueBuilder.string(collection || ''),
+      collectionName: CLValueBuilder.string(collectionName || ''),
+      beneficiary: CLValueBuilder.string(beneficiary),
+      beneficiaryPercentage: CLValueBuilder.string(beneficiaryPercentage),
     });
 
     return this.contractClient.callEntrypoint(

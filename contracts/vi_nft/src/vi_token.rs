@@ -33,7 +33,6 @@ use minters_control::MinterControl;
 
 mod beneficiaries_control;
 use beneficiaries_control::BeneficiaryControl;
-// use beneficiaries_control::{Beneficiaries, BeneficiaryControl};
 
 pub type Beneficiary = BTreeMap<String, String>;
 
@@ -77,9 +76,10 @@ impl ViToken {
         Collections::init();
         Campaigns::init();
         campaign_data::set_total_campaigns(U256::zero());
-        collection_data::set_total_collections(U256::zero());
         beneficiaries_control::set_total_beneficiaries(U256::zero());
+        collection_data::set_total_collections(U256::zero());
         creator_control::set_total_creators(U256::zero());
+        // collection_control::set_total_collections(U256::zero());
     }
 
     fn beneficiary_campaign(&self, index: U256) -> Option<Campaign> {
@@ -90,6 +90,10 @@ impl ViToken {
         Collections::instance().get(index)
     }
 
+    fn is_collection(&self, index: U256) -> bool {
+        Collections::instance().is_collection(index)
+    }
+
     fn get_beneficiary(&self, index: U256) -> Option<Beneficiary> {
         BeneficiaryControl::get_beneficiary(self, index)
     }
@@ -98,9 +102,17 @@ impl ViToken {
         CreatorControl::get_creator(self, index)
     }
 
+    // fn get_collection(&self, index: U256) -> Option<Collection> {
+    //     CollectionControl::get_collection(index)
+    // }
+
     fn total_campaigns(&self) -> U256 {
         campaign_data::total_campaigns()
     }
+
+    // fn total_collections(&self) -> U256 {
+    //     collection_control::total_collections()
+    // }
 
     fn total_collections(&self) -> U256 {
         collection_data::total_collections()
@@ -159,53 +171,6 @@ impl ViToken {
             //         .unwrap();
             //     campaigns_dict.remove(caller);
             //     campaign_data::set_total_campaigns(new_campaign_count);
-            // }
-            _ => {
-                return Err(Error::WrongArguments);
-            }
-        }
-        Ok(())
-    }
-
-    fn set_collection(
-        &mut self,
-        token_ids: Vec<TokenId>,
-        mode: String,
-        name: String,
-        description: String,
-        creator: String,
-        url: String,
-    ) -> Result<(), Error> {
-        let collections_dict = Collections::instance();
-
-        match mode.as_str() {
-            "ADD" | "UPDATE" => {
-                let new_collection_count = collection_data::total_collections()
-                    .checked_add(U256::one())
-                    .unwrap();
-                let mut collection = collections_dict
-                    .get(new_collection_count)
-                    .unwrap_or_default();
-
-                collection.insert(
-                    format!("token_ids: "),
-                    token_ids.iter().map(ToString::to_string).collect(),
-                );
-                collection.insert(format!("id: "), new_collection_count.to_string());
-                collection.insert(format!("name: "), name);
-                collection.insert(format!("description: "), description);
-                collection.insert(format!("url: "), url);
-                collection.insert(format!("creator: "), creator);
-
-                collections_dict.set(new_collection_count, collection);
-                collection_data::set_total_collections(new_collection_count);
-            }
-            // "DELETE" => {
-            //     let new_collection_count = collection_data::total_collections()
-            //         .checked_sub(U256::one())
-            //         .unwrap();
-            //     collections_dict.remove(caller);
-            //     collection_data::set_total_collections(new_collection_count);
             // }
             _ => {
                 return Err(Error::WrongArguments);
@@ -286,30 +251,174 @@ impl ViToken {
         Ok(())
     }
 
+    fn set_collection(
+        &mut self,
+        token_ids: Vec<TokenId>,
+        mode: String,
+        name: String,
+        description: String,
+        creator: String,
+        url: String,
+    ) -> Result<(), Error> {
+        let collections_dict = Collections::instance();
+
+        match mode.as_str() {
+            "ADD" | "UPDATE" => {
+                let new_collection_count = collection_data::total_collections()
+                    .checked_add(U256::one())
+                    .unwrap();
+                let mut collection = collections_dict
+                    .get(new_collection_count)
+                    .unwrap_or_default();
+
+                collection.insert(
+                    format!("token_ids: "),
+                    token_ids.iter().map(ToString::to_string).collect(),
+                );
+                collection.insert(format!("id: "), new_collection_count.to_string());
+                collection.insert(format!("name: "), name);
+                collection.insert(format!("description: "), description);
+                collection.insert(format!("url: "), url);
+                collection.insert(format!("creator: "), creator);
+
+                collections_dict.set(new_collection_count, collection);
+                collection_data::set_total_collections(new_collection_count);
+            }
+            // "DELETE" => {
+            //     let new_collection_count = collection_data::total_collections()
+            //         .checked_sub(U256::one())
+            //         .unwrap();
+            //     collections_dict.remove(caller);
+            //     collection_data::set_total_collections(new_collection_count);
+            // }
+            _ => {
+                return Err(Error::WrongArguments);
+            }
+        }
+        Ok(())
+    }
+
+    // fn set_collection(
+    //     &mut self,
+    //     token_ids: Vec<TokenId>,
+    //     mode: String,
+    //     name: String,
+    //     description: String,
+    //     creator: String,
+    //     url: String,
+    // ) -> Result<(), Error> {
+    //     match mode.as_str() {
+    //         "ADD" | "UPDATE" => {
+    //             let new_collection_count = collection_control::total_collections()
+    //                 .checked_add(U256::one())
+    //                 .unwrap();
+    //             let mut collection =
+    //                 CollectionControl::get_collection(new_collection_count).unwrap_or_default();
+
+    //             collection.insert(
+    //                 format!("token_ids: "),
+    //                 token_ids.iter().map(ToString::to_string).collect(),
+    //             );
+    //             collection.insert(format!("id: "), new_collection_count.to_string());
+    //             collection.insert(format!("name: "), name);
+    //             collection.insert(format!("description: "), description);
+    //             collection.insert(format!("url: "), url);
+    //             collection.insert(format!("creator: "), creator);
+
+    //             CollectionControl::add_collection(self, new_collection_count, collection);
+    //             CreatorControl::add_creator(self, new_creator_count, caller, creator);
+
+    //             collection_control::set_total_collections(new_collection_count);
+    //         }
+    //         _ => {
+    //             return Err(Error::WrongArguments);
+    //         }
+    //     }
+    //     Ok(())
+    // }
+
     fn mint(
         &mut self,
         recipient: Key,
         creator_name: String,
-        creator_address: String,
-        token_metas: Vec<Meta>,
+        title: String,
+        description: String,
+        image: String,
+        price: String,
+        is_for_sale: String,
+        currency: String,
+        campaign: String,
+        creator: String,
+        creator_percentage: String,
+        collection: U256,
+        collection_name: String,
+        beneficiary: String,
+        beneficiary_percentage: String,
     ) -> Result<Vec<TokenId>, Error> {
         let caller = ViToken::default().get_caller();
+        let creator_add = String::from(creator);
+        let cloned_creator = creator_add.clone();
+        let collection_creator = creator_add.clone();
+        let collection_id: U256;
+
+        if !ViToken::default().is_collection(collection) {
+            collection_id = collection_data::total_collections()
+                .checked_add(U256::one())
+                .unwrap();
+
+            self.set_collection(
+                vec![U256::zero()],
+                "ADD".to_string(),
+                collection_name,
+                "".to_string(),
+                collection_creator,
+                "".to_string(),
+            )
+            .unwrap_or_revert();
+        } else {
+            collection_id = collection;
+        }
+
         if !ViToken::default().is_creator(caller) {
             self.set_creator(
                 "ADD".to_string(),
                 creator_name,
                 "".to_string(),
-                creator_address,
+                creator_add,
                 "".to_string(),
             )
             .unwrap_or_revert();
         }
-        let token_id = vec![ViToken::default()
+        let token_id = ViToken::default()
+            .total_supply()
+            .checked_add(U256::one())
+            .unwrap();
+
+        let token_ids = vec![ViToken::default()
             .total_supply()
             .checked_add(U256::one())
             .unwrap()];
+
+        let mut mapped_meta = ViToken::default().token_meta(token_id).unwrap_or_revert();
+
+        mapped_meta.insert(format!("title"), title);
+        mapped_meta.insert(format!("description"), description);
+        mapped_meta.insert(format!("image"), image);
+        mapped_meta.insert(format!("price"), price);
+        mapped_meta.insert(format!("isForSale"), is_for_sale);
+        mapped_meta.insert(format!("currency"), currency);
+        mapped_meta.insert(format!("campaign"), campaign);
+        mapped_meta.insert(format!("creator"), cloned_creator);
+        mapped_meta.insert(format!("collection"), collection_id.to_string());
+        mapped_meta.insert(format!("beneficiary"), beneficiary);
+        mapped_meta.insert(format!("creatorPercentage"), creator_percentage);
+        mapped_meta.insert(
+            format!("beneficiaryPercentage"),
+            beneficiary_percentage.to_string(),
+        );
+
         let confirmed_token_ids =
-            CEP47::mint(self, recipient, token_id, token_metas).unwrap_or_revert();
+            CEP47::mint(self, recipient, token_ids, vec![mapped_meta]).unwrap_or_revert();
 
         Ok(confirmed_token_ids)
     }
@@ -616,12 +725,39 @@ fn add_collection() {
 #[no_mangle]
 fn mint() {
     let recipient = runtime::get_named_arg::<Key>("recipient");
-    let creator_name = runtime::get_named_arg::<String>("creator_name");
-    let creator_address = runtime::get_named_arg::<String>("creator_address");
-    let token_metas = runtime::get_named_arg::<Vec<Meta>>("token_metas");
+    let creator_name = runtime::get_named_arg::<String>("creatorName");
+    let title = runtime::get_named_arg::<String>("title");
+    let description = runtime::get_named_arg::<String>("description");
+    let image = runtime::get_named_arg::<String>("image");
+    let price = runtime::get_named_arg::<String>("price");
+    let is_for_sale = runtime::get_named_arg::<String>("isForSale");
+    let currency = runtime::get_named_arg::<String>("currency");
+    let campaign = runtime::get_named_arg::<String>("campaign");
+    let creator = runtime::get_named_arg::<String>("creator");
+    let creator_percentage = runtime::get_named_arg::<String>("creatorPercentage");
+    let collection = runtime::get_named_arg::<U256>("collection");
+    let collection_name = runtime::get_named_arg::<String>("collectionName");
+    let beneficiary = runtime::get_named_arg::<String>("beneficiary");
+    let beneficiary_percentage = runtime::get_named_arg::<String>("beneficiaryPercentage");
 
     ViToken::default()
-        .mint(recipient, creator_name, creator_address, token_metas)
+        .mint(
+            recipient,
+            creator_name,
+            title,
+            description,
+            image,
+            price,
+            is_for_sale,
+            currency,
+            campaign,
+            creator,
+            creator_percentage,
+            collection,
+            collection_name,
+            beneficiary,
+            beneficiary_percentage,
+        )
         .unwrap_or_revert();
 }
 
@@ -980,9 +1116,20 @@ fn get_entry_points() -> EntryPoints {
         "mint",
         vec![
             Parameter::new("recipient", Key::cl_type()),
-            Parameter::new("creator_name", String::cl_type()),
-            Parameter::new("creator_address", String::cl_type()),
-            Parameter::new("token_metas", CLType::List(Box::new(Meta::cl_type()))),
+            Parameter::new("creatorName", String::cl_type()),
+            Parameter::new("title", String::cl_type()),
+            Parameter::new("description", String::cl_type()),
+            Parameter::new("image", String::cl_type()),
+            Parameter::new("price", String::cl_type()),
+            Parameter::new("isForSale", String::cl_type()),
+            Parameter::new("currency", String::cl_type()),
+            Parameter::new("campaign", String::cl_type()),
+            Parameter::new("creator", String::cl_type()),
+            Parameter::new("creatorPercentage", String::cl_type()),
+            Parameter::new("collection", U256::cl_type()),
+            Parameter::new("collectionName", String::cl_type()),
+            Parameter::new("beneficiary", String::cl_type()),
+            Parameter::new("beneficiaryPercentage", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
