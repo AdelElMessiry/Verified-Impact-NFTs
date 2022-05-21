@@ -101,7 +101,7 @@ const CreatorNFTs = () => {
     setTagCollection(tag);
     if (tag !== 'All') {
       console.log(allNfts);
-      let campaigns = allNfts
+      let campaigns = selectedNfts
         .filter((d) => d.collectionName == tag)
         .map((data) => ({ name: data.campaignName }))
         .filter(
@@ -111,7 +111,7 @@ const CreatorNFTs = () => {
       setCampaignTags([{ name: 'All' }, ...campaigns]);
       setTagCampaign('All');
 
-      let creators = allNfts
+      let creators = selectedNfts
         .filter((d) => d.collectionName == tag)
         .map((data) => ({ name: data.creatorName }))
         .filter(
@@ -122,7 +122,7 @@ const CreatorNFTs = () => {
       setCreatorTags([{ name: 'All' }, ...creators]);
       setTagCreator('All');
     } else {
-      let campaigns = allNfts
+      let campaigns = selectedNfts
         .map((data) => ({ name: data.campaignName }))
         .filter(
           (value, index, self) =>
@@ -132,7 +132,7 @@ const CreatorNFTs = () => {
       setCampaignTags([{ name: 'All' }, ...campaigns]);
       setTagCampaign('All');
 
-      let creators = allNfts
+      let creators = selectedNfts
         .map((data) => ({ name: data.creatorName }))
         .filter(
           (value, index, self) =>
@@ -149,7 +149,7 @@ const CreatorNFTs = () => {
   const setSelectedCampaignTag = (tag, data = null) => {
     setTagCampaign(tag);
     if (tag !== 'All') {
-      let collections = allNfts
+      let collections = selectedNfts
         .filter((d) => d.campaignName == tag)
         .map((data) => ({ name: data.collectionName }))
         .filter(
@@ -159,7 +159,7 @@ const CreatorNFTs = () => {
       setCollectionTags([{ name: 'All' }, ...collections]);
       setTagCollection('All');
 
-      let creators = allNfts
+      let creators = selectedNfts
         .filter((d) => d.campaignName == tag)
         .map((data) => ({ name: data.creatorName }))
         .filter(
@@ -170,7 +170,7 @@ const CreatorNFTs = () => {
       setCreatorTags([{ name: 'All' }, ...creators]);
       setTagCreator('All');
     } else {
-      let collections = allNfts
+      let collections = selectedNfts
         .map((data) => ({ name: data.collectionName }))
         .filter(
           (value, index, self) =>
@@ -180,7 +180,7 @@ const CreatorNFTs = () => {
       setCollectionTags([{ name: 'All' }, ...collections]);
       setTagCollection('All');
 
-      let creators = allNfts
+      let creators = selectedNfts
         .map((data) => ({ name: data.creatorName }))
         .filter(
           (value, index, self) =>
@@ -197,7 +197,7 @@ const CreatorNFTs = () => {
   const setSelectedCreatorTag = (tag, data = null) => {
     setTagCreator(tag);
     if (tag !== 'All') {
-      let campaigns = allNfts
+      let campaigns = selectedNfts
         .filter((d) => d.creatorName == tag)
         .map((data) => ({ name: data.campaignName }))
         .filter(
@@ -207,7 +207,7 @@ const CreatorNFTs = () => {
       setCampaignTags([{ name: 'All' }, ...campaigns]);
       setTagCampaign('All');
 
-      let collections = allNfts
+      let collections = selectedNfts
         .filter((d) => d.creatorName == tag)
         .map((data) => ({ name: data.collectionName }))
         .filter(
@@ -218,7 +218,7 @@ const CreatorNFTs = () => {
       setCollectionTags([{ name: 'All' }, ...collections]);
       setTagCollection('All');
     } else {
-      let campaigns = allNfts
+      let campaigns = selectedNfts
         .map((data) => ({ name: data.campaignName }))
         .filter(
           (value, index, self) =>
@@ -227,7 +227,7 @@ const CreatorNFTs = () => {
 
       setCampaignTags([{ name: 'All' }, ...campaigns]);
       setTagCampaign('All');
-      let collections = allNfts
+      let collections = selectedNfts
         .map((data) => ({ name: data.collectionName }))
         .filter(
           (value, index, self) =>
