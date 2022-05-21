@@ -41,8 +41,10 @@ use campaign_data::Campaigns;
 
 pub type Campaign = BTreeMap<String, String>;
 
-mod collection_data;
-use collection_data::Collections;
+mod collection_control;
+// mod collection_data;
+use collection_control::CollectionControl;
+// use collection_data::Collections;
 
 pub type Collection = BTreeMap<String, String>;
 
@@ -65,6 +67,7 @@ impl AdminControl<OnChainContractStorage> for ViToken {}
 impl MinterControl<OnChainContractStorage> for ViToken {}
 impl BeneficiaryControl<OnChainContractStorage> for ViToken {}
 impl CreatorControl<OnChainContractStorage> for ViToken {}
+impl CollectionControl<OnChainContractStorage> for ViToken {}
 
 impl ViToken {
     fn constructor(&mut self, name: String, symbol: String, meta: Meta) {
@@ -73,25 +76,23 @@ impl ViToken {
         MinterControl::init(self);
         BeneficiaryControl::init(self);
         CreatorControl::init(self);
-        Collections::init();
+        CollectionControl::init(self);
         Campaigns::init();
         campaign_data::set_total_campaigns(U256::zero());
         beneficiaries_control::set_total_beneficiaries(U256::zero());
-        collection_data::set_total_collections(U256::zero());
+        // Collections::init();
+        // collection_data::set_total_collections(U256::zero());
         creator_control::set_total_creators(U256::zero());
-        // collection_control::set_total_collections(U256::zero());
+        collection_control::set_total_collections(U256::zero());
     }
 
     fn beneficiary_campaign(&self, index: U256) -> Option<Campaign> {
         Campaigns::instance().get(index)
     }
 
-    fn get_collection(&self, index: U256) -> Option<Collection> {
-        Collections::instance().get(index)
-    }
-
     fn is_collection(&self, index: U256) -> bool {
-        Collections::instance().is_collection(index)
+        // Collections::instance().is_collection(index)
+        CollectionControl::is_collection(self, index)
     }
 
     fn get_beneficiary(&self, index: U256) -> Option<Beneficiary> {
@@ -103,19 +104,23 @@ impl ViToken {
     }
 
     // fn get_collection(&self, index: U256) -> Option<Collection> {
-    //     CollectionControl::get_collection(index)
+    //     Collections::instance().get(index)
+    // }
+
+    fn get_collection(&self, index: U256) -> Option<Collection> {
+        CollectionControl::get_collection(self, index)
+    }
+
+    fn total_collections(&self) -> U256 {
+        collection_control::total_collections()
+    }
+
+    // fn total_collections(&self) -> U256 {
+    //     collection_data::total_collections()
     // }
 
     fn total_campaigns(&self) -> U256 {
         campaign_data::total_campaigns()
-    }
-
-    // fn total_collections(&self) -> U256 {
-    //     collection_control::total_collections()
-    // }
-
-    fn total_collections(&self) -> U256 {
-        collection_data::total_collections()
     }
 
     fn total_beneficiaries(&self) -> U256 {
@@ -251,6 +256,53 @@ impl ViToken {
         Ok(())
     }
 
+    // fn set_collection(
+    //     &mut self,
+    //     token_ids: Vec<TokenId>,
+    //     mode: String,
+    //     name: String,
+    //     description: String,
+    //     creator: String,
+    //     url: String,
+    // ) -> Result<(), Error> {
+    //     let collections_dict = Collections::instance();
+
+    //     match mode.as_str() {
+    //         "ADD" | "UPDATE" => {
+    //             let new_collection_count = collection_data::total_collections()
+    //                 .checked_add(U256::one())
+    //                 .unwrap();
+    //             let mut collection = collections_dict
+    //                 .get(new_collection_count)
+    //                 .unwrap_or_default();
+
+    //             collection.insert(
+    //                 format!("token_ids: "),
+    //                 token_ids.iter().map(ToString::to_string).collect(),
+    //             );
+    //             collection.insert(format!("id: "), new_collection_count.to_string());
+    //             collection.insert(format!("name: "), name);
+    //             collection.insert(format!("description: "), description);
+    //             collection.insert(format!("url: "), url);
+    //             collection.insert(format!("creator: "), creator);
+
+    //             collections_dict.set(new_collection_count, collection);
+    //             collection_data::set_total_collections(new_collection_count);
+    //         }
+    //         // "DELETE" => {
+    //         //     let new_collection_count = collection_data::total_collections()
+    //         //         .checked_sub(U256::one())
+    //         //         .unwrap();
+    //         //     collections_dict.remove(caller);
+    //         //     collection_data::set_total_collections(new_collection_count);
+    //         // }
+    //         _ => {
+    //             return Err(Error::WrongArguments);
+    //         }
+    //     }
+    //     Ok(())
+    // }
+
     fn set_collection(
         &mut self,
         token_ids: Vec<TokenId>,
@@ -260,15 +312,12 @@ impl ViToken {
         creator: String,
         url: String,
     ) -> Result<(), Error> {
-        let collections_dict = Collections::instance();
-
         match mode.as_str() {
             "ADD" | "UPDATE" => {
-                let new_collection_count = collection_data::total_collections()
+                let new_collection_count = collection_control::total_collections()
                     .checked_add(U256::one())
                     .unwrap();
-                let mut collection = collections_dict
-                    .get(new_collection_count)
+                let mut collection = CollectionControl::get_collection(self, new_collection_count)
                     .unwrap_or_default();
 
                 collection.insert(
@@ -281,61 +330,15 @@ impl ViToken {
                 collection.insert(format!("url: "), url);
                 collection.insert(format!("creator: "), creator);
 
-                collections_dict.set(new_collection_count, collection);
-                collection_data::set_total_collections(new_collection_count);
+                CollectionControl::add_collection(self, new_collection_count, collection);
+                collection_control::set_total_collections(new_collection_count);
             }
-            // "DELETE" => {
-            //     let new_collection_count = collection_data::total_collections()
-            //         .checked_sub(U256::one())
-            //         .unwrap();
-            //     collections_dict.remove(caller);
-            //     collection_data::set_total_collections(new_collection_count);
-            // }
             _ => {
                 return Err(Error::WrongArguments);
             }
         }
         Ok(())
     }
-
-    // fn set_collection(
-    //     &mut self,
-    //     token_ids: Vec<TokenId>,
-    //     mode: String,
-    //     name: String,
-    //     description: String,
-    //     creator: String,
-    //     url: String,
-    // ) -> Result<(), Error> {
-    //     match mode.as_str() {
-    //         "ADD" | "UPDATE" => {
-    //             let new_collection_count = collection_control::total_collections()
-    //                 .checked_add(U256::one())
-    //                 .unwrap();
-    //             let mut collection =
-    //                 CollectionControl::get_collection(new_collection_count).unwrap_or_default();
-
-    //             collection.insert(
-    //                 format!("token_ids: "),
-    //                 token_ids.iter().map(ToString::to_string).collect(),
-    //             );
-    //             collection.insert(format!("id: "), new_collection_count.to_string());
-    //             collection.insert(format!("name: "), name);
-    //             collection.insert(format!("description: "), description);
-    //             collection.insert(format!("url: "), url);
-    //             collection.insert(format!("creator: "), creator);
-
-    //             CollectionControl::add_collection(self, new_collection_count, collection);
-    //             CreatorControl::add_creator(self, new_creator_count, caller, creator);
-
-    //             collection_control::set_total_collections(new_collection_count);
-    //         }
-    //         _ => {
-    //             return Err(Error::WrongArguments);
-    //         }
-    //     }
-    //     Ok(())
-    // }
 
     fn mint(
         &mut self,
@@ -350,6 +353,7 @@ impl ViToken {
         campaign: String,
         creator: String,
         creator_percentage: String,
+        is_collection_exist: bool,
         collection: U256,
         collection_name: String,
         beneficiary: String,
@@ -357,14 +361,27 @@ impl ViToken {
     ) -> Result<Vec<TokenId>, Error> {
         let caller = ViToken::default().get_caller();
         let creator_add = String::from(creator);
+        let token_id = ViToken::default()
+            .total_supply()
+            .checked_add(U256::one())
+            .unwrap();
+
+        let token_ids = vec![ViToken::default()
+            .total_supply()
+            .checked_add(U256::one())
+            .unwrap()];
+
+        let mut mapped_meta = ViToken::default().token_meta(token_id).unwrap_or_revert();
         let cloned_creator = creator_add.clone();
         let collection_creator = creator_add.clone();
-        let collection_id: U256;
 
-        if !ViToken::default().is_collection(collection) {
-            collection_id = collection_data::total_collections()
-                .checked_add(U256::one())
-                .unwrap();
+        if !is_collection_exist {
+            // let collection_id = collection_control::total_collections()
+            //     .checked_add(U256::one())
+            //     .unwrap();
+
+            // mapped_meta.insert(format!("collection"), collection_id.to_string());
+            mapped_meta.insert(format!("collection"), U256::one().to_string());
 
             self.set_collection(
                 vec![U256::zero()],
@@ -376,7 +393,7 @@ impl ViToken {
             )
             .unwrap_or_revert();
         } else {
-            collection_id = collection;
+            mapped_meta.insert(format!("collection"), collection.to_string());
         }
 
         if !ViToken::default().is_creator(caller) {
@@ -389,17 +406,6 @@ impl ViToken {
             )
             .unwrap_or_revert();
         }
-        let token_id = ViToken::default()
-            .total_supply()
-            .checked_add(U256::one())
-            .unwrap();
-
-        let token_ids = vec![ViToken::default()
-            .total_supply()
-            .checked_add(U256::one())
-            .unwrap()];
-
-        let mut mapped_meta = ViToken::default().token_meta(token_id).unwrap_or_revert();
 
         mapped_meta.insert(format!("title"), title);
         mapped_meta.insert(format!("description"), description);
@@ -409,7 +415,6 @@ impl ViToken {
         mapped_meta.insert(format!("currency"), currency);
         mapped_meta.insert(format!("campaign"), campaign);
         mapped_meta.insert(format!("creator"), cloned_creator);
-        mapped_meta.insert(format!("collection"), collection_id.to_string());
         mapped_meta.insert(format!("beneficiary"), beneficiary);
         mapped_meta.insert(format!("creatorPercentage"), creator_percentage);
         mapped_meta.insert(
@@ -537,7 +542,7 @@ impl ViToken {
         Ok(())
     }
 
-    fn add_collection(
+    fn create_collection(
         &mut self,
         token_ids: Vec<TokenId>,
         mode: String,
@@ -614,6 +619,13 @@ fn total_beneficiaries() {
 fn get_beneficiary() {
     let index = runtime::get_named_arg::<U256>("index");
     let ret = ViToken::default().get_beneficiary(index);
+    runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
+}
+
+#[no_mangle]
+fn is_collection() {
+    let index = runtime::get_named_arg::<U256>("index");
+    let ret = ViToken::default().is_collection(index);
     runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
 }
 
@@ -718,7 +730,7 @@ fn add_collection() {
     let url = runtime::get_named_arg::<String>("url");
 
     ViToken::default()
-        .add_collection(token_ids, mode, name, description, creator, url)
+        .create_collection(token_ids, mode, name, description, creator, url)
         .unwrap_or_revert();
 }
 
@@ -735,6 +747,7 @@ fn mint() {
     let campaign = runtime::get_named_arg::<String>("campaign");
     let creator = runtime::get_named_arg::<String>("creator");
     let creator_percentage = runtime::get_named_arg::<String>("creatorPercentage");
+    let is_collection_exist = runtime::get_named_arg::<bool>("isCollectionExist");
     let collection = runtime::get_named_arg::<U256>("collection");
     let collection_name = runtime::get_named_arg::<String>("collectionName");
     let beneficiary = runtime::get_named_arg::<String>("beneficiary");
@@ -753,6 +766,7 @@ fn mint() {
             campaign,
             creator,
             creator_percentage,
+            is_collection_exist,
             collection,
             collection_name,
             beneficiary,
@@ -1013,6 +1027,13 @@ fn get_entry_points() -> EntryPoints {
         EntryPointType::Contract,
     ));
     entry_points.add_entry_point(EntryPoint::new(
+        "is_collection",
+        vec![Parameter::new("index", U256::cl_type())],
+        CLType::Option(Box::new(CLType::Bool)),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
         "get_token_by_index",
         vec![
             Parameter::new("owner", Key::cl_type()),
@@ -1126,6 +1147,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("campaign", String::cl_type()),
             Parameter::new("creator", String::cl_type()),
             Parameter::new("creatorPercentage", String::cl_type()),
+            Parameter::new("isCollectionExist", U256::cl_type()),
             Parameter::new("collection", U256::cl_type()),
             Parameter::new("collectionName", String::cl_type()),
             Parameter::new("beneficiary", String::cl_type()),
