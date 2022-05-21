@@ -31,7 +31,8 @@ const MintNFT = () => {
   const [beneficiary, setBeneficiary] = useState();
   const [campaign, setCampaign] = useState();
 
-  const [options, setOptions] = useState();
+  const [options, setOptions] = useState([]);
+  const [isCreateNewCollection, setIsCreateNewCollection] = useState();
 
   //handling of creating new option in creatable select control
   const createOption = (label) => ({
@@ -51,6 +52,7 @@ const MintNFT = () => {
       setIsLoading(false);
       setOptions([...options, newOption]);
       setSelectedCollectionValue(newOption);
+      setIsCreateNewCollection(true)
     }, 1000);
   };
 
@@ -124,6 +126,7 @@ const MintNFT = () => {
               selectedOptions.push(singleoption);
             });
             setOptions(selectedOptions);
+            setSelectedCollectionValue(selectedOptions[0])
           } else {
             setOptions([]);
           }
@@ -190,8 +193,8 @@ const MintNFT = () => {
           campaign: campaign,
           category: state.inputs.category,
           currency: state.inputs.currency,
-          collection: selectedCollectionValue.value,
-          collectionName: selectedCollectionValue.value,
+          collection: isCreateNewCollection?"":selectedCollectionValue.value,
+          collectionName: isCreateNewCollection?selectedCollectionValue.value:"",
           creator: entityInfo.publicKey,
           creatorPercentage: creatorPercentage,
           beneficiary: beneficiary,
