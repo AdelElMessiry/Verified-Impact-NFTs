@@ -52,7 +52,7 @@ const MintNFT = () => {
       setIsLoading(false);
       setOptions([...options, newOption]);
       setSelectedCollectionValue(newOption);
-      setIsCreateNewCollection(true)
+      setIsCreateNewCollection(true);
     }, 1000);
   };
 
@@ -126,7 +126,7 @@ const MintNFT = () => {
               selectedOptions.push(singleoption);
             });
             setOptions(selectedOptions);
-            setSelectedCollectionValue(selectedOptions[0])
+            setSelectedCollectionValue(selectedOptions[0]);
           } else {
             setOptions([]);
           }
@@ -190,15 +190,17 @@ const MintNFT = () => {
           image: imgURL,
           price: state.inputs.price,
           isForSale: state.inputs.isForSale,
-          campaign: campaign,
-          category: state.inputs.category,
+          campaign: campaign || '',
+          // category: state.inputs.category,
           currency: state.inputs.currency,
-          collection: isCreateNewCollection?"":selectedCollectionValue.value,
-          collectionName: isCreateNewCollection?selectedCollectionValue.value:"",
+          collection: isCreateNewCollection ? 0 : selectedCollectionValue.value,
+          collectionName: isCreateNewCollection
+            ? selectedCollectionValue.label
+            : '',
           creator: entityInfo.publicKey,
-          creatorPercentage: creatorPercentage,
-          beneficiary: beneficiary,
-          beneficiaryPercentage: state.inputs.beneficiaryPercentage,
+          creatorPercentage: creatorPercentage || '',
+          beneficiary: beneficiary || '',
+          beneficiaryPercentage: state.inputs.beneficiaryPercentage || '',
         });
       } catch (err) {
         if (err.message.includes('User Cancelled')) {

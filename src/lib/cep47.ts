@@ -14,6 +14,7 @@ import { concat } from '@ethersproject/bytes';
 import blake from 'blakejs';
 import BufferImported from 'buffer/';
 
+import { signDeploy } from '../utils/signer';
 import { CONNECTION, KEYS } from '../constants/blockchain';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import {
@@ -114,8 +115,10 @@ class CEP47Client {
     // if (contractHash) {
     // this.contractClient.setContractHash(contractHash, contractPackageHash);
     this.contractClient.setContractHash(
-      'hash-92ea9d1a263f50c18f3786dcd94f580a5cd0ba5ca089031669867f8beb7dc64d',
-      'hash-9e0705f217ba1082851eaed4e6afa7b35052b58b555fcc092a80afe20c4f732a'
+      // 'hash-92ea9d1a263f50c18f3786dcd94f580a5cd0ba5ca089031669867f8beb7dc64d',
+      // 'hash-9e0705f217ba1082851eaed4e6afa7b35052b58b555fcc092a80afe20c4f732a'
+      'hash-319493701cf89a139fa06c63a234df4d347635adb4d30854a99128b69abbb363',
+      'hash-1a7c8e7f37c947a53ab2ba0eb8f553446ab316aa90bacdd5bb5447a941292d04'
       // 'hash-b8d0904bcea32cc9ad7b3ea57e9bcb3c7c9ff587aed16a0d2d54515c8e3b7707',
       // 'hash-9b415c680433078b16531c4127093b03fc12024c10368ae39fe113839d3f0812'
     );
@@ -371,6 +374,22 @@ class CEP47Client {
       beneficiaryPercentage,
     } = metas;
 
+    // console.log(CLValueBuilder.u256('0'));
+
+    // const hex = keyAndValueToHex(
+    //   CLValueBuilder.string('index'),
+    //   CLValueBuilder.u256('0')
+    // );
+
+    // const result = await this.contractClient.queryContractDictionary(
+    //   'is_collection',
+    //   hex
+    // );
+
+    // const maybeValue = result.value().unwrap().value();
+
+    // console.log(fromCLMap(maybeValue));
+
     const runtimeArgs = RuntimeArgs.fromMap({
       recipient: CLValueBuilder.key(recipient),
       creatorName: CLValueBuilder.string(creatorName),
@@ -378,16 +397,38 @@ class CEP47Client {
       description: CLValueBuilder.string(description),
       image: CLValueBuilder.string(image),
       price: CLValueBuilder.string(price),
-      isForSale: CLValueBuilder.string(isForSale),
+      isForSale: CLValueBuilder.string(isForSale.toString()),
       currency: CLValueBuilder.string(currency),
       campaign: CLValueBuilder.string(campaign),
       creator: CLValueBuilder.string(creator),
       creatorPercentage: CLValueBuilder.string(creatorPercentage),
-      collection: CLValueBuilder.u256(collection || 0),
+      isCollectionExist: CLValueBuilder.bool(!!collection),
+      collection: CLValueBuilder.u256(collection),
       collectionName: CLValueBuilder.string(collectionName || ''),
       beneficiary: CLValueBuilder.string(beneficiary),
       beneficiaryPercentage: CLValueBuilder.string(beneficiaryPercentage),
     });
+
+    // const collectionDeploy = await cep47.addCollection(
+    //   'test',
+    //   '',
+    //   creator,
+    //   '',
+    //   paymentAmount,
+    //   deploySender
+    // );
+
+    // const signedCollectionDeploy = await signDeploy(
+    //   collectionDeploy,
+    //   deploySender
+    // );
+    // console.log('Signed collection deploy:', signedCollectionDeploy);
+
+    // const collectionDeployHash = await signedCollectionDeploy.send(
+    //   CONNECTION.NODE_ADDRESS
+    // );
+
+    // console.log(collectionDeployHash);
 
     return this.contractClient.callEntrypoint(
       'mint',
