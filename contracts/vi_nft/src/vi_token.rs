@@ -343,6 +343,7 @@ impl ViToken {
     fn mint(
         &mut self,
         recipient: Key,
+        // owner: Key,
         creator_name: String,
         title: String,
         description: String,
@@ -413,6 +414,8 @@ impl ViToken {
 
         let confirmed_token_ids =
             CEP47::mint(self, recipient, token_ids, vec![mapped_meta]).unwrap_or_revert();
+
+            // CEP47::transfer(self, owner, token_ids).unwrap_or_revert();
 
         Ok(confirmed_token_ids)
     }
