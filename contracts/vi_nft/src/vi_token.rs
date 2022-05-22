@@ -348,41 +348,33 @@ impl ViToken {
         description: String,
         image: String,
         price: String,
-        is_for_sale: String,
+        is_for_sale: bool,
         currency: String,
         campaign: String,
         creator: String,
         creator_percentage: String,
-        is_collection_exist: bool,
+        // is_collection_exist: bool,
         collection: U256,
         collection_name: String,
         beneficiary: String,
         beneficiary_percentage: String,
     ) -> Result<Vec<TokenId>, Error> {
+        let mut mapped_meta: BTreeMap<String, String> = BTreeMap::new();
         let caller = ViToken::default().get_caller();
         let creator_add = String::from(creator);
-        let token_id = ViToken::default()
-            .total_supply()
-            .checked_add(U256::one())
-            .unwrap();
-
+        let cloned_creator = creator_add.clone();
+        let collection_creator = creator_add.clone();
         let token_ids = vec![ViToken::default()
             .total_supply()
             .checked_add(U256::one())
             .unwrap()];
 
-        let mut mapped_meta = ViToken::default().token_meta(token_id).unwrap_or_revert();
-        let cloned_creator = creator_add.clone();
-        let collection_creator = creator_add.clone();
+        if !ViToken::default().is_collection(collection) {
+            let collection_id = collection_control::total_collections()
+                .checked_add(U256::one())
+                .unwrap();
 
-        if !is_collection_exist {
-            // let collection_id = collection_control::total_collections()
-            //     .checked_add(U256::one())
-            //     .unwrap();
-
-            // mapped_meta.insert(format!("collection"), collection_id.to_string());
-            mapped_meta.insert(format!("collection"), U256::one().to_string());
-
+            mapped_meta.insert(format!("collection"), collection_id.to_string());
             self.set_collection(
                 vec![U256::zero()],
                 "ADD".to_string(),
@@ -411,16 +403,13 @@ impl ViToken {
         mapped_meta.insert(format!("description"), description);
         mapped_meta.insert(format!("image"), image);
         mapped_meta.insert(format!("price"), price);
-        mapped_meta.insert(format!("isForSale"), is_for_sale);
+        mapped_meta.insert(format!("isForSale"), is_for_sale.to_string());
         mapped_meta.insert(format!("currency"), currency);
         mapped_meta.insert(format!("campaign"), campaign);
         mapped_meta.insert(format!("creator"), cloned_creator);
         mapped_meta.insert(format!("beneficiary"), beneficiary);
         mapped_meta.insert(format!("creatorPercentage"), creator_percentage);
-        mapped_meta.insert(
-            format!("beneficiaryPercentage"),
-            beneficiary_percentage.to_string(),
-        );
+        mapped_meta.insert(format!("beneficiaryPercentage"), beneficiary_percentage);
 
         let confirmed_token_ids =
             CEP47::mint(self, recipient, token_ids, vec![mapped_meta]).unwrap_or_revert();
@@ -742,12 +731,12 @@ fn mint() {
     let description = runtime::get_named_arg::<String>("description");
     let image = runtime::get_named_arg::<String>("image");
     let price = runtime::get_named_arg::<String>("price");
-    let is_for_sale = runtime::get_named_arg::<String>("isForSale");
+    let is_for_sale = runtime::get_named_arg::<bool>("isForSale");
     let currency = runtime::get_named_arg::<String>("currency");
     let campaign = runtime::get_named_arg::<String>("campaign");
     let creator = runtime::get_named_arg::<String>("creator");
     let creator_percentage = runtime::get_named_arg::<String>("creatorPercentage");
-    let is_collection_exist = runtime::get_named_arg::<bool>("isCollectionExist");
+    // let is_collection_exist = runtime::get_named_arg::<bool>("isCollectionExist");
     let collection = runtime::get_named_arg::<U256>("collection");
     let collection_name = runtime::get_named_arg::<String>("collectionName");
     let beneficiary = runtime::get_named_arg::<String>("beneficiary");
@@ -766,7 +755,7 @@ fn mint() {
             campaign,
             creator,
             creator_percentage,
-            is_collection_exist,
+            // is_collection_exist,
             collection,
             collection_name,
             beneficiary,
@@ -1099,6 +1088,7 @@ fn get_entry_points() -> EntryPoints {
     entry_points.add_entry_point(EntryPoint::new(
         "add_collection",
         vec![
+            Parameter::new("token_ids", CLType::List(Box::new(TokenId::cl_type()))),
             Parameter::new("mode", String::cl_type()),
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
@@ -1142,12 +1132,12 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("description", String::cl_type()),
             Parameter::new("image", String::cl_type()),
             Parameter::new("price", String::cl_type()),
-            Parameter::new("isForSale", String::cl_type()),
+            Parameter::new("isForSale", bool::cl_type()),
             Parameter::new("currency", String::cl_type()),
             Parameter::new("campaign", String::cl_type()),
             Parameter::new("creator", String::cl_type()),
             Parameter::new("creatorPercentage", String::cl_type()),
-            Parameter::new("isCollectionExist", U256::cl_type()),
+            // Parameter::new("isCollectionExist", U256::cl_type()),
             Parameter::new("collection", U256::cl_type()),
             Parameter::new("collectionName", String::cl_type()),
             Parameter::new("beneficiary", String::cl_type()),

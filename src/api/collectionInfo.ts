@@ -4,7 +4,7 @@ export async function getCollectionDetails(collectionId: string) {
   console.log(collectionId);
 
   const collectionDetails = await cep47.getCollection(collectionId);
-  console.log(`NFT ${collectionId} metadata: `, collectionDetails);
+  console.log(`Collection ${collectionId} details: `, collectionDetails);
   return collectionDetails;
 }
 
@@ -20,14 +20,14 @@ export async function parseCollection(maybeValue: any) {
 }
 
 export async function getCollectionsList() {
-  const collectionCount = await cep47.totalCollections();
+  const collectionCount: any = await cep47.totalCollections();
 
   const collectionsList: any = [];
-  for (const id of [...(Array(collectionCount).keys() as any)]) {
-    await getCollectionDetails(id.toString())
-      .then((rawCollection: any) => {
-        console.log(rawCollection);
-        collectionsList.push(parseCollection(rawCollection));
+  for (const id of [...(Array(parseInt(collectionCount)).keys() as any)]) {
+    await getCollectionDetails((id + 1).toString())
+      .then(async (rawCollection: any) => {
+        const parsedCollection = await parseCollection(rawCollection);
+        collectionsList.push(parsedCollection);
       })
       .catch((err) => {
         console.log(err);

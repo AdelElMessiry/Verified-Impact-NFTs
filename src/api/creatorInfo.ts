@@ -1,5 +1,5 @@
 import { cep47 } from '../lib/cep47';
-import { getCampaignsList } from './campaignInfo';
+import { getCollectionsList } from './collectionInfo';
 
 export async function getCreatorDetails(creatorId: string) {
   console.log(creatorId);
@@ -41,7 +41,7 @@ export async function getCreatorsList() {
 
 export async function getCreatorsCollectionsList() {
   const creatorsList = await getCreatorsList();
-  const collectionsList = await getCampaignsList();
+  const collectionsList = await getCollectionsList();
   const mappedCreatorsList: any = [];
 
   creatorsList.find((creator: any, index: any) =>
@@ -53,10 +53,10 @@ export async function getCreatorsCollectionsList() {
             creator.address === collection.creator &&
             mappedCreatorsList.find((newCreator: any) => {
               return creator.id === newCreator.id
-                ? mappedCreatorsList[index].collections.push(creator)
+                ? mappedCreatorsList[index].collections.push(collection)
                 : mappedCreatorsList.push({
                     ...creator,
-                    collections: [creator],
+                    collections: [collection],
                   });
             })
           );
