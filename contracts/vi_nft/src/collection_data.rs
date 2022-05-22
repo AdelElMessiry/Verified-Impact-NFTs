@@ -25,13 +25,13 @@ impl Collections {
         self.dict.get(&index.to_string())
     }
 
+    pub fn is_collection(&self, index: U256) -> bool {
+        self.get(index).is_some()
+    }
+
     pub fn set(&self, index: U256, value: Collection) {
         self.dict.set(&index.to_string(), value);
     }
-
-    // pub fn remove(&self, index: Key) {
-    //     self.dict.remove::<Collection>(&index.to_string());
-    // }
 }
 
 pub fn total_collections() -> U256 {
