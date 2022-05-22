@@ -31,7 +31,8 @@ const MintNFT = () => {
   const [beneficiary, setBeneficiary] = useState();
   const [campaign, setCampaign] = useState();
 
-  const [options, setOptions] = useState();
+  const [options, setOptions] = useState([]);
+  const [isCreateNewCollection, setIsCreateNewCollection] = useState();
 
   //handling of creating new option in creatable select control
   const createOption = (label) => ({
@@ -51,6 +52,7 @@ const MintNFT = () => {
       setIsLoading(false);
       setOptions([...options, newOption]);
       setSelectedCollectionValue(newOption);
+      setIsCreateNewCollection(true);
     }, 1000);
   };
 
@@ -114,30 +116,25 @@ const MintNFT = () => {
         );
         if (selectedCreator.length > 0) {
           setCreator(selectedCreator[0].name);
-          if(selectedCreator[0].collections){
-          let selectedOptions = [];
-          selectedCreator[0].collections
-            .forEach((col) => {
+          if (selectedCreator[0].collections) {
+            let selectedOptions = [];
+            selectedCreator[0].collections.forEach((col) => {
               let singleoption = {
                 value: col.id,
-                label: (
-                  <div>
-                    &nbsp;{col.name}{" "}
-                  </div>
-                ),
+                label: <div>&nbsp;{col.name} </div>,
               };
               selectedOptions.push(singleoption);
             });
-           setOptions(selectedOptions);
-          }else{
-           setOptions([]);
+            setOptions(selectedOptions);
+            setSelectedCollectionValue(selectedOptions[0]);
+          } else {
+            setOptions([]);
           }
           setIsCreatorExist(true);
         }
-
       }
     })();
-  }, [creators,entityInfo]);
+  }, [creators, entityInfo]);
 
   //handling of selecting image in image control
   const onDrop = (picture) => {
@@ -193,14 +190,17 @@ const MintNFT = () => {
           image: imgURL,
           price: state.inputs.price,
           isForSale: state.inputs.isForSale,
-          campaign: campaign,
-          category: state.inputs.category,
+          campaign: campaign || '',
+          // category: state.inputs.category,
           currency: state.inputs.currency,
-          collectionName: selectedCollectionValue.value,
+          collection: isCreateNewCollection ? 0 : selectedCollectionValue.value,
+          collectionName: isCreateNewCollection
+            ? selectedCollectionValue.label
+            : '',
           creator: entityInfo.publicKey,
-          creatorPercentage: creatorPercentage,
-          beneficiary: beneficiary,
-          beneficiaryPercentage: state.inputs.beneficiaryPercentage,
+          creatorPercentage: creatorPercentage || '',
+          beneficiary: beneficiary || '',
+          beneficiaryPercentage: state.inputs.beneficiaryPercentage || '',
         });
       } catch (err) {
         if (err.message.includes('User Cancelled')) {

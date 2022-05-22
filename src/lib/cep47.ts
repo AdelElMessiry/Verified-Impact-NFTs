@@ -114,8 +114,10 @@ class CEP47Client {
     // if (contractHash) {
     // this.contractClient.setContractHash(contractHash, contractPackageHash);
     this.contractClient.setContractHash(
-      'hash-92ea9d1a263f50c18f3786dcd94f580a5cd0ba5ca089031669867f8beb7dc64d',
-      'hash-9e0705f217ba1082851eaed4e6afa7b35052b58b555fcc092a80afe20c4f732a'
+      // 'hash-92ea9d1a263f50c18f3786dcd94f580a5cd0ba5ca089031669867f8beb7dc64d',
+      // 'hash-9e0705f217ba1082851eaed4e6afa7b35052b58b555fcc092a80afe20c4f732a'
+      'hash-c1b9d89dffb2460f18b152ab4106733f7682f129db0da6eef101662528a6a37a',
+      'hash-340a25f1f465b4705e9396513260ebc83a33919f513823798bd01f11fd2f98e8'
       // 'hash-b8d0904bcea32cc9ad7b3ea57e9bcb3c7c9ff587aed16a0d2d54515c8e3b7707',
       // 'hash-9b415c680433078b16531c4127093b03fc12024c10368ae39fe113839d3f0812'
     );
@@ -247,7 +249,7 @@ class CEP47Client {
 
   public async getCollection(collectionId: string) {
     const result = await this.contractClient.queryContractDictionary(
-      'collections',
+      'collections_list',
       collectionId
     );
 
@@ -350,17 +352,44 @@ class CEP47Client {
   public async mint(
     recipient: CLPublicKey,
     creatorName: string,
-    creatorAddress: string,
-    metas: Map<string, string>[],
+    metas: any,
     paymentAmount: string,
     deploySender: CLPublicKey,
     keys?: Keys.AsymmetricKey[]
   ) {
+    const {
+      title,
+      description,
+      image,
+      price,
+      isForSale,
+      currency,
+      campaign,
+      creator,
+      creatorPercentage,
+      collection,
+      collectionName,
+      beneficiary,
+      beneficiaryPercentage,
+    } = metas;
+
     const runtimeArgs = RuntimeArgs.fromMap({
       recipient: CLValueBuilder.key(recipient),
-      creator_name: CLValueBuilder.string(creatorName),
-      creator_address: CLValueBuilder.string(creatorAddress),
-      token_metas: CLValueBuilder.list(metas.map((meta) => toCLMap(meta))),
+      creatorName: CLValueBuilder.string(creatorName),
+      title: CLValueBuilder.string(title),
+      description: CLValueBuilder.string(description),
+      image: CLValueBuilder.string(image),
+      price: CLValueBuilder.string(price),
+      isForSale: CLValueBuilder.bool(isForSale),
+      currency: CLValueBuilder.string(currency),
+      campaign: CLValueBuilder.string(campaign),
+      creator: CLValueBuilder.string(creator),
+      creatorPercentage: CLValueBuilder.string(creatorPercentage),
+      // isCollectionExist: CLValueBuilder.bool(!!collection),
+      collection: CLValueBuilder.u256(collection),
+      collectionName: CLValueBuilder.string(collectionName || ''),
+      beneficiary: CLValueBuilder.string(beneficiary),
+      beneficiaryPercentage: CLValueBuilder.string(beneficiaryPercentage),
     });
 
     return this.contractClient.callEntrypoint(
