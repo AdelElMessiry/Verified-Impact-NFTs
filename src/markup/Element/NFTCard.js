@@ -154,7 +154,7 @@ const NFTCard = ({
               <p>
                 <b>Collection: </b>
                 <Link
-                  to={`./collection?collection=${item.collectionName}`}
+                  to={`./CreatorNFTs?creator=${item.creatorName}&collection=${item.collectionName}`}
                   className="dez-page text-white"
                 >
                   {item.collectionName}

@@ -3,7 +3,6 @@ import { Route, Switch } from 'react-router-dom';
 import { AuthProvider } from '../contexts/AuthContext';
 import Index4 from './Pages/Index4';
 import NFTDetail from './Pages/NFTDetail';
-import SingleCollection from './Pages/singleCollection';
 
 import ScrollToTop from './Element/ScrollToTop';
 import { HashRouter } from 'react-router-dom';
@@ -30,7 +29,6 @@ class Markup extends Component {
                 component={BenefeiciaryNFTs}
               />
               <Route path='/CreatorNFTs' exact component={CreatorNFTs} />
-              <Route path='/collection' exact component={SingleCollection} />
               <Route path='/my-NFTs' exact component={MyNFTs} />
               <Route
                 path='/admin_beneficiary'
