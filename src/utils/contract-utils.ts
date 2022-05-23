@@ -41,8 +41,8 @@ export const sleep = (ms: number) => {
 export const getKeyPairOfUserSet = (pathToUsers: string) => {
   return [1, 2, 3, 4, 5].map((userID) => {
     return Keys.Ed25519.parseKeyFiles(
-      `${pathToUsers}/user-${userID}/NFT_Deploy_public_key.pem`,
-      `${pathToUsers}/user-${userID}/NFT_Deploy_secret_key.pem`
+      `${pathToUsers}/user-${userID}/public_key.pem`,
+      `${pathToUsers}/user-${userID}/secret_key.pem`
     );
   });
 };
@@ -125,6 +125,19 @@ export const getAccountBalance: any = async (publicKey: string) => {
   return balance / MOTE_RATE;
 };
 
+const mapOwnerKeys = async () => {
+  const privateKey = Keys.Ed25519.parsePrivateKey(
+    Keys.Ed25519.readBase64WithPEM(
+      process.env.REACT_APP_CASPER_PRIVATE_KEY as string
+    )
+  );
+
+  const publicKey = Keys.Ed25519.privateToPublicKey(privateKey);
+  const mappedKeys = Keys.Ed25519.parseKeyPair(publicKey, privateKey);
+
+  return mappedKeys;
+};
+
 export const nativeTransfer = async (
   selectedAddress: string,
   toAddress: string,
@@ -173,12 +186,13 @@ export const nativeTransfer = async (
     }
     signedDeployJson = DeployUtil.deployFromJson(signedDeployJson).unwrap();
   } else {
-    const client: any = new CasperServiceByJsonRPC(CONNECTION.NODE_ADDRESS);
-    const KEYS_USER: any = Keys.Ed25519.parseKeyFiles(
-      `${USER_KEY_PAIR_PATH}/NFT_Deploy_public_key.pem`,
-      `${USER_KEY_PAIR_PATH}/NFT_Deploy_secret_key.pem`
-    );
+    const client: any = new CasperClient(CONNECTION.NODE_ADDRESS);
+    const KEYS_USER = await mapOwnerKeys();
     signedDeployJson = client.signDeploy(deploy, KEYS_USER);
+    // const KEYS_USER: any = Keys.Ed25519.parseKeyFiles(
+    //   `${USER_KEY_PAIR_PATH}/NFT_Deploy_public_key.pem`,
+    //   `${USER_KEY_PAIR_PATH}/NFT_Deploy_secret_key.pem`
+    // );
   }
 
   try {
@@ -197,14 +211,11 @@ export const nativeTransfer = async (
 
 export const transferFees = async (buyer: string, tokenId: string) => {
   try {
-    console.log(buyer);
-
     const tokenDetails = await cep47.getMappedTokenMeta(tokenId);
     const owner = await cep47.getOwnerOf(tokenId);
     const deployer = DEPLOYER_ACC;
 
-    let { beneficiary, price } = tokenDetails;
-    price = parseInt(price);
+    const { beneficiary, price } = tokenDetails;
 
     const portalFees = (price / 100) * 2;
     const finalPrice = price - portalFees;
