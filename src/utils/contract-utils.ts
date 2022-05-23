@@ -1,6 +1,7 @@
 import {
   CasperClient,
   CLPublicKey,
+  CLURef,
   Keys,
   CasperServiceByJsonRPC,
   DeployUtil,
@@ -8,11 +9,7 @@ import {
 } from 'casper-js-sdk';
 
 import { cep47 } from '../lib/cep47';
-import {
-  CONNECTION,
-  DEPLOYER_ACC,
-  USER_KEY_PAIR_PATH,
-} from '../constants/blockchain';
+import { CONNECTION, DEPLOYER_ACC } from '../constants/blockchain';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 
 export function HexToCLPublicKey(publicKey: string) {
@@ -80,7 +77,20 @@ export const getAccountInfo: any = async (
   const client = new CasperServiceByJsonRPC(nodeAddress);
   const stateRootHash = await client.getStateRootHash();
   const blockState = await client.getBlockState(stateRootHash, accountHash, []);
+
   return blockState.Account;
+};
+
+export const hashToURef: any = async (accountHash: string) => {
+  const client = new CasperServiceByJsonRPC(CONNECTION.NODE_ADDRESS);
+  const stateRootHash = await client.getStateRootHash();
+  const blockState: any = await client.getBlockState(
+    stateRootHash,
+    accountHash,
+    []
+  );
+
+  return CLURef.fromFormattedStr(blockState.Account.mainPurse);
 };
 
 export const getAccountInfoFromCLPub: any = async (
@@ -140,15 +150,16 @@ const mapOwnerKeys = async () => {
 
 export const nativeTransfer = async (
   selectedAddress: string,
-  toAddress: string,
+  toAddress: any,
   amount: any,
-  isSignerTransfer: boolean
+  isSignerTransfer: boolean,
+  ifOwner?: boolean
 ) => {
   const MOTE_RATE = 1000000000;
   console.log(selectedAddress);
 
   const fromAccount = CLPublicKey.fromHex(selectedAddress);
-  const toAccount = CLPublicKey.fromHex(toAddress);
+  const toAccount = !ifOwner ? CLPublicKey.fromHex(toAddress) : toAddress;
   amount = amount * MOTE_RATE;
   const ttl = 1800000;
 
@@ -212,7 +223,8 @@ export const nativeTransfer = async (
 export const transferFees = async (buyer: string, tokenId: string) => {
   try {
     const tokenDetails = await cep47.getMappedTokenMeta(tokenId);
-    const owner = await cep47.getOwnerOf(tokenId);
+    let owner = await cep47.getOwnerOf(tokenId);
+    owner = await hashToURef(owner);
     const deployer = DEPLOYER_ACC;
 
     const { beneficiary, price } = tokenDetails;
@@ -225,24 +237,20 @@ export const transferFees = async (buyer: string, tokenId: string) => {
 
     console.log(tokenDetails);
 
-    const deployerTransfer = await nativeTransfer(
-      buyer,
-      deployer,
-      price,
-      false
-    );
+    const deployerTransfer = await nativeTransfer(buyer, deployer, price, true);
 
     const beneficiaryTransfer = await nativeTransfer(
       deployer,
       beneficiary,
       beneficiaryAmount,
-      true
+      false
     );
 
     const ownerTransfer = await nativeTransfer(
       deployer,
       owner,
       ownerAmount,
+      false,
       true
     );
 
