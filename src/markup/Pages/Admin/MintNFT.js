@@ -104,7 +104,11 @@ const MintNFT = () => {
       !beneficiaries && setCampaigns(beneficiaryList[0]?.campaigns);
       !beneficiaries && setBeneficiary(beneficiaryList[0]?.address);
       !beneficiaries && setCampaign(beneficiaryList[0]?.campaigns[0]?.id);
-      !beneficiaries && setCampaignSelectedData(beneficiaryList[0]?.campaigns,beneficiaryList[0]?.campaigns[0]?.id)
+      !beneficiaries &&
+        setCampaignSelectedData(
+          beneficiaryList[0]?.campaigns,
+          beneficiaryList[0]?.campaigns[0]?.id
+        );
     })();
   }, [beneficiaries]);
 
@@ -129,7 +133,6 @@ const MintNFT = () => {
             });
             setOptions(selectedOptions);
             setSelectedCollectionValue(selectedOptions[0]);
-
           } else {
             setOptions([]);
           }
@@ -201,9 +204,13 @@ const MintNFT = () => {
             ? selectedCollectionValue.label
             : '',
           creator: entityInfo.publicKey,
-          creatorPercentage: creatorPercentage? creatorPercentage:'',
+          creatorPercentage: creatorPercentage
+            ? creatorPercentage.toString()
+            : '',
           beneficiary: beneficiary || '',
-          beneficiaryPercentage: beneficiaryPercentage?beneficiaryPercentage : '',
+          beneficiaryPercentage: beneficiaryPercentage
+            ? beneficiaryPercentage
+            : '',
         });
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
@@ -241,7 +248,7 @@ const MintNFT = () => {
     }
   }
 
-  const setCampaignSelectedData = (allcampains,value) => {
+  const setCampaignSelectedData = (allcampains, value) => {
     setCampaign(value);
     let campaignPercentage = allcampains.filter((c) => c.id == value)[0]
       .requested_royalty;
@@ -302,7 +309,12 @@ const MintNFT = () => {
                               name='campaign'
                               placeholder='Campaign'
                               className='form-control'
-                              onChange={(e) => setCampaignSelectedData(campaigns, e.target.value)}
+                              onChange={(e) =>
+                                setCampaignSelectedData(
+                                  campaigns,
+                                  e.target.value
+                                )
+                              }
                               value={campaign}
                             >
                               {campaigns?.map(
