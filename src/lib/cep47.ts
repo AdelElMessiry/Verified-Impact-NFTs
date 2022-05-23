@@ -206,9 +206,11 @@ class CEP47Client {
 
     const maybeValue = result.value().unwrap();
 
-    return `account-hash-${Buffer.from(maybeValue.value().value()).toString(
-      'hex'
-    )}`;
+    return Buffer.from(maybeValue.value().value()).toString('hex');
+
+    // return `account-hash-${Buffer.from(maybeValue.value().value()).toString(
+    //   'hex'
+    // )}`;
   }
 
   public async getTokenMeta(tokenId: string) {

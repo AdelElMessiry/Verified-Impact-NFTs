@@ -423,7 +423,7 @@ impl ViToken {
         let caller = ViToken::default().get_caller();
         let owner = CEP47::owner_of(self, token_id).unwrap_or_revert();
 
-        if owner == recipient {
+        if owner == caller {
             revert(ApiError::User(20));
         }
 
