@@ -116,8 +116,8 @@ class CEP47Client {
     this.contractClient.setContractHash(
       // 'hash-92ea9d1a263f50c18f3786dcd94f580a5cd0ba5ca089031669867f8beb7dc64d',
       // 'hash-9e0705f217ba1082851eaed4e6afa7b35052b58b555fcc092a80afe20c4f732a'
-      'hash-c1b9d89dffb2460f18b152ab4106733f7682f129db0da6eef101662528a6a37a',
-      'hash-340a25f1f465b4705e9396513260ebc83a33919f513823798bd01f11fd2f98e8'
+      'hash-09e670bfb016bb09d73c85995171e44de2885a5b9fffca70a71c20fa4e53212c',
+      'ash-86c7e5fa0e25390f47c1061095fe7494030840d7c4bedfe10303e6f1c8f1d59e'
       // 'hash-b8d0904bcea32cc9ad7b3ea57e9bcb3c7c9ff587aed16a0d2d54515c8e3b7707',
       // 'hash-9b415c680433078b16531c4127093b03fc12024c10368ae39fe113839d3f0812'
     );
@@ -506,6 +506,26 @@ class CEP47Client {
       'transfer',
       runtimeArgs,
       deploySender,
+      this.networkName,
+      PAYMENT_AMOUNTS.TRANSFER_ONE_PAYMENT_AMOUNT,
+      keys
+    );
+  }
+
+  public async purchaseNft(
+    recipient: CLPublicKey,
+    id: string,
+    keys?: Keys.AsymmetricKey[]
+  ) {
+    const runtimeArgs = RuntimeArgs.fromMap({
+      recipient: CLValueBuilder.key(recipient),
+      token_id: CLValueBuilder.u256(id),
+    });
+
+    return this.contractClient.callEntrypoint(
+      'purchase_token',
+      runtimeArgs,
+      recipient,
       this.networkName,
       PAYMENT_AMOUNTS.TRANSFER_ONE_PAYMENT_AMOUNT,
       keys

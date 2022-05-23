@@ -4,7 +4,7 @@ import { CLPublicKey } from 'casper-js-sdk';
 import { Row, Col } from 'react-bootstrap';
 
 import { transferFees } from '../../utils/contract-utils';
-import { transfer } from '../../api/transfer';
+import { transfer, purchaseNFT } from '../../api/transfer';
 import { approve } from '../../api/approve';
 import { getDeployDetails } from '../../api/universal';
 import { useAuth } from '../../contexts/AuthContext';
@@ -27,20 +27,34 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
   const buyNFT = async () => {
     const nftID = data.tokenId;
 
-    const approveTransfer = await approve(
-      CLPublicKey.fromHex(entityInfo.publicKey),
-      nftID
-    );
+    // const approveTransfer = await approve(
+    //   CLPublicKey.fromHex(entityInfo.publicKey),
+    //   nftID
+    // );
+
+    // const deployApproveResult = await getDeployDetails(approveTransfer);
+    // console.log(
+    //   '...... Token approve transferred successfully',
+    //   deployApproveResult
+    // );
+    // VIToast.success('Token approve transferred successfully');
 
     try {
-      const deployApproveResult = await getDeployDetails(approveTransfer);
+      const transferFeesHash = await transferFees(entityInfo.publicKey, nftID);
+      const deployFeesResult = await getDeployDetails(transferFeesHash);
+
       console.log(
-        '...... Token approve transferred successfully',
-        deployApproveResult
+        '...... Token fees transferred successfully',
+        deployFeesResult
       );
-      VIToast.success('Token approve transferred successfully');
-      const transferDeployHash = await transfer(
-        CLPublicKey.fromHex(entityInfo.publicKey),
+      VIToast.success('Token fees transferred successfully');
+    } catch (err) {
+      console.log('Transfer Fees Err ' + err);
+      VIToast.error('Error happened please try again later');
+    }
+
+    try {
+      const transferDeployHash = await purchaseNFT(
         CLPublicKey.fromHex(entityInfo.publicKey),
         nftID
       );
@@ -49,20 +63,10 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
         '...... Token fees transferred successfully',
         deployTransferResult
       );
-      VIToast.success('Token fees transferred successfully');
+
+      VIToast.success('Transaction ended successfully');
     } catch (err) {
       console.log('Transfer Err ' + err);
-    }
-
-    try {
-      const transferFeesHash = await transferFees(entityInfo.publicKey, nftID);
-      const deployFeesResult = await getDeployDetails(transferFeesHash);
-
-      console.log('...... Token transferred successfully', deployFeesResult);
-      VIToast.success('transaction ended successfully');
-    } catch (err) {
-      console.log('Transfer Err ' + err);
-      VIToast.error('Error happend please try again later');
     }
   };
 
@@ -109,28 +113,28 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
       show={showModal}
       onHide={handleClose}
       scrollable={true}
-      size="lg"
-      backdrop="static"
+      size='lg'
+      backdrop='static'
     >
       <Modal.Header closeButton>
         <Modal.Title>Buy {data.title} NFT</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="reserve-form">
+        <div className='reserve-form'>
           <Row>
             <Col>
               <h5>{data.title}</h5>
-              <p className="text-muted">{data.description}</p>
+              <p className='text-muted'>{data.description}</p>
             </Col>
           </Row>
           {isTransfer ? (
-            <div className="row form-group justify-content-center">
-              <div className="col-6">
+            <div className='row form-group justify-content-center'>
+              <div className='col-6'>
                 <input
-                  type="text"
-                  className="form-control"
-                  name="address"
-                  placeholder="Transfer To*"
+                  type='text'
+                  className='form-control'
+                  name='address'
+                  placeholder='Transfer To*'
                   onChange={(e) => handleChange(e)}
                   value={state.inputs.address}
                 />
@@ -142,11 +146,11 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <button className="btn" onClick={handleClose}>
+        <button className='btn' onClick={handleClose}>
           Close
         </button>
         <button
-          className="btn btn-success"
+          className='btn btn-success'
           onClick={() => {
             isTransfer ? transferNFT() : buyNFT();
           }}

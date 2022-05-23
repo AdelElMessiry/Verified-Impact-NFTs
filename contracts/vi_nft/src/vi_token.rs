@@ -20,6 +20,7 @@ use casper_contract::{
 
 use cep47::{
     contract_utils::{AdminControl, ContractContext, OnChainContractStorage},
+    data::Allowances,
     Error, Meta, TokenId, CEP47,
 };
 
@@ -415,9 +416,21 @@ impl ViToken {
         let confirmed_token_ids =
             CEP47::mint(self, recipient, token_ids, vec![mapped_meta]).unwrap_or_revert();
 
-            // CEP47::transfer(self, owner, token_ids).unwrap_or_revert();
-
         Ok(confirmed_token_ids)
+    }
+
+    fn purchase_token(&mut self, recipient: Key, token_id: TokenId) -> Result<(), Error> {
+        let caller = ViToken::default().get_caller();
+        let owner = CEP47::owner_of(self, token_id).unwrap_or_revert();
+
+        if owner == recipient {
+            revert(ApiError::User(20));
+        }
+
+        Allowances::instance().set(&caller, &token_id, recipient);
+        CEP47::transfer(self, owner, vec![token_id]).unwrap_or_revert();
+
+        Ok(())
     }
 
     fn mint_copies(
@@ -797,14 +810,26 @@ fn transfer() {
 }
 
 #[no_mangle]
+fn purchase_token() {
+    let recipient = runtime::get_named_arg::<Key>("recipient");
+    let token_id = runtime::get_named_arg::<TokenId>("token_id");
+
+    ViToken::default()
+        .purchase_token(recipient, token_id)
+        .unwrap_or_revert();
+}
+
+#[no_mangle]
 fn transfer_from() {
     let sender = runtime::get_named_arg::<Key>("sender");
     let recipient = runtime::get_named_arg::<Key>("recipient");
     let token_ids = runtime::get_named_arg::<Vec<TokenId>>("token_ids");
     let caller = ViToken::default().get_caller();
+
     if !ViToken::default().is_admin(caller) {
         revert(ApiError::User(20));
     }
+
     ViToken::default()
         .transfer_from_internal(sender, recipient, token_ids)
         .unwrap_or_revert();
@@ -848,14 +873,6 @@ fn add_creator() {
         .create_creator(mode, name, description, address, url)
         .unwrap_or_revert();
 }
-
-// #[no_mangle]
-// fn remove_beneficiary() {
-//     let index = runtime::get_named_arg::<U256>("index");
-//     let beneficiary = runtime::get_named_arg::<Key>("beneficiary");
-//     ViToken::default().assert_caller_is_admin();
-//     ViToken::default().revoke_beneficiary(index, beneficiary);
-// }
 
 #[no_mangle]
 fn grant_admin() {
@@ -1180,6 +1197,16 @@ fn get_entry_points() -> EntryPoints {
         vec![
             Parameter::new("recipient", Key::cl_type()),
             Parameter::new("token_ids", CLType::List(Box::new(TokenId::cl_type()))),
+        ],
+        <()>::cl_type(),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "purchase_token",
+        vec![
+            Parameter::new("recipient", Key::cl_type()),
+            Parameter::new("token_id", TokenId::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
