@@ -20,8 +20,11 @@ use casper_contract::{
 
 use cep47::{
     contract_utils::{AdminControl, ContractContext, OnChainContractStorage},
-    data::Allowances,
-    Error, Meta, TokenId, CEP47,
+    // data::Allowances,
+    Error,
+    Meta,
+    TokenId,
+    CEP47,
 };
 
 use casper_types::{
@@ -421,14 +424,17 @@ impl ViToken {
 
     fn purchase_token(&mut self, recipient: Key, token_id: TokenId) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
-        let owner = CEP47::owner_of(self, token_id).unwrap_or_revert();
+        // let owner = CEP47::owner_of(self, token_id).unwrap_or_revert();
 
-        if owner == caller {
-            revert(ApiError::User(20));
-        }
+        // if owner == caller {
+        //     revert(ApiError::User(20));
+        // }
 
-        Allowances::instance().set(&caller, &token_id, recipient);
-        CEP47::transfer(self, owner, vec![token_id]).unwrap_or_revert();
+        // Allowances::instance().set(&caller, &token_id, recipient);
+        ViToken::default()
+            .transfer_from_internal(caller, recipient, vec![token_id])
+            .unwrap_or_revert();
+        // CEP47::transfer(self, owner, vec![token_id]).unwrap_or_revert();
 
         Ok(())
     }
