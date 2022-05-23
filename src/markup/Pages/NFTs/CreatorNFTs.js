@@ -9,6 +9,7 @@ import NFTCard from '../../Element/NFTCard';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { getNFTsList } from '../../../api/nftInfo';
 import { getCreatorsList } from '../../../api/creatorInfo';
+import { getCollectionsList } from '../../../api/collectionInfo';
 
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Lightbox from 'react-image-lightbox';
@@ -81,6 +82,8 @@ const CreatorNFTs = () => {
   const [selectedNFT, setSelectedNFT] = useState();
   const [beneficiaries, setbeneficiaries] = useState();
   const [allCreators, setCreators] = useState();
+  const [allCollections, setCollections] = useState();
+
   //function returns button of buying NFT
   const Iconimage = ({ nft }) => {
     return (
@@ -264,11 +267,13 @@ const CreatorNFTs = () => {
         !beneficiaries && setbeneficiaries(beneficiaryList);
         let creatorsList = !allCreators && (await getCreatorsList());
         !allCreators && setCreators(creatorsList);
+        let collectionsList = !allCollections && (await getCollectionsList());
+        !allCollections && setCollections(collectionsList);
         //mappign nft details addresses and ids to names
         if (
           creatorsList?.length > 0 &&
           beneficiaries?.length > 0 &&
-          newNFTList?.length > 0
+          newNFTList?.length > 0&&collectionsList?.length > 0
         ) {
           newNFTList
             .filter((n) => n.isForSale == 'true')
@@ -282,9 +287,13 @@ const CreatorNFTs = () => {
               let selectedCreator = creatorsList?.filter(
                 (c) => c.address === element.creator
               );
+              let selectedCollection = collectionsList?.filter(
+                (c) => c.id === element.collection
+              );
               element['beneficiaryName'] = selectedBene[0].name;
               element['campaignName'] = selectedCampaign[0].name;
               element['creatorName'] = selectedCreator[0].name;
+              element['collectionName'] = selectedCollection[0].name;
               nftList.push(element);
             });
           !allNfts && setAllNfts(nftList);
@@ -294,7 +303,7 @@ const CreatorNFTs = () => {
         }
       }
     })();
-  }, [allNfts, beneficiaries, allCreators]);
+  }, [allNfts, beneficiaries, allCreators, allCollections]);
 
   //setting nft list according to user selection from menu
   useEffect(async () => {
@@ -416,7 +425,7 @@ const CreatorNFTs = () => {
 
               <b className="ml-4">Collection: </b>
               <Link
-                to={`./collection?collection=${Data[item].collectionName}`}
+                to={`./CreatorNFTs?creator=${Data[item].creatorName}&collection=${Data[item].collectionName}`}
                 className="dez-page text-white"
                 onClick={() => {
                   setOpenSlider(false);
