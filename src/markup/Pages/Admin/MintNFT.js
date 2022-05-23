@@ -93,6 +93,7 @@ const MintNFT = () => {
   const [creator, setCreator] = useState('');
   const [isCreatorExist, setIsCreatorExist] = useState(false);
   const [creatorPercentage, setCreatorPercentage] = useState();
+  const [beneficiaryPercentage, setBeneficiaryPercentage] = useState();
 
   //getting beneficiaries and campaigns lists
   useEffect(() => {
@@ -103,6 +104,7 @@ const MintNFT = () => {
       !beneficiaries && setCampaigns(beneficiaryList[0]?.campaigns);
       !beneficiaries && setBeneficiary(beneficiaryList[0]?.address);
       !beneficiaries && setCampaign(beneficiaryList[0]?.campaigns[0]?.id);
+      !beneficiaries && setCampaignSelectedData(beneficiaryList[0]?.campaigns,beneficiaryList[0]?.campaigns[0]?.id)
     })();
   }, [beneficiaries]);
 
@@ -127,6 +129,7 @@ const MintNFT = () => {
             });
             setOptions(selectedOptions);
             setSelectedCollectionValue(selectedOptions[0]);
+
           } else {
             setOptions([]);
           }
@@ -198,9 +201,9 @@ const MintNFT = () => {
             ? selectedCollectionValue.label
             : '',
           creator: entityInfo.publicKey,
-          creatorPercentage: creatorPercentage || '',
+          creatorPercentage: creatorPercentage? creatorPercentage:'',
           beneficiary: beneficiary || '',
-          beneficiaryPercentage: state.inputs.beneficiaryPercentage || '',
+          beneficiaryPercentage: beneficiaryPercentage?beneficiaryPercentage : '',
         });
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
@@ -238,11 +241,12 @@ const MintNFT = () => {
     }
   }
 
-  const setCampaignSelectedData = (e) => {
-    setCampaign(e.target.value);
-    let creatorPercentage = campaigns.filter((c) => c.id == e.target.value)[0]
+  const setCampaignSelectedData = (allcampains,value) => {
+    setCampaign(value);
+    let campaignPercentage = allcampains.filter((c) => c.id == value)[0]
       .requested_royalty;
-    setCreatorPercentage(100 - creatorPercentage);
+    setCreatorPercentage(100 - campaignPercentage);
+    setBeneficiaryPercentage(campaignPercentage);
   };
 
   return (
@@ -298,7 +302,7 @@ const MintNFT = () => {
                               name='campaign'
                               placeholder='Campaign'
                               className='form-control'
-                              onChange={(e) => setCampaignSelectedData(e)}
+                              onChange={(e) => setCampaignSelectedData(campaigns, e.target.value)}
                               value={campaign}
                             >
                               {campaigns?.map(
