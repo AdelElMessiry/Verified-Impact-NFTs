@@ -315,49 +315,49 @@ const Index4 = () => {
           <div className="row stats-section">
             <div className="col">
               {allNfts ? (
-                 <> <span>{beneficiariesLength}</span>Beneficiaries</>
+                 <> <span>{beneficiariesLength}</span> Beneficiaries</>
               ) : (
                 <><Spinner animation="border" variant="success" className='stats-spinner'/>Beneficiaries</>
               )}
             </div>
             <div className="col">
              {allNfts ? (
-                 <> <span>{campaignsLength}</span>Campaigns</>
+                 <> <span>{campaignsLength}</span> Campaigns</>
               ) : (
                 <><Spinner animation="border" variant="success" className='stats-spinner'/>Campaigns</>
               )}
             </div>
             <div className="col">
               {allNfts ? (
-                 <> <span>{creatorsLength}</span>Creators</>
+                 <> <span>{creatorsLength}</span> Creators</>
               ) : (
                 <><Spinner animation="border" variant="success" className='stats-spinner'/>Creators</>
               )}
             </div>
             <div className="col">
               {allNfts ? (
-                 <> <span>{collectionsLength}</span>Collections</>
+                 <> <span>{collectionsLength?collectionsLength:0}</span> Collections</>
               ) : (
                 <><Spinner animation="border" variant="success" className='stats-spinner'/>Collections</>
               )}
             </div>
             <div className="col">
               {allNfts ? (
-                 <> <span>{allNfts?.length}</span>NFTs</>
+                 <> <span>{allNfts?.length}</span> NFTs</>
               ) : (
                 <><Spinner animation="border" variant="success" className='stats-spinner'/>NFTs</>
               )}
             </div>
             <div className="col">
               {allNfts ? (
-                 <> <span>{csprSum}</span>CSPR</>
+                 <> <span>{csprSum?csprSum:0}</span> CSPR</>
               ) : (
                 <><Spinner animation="border" variant="success" className='stats-spinner'/>CSPR</>
               )}
             </div>
             <div className="col">
               {allNfts ? (
-                 <> <span>{(csprSum / 13.68).toFixed(2)}</span>$$</>
+                 <> <span>{csprSum?(csprSum / 13.68).toFixed(2):0}</span> $$</>
               ) : (
                 <><Spinner animation="border" variant="success" className='stats-spinner'/>$$</>
               )}
