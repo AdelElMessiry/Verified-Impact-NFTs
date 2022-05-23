@@ -25,48 +25,55 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
 
   //buy NFT Function
   const buyNFT = async () => {
-    const nftID = data.tokenId;
+    if (entityInfo.publicKey) {
+      const nftID = data.tokenId.toString();
 
-    // const approveTransfer = await approve(
-    //   CLPublicKey.fromHex(entityInfo.publicKey),
-    //   nftID
-    // );
+      // const approveTransfer = await approve(
+      //   CLPublicKey.fromHex(entityInfo.publicKey),
+      //   nftID
+      // );
 
-    // const deployApproveResult = await getDeployDetails(approveTransfer);
-    // console.log(
-    //   '...... Token approve transferred successfully',
-    //   deployApproveResult
-    // );
-    // VIToast.success('Token approve transferred successfully');
+      // const deployApproveResult = await getDeployDetails(approveTransfer);
+      // console.log(
+      //   '...... Token approve transferred successfully',
+      //   deployApproveResult
+      // );
+      // VIToast.success('Token approve transferred successfully');
+      console.log(entityInfo.publicKey);
+      try {
+        const transferFeesHash = await transferFees(
+          entityInfo.publicKey,
+          nftID
+        );
+        const deployFeesResult = await getDeployDetails(transferFeesHash);
 
-    try {
-      const transferFeesHash = await transferFees(entityInfo.publicKey, nftID);
-      const deployFeesResult = await getDeployDetails(transferFeesHash);
+        console.log(
+          '...... Token fees transferred successfully',
+          deployFeesResult
+        );
+        VIToast.success('Token fees transferred successfully');
 
-      console.log(
-        '...... Token fees transferred successfully',
-        deployFeesResult
-      );
-      VIToast.success('Token fees transferred successfully');
-    } catch (err) {
-      console.log('Transfer Fees Err ' + err);
-      VIToast.error('Error happened please try again later');
-    }
+        const transferDeployHash = await purchaseNFT(
+          CLPublicKey.fromHex(entityInfo.publicKey),
+          nftID
+        );
+        const deployTransferResult = await getDeployDetails(transferDeployHash);
+        console.log(
+          '...... Token fees transferred successfully',
+          deployTransferResult
+        );
 
-    try {
-      const transferDeployHash = await purchaseNFT(
-        CLPublicKey.fromHex(entityInfo.publicKey),
-        nftID
-      );
-      const deployTransferResult = await getDeployDetails(transferDeployHash);
-      console.log(
-        '...... Token fees transferred successfully',
-        deployTransferResult
-      );
+        VIToast.success('Transaction ended successfully');
+      } catch (err) {
+        console.log('Transfer Fees Err ' + err);
+        VIToast.error('Error happened please try again later');
+      }
 
-      VIToast.success('Transaction ended successfully');
-    } catch (err) {
-      console.log('Transfer Err ' + err);
+      // try {
+
+      // } catch (err) {
+      //   console.log('Transfer Err ' + err);
+      // }
     }
   };
 
