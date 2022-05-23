@@ -422,9 +422,14 @@ impl ViToken {
         Ok(confirmed_token_ids)
     }
 
-    fn purchase_token(&mut self, recipient: Key, token_id: TokenId) -> Result<(), Error> {
-        let caller = ViToken::default().get_caller();
-        // let owner = CEP47::owner_of(self, token_id).unwrap_or_revert();
+    fn purchase_token(
+        &mut self,
+        // owner: Key,
+        recipient: Key,
+        token_id: TokenId,
+    ) -> Result<(), Error> {
+        // let caller = ViToken::default().get_caller();
+        let owner = CEP47::owner_of(self, token_id).unwrap_or_revert();
 
         // if owner == caller {
         //     revert(ApiError::User(20));
@@ -432,7 +437,7 @@ impl ViToken {
 
         // Allowances::instance().set(&caller, &token_id, recipient);
         ViToken::default()
-            .transfer_from_internal(caller, recipient, vec![token_id])
+            .transfer_from_internal(owner, recipient, vec![token_id])
             .unwrap_or_revert();
         // CEP47::transfer(self, owner, vec![token_id]).unwrap_or_revert();
 
@@ -817,6 +822,7 @@ fn transfer() {
 
 #[no_mangle]
 fn purchase_token() {
+    // let owner = runtime::get_named_arg::<Key>("owner");
     let recipient = runtime::get_named_arg::<Key>("recipient");
     let token_id = runtime::get_named_arg::<TokenId>("token_id");
 
@@ -830,11 +836,11 @@ fn transfer_from() {
     let sender = runtime::get_named_arg::<Key>("sender");
     let recipient = runtime::get_named_arg::<Key>("recipient");
     let token_ids = runtime::get_named_arg::<Vec<TokenId>>("token_ids");
-    let caller = ViToken::default().get_caller();
+    // let caller = ViToken::default().get_caller();
 
-    if !ViToken::default().is_admin(caller) {
-        revert(ApiError::User(20));
-    }
+    // if !ViToken::default().is_admin(caller) {
+    //     revert(ApiError::User(20));
+    // }
 
     ViToken::default()
         .transfer_from_internal(sender, recipient, token_ids)
@@ -1211,6 +1217,7 @@ fn get_entry_points() -> EntryPoints {
     entry_points.add_entry_point(EntryPoint::new(
         "purchase_token",
         vec![
+            // Parameter::new("owner", Key::cl_type()),
             Parameter::new("recipient", Key::cl_type()),
             Parameter::new("token_id", TokenId::cl_type()),
         ],
