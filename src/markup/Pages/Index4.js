@@ -19,6 +19,8 @@ import {
 } from '../../api/beneficiaryInfo';
 import { getCampaignsList } from '../../api/campaignInfo';
 import { getCreatorsList } from '../../api/creatorInfo';
+import { getCollectionsList } from '../../api/collectionInfo';
+
 import { getNFTsList } from '../../api/nftInfo';
 import { Spinner } from 'react-bootstrap';
 
@@ -44,6 +46,7 @@ const Index4 = () => {
   const [allNfts, setAllNfts] = useState();
   const [beneficiaries, setbeneficiaries] = useState();
   const [allCreators, setCreators] = useState();
+  const [allCollections, setCollections] = useState();
 
   useEffect(() => {
     (async () => {
@@ -54,8 +57,10 @@ const Index4 = () => {
       !campaignsLength && setCampaignsLength(campaignList?.length);
       let creatorsList = !creatorsLength && (await getCreatorsList());
       !creatorsLength && setCreatorsLength(creatorsList?.length);
+      let collectionsList = !collectionsLength && (await getCollectionsList());
+      !collectionsLength && setCollectionLength(collectionsList?.length);
     })();
-  }, [beneficiariesLength, campaignsLength, creatorsLength]);
+  }, [beneficiariesLength, campaignsLength, creatorsLength,collectionsLength]);
 
   //getting list of NFTs
   useEffect(() => {
@@ -71,9 +76,12 @@ const Index4 = () => {
         !allCreators &&await getCreatorsList();
       !allCreators &&
         setCreators(creatorsList);
-        
+        let collectionsList =
+        !allCollections &&await getCollectionsList();
+      !allCollections &&
+        setCollections(collectionsList);
         //mappign nft details addresses and ids to names
-        if (creatorsList?.length>0&& beneficiaries?.length > 0 &&newNFTList?.length > 0 ) {
+        if (creatorsList?.length>0&& beneficiaries?.length > 0 &&newNFTList?.length > 0 &&collectionsList?.length > 0) {
           newNFTList
             .filter((n) => n.isForSale == 'true')
             .forEach(async (element) => {
@@ -84,23 +92,17 @@ const Index4 = () => {
                 (c) => c.id === element.campaign
               );
               let selectedCreator=creatorsList?.filter((c=>(c.address===element.creator)))
+              let selectedCollection=collectionsList?.filter((c=>(c.id===element.collection)))
               element['beneficiaryName'] = selectedBene[0].name;
               element['campaignName'] = selectedCampaign[0].name;
               element['creatorName'] = selectedCreator[0].name;
+              element['collectionName'] = selectedCollection[0].name;
 
               nftList.push(element);
             });
           !allNfts && setAllNfts(nftList);
           !allNfts && setSelectedNFT(nftList);
           console.log(newNFTList);
-          setCollectionLength(
-            nftList
-              .map((data) => ({ name: data.collection }))
-              .filter(
-                (value, index, self) =>
-                  index === self.findIndex((t) => t.name === value.name)
-              ).length
-          );
 
           setCsprSum(
             nftList
@@ -132,7 +134,7 @@ const Index4 = () => {
        }
       }
     })();
-  }, [allNfts, beneficiaries,allCreators]);
+  }, [allNfts, beneficiaries,allCreators,allCollections]);
 
   const setCaptions = (data, camNumber) => {
     const captionsCamp = [];
@@ -201,7 +203,7 @@ const Index4 = () => {
 
             <b className="ml-4">Collection: </b>
             <Link
-              to={`./collection?collection=${data[item].collectionName}`}
+              to={`./CreatorNFTs?creator=${data[item].creatorName}&collection=${data[item].collectionName}`}
               className="dez-page text-white"
             >
               {' '}
