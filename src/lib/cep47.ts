@@ -116,8 +116,8 @@ class CEP47Client {
     this.contractClient.setContractHash(
       // 'hash-92ea9d1a263f50c18f3786dcd94f580a5cd0ba5ca089031669867f8beb7dc64d',
       // 'hash-9e0705f217ba1082851eaed4e6afa7b35052b58b555fcc092a80afe20c4f732a'
-      'hash-36873b1e0ba7d239a23243e747c1fc858f2c56142c4f3f6411cb5a1b4fc6b7f9',
-      'hash-d3b7a71808a4a9861e101aaf5b52ea26ffc04ab33f305f2e7598febfcd03ffc0'
+      'hash-b719909a345f675935a2b5ba15d783a152998e9a0d7754e787ece873845600fa',
+      'hash-d01f56e224ef7a7dc7b78e4b24d788a17e40edb186b0cfa750af4f33b4d38a1d'
       // 'hash-b8d0904bcea32cc9ad7b3ea57e9bcb3c7c9ff587aed16a0d2d54515c8e3b7707',
       // 'hash-9b415c680433078b16531c4127093b03fc12024c10368ae39fe113839d3f0812'
     );
@@ -206,11 +206,11 @@ class CEP47Client {
 
     const maybeValue = result.value().unwrap();
 
-    return Buffer.from(maybeValue.value().value()).toString('hex');
+    // return Buffer.from(maybeValue.value().value()).toString('hex');
 
-    // return `account-hash-${Buffer.from(maybeValue.value().value()).toString(
-    //   'hex'
-    // )}`;
+    return `account-hash-${Buffer.from(maybeValue.value().value()).toString(
+      'hex'
+    )}`;
   }
 
   public async getTokenMeta(tokenId: string) {
