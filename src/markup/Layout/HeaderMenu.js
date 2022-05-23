@@ -172,6 +172,26 @@ class HeaderMenu extends Component {
                   Vic Guiza <i className="fa fa-angle-right"></i>
                 </Link>
               </li>
+              <li>
+                <Link
+                  to={"./CreatorNFTs?creator=Olga Litvinenko"}
+                  className="dez-page"
+                >
+                  Olga Litvinenko <i className="fa fa-angle-right"></i>
+                </Link>
+                <ul className="sub-menu">
+                  <li>
+                    <Link
+                      to={
+                        "./CreatorNFTs?creator=Olga Litvinenko&collection=Bucha"
+                      }
+                      className="dez-page"
+                    >
+                      Bucha{" "}
+                    </Link>
+                  </li>
+                </ul>
+              </li>
             </ul>
           </li>
           <li>
