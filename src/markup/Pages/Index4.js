@@ -130,13 +130,6 @@ const Index4 = () => {
           console.log(arr);
           if (arr.length > 0) {
             setDisplayedCampaigns(arr);
-            arr.forEach((n, index) => {
-              let campaignsName = Object.keys(n);
-              let NFTs = Object.values(n);
-              NFTs[0].forEach((c) => {
-                setCaptions(NFTs[0].slice(0, 4), index + 1);
-              });
-            });
           }
         } else {
           setAllNfts([]);
@@ -459,7 +452,7 @@ const Index4 = () => {
                                           setOpenSliderCamp(true);
                                           setSelectedCampaign(itemCampaign);
                                           setCaptions(
-                                            NFts.slice(0, 4),
+                                            NFts.slice(0, 5),
                                             index + 1
                                           );
                                         }}
