@@ -13,13 +13,14 @@ import AddBeneficiary from './Pages/Admin/AddBeneficiary';
 import AddCampaign from './Pages/Admin/AddCampaign';
 import MyCreations from './Pages/NFTs/MyCreations';
 import MintNFT from './Pages/Admin/MintNFT';
+import Header1 from './Layout/Header1';
 
-class Markup extends Component {
-  render() {
+const Markup =()=> {
     return (
       <AuthProvider>
         <HashRouter>
           <div className='page-wraper'>
+            <Header1/>
             <Switch>
               <Route path='/' exact component={Index4} />
               <Route path='/nft-detail' exact component={NFTDetail} />
@@ -45,7 +46,7 @@ class Markup extends Component {
         </HashRouter>
       </AuthProvider>
     );
-  }
+  
 }
 
 export default Markup;
