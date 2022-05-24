@@ -1,26 +1,17 @@
-import foreverKey from './../images/foreverkey.png';
-import stopWar from './../images/stopWar.png';
 
-import stopWar1 from './../images/stopWar1.png';
-import stopWar2 from './../images/stopWar2.png';
-import stopWar3 from './../images/stopWar3.png';
-import stopWar4 from './../images/stopWar4.png';
-import stopWar5 from './../images/stopWar5.png';
-import stopWar6 from './../images/stopWar6.png';
-import stopWar7 from './../images/stopWar7.png';
-import stopWar8 from './../images/stopWar8.png';
-import stopWar9 from './../images/stopWar9.png';
-import stopWar10 from './../images/stopWar10.png';
-import stopWar11 from './../images/stopWar11.png';
-import Stamp from './../images/Stamp.jpg';
-import Stamp_1 from './../images/Stamp_1.png';
-import Stamp_2 from './../images/Stamp_2.png';
-import Stamp_3 from './../images/Stamp_3.png';
-import Stamp_4 from './../images/Stamp_4.png';
-import Stamp_5 from './../images/Stamp_5.png';
-import Stamp_6 from './../images/Stamp_6.png';
-import Stamp_7 from './../images/Stamp_7.png';
-import Stamp_8 from './../images/Stamp_8.png';
+import Bucha1 from './../images/Bucha1.jpg';
+import Bucha2 from './../images/Bucha2.jpg';
+import Bucha3 from './../images/Bucha3.jpg';
+import Bucha4 from './../images/Bucha4.jpg';
+import Bucha5 from './../images/Bucha5.jpg';
+import Bucha6 from './../images/Bucha6.jpg';
+import Bucha7 from './../images/Bucha7.jpg';
+import Bucha8 from './../images/Bucha8.jpg';
+import Bucha9 from './../images/Bucha9.jpg';
+import Bucha10 from './../images/Bucha10.jpg';
+import Bucha11 from './../images/Bucha11.jpg';
+import Bucha12 from './../images/Bucha12.jpg';
+
 export const imageBlog = [
     {
       id: 1,
@@ -969,5 +960,197 @@ export const imageBlog = [
       price: "1000",
       currency: "CSPR",
       description: "Got bitten by the snake island and sank ",
+    },
+    {
+      id: 60,
+      name: "Bucha",
+      image:
+        Bucha1,
+      category: "2",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "Olga Litvinenko",
+      creatorPercentage: "20",
+      collection: "Bucha",
+      price: "1000",
+      currency: "CSPR",
+      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+    },
+    {
+      id: 61,
+      name: "Bucha",
+      image:
+        Bucha2,
+      category: "2",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "Olga Litvinenko",
+      creatorPercentage: "20",
+      collection: "Bucha",
+      price: "1000",
+      currency: "CSPR",
+      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+    },
+    {
+      id: 62,
+      name: "Bucha",
+      image:
+        Bucha3,
+      category: "2",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "Olga Litvinenko",
+      creatorPercentage: "20",
+      collection: "Bucha",
+      price: "1000",
+      currency: "CSPR",
+      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+    },
+    {
+      id: 63,
+      name: "Bucha",
+      image:
+        Bucha4,
+      category: "2",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "Olga Litvinenko",
+      creatorPercentage: "20",
+      collection: "Bucha",
+      price: "1000",
+      currency: "CSPR",
+      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+    },
+    {
+      id: 64,
+      name: "Bucha",
+      image:
+        Bucha5,
+      category: "2",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "Olga Litvinenko",
+      creatorPercentage: "20",
+      collection: "Bucha",
+      price: "1000",
+      currency: "CSPR",
+      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+    },
+    {
+      id: 65,
+      name: "Bucha",
+      image:
+        Bucha6,
+      category: "2",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "Olga Litvinenko",
+      creatorPercentage: "20",
+      collection: "Bucha",
+      price: "1000",
+      currency: "CSPR",
+      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+    },
+    {
+      id: 66,
+      name: "Bucha",
+      image:
+        Bucha7,
+      category: "2",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "Olga Litvinenko",
+      creatorPercentage: "20",
+      collection: "Bucha",
+      price: "1000",
+      currency: "CSPR",
+      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+    },
+    {
+      id: 67,
+      name: "Bucha",
+      image:
+        Bucha8,
+      category: "2",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "Olga Litvinenko",
+      creatorPercentage: "20",
+      collection: "Bucha",
+      price: "1000",
+      currency: "CSPR",
+      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+    },
+    {
+      id: 68,
+      name: "Bucha",
+      image:
+        Bucha9,
+      category: "2",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "Olga Litvinenko",
+      creatorPercentage: "20",
+      collection: "Bucha",
+      price: "1000",
+      currency: "CSPR",
+      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+    },
+    {
+      id: 69,
+      name: "Bucha",
+      image:
+        Bucha10,
+      category: "2",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "Olga Litvinenko",
+      creatorPercentage: "20",
+      collection: "Bucha",
+      price: "1000",
+      currency: "CSPR",
+      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+    },
+    {
+      id: 70,
+      name: "Bucha",
+      image:
+        Bucha11,
+      category: "2",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "Olga Litvinenko",
+      creatorPercentage: "20",
+      collection: "Bucha",
+      price: "1000",
+      currency: "CSPR",
+      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+    },
+    {
+      id: 71,
+      name: "Bucha",
+      image:
+        Bucha12,
+      category: "2",
+      beneficiary: "Ukraine Gov",
+      beneficiaryPercentage: "80",
+      campaign: "Stand With Ukraine",
+      creator: "Olga Litvinenko",
+      creatorPercentage: "20",
+      collection: "Bucha",
+      price: "1000",
+      currency: "CSPR",
+      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
     }
   ];
