@@ -26,12 +26,10 @@ To compile the WASM file, use these commands:
 
 ### Client installation
 
-To install the client, run `yarn install` in the `client` folder.
+- Add your casper private key to ```.env.sample```
+- Rename ```.env.sample``` file to ```.env```
 
-```bash
- cd client
- yarn install
-```
+- To install the client, run `yarn install`.
 
 ### Running prepared scenarios
 
