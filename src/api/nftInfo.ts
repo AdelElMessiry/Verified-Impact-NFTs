@@ -4,6 +4,10 @@ import { cep47 } from '../lib/cep47';
 import { getRandomNumberBetween } from '../utils/calculations';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import { getDeployDetails } from '../api/universal';
+import { getBeneficiariesList } from '../api/beneficiaryInfo';
+import { getCampaignsList } from '../api/campaignInfo';
+import { getCreatorsList } from '../api/creatorInfo';
+import { getCollectionsList } from '../api/collectionInfo';
 import { signDeploy } from '../utils/signer';
 import { CONNECTION } from '../constants/blockchain';
 
@@ -98,4 +102,29 @@ export async function setIsTokenForSale(
   console.log('...... NFT Updated successfully', deployUpdatedNftResult);
 
   return deployUpdatedNftResult;
+}
+
+export async function getMappedNfts() {
+  const nftsList = await getNFTsList();
+  nftsList.forEach((nft: any) => nft.isForSale === 'true');
+  const beneficiariesList = await getBeneficiariesList();
+  const campaignsList = await getCampaignsList();
+  const creatorsList = await getCreatorsList();
+  const collectionsList = await getCollectionsList();
+
+  const mappedNFTs = nftsList.map((nft: any) => ({
+    ...nft,
+    campaignName: campaignsList.find(({ id }: any) => nft.campaign === id).name,
+    creatorName: creatorsList.find(
+      ({ address }: any) => nft.creator === address
+    ).name,
+    beneficiaryName: beneficiariesList.find(
+      ({ address }: any) => nft.beneficiary === address
+    ).name,
+    collectionName: collectionsList.find(({ id }: any) => nft.collection === id)
+      .name,
+  }));
+  console.log(mappedNFTs);
+
+  return mappedNFTs;
 }
