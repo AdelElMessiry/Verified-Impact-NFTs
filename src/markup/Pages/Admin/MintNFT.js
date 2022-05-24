@@ -13,12 +13,12 @@ import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
 import { numberOfNFTsOwned } from '../../../api/userInfo';
 
-import Header from '../../Layout/Header1';
-import Footer from '../../Layout/Footer1';
+
 import PageTitle from '../../Layout/PageTitle';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import PromptLogin from '../PromptLogin';
+import Layout from '../../Layout';
 
 //minting new nft page
 const MintNFT = () => {
@@ -257,8 +257,7 @@ const MintNFT = () => {
   };
 
   return (
-    <>
-      <Header />
+    <Layout>
 
       <div className='page-content bg-white'>
         {/* <!-- inner page banner --> */}
@@ -506,8 +505,7 @@ const MintNFT = () => {
         {/* <!-- contact area  END --> */}
       </div>
 
-      <Footer />
-    </>
+    </Layout>
   );
 };
 

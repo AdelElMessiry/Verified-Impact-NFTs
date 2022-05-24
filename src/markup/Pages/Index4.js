@@ -2,8 +2,6 @@ import React, { useState, useEffect, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper } from 'simple-react-lightbox';
-import Header6 from './../Layout/Header6';
-import Footer3 from './../Layout/footer3';
 import { VideoPopup2 } from './../Element/VideoPopup';
 import NFTCard from '../Element/NFTCard';
 //Images..
@@ -23,6 +21,7 @@ import { getCollectionsList } from '../../api/collectionInfo';
 
 import { getNFTsList } from '../../api/nftInfo';
 import { Spinner } from 'react-bootstrap';
+import Layout from '../Layout';
 
 //Light Gallery on icon click
 
@@ -267,8 +266,7 @@ const Index4 = () => {
 
 
   return (
-    <>
-      <Header6 />
+    <Layout>
       <div className="page-content bg-white rubik">
         <div
           className="home-banner"
@@ -542,8 +540,7 @@ const Index4 = () => {
           isTransfer={false}
         />
       )}
-      <Footer3 />
-    </>
+    </Layout>
   );
 };
 

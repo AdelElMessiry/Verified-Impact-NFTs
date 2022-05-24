@@ -7,12 +7,12 @@ import { addBeneficiary } from '../../../api/addBeneficiary';
 import { useAuth } from '../../../contexts/AuthContext';
 import PromptLogin from '../PromptLogin';
 
-import Header from '../../Layout/Header1';
-import Footer from '../../Layout/Footer1';
+
 import PageTitle from '../../Layout/PageTitle';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { toast as VIToast } from 'react-toastify';
+import Layout from '../../Layout';
 
 //add new beneficiary page
 const AddBeneficiary = () => {
@@ -54,7 +54,7 @@ const AddBeneficiary = () => {
 
   return (
     <>
-      <Header />
+      <Layout>
 
       <div className='page-content bg-white'>
         {/* <!-- inner page banner --> */}
@@ -151,7 +151,7 @@ const AddBeneficiary = () => {
         {/* <!-- contact area  END --> */}
       </div>
 
-      <Footer />
+      </Layout>
     </>
   );
 };

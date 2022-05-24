@@ -11,14 +11,14 @@ import { getNFTsList } from '../../../api/nftInfo';
 import VINFTsTooltip from '../../Element/Tooltip';
 import NFTCard from '../../Element/NFTCard';
 import BuyNFTModal from '../../Element/BuyNFT';
-import Header from '../../Layout/Header1';
-import Footer from '../../Layout/Footer1';
+
 import { Spinner } from 'react-bootstrap';
 import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { getCreatorsList } from '../../../api/creatorInfo';
 import { getCollectionsList } from '../../../api/collectionInfo';
+import Layout from '../../Layout';
 
 // Masonry section
 const masonryOptions = {
@@ -489,8 +489,7 @@ const BenefeiciaryNFTs = () => {
   }, [searchFlag]);
 
   return (
-    <Fragment>
-      <Header />
+    <Layout>
       <div className="page-content bg-white">
         {/*  banner  */}
         <div
@@ -665,8 +664,7 @@ const BenefeiciaryNFTs = () => {
           isTransfer={false}
         />
       )}
-      <Footer />
-    </Fragment>
+    </Layout>
   );
 };
 export default BenefeiciaryNFTs;

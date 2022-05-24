@@ -1,8 +1,7 @@
 import React, { Component, useState, useEffect, Fragment } from 'react';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper, useLightbox } from 'simple-react-lightbox';
-import Header from '../../Layout/Header1';
-import Footer from '../../Layout/Footer1';
+
 import Masonry from 'react-masonry-component';
 import NFTCard from '../../Element/NFTCard';
 //images
@@ -18,6 +17,7 @@ import VINFTsTooltip from '../../Element/Tooltip';
 import BuyNFTModal from '../../Element/BuyNFT';
 import { Spinner } from 'react-bootstrap';
 import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
+import Layout from '../../Layout';
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -456,8 +456,7 @@ const CreatorNFTs = () => {
     handleSearch(tagCollection, tagCreator, tagCampaign);
   }, [searchFlag]);
   return (
-    <Fragment>
-      <Header />
+    <Layout>
       <div className="page-content bg-white">
         {/*  banner  */}
         <div
@@ -629,8 +628,7 @@ const CreatorNFTs = () => {
           isTransfer={false}
         />
       )}
-      <Footer />
-    </Fragment>
+    </Layout>
   );
 };
 export default CreatorNFTs;
