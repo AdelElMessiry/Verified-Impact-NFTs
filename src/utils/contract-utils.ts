@@ -9,6 +9,7 @@ import {
 } from 'casper-js-sdk';
 
 import { cep47 } from '../lib/cep47';
+import { getCampaignDetails } from '../api/campaignInfo';
 import { CONNECTION, DEPLOYER_ACC } from '../constants/blockchain';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 
@@ -227,13 +228,16 @@ export const transferFees = async (buyer: string, tokenId: string) => {
     owner = await hashToURef(owner);
     const deployer = DEPLOYER_ACC;
 
-    const { beneficiary, price } = tokenDetails;
+    const { beneficiary, price, campaign } = tokenDetails;
+    const campaignDetails: any = await getCampaignDetails(campaign);
+    const beneficiaryPercentage = parseInt(campaignDetails.requested_royalty);
+    const creatorPercentage = 100 - beneficiaryPercentage;
 
     const portalFees = (price / 100) * 2;
     const finalPrice = price - portalFees;
 
-    const beneficiaryAmount = (finalPrice / 100) * 20;
-    const ownerAmount = (finalPrice / 100) * 80;
+    const beneficiaryAmount = (finalPrice / 100) * beneficiaryPercentage;
+    const ownerAmount = (finalPrice / 100) * creatorPercentage;
 
     console.log(tokenDetails);
 
