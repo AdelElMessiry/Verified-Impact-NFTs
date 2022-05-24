@@ -1,8 +1,7 @@
 import React, { Component, useState, useEffect, Fragment } from 'react';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper, useLightbox } from 'simple-react-lightbox';
-import Header from '../../Layout/Header1';
-import Footer from '../../Layout/Footer1';
+
 import Masonry from 'react-masonry-component';
 import NFTCard from '../../Element/NFTCard';
 //images
@@ -23,6 +22,7 @@ import ListForSaleNFTModal from '../../Element/ListForSaleNFT';
 import { Spinner } from 'react-bootstrap';
 import { getCreatorsList } from '../../../api/creatorInfo';
 import { getCollectionsList } from '../../../api/collectionInfo';
+import Layout from '../../Layout';
 
 // Masonry section
 const masonryOptions = {
@@ -484,8 +484,7 @@ const MyCreations = () => {
   }, [searchFlag]);
 
   return (
-    <Fragment>
-      <Header />
+    <Layout>
       <div className="page-content bg-white">
         {/*  banner  */}
         <div
@@ -679,8 +678,7 @@ const MyCreations = () => {
           data={listForSaleNFT}
         />
       )}
-      <Footer />
-    </Fragment>
+    </Layout>
   );
 };
 export default MyCreations;
