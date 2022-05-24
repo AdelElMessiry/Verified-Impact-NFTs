@@ -8,12 +8,12 @@ import { getBeneficiariesList } from '../../../api/beneficiaryInfo';
 import { createCampaign } from '../../../api/createCampaign';
 import PromptLogin from '../PromptLogin';
 
-import Header from '../../Layout/Header1';
-import Footer from '../../Layout/Footer1';
+
 import PageTitle from '../../Layout/PageTitle';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { toast as VIToast } from 'react-toastify';
+import Layout from '../../Layout';
 
 //adding new campaign page
 const AddCampaign = () => {
@@ -94,8 +94,7 @@ const AddCampaign = () => {
   };
 
   return (
-    <>
-      <Header />
+    <Layout>
 
       <div className="page-content bg-white">
         {/* <!-- inner page banner --> */}
@@ -214,8 +213,7 @@ const AddCampaign = () => {
         {/* <!-- contact area  END --> */}
       </div>
 
-      <Footer />
-    </>
+    </Layout>
   );
 };
 

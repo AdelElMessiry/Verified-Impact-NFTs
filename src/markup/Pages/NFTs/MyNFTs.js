@@ -1,8 +1,7 @@
 import React, { Component, useState, useEffect, Fragment } from 'react';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper, useLightbox } from 'simple-react-lightbox';
-import Header from '../../Layout/Header1';
-import Footer from '../../Layout/Footer1';
+
 import Masonry from 'react-masonry-component';
 import NFTCard from '../../Element/NFTCard';
 //images
@@ -20,6 +19,7 @@ import BuyNFTModal from '../../Element/BuyNFT';
 import PromptLogin from '../PromptLogin';
 import { getCreatorsList } from '../../../api/creatorInfo';
 import { getCollectionsList } from '../../../api/collectionInfo';
+import Layout from '../../Layout';
 
 // Masonry section
 const masonryOptions = {
@@ -453,8 +453,7 @@ const MyNFTs = () => {
   }, [searchFlag]);
 
   return (
-    <Fragment>
-      <Header />
+    <Layout>
       <div className="page-content bg-white">
         {/*  banner  */}
         <div
@@ -627,8 +626,7 @@ const MyNFTs = () => {
           isTransfer={true}
         />
       )}
-      <Footer />
-    </Fragment>
+    </Layout>
   );
 };
 export default MyNFTs;
