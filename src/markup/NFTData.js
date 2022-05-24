@@ -963,7 +963,7 @@ export const imageBlog = [
     },
     {
       id: 60,
-      name: "Bucha",
+      name: "Defiant we stand",
       image:
         Bucha1,
       category: "2",
@@ -975,11 +975,11 @@ export const imageBlog = [
       collection: "Bucha",
       price: "1000",
       currency: "CSPR",
-      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+      description: "You can burn our homes down, but we stand defiant!",
     },
     {
       id: 61,
-      name: "Bucha",
+      name: "Defiant we stand",
       image:
         Bucha2,
       category: "2",
@@ -991,11 +991,11 @@ export const imageBlog = [
       collection: "Bucha",
       price: "1000",
       currency: "CSPR",
-      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+      description: "You can burn our homes down, but we stand defiant!",
     },
     {
       id: 62,
-      name: "Bucha",
+      name: "Defiant we stand",
       image:
         Bucha3,
       category: "2",
@@ -1007,11 +1007,11 @@ export const imageBlog = [
       collection: "Bucha",
       price: "1000",
       currency: "CSPR",
-      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+      description: "You can burn our homes down, but we stand defiant!",
     },
     {
       id: 63,
-      name: "Bucha",
+      name: "Defiant we stand",
       image:
         Bucha4,
       category: "2",
@@ -1023,11 +1023,11 @@ export const imageBlog = [
       collection: "Bucha",
       price: "1000",
       currency: "CSPR",
-      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+      description: "You can burn our homes down, but we stand defiant!",
     },
     {
       id: 64,
-      name: "Bucha",
+      name: "Defiant we stand",
       image:
         Bucha5,
       category: "2",
@@ -1039,11 +1039,11 @@ export const imageBlog = [
       collection: "Bucha",
       price: "1000",
       currency: "CSPR",
-      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+      description: "You can burn our homes down, but we stand defiant!",
     },
     {
       id: 65,
-      name: "Bucha",
+      name: "Defiant we stand",
       image:
         Bucha6,
       category: "2",
@@ -1055,11 +1055,11 @@ export const imageBlog = [
       collection: "Bucha",
       price: "1000",
       currency: "CSPR",
-      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+      description: "You can burn our homes down, but we stand defiant!",
     },
     {
       id: 66,
-      name: "Bucha",
+      name: "Defiant we stand",
       image:
         Bucha7,
       category: "2",
@@ -1071,11 +1071,11 @@ export const imageBlog = [
       collection: "Bucha",
       price: "1000",
       currency: "CSPR",
-      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+      description: "You can burn our homes down, but we stand defiant!",
     },
     {
       id: 67,
-      name: "Bucha",
+      name: "Defiant we stand",
       image:
         Bucha8,
       category: "2",
@@ -1087,11 +1087,11 @@ export const imageBlog = [
       collection: "Bucha",
       price: "1000",
       currency: "CSPR",
-      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+      description: "You can burn our homes down, but we stand defiant!",
     },
     {
       id: 68,
-      name: "Bucha",
+      name: "Defiant we stand",
       image:
         Bucha9,
       category: "2",
@@ -1103,11 +1103,11 @@ export const imageBlog = [
       collection: "Bucha",
       price: "1000",
       currency: "CSPR",
-      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+      description: "You can burn our homes down, but we stand defiant!",
     },
     {
       id: 69,
-      name: "Bucha",
+      name: "Defiant we stand",
       image:
         Bucha10,
       category: "2",
@@ -1119,11 +1119,11 @@ export const imageBlog = [
       collection: "Bucha",
       price: "1000",
       currency: "CSPR",
-      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+      description: "You can burn our homes down, but we stand defiant!",
     },
     {
       id: 70,
-      name: "Bucha",
+      name: "Defiant we stand",
       image:
         Bucha11,
       category: "2",
@@ -1135,11 +1135,11 @@ export const imageBlog = [
       collection: "Bucha",
       price: "1000",
       currency: "CSPR",
-      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+      description: "You can burn our homes down, but we stand defiant!",
     },
     {
       id: 71,
-      name: "Bucha",
+      name: "Defiant we stand",
       image:
         Bucha12,
       category: "2",
@@ -1151,6 +1151,6 @@ export const imageBlog = [
       collection: "Bucha",
       price: "1000",
       currency: "CSPR",
-      description: "Bucha is a city in Ukraine’s Kyiv Oblast. Administratively, it is incorporated as a city of oblast significance. ",
+      description: "You can burn our homes down, but we stand defiant!",
     }
   ];
