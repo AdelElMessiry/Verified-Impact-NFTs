@@ -152,6 +152,7 @@ const AddCampaign = () => {
                           className="form-control"
                           value={state.inputs.requestedRoyalty}
                           onChange={(e) => handleChange(e)}
+                          min={0}
                         />
                         {(state.inputs.requestedRoyalty < 0 ||
                           state.inputs.requestedRoyalty > 100) && (

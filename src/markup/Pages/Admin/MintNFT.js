@@ -12,7 +12,7 @@ import { uploadImg } from '../../../api/imageCDN';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
 import { numberOfNFTsOwned } from '../../../api/userInfo';
-
+import validator from 'validator'
 
 import PageTitle from '../../Layout/PageTitle';
 
@@ -33,7 +33,8 @@ const MintNFT = () => {
 
   const [options, setOptions] = useState([]);
   const [isCreateNewCollection, setIsCreateNewCollection] = useState();
-
+  const [showURLErrorMsg, setShowURLErrorMsg] = useState(false);
+  
   //handling of creating new option in creatable select control
   const createOption = (label) => ({
     label,
@@ -159,7 +160,8 @@ const MintNFT = () => {
     }
 
     let cloudURL = uploadedImageURL;
-    if (!state.inputs.isImageURL && uploadedFile) {
+    if ((!state.inputs.isImageURL && uploadedFile)||(state.inputs.isImageURL&&validator.isURL(uploadedImageURL))){
+      setShowURLErrorMsg(false)
       console.log('Img', uploadedFile);
       console.log('Img url', uploadedImageURL);
       setUploadingToCloud(true);
@@ -173,8 +175,11 @@ const MintNFT = () => {
       }
       VIToast.success('Image uploaded to cloud CDN successfully !');
       setUploadingToCloud(false);
+      mintNewNFT(cloudURL);
     }
-    mintNewNFT(cloudURL);
+    else{
+      setShowURLErrorMsg(true)
+    }
   }
 
   async function mintNewNFT(imgURL) {
@@ -255,6 +260,7 @@ const MintNFT = () => {
     setCreatorPercentage(100 - campaignPercentage);
     setBeneficiaryPercentage(campaignPercentage);
   };
+
 
   return (
     <Layout>
@@ -392,7 +398,7 @@ const MintNFT = () => {
                         <Row className='form-group'>
                           <Col>
                             {state.inputs.isImageURL ? (
-                              <input
+                             <> <input
                                 type='text'
                                 placeholder='Image URl'
                                 name='imageUrl'
@@ -402,6 +408,7 @@ const MintNFT = () => {
                                 }
                                 value={uploadedImageURL}
                               />
+                              {showURLErrorMsg&&<span className='text-danger'>Please enter Valid URL </span>}</>
                             ) : (
                               <ImageUploader
                                 singleImage
@@ -437,12 +444,13 @@ const MintNFT = () => {
                         <Row className='form-group'>
                           <Col>
                             <input
-                              type='text'
+                              type='number'
                               placeholder='Price'
                               name='price'
                               className='form-control'
                               onChange={(e) => handleChange(e)}
                               value={state.inputs.price}
+                              min={0}
                             />
                           </Col>
                           <Col>
@@ -488,7 +496,8 @@ const MintNFT = () => {
                               selectedCollectionValue === null ||
                               selectedCollectionValue?.value === '' ||
                               creator === '' ||
-                              state.inputs.name === ''
+                              state.inputs.name === ''||
+                              (state.inputs.isForSale&&state.inputs.price==="")
                             }
                           />
                         </p>
