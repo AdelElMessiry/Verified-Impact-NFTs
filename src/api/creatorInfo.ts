@@ -44,7 +44,7 @@ export async function getCreatorsCollectionsList() {
   const collectionsList = await getCollectionsList();
   const mappedCreatorsList: any = [];
 
-  creatorsList.find((creator: any, index: any) =>
+  creatorsList.filter((creator: any, index: any) =>
     collectionsList.length
       ? collectionsList.map((collection: any) => {
           !mappedCreatorsList.length &&
