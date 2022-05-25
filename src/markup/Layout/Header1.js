@@ -81,7 +81,7 @@ const Header1 = ({ isNFTDetails = false }) => {
               </button>
 
               <div
-                className='header-nav navbar-collapse collapse myNavbar justify-content-end'
+                className='header-nav navbar-collapse collapse myNavbar justify-content-center'
                 id='navbarNavDropdown'
               >
                 <div className='logo-header mostion d-md-block d-lg-none'>
