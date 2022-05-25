@@ -158,10 +158,12 @@ const MintNFT = () => {
     if (!entityInfo.publicKey) {
       return VIToast.error('Please enter sign in First');
     }
+    if(state.inputs.isImageURL&&showURLErrorMsg){
+      return;
+    }
 
     let cloudURL = uploadedImageURL;
-    if ((!state.inputs.isImageURL && uploadedFile)||(state.inputs.isImageURL&&validator.isURL(uploadedImageURL))){
-      setShowURLErrorMsg(false)
+    if (!state.inputs.isImageURL && uploadedFile){
       console.log('Img', uploadedFile);
       console.log('Img url', uploadedImageURL);
       setUploadingToCloud(true);
@@ -175,11 +177,8 @@ const MintNFT = () => {
       }
       VIToast.success('Image uploaded to cloud CDN successfully !');
       setUploadingToCloud(false);
-      mintNewNFT(cloudURL);
     }
-    else{
-      setShowURLErrorMsg(true)
-    }
+    mintNewNFT(cloudURL);
   }
 
   async function mintNewNFT(imgURL) {
@@ -261,6 +260,13 @@ const MintNFT = () => {
     setBeneficiaryPercentage(campaignPercentage);
   };
 
+  const checkURLValidation=(value)=>{
+    if(validator.isURL(value)){
+      setShowURLErrorMsg(false)
+    }else{
+      setShowURLErrorMsg(true)
+    }
+  }
 
   return (
     <Layout>
@@ -403,8 +409,10 @@ const MintNFT = () => {
                                 placeholder='Image URl'
                                 name='imageUrl'
                                 className='form-control'
-                                onChange={(e) =>
-                                  setUploadedImage(e.target.value)
+                                onChange={(e) =>{
+                                  setUploadedImage(e.target.value);
+                                  checkURLValidation(e.target.value);
+                                }
                                 }
                                 value={uploadedImageURL}
                               />
