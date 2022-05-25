@@ -51,8 +51,9 @@ export async function getCreatorsCollectionsList() {
             mappedCreatorsList.push({ ...creator, collections: [] });
           return (
             creator.address === collection.creator &&
-            mappedCreatorsList.find((newCreator: any) => {
-              return creator.id === newCreator.id
+            mappedCreatorsList.find(
+              (newCreator: any, index: any, creators: any) => {
+                return creators.indexOf(newCreator) === index
                 ? mappedCreatorsList[index].collections.push(collection)
                 : mappedCreatorsList.push({
                     ...creator,
