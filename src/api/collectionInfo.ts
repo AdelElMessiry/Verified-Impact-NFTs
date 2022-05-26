@@ -1,14 +1,14 @@
 import { cep47 } from '../lib/cep47';
 
 export async function getCollectionDetails(collectionId: string) {
-  console.log(collectionId);
+  // console.log(collectionId);
 
   const collectionDetails = await cep47.getCollection(collectionId);
-  console.log(`Collection ${collectionId} details: `, collectionDetails);
+  // console.log(`Collection ${collectionId} details: `, collectionDetails);
   return collectionDetails;
 }
 
-export async function parseCollection(maybeValue: any) {
+export function parseCollection(maybeValue: any) {
   const jsMap: any = new Map();
 
   for (const [innerKey, value] of maybeValue) {
@@ -19,6 +19,30 @@ export async function parseCollection(maybeValue: any) {
   return mapObj;
 }
 
+export async function getUniqueCollectionsList() {
+  const collectionCount: any = await cep47.totalCollections();
+
+  const collectionsList: any = [];
+  for (const id of [...(Array(parseInt(collectionCount)).keys() as any)]) {
+    await getCollectionDetails((id + 1).toString())
+      .then(async (rawCollection: any) => {
+        const parsedCollection = parseCollection(rawCollection);
+        collectionsList.push(parsedCollection);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  const uniqueCollections = collectionsList.filter(
+    (collection: any, index: any, collections: any) =>
+      index ===
+      collections.findIndex((idx: any) => idx.name === collection.name)
+  );
+
+  return { uniqueCollections, collectionsList };
+}
+
 export async function getCollectionsList() {
   const collectionCount: any = await cep47.totalCollections();
 
@@ -26,7 +50,7 @@ export async function getCollectionsList() {
   for (const id of [...(Array(parseInt(collectionCount)).keys() as any)]) {
     await getCollectionDetails((id + 1).toString())
       .then(async (rawCollection: any) => {
-        const parsedCollection = await parseCollection(rawCollection);
+        const parsedCollection = parseCollection(rawCollection);
         collectionsList.push(parsedCollection);
       })
       .catch((err) => {
