@@ -17,7 +17,10 @@ import {
 } from '../../api/beneficiaryInfo';
 import { getCampaignsList } from '../../api/campaignInfo';
 import { getCreatorsList } from '../../api/creatorInfo';
-import { getCollectionsList } from '../../api/collectionInfo';
+import {
+  getUniqueCollectionsList,
+  getCollectionsList,
+} from '../../api/collectionInfo';
 
 import { getNFTsList } from '../../api/nftInfo';
 import { Spinner } from 'react-bootstrap';
@@ -52,8 +55,10 @@ const Index4 = () => {
       !campaignsLength && setCampaignsLength(campaignList?.length);
       let creatorsList = !creatorsLength && (await getCreatorsList());
       !creatorsLength && setCreatorsLength(creatorsList?.length);
-      let collectionsList = !collectionsLength && (await getCollectionsList());
-      !collectionsLength && setCollectionLength(collectionsList?.length);
+      let collectionsList =
+        !collectionsLength && (await getUniqueCollectionsList());
+      !collectionsLength &&
+        setCollectionLength(collectionsList?.uniqueCollections.length);
     })();
   }, [beneficiariesLength, campaignsLength, creatorsLength, collectionsLength]);
 
@@ -142,7 +147,7 @@ const Index4 = () => {
     const captionsCamp = [];
     for (let item = 0; item < data?.length; item++) {
       captionsCamp.push(
-        <div className="text-white text-left port-box">
+        <div className='text-white text-left port-box'>
           <h5>{data[item].title}</h5>
           {/* <p>
           <b>Category: </b>
@@ -159,61 +164,61 @@ const Index4 = () => {
             >
               <Link
                 to={`./BenefeiciaryNFTs?beneficiary=${data[item].beneficiaryName}`}
-                className="dez-page text-white"
+                className='dez-page text-white'
               >
                 {data[item].beneficiaryName}
               </Link>
             </VINFTsTooltip>
-            <span className="bg-success text-white px-1 ml-1 border-raduis-2">
+            <span className='bg-success text-white px-1 ml-1 border-raduis-2'>
               {data[item].beneficiaryPercentage}%
             </span>
 
-            <b className="ml-4">Campaign: </b>
+            <b className='ml-4'>Campaign: </b>
             <VINFTsTooltip
               title={`Click to see all NFTs for "${data[item].campaignName}" campaign`}
             >
               {data[item].beneficiary ? (
                 <Link
                   to={`./BenefeiciaryNFTs?beneficiary=${data[item].beneficiaryName}&campaign=${data[item].campaignName}`}
-                  className="dez-page text-white"
+                  className='dez-page text-white'
                 >
                   {data[item].campaignName}
                 </Link>
               ) : (
                 <Link
                   to={`./CreatorNFTs?creator=${data[item].creatorName}&collection=${data[item].collectionName}`}
-                  className="dez-page text-white"
+                  className='dez-page text-white'
                 >
                   {data[item].campaignName}
                 </Link>
               )}
             </VINFTsTooltip>
-            <b className="ml-4">Creator: </b>
+            <b className='ml-4'>Creator: </b>
             <VINFTsTooltip
               title={`Click to see all NFTs created by "${data[item].creatorName}"`}
             >
               <Link
                 to={`./CreatorNFTs?creator=${data[item].creatorName}`}
-                className="dez-page text-white"
+                className='dez-page text-white'
               >
                 {data[item].creatorName}
               </Link>
             </VINFTsTooltip>
-            <span className="bg-info text-white px-1 ml-1 border-raduis-2">
+            <span className='bg-info text-white px-1 ml-1 border-raduis-2'>
               {data[item].creatorPercentage}%
             </span>
 
-            <b className="ml-4">Collection: </b>
+            <b className='ml-4'>Collection: </b>
             <Link
               to={`./CreatorNFTs?creator=${data[item].creatorName}&collection=${data[item].collectionName}`}
-              className="dez-page text-white"
+              className='dez-page text-white'
             >
               {' '}
               {data[item].collectionName}
             </Link>
           </p>
 
-          <p className="d-flex align-content-center align-items-center">
+          <p className='d-flex align-content-center align-items-center'>
             <b>Price: </b>
             {data[item].price} {data[item].currency}
             &nbsp;&nbsp; <Iconimage nft={data[item]} />
@@ -229,7 +234,7 @@ const Index4 = () => {
     return (
       <>
         <i
-          className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"
+          className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
           onClick={() => {
             setSelectedNFT(nft);
             setShowBuyModal(true);
@@ -257,28 +262,27 @@ const Index4 = () => {
   const imagesLoadedOptions = { background: '.my-bg-image-el' };
   // Masonry section end
 
-
   return (
     <Layout>
-      <div className="page-content bg-white rubik">
+      <div className='page-content bg-white rubik'>
         <div
-          className="home-banner"
+          className='home-banner'
           style={{ backgroundImage: 'url(' + bgimg + ')' }}
         >
-          <div className="home-bnr-inner">
-            <div className="home-bnr-content">
-              <h4 className="dz-title">Verified Impact NFTs</h4>
-              <h2 className="sub-title">Making a Verified Impact</h2>
-              <div className="home-bnr-btns">
-                <Link to={'#'} className="site-button white btn-icon">
-                  Read more <i className="fa fa-angle-double-right"></i>
+          <div className='home-bnr-inner'>
+            <div className='home-bnr-content'>
+              <h4 className='dz-title'>Verified Impact NFTs</h4>
+              <h2 className='sub-title'>Making a Verified Impact</h2>
+              <div className='home-bnr-btns'>
+                <Link to={'#'} className='site-button white btn-icon'>
+                  Read more <i className='fa fa-angle-double-right'></i>
                 </Link>
                 <VideoPopup2 />
               </div>
             </div>
           </div>
-          <div className="row stats-section">
-            <div className="col">
+          <div className='row stats-section'>
+            <div className='col'>
               {allNfts ? (
                 <>
                   {' '}
@@ -287,15 +291,15 @@ const Index4 = () => {
               ) : (
                 <>
                   <Spinner
-                    animation="border"
-                    variant="success"
-                    className="stats-spinner"
+                    animation='border'
+                    variant='success'
+                    className='stats-spinner'
                   />
                   Beneficiaries
                 </>
               )}
             </div>
-            <div className="col">
+            <div className='col'>
               {allNfts ? (
                 <>
                   {' '}
@@ -304,15 +308,15 @@ const Index4 = () => {
               ) : (
                 <>
                   <Spinner
-                    animation="border"
-                    variant="success"
-                    className="stats-spinner"
+                    animation='border'
+                    variant='success'
+                    className='stats-spinner'
                   />
                   Campaigns
                 </>
               )}
             </div>
-            <div className="col">
+            <div className='col'>
               {allNfts ? (
                 <>
                   {' '}
@@ -321,15 +325,15 @@ const Index4 = () => {
               ) : (
                 <>
                   <Spinner
-                    animation="border"
-                    variant="success"
-                    className="stats-spinner"
+                    animation='border'
+                    variant='success'
+                    className='stats-spinner'
                   />
                   Creators
                 </>
               )}
             </div>
-            <div className="col">
+            <div className='col'>
               {allNfts ? (
                 <>
                   {' '}
@@ -339,15 +343,15 @@ const Index4 = () => {
               ) : (
                 <>
                   <Spinner
-                    animation="border"
-                    variant="success"
-                    className="stats-spinner"
+                    animation='border'
+                    variant='success'
+                    className='stats-spinner'
                   />
                   Collections
                 </>
               )}
             </div>
-            <div className="col">
+            <div className='col'>
               {allNfts ? (
                 <>
                   {' '}
@@ -356,15 +360,15 @@ const Index4 = () => {
               ) : (
                 <>
                   <Spinner
-                    animation="border"
-                    variant="success"
-                    className="stats-spinner"
+                    animation='border'
+                    variant='success'
+                    className='stats-spinner'
                   />
                   NFTs
                 </>
               )}
             </div>
-            <div className="col">
+            <div className='col'>
               {allNfts ? (
                 <>
                   {' '}
@@ -373,15 +377,15 @@ const Index4 = () => {
               ) : (
                 <>
                   <Spinner
-                    animation="border"
-                    variant="success"
-                    className="stats-spinner"
+                    animation='border'
+                    variant='success'
+                    className='stats-spinner'
                   />
                   CSPR
                 </>
               )}
             </div>
-            <div className="col">
+            <div className='col'>
               {allNfts ? (
                 <>
                   {' '}
@@ -390,9 +394,9 @@ const Index4 = () => {
               ) : (
                 <>
                   <Spinner
-                    animation="border"
-                    variant="success"
-                    className="stats-spinner"
+                    animation='border'
+                    variant='success'
+                    className='stats-spinner'
                   />
                   $$
                 </>
@@ -404,7 +408,7 @@ const Index4 = () => {
         {allNfts && selectedNFT && displayedCampaigns ? (
           displayedCampaigns.length > 0 ? (
             <>
-              <h3 className="text-center mt-5">Latest Campaigns</h3>
+              <h3 className='text-center mt-5'>Latest Campaigns</h3>
 
               {displayedCampaigns?.map((n, index) => {
                 let campaignsName = Object.keys(n);
@@ -412,21 +416,23 @@ const Index4 = () => {
                 let camNumber = index + 1;
                 return (
                   <div key={index}>
-                    <h4 className="text-success text-center  d-flex align-items-center justify-content-center">
+                    <h4 className='text-success text-center  d-flex align-items-center justify-content-center'>
                       <Link
-                        to={`./BenefeiciaryNFTs?beneficiary=${'Ukraine Gov'}&campaign=${NFts[0].campaignName}`}
-                        className="mr-1 text-success text-underline"
+                        to={`./BenefeiciaryNFTs?beneficiary=${'Ukraine Gov'}&campaign=${
+                          NFts[0].campaignName
+                        }`}
+                        className='mr-1 text-success text-underline'
                       >
-                        Top NFTs from the {NFts[0].campaignName} Campaign, click to see
-                        all {NFts.length} NFTs
+                        Top NFTs from the {NFts[0].campaignName} Campaign, click
+                        to see all {NFts.length} NFTs
                       </Link>
                     </h4>
                     <SimpleReactLightbox>
                       <SRLWrapper options={options}>
-                        <div className="clearfix portfolio nfts-slider">
+                        <div className='clearfix portfolio nfts-slider'>
                           <ul
-                            id="masonry"
-                            className="dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1"
+                            id='masonry'
+                            className='dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1'
                           >
                             <Masonry
                               className={'my-gallery-class'} // default ''
@@ -441,7 +447,7 @@ const Index4 = () => {
                               >
                                 {NFts?.slice(0, 5).map((item, index) => (
                                   <Fragment key={index}>
-                                    <li className="web design card-container p-a0">
+                                    <li className='web design card-container p-a0'>
                                       <NFTCard
                                         item={item}
                                         openSlider={(
@@ -464,15 +470,12 @@ const Index4 = () => {
                                         <Lightbox
                                           mainSrc={NFts[photoIndex].image}
                                           nextSrc={
-                                            NFts[
-                                              (photoIndex + 1) % NFts.length
-                                            ].image
+                                            NFts[(photoIndex + 1) % NFts.length]
+                                              .image
                                           }
                                           prevSrc={
                                             NFts[
-                                              (photoIndex +
-                                                NFts.length -
-                                                1) %
+                                              (photoIndex + NFts.length - 1) %
                                                 NFts.length
                                             ].image
                                           }
@@ -481,9 +484,7 @@ const Index4 = () => {
                                           }
                                           onMovePrevRequest={() =>
                                             setPhotoIndex(
-                                              (photoIndex +
-                                                NFts.length -
-                                                1) %
+                                              (photoIndex + NFts.length - 1) %
                                                 NFts.length
                                             )
                                           }
@@ -510,14 +511,14 @@ const Index4 = () => {
               })}
             </>
           ) : (
-            <h4 className="text-muted text-center my-5">
+            <h4 className='text-muted text-center my-5'>
               We are working hard to add more NFTs
             </h4>
           )
         ) : (
-          <div className="vinft-section-loader">
-            <div className="vinft-spinner-body">
-              <Spinner animation="border" variant="success" />
+          <div className='vinft-section-loader'>
+            <div className='vinft-spinner-body'>
+              <Spinner animation='border' variant='success' />
               <p>Fetching NFTs Please wait...</p>
             </div>
           </div>
