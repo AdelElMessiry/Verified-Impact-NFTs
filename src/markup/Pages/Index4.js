@@ -348,7 +348,7 @@ const Index4 = () => {
               )}
             </div>
             <div className="col">
-              {allNfts ? (
+              {allNfts && selectedNFT && displayedCampaigns  ? (
                 <>
                   {' '}
                   <span>{allNfts?.length}</span> NFTs
@@ -365,7 +365,7 @@ const Index4 = () => {
               )}
             </div>
             <div className="col">
-              {allNfts ? (
+              {allNfts && selectedNFT && displayedCampaigns  ? (
                 <>
                   {' '}
                   <span>{csprSum ? csprSum : 0}</span> CSPR
@@ -382,7 +382,7 @@ const Index4 = () => {
               )}
             </div>
             <div className="col">
-              {allNfts ? (
+              {allNfts && selectedNFT && displayedCampaigns  ? (
                 <>
                   {' '}
                   <span>{csprSum ? (csprSum / 13.68).toFixed(2) : 0}</span> $$
