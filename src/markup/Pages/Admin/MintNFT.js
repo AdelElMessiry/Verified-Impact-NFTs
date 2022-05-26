@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import ImageUploader from 'react-images-upload';
 import { toast as VIToast } from 'react-toastify';
 import { Form } from 'react-bootstrap';
@@ -34,6 +34,7 @@ const MintNFT = () => {
   const [options, setOptions] = useState([]);
   const [isCreateNewCollection, setIsCreateNewCollection] = useState();
   const [showURLErrorMsg, setShowURLErrorMsg] = useState(false);
+  const [isMintClicked, setIsMintClicked] = useState(false);
   
   //handling of creating new option in creatable select control
   const createOption = (label) => ({
@@ -97,6 +98,7 @@ const MintNFT = () => {
   const [beneficiaryPercentage, setBeneficiaryPercentage] = useState();
 
   //getting beneficiaries and campaigns lists
+  let selectedCamapign=localStorage.getItem('selectedCampaign')
   useEffect(() => {
     (async () => {
       let beneficiaryList =
@@ -104,11 +106,10 @@ const MintNFT = () => {
       !beneficiaries && setBeneficiaries(beneficiaryList);
       !beneficiaries && setCampaigns(beneficiaryList[0]?.campaigns);
       !beneficiaries && setBeneficiary(beneficiaryList[0]?.address);
-      !beneficiaries && setCampaign(beneficiaryList[0]?.campaigns[0]?.id);
       !beneficiaries &&
         setCampaignSelectedData(
           beneficiaryList[0]?.campaigns,
-          beneficiaryList[0]?.campaigns[0]?.id
+          selectedCamapign?selectedCamapign:beneficiaryList[0]?.campaigns[0]?.id
         );
     })();
   }, [beneficiaries]);
@@ -145,9 +146,14 @@ const MintNFT = () => {
 
   //handling of selecting image in image control
   const onDrop = (picture) => {
+    if(picture.length>0){
     const newImageUrl = URL.createObjectURL(picture[0]);
     setUploadedImage(newImageUrl);
     setUploadedFile(picture[0]);
+  }else{
+    setUploadedImage(null);
+    setUploadedFile(null);
+  }
   };
 
   //handling minting new NFT
@@ -161,7 +167,7 @@ const MintNFT = () => {
     if(state.inputs.isImageURL&&showURLErrorMsg){
       return;
     }
-
+    setIsMintClicked(true);
     let cloudURL = uploadedImageURL;
     if (!state.inputs.isImageURL && uploadedFile){
       console.log('Img', uploadedFile);
@@ -227,10 +233,18 @@ const MintNFT = () => {
 
       try {
         const deployResult = await getDeployDetails(mintDeployHash);
+        if(campaign!=="" && campaign!==null){
+          localStorage.setItem('selectedCampaign', campaign);
+        }else{
+          localStorage.setItem('selectedCampaign', null);
+        }
         console.log('...... Token minted successfully', deployResult);
+        VIToast.success('NFT minted successfully');
         window.location.reload();
+        setIsMintClicked(false)
       } catch (err) {
         //   setErrStage(MintingStages.TX_PENDING);
+        VIToast.error(err);
       }
       //  setMintStage(MintingStages.TX_SUCCESS);
       setState({
@@ -355,6 +369,7 @@ const MintNFT = () => {
                               menuPortalTarget={document.body}
                               placeholder='Select...'
                               className='creatable-select'
+                              formatCreateLabel={(v)=>'Click here to create "'+ v +'" Collection'}
                             />
                           </Col>
                         </Row>
@@ -379,7 +394,7 @@ const MintNFT = () => {
                           <Col>
                             <input
                               type='text'
-                              placeholder='Name'
+                              placeholder='NFT Name'
                               name='name'
                               className='form-control'
                               onChange={(e) => handleChange(e)}
@@ -421,7 +436,7 @@ const MintNFT = () => {
                               <ImageUploader
                                 singleImage
                                 withIcon={true}
-                                buttonText='Choose images'
+                                buttonText='Choose image'
                                 onChange={onDrop}
                                 imgExtension={['.jpg', '.gif', '.png']}
                                 maxFileSize={20209230}
@@ -480,7 +495,7 @@ const MintNFT = () => {
                         <textarea
                           rows={4}
                           name='description'
-                          placeholder='Description'
+                          placeholder='NFT Description'
                           className='form-control'
                           onChange={(e) => handleChange(e)}
                           value={state.inputs.description}
@@ -490,9 +505,8 @@ const MintNFT = () => {
                     <Row className='form-group'>
                       <Col>
                         <p className='form-submit'>
-                          <input
+                          <button
                             type='button'
-                            value='Mint'
                             className='btn btn-success'
                             name='submit'
                             onClick={mintNFT}
@@ -505,9 +519,11 @@ const MintNFT = () => {
                               selectedCollectionValue?.value === '' ||
                               creator === '' ||
                               state.inputs.name === ''||
-                              (state.inputs.isForSale&&state.inputs.price==="")
+                              (state.inputs.isForSale&&state.inputs.price==="")||
+                              isMintClicked
                             }
-                          />
+                          >{isMintClicked?<Spinner  animation="border"
+                          variant="light"/>:'Mint'}</button>
                         </p>
                       </Col>
                     </Row>
