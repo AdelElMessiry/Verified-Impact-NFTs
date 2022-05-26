@@ -44,27 +44,31 @@ export async function getCreatorsCollectionsList() {
   const collectionsList = await getCollectionsList();
   const mappedCreatorsList: any = [];
 
-  creatorsList.filter((creator: any, index: any) =>
-    collectionsList.length
-      ? collectionsList.map((collection: any) => {
-          !mappedCreatorsList.length &&
-            mappedCreatorsList.push({ ...creator, collections: [] });
-          return (
-            creator.address === collection.creator &&
-            mappedCreatorsList.find(
-              (newCreator: any, index: any, creators: any) => {
-                return creators.indexOf(newCreator) === index
-                ? mappedCreatorsList[index].collections.push(collection)
-                : mappedCreatorsList.push({
-                    ...creator,
-                    collections: [collection],
-                  });
-            })
-          );
+  const pluckedCollections = collectionsList
+    .map(({ creator }: any) => creator)
+    .filter(
+      (creator: any, index: any, creators: any) =>
+        creators.indexOf(creator) === index
+    );
+
+  creatorsList.forEach((creator: any) =>
+    pluckedCollections.includes(creator.address)
+      ? mappedCreatorsList.push({
+          ...creator,
+          collections: collectionsList.filter(
+            (collection: any, index: any, collections: any) =>
+              collection.creator === creator.address &&
+              index ===
+                collections.findIndex(
+                  (idx: any) => idx.name === collection.name
+                )
+          ),
         })
-      : mappedCreatorsList.push({ ...creator, collections: [] })
+      : mappedCreatorsList.push({
+          ...creator,
+          collections: [],
+        })
   );
-  console.log(mappedCreatorsList);
 
   return mappedCreatorsList;
 }
