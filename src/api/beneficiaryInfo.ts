@@ -2,7 +2,7 @@ import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from './campaignInfo';
 
 export async function getBeneficiaryDetails(beneficiaryId: string) {
-  const beneficiaryDetails = await cep47.getBeneficiary('1');
+  const beneficiaryDetails = await cep47.getBeneficiary(beneficiaryId);
   // console.log(`NFT ${beneficiaryId} beneficiary: `, beneficiaryDetails);
   return beneficiaryDetails;
 }
