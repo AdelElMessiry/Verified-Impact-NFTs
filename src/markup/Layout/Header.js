@@ -1,30 +1,35 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from './../../images/logov.png';
-import HeaderMenu from './HeaderMenu';
-import casper from './../../images/icon/casper.png';
-import { useAuth } from '../../contexts/AuthContext';
-import VINFTsTooltip from '../Element/Tooltip';
 import { Avatar } from '@mui/material';
 
-const Header1 = ({ isNFTDetails = false }) => {
-  const { isLoggedIn, entityInfo, balance, login } = useAuth();
-  const generateRandomCharacter = () => {
-    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+import { useAuth } from '../../contexts/AuthContext';
 
-    return alphabet[Math.floor(Math.random() * alphabet.length)];
-  };
-  useEffect(() => {
+import HeaderMenu from './HeaderMenu';
+import VINftsTooltip from '../Element/Tooltip';
+
+import logo from './../../images/logov.png';
+import casper from './../../images/icon/casper.png';
+
+const generateRandomCharacter = () => {
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
+  return alphabet[Math.floor(Math.random() * alphabet.length)];
+};
+
+const Header = ({ isNFTDetails = false }) => {
+  const { isLoggedIn, entityInfo, balance, login } = useAuth();
+
+  React.useEffect(() => {
     // sidebar open/close
 
-    var Navicon = document.querySelector('.navicon');
-    var sidebarmenu = document.querySelector('.myNavbar ');
+    var NavIcon = document.querySelector('.navicon');
+    var sidebarMenu = document.querySelector('.myNavbar ');
 
     function toggleFunc() {
-      sidebarmenu.classList.toggle('show');
-      //   Navicon.classList.toggle('open');
+      sidebarMenu.classList.toggle('show');
+      //   NavIcon.classList.toggle('open');
     }
-    Navicon.addEventListener('click', toggleFunc);
+    NavIcon.addEventListener('click', toggleFunc);
 
     // Sidenav li open close
     var navUl = [].slice.call(
@@ -103,7 +108,7 @@ const Header1 = ({ isNFTDetails = false }) => {
                       )}
                     </div>
                   ) : (
-                    <VINFTsTooltip title='Connect signer' className='mx-4'>
+                    <VINftsTooltip title='Connect signer' className='mx-4'>
                       <img
                         alt='casper'
                         src={casper}
@@ -111,11 +116,11 @@ const Header1 = ({ isNFTDetails = false }) => {
                         width={'50px'}
                         onClick={login}
                       />
-                    </VINFTsTooltip>
+                    </VINftsTooltip>
                   )}
                   {isLoggedIn && entityInfo && (
                     <>
-                      <VINFTsTooltip title='Open settings'>
+                      <VINftsTooltip title='Open settings'>
                         <>
                           <Avatar className='float-left' aria-label='avatar'>
                             {generateRandomCharacter()}
@@ -124,7 +129,7 @@ const Header1 = ({ isNFTDetails = false }) => {
                             {balance} CSPR
                           </span>{' '}
                         </>
-                      </VINFTsTooltip>
+                      </VINftsTooltip>
                     </>
                   )}
                 </div>
@@ -137,4 +142,4 @@ const Header1 = ({ isNFTDetails = false }) => {
   );
 };
 
-export default Header1;
+export default Header;

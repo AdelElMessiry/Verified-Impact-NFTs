@@ -7,7 +7,7 @@ export async function getBeneficiaryDetails(beneficiaryId: string) {
   return beneficiaryDetails;
 }
 
-export async function parseBeneficiary(maybeValue: any) {
+export function parseBeneficiary(maybeValue: any) {
   const jsMap: any = new Map();
 
   for (const [innerKey, value] of maybeValue) {
@@ -28,14 +28,13 @@ export async function getBeneficiariesList() {
     await getBeneficiaryDetails((id + 1).toString())
       .then(async (rawBeneficiary: any) => {
         // console.log(rawBeneficiary);
-        const parsedBeneficiary = await parseBeneficiary(rawBeneficiary);
+        const parsedBeneficiary = parseBeneficiary(rawBeneficiary);
         beneficiariesList.push(parsedBeneficiary);
       })
       .catch((err) => {
         console.log(err);
       });
   }
-  console.log(beneficiariesList);
 
   return beneficiariesList;
 }
@@ -72,7 +71,47 @@ export async function getBeneficiariesCampaignsList() {
         })
   );
 
-  console.log(mappedBeneficiariesList);
+  // console.log(mappedBeneficiariesList);
+
+  return mappedBeneficiariesList;
+}
+
+export async function _getBeneficiariesCampaignsList(
+  beneficiariesList: any,
+  campaignsList: any
+) {
+  // const beneficiariesList = await getBeneficiariesList();
+  // const campaignsList = await getCampaignsList();
+  const mappedBeneficiariesList: any = [];
+
+  const pluckedCampaigns = campaignsList
+    .map(({ wallet_address }: any) => wallet_address)
+    .filter(
+      (creator: any, index: any, creators: any) =>
+        creators.indexOf(creator) === index
+    );
+
+  beneficiariesList.forEach((beneficiary: any) =>
+    pluckedCampaigns.includes(beneficiary.address)
+      ? mappedBeneficiariesList.push({
+          ...beneficiary,
+          campaigns: campaignsList.filter(
+            (campaign: any, index: any, campaigns: any) =>
+              campaign.wallet_address === beneficiary.address
+            // &&
+            // index ===
+            //   collections.findIndex(
+            //     (idx: any) => idx.name === collection.name
+            //   )
+          ),
+        })
+      : mappedBeneficiariesList.push({
+          ...beneficiary,
+          campaigns: [],
+        })
+  );
+
+  // console.log(mappedBeneficiariesList);
 
   return mappedBeneficiariesList;
 }

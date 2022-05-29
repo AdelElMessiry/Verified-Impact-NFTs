@@ -226,8 +226,6 @@ class CEP47Client {
 
   public async getMappedTokenMeta(tokenId: string) {
     const maybeValue: any = await this.getTokenMeta(tokenId);
-    console.log(maybeValue);
-
     const jsMap: any = new Map();
 
     for (const [innerKey, value] of maybeValue) {

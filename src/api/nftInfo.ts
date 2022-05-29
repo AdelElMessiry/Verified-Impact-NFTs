@@ -39,7 +39,7 @@ export async function generateUniqueID(): Promise<number> {
 }
 
 export async function getNFTDetails(tokenId: string) {
-  console.log(tokenId);
+  // console.log(tokenId);
 
   const nft_metadata = await cep47.getMappedTokenMeta(tokenId);
   console.log(`NFT ${tokenId} metadata: `, nft_metadata);
@@ -48,7 +48,7 @@ export async function getNFTDetails(tokenId: string) {
 
 export async function getNFTsList() {
   const nftsCount: any = await cep47.totalSupply();
-  console.log(parseInt(nftsCount));
+  // console.log(parseInt(nftsCount));
 
   const nftsList: any = [];
   for (let tokenId of [...(Array(parseInt(nftsCount)).keys() as any)]) {
@@ -57,7 +57,7 @@ export async function getNFTsList() {
     const nft_metadata = await cep47.getMappedTokenMeta(tokenId.toString());
     nftsList.push({ ...nft_metadata, tokenId });
   }
-  console.log(nftsList);
+  // console.log(nftsList);
 
   return nftsList;
 }
@@ -111,6 +111,11 @@ export async function getMappedNfts() {
   const campaignsList = await getCampaignsList();
   const creatorsList = await getCreatorsList();
   const collectionsList = await getCollectionsList();
+  const uniqueCollections = collectionsList.filter(
+    (collection: any, index: any, collections: any) =>
+      index ===
+      collections.findIndex((idx: any) => idx.name === collection.name)
+  );
 
   const mappedNFTs = nftsList.map((nft: any) => ({
     ...nft,
@@ -124,7 +129,13 @@ export async function getMappedNfts() {
     collectionName: collectionsList.find(({ id }: any) => nft.collection === id)
       .name,
   }));
-  console.log(mappedNFTs);
 
-  return mappedNFTs;
+  return {
+    mappedNFTs,
+    beneficiariesList,
+    campaignsList,
+    creatorsList,
+    collectionsList,
+    uniqueCollections,
+  };
 }
