@@ -1,24 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { getBeneficiariesCampaignsList } from '../../api/beneficiaryInfo';
-import { getCreatorsCollectionsList } from '../../api/creatorInfo';
+import { _getBeneficiariesCampaignsList } from '../../api/beneficiaryInfo';
+import { _getCreatorsCollectionsList } from '../../api/creatorInfo';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNFTState } from '../../contexts/NFTContext';
 
 const HeaderMenu = () => {
   const { isLoggedIn } = useAuth();
+  const { beneficiaries, campaigns, collections, creators } = useNFTState();
 
-  const [beneficiaries, setBeneficiaries] = useState();
-  const [creators, setCreators] = useState();
-  useEffect(() => {
-    (async () => {
-      let beneficiaryList =
-        !beneficiaries && (await getBeneficiariesCampaignsList());
-      !beneficiaries && setBeneficiaries(beneficiaryList);
-      let creatorsList = !creators && (await getCreatorsCollectionsList());
-      !creators && setCreators(creatorsList);
-    })();
-  }, [creators, beneficiaries]);
+  const [beneficiariesList, setBeneficiariesList] = React.useState();
+  const [creatorsList, setCreatorsList] = React.useState();
+
+  const loadSubMenu = React.useCallback(async () => {
+    const beneficiaryList =
+      beneficiaries &&
+      !beneficiariesList &&
+      (await _getBeneficiariesCampaignsList(beneficiaries, campaigns));
+    beneficiaryList && setBeneficiariesList(beneficiaryList);
+
+    const creatorList =
+      creators &&
+      collections &&
+      !creatorsList &&
+      (await _getCreatorsCollectionsList(creators, collections));
+    creatorList && setCreatorsList(creatorList);
+  }, [
+    beneficiaries,
+    creatorsList,
+    beneficiariesList,
+    collections,
+    campaigns,
+    creators,
+  ]);
+
+  React.useEffect(() => {
+    (!creatorsList || !beneficiariesList) && loadSubMenu();
+  }, [creatorsList, beneficiariesList, loadSubMenu]);
+
   return (
     <>
       <ul className='nav navbar-nav'>
@@ -32,10 +52,10 @@ const HeaderMenu = () => {
             Beneficiaries <i className='fa fa-chevron-down'></i>
           </Link>
           <ul className='sub-menu'>
-            {beneficiaries?.map((b, index) => (
+            {beneficiariesList?.map((b, index) => (
               <li key={`#${index}`}>
                 <Link
-                  to={`./BenefeiciaryNFTs?beneficiary=${b.name}`}
+                  to={`./BeneficiaryNFTs?beneficiary=${b.name}`}
                   className='dez-page'
                 >
                   {b.name} <i className='fa fa-angle-right'></i>
@@ -44,7 +64,7 @@ const HeaderMenu = () => {
                   {b.campaigns?.map((c, index) => (
                     <li key={index}>
                       <Link
-                        to={`./BenefeiciaryNFTs?beneficiary=${b.name}&campaign=${c.name}`}
+                        to={`./BeneficiaryNFTs?beneficiary=${b.name}&campaign=${c.name}`}
                         className='dez-page'
                       >
                         {c.name}{' '}
@@ -61,7 +81,7 @@ const HeaderMenu = () => {
             Creators <i className='fa fa-chevron-down'></i>
           </Link>
           <ul className='sub-menu'>
-            {creators?.map((c, index) => (
+            {creatorsList?.map((c, index) => (
               <li key={`#${index}`}>
                 <Link
                   to={`./CreatorNFTs?creator=${c.name}`}

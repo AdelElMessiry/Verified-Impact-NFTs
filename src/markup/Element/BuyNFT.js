@@ -1,45 +1,31 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import { CLPublicKey } from 'casper-js-sdk';
 import { Row, Col } from 'react-bootstrap';
+import { toast as VIToast } from 'react-toastify';
 
 import { transferFees } from '../../utils/contract-utils';
 import { transfer, purchaseNFT } from '../../api/transfer';
-import { approve } from '../../api/approve';
 import { getDeployDetails } from '../../api/universal';
 import { useAuth } from '../../contexts/AuthContext';
-import { toast as VIToast } from 'react-toastify';
+
+const InitialInputs = () => ({
+  inputs: {
+    address: '',
+  },
+});
 
 //buying NFT Modal
 const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
-  const IntialInputs = () => ({
-    inputs: {
-      address: '',
-    },
-  });
-
   const { entityInfo } = useAuth();
-  const [showModal, setShowModal] = useState(show);
-  const [state, setState] = useState(IntialInputs());
-  if (!data) return <></>;
+  const [showModal, setShowModal] = React.useState(show);
+  const [state, setState] = React.useState(InitialInputs());
 
   //buy NFT Function
   const buyNFT = async () => {
     if (entityInfo.publicKey) {
       const nftID = data.tokenId.toString();
 
-      // const approveTransfer = await approve(
-      //   CLPublicKey.fromHex(entityInfo.publicKey),
-      //   nftID
-      // );
-
-      // const deployApproveResult = await getDeployDetails(approveTransfer);
-      // console.log(
-      //   '...... Token approve transferred successfully',
-      //   deployApproveResult
-      // );
-      // VIToast.success('Token approve transferred successfully');
-      console.log(entityInfo.publicKey);
       try {
         const transferFeesHash = await transferFees(
           entityInfo.publicKey,
@@ -68,12 +54,6 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
         console.log('Transfer Fees Err ' + err);
         VIToast.error('Error happened please try again later');
       }
-
-      // try {
-
-      // } catch (err) {
-      //   console.log('Transfer Err ' + err);
-      // }
     }
   };
 
@@ -87,13 +67,13 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
         nftId: nftID,
       });
       if (transferDeployHash) {
-        VIToast.success('NFT transfered successfully');
+        VIToast.success('NFT transferred successfully');
       } else {
-        VIToast.error('Error happend please try again later');
+        VIToast.error('Error happened please try again later');
       }
     } catch (err) {
       console.log('Transfer Err ' + err);
-      VIToast.error('Error happend please try again later');
+      VIToast.error('Error happened please try again later');
     }
   };
 
@@ -115,7 +95,9 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
     });
   };
 
-  return (
+  return !data ? (
+    <></>
+  ) : (
     <Modal
       show={showModal}
       onHide={handleClose}

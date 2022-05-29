@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class Footer1 extends Component {
+class Footer extends React.Component {
   render() {
     return (
       <>
@@ -16,6 +16,7 @@ class Footer1 extends Component {
                       href='https://alphafin.io/'
                       className='text-success'
                       target='_blank'
+                      rel='noreferrer'
                     >
                       Alphafin
                     </a>{' '}
@@ -24,6 +25,7 @@ class Footer1 extends Component {
                       href='https://nftpunks.org/'
                       className='text-success'
                       target='_blank'
+                      rel='noreferrer'
                     >
                       NFTPunks
                     </a>{' '}
@@ -38,4 +40,4 @@ class Footer1 extends Component {
   }
 }
 
-export default Footer1;
+export default Footer;
