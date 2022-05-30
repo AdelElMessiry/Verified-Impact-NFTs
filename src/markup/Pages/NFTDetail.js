@@ -8,6 +8,7 @@ import {Spinner} from 'react-bootstrap';
 import { getNFTsList } from '../../api/nftInfo';
 import BuyNFTModal from '../Element/BuyNFT';
 import Layout from '../Layout';
+import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
 
 //nft details component
 const NFTDetail = () => {
@@ -128,7 +129,8 @@ const NFTDetail = () => {
                   <p className="d-flex align-content-center align-items-center">
                     <b>Price: </b>
                     {item[0]?.price} {item[0]?.currency} &nbsp;&nbsp;
-                    <Iconimage nft={item[0]} />
+                    <Iconimage nft={item[0]} />  &nbsp;&nbsp; {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+                  <NFTTwitterShare item={item[0]} />)}
                   </p>
                 </div>
               </div>

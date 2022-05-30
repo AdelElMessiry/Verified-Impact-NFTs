@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import VINFTsTooltip from './Tooltip';
 import BuyNFTModal from './BuyNFT';
 import ListForSaleNFTModal from './ListForSaleNFT';
+import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
 
 //NFT Card component
 const NFTCard = ({
@@ -82,6 +83,9 @@ const NFTCard = ({
             }}
             data={item}
           />
+        )}
+         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+          <NFTTwitterShare item={item} isWithoutText={true} />
         )}
       </>
     );
