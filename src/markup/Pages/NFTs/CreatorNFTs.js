@@ -18,6 +18,9 @@ import BuyNFTModal from '../../Element/BuyNFT';
 import { Spinner } from 'react-bootstrap';
 import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
 import Layout from '../../Layout';
+import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
+import CampaignOrCollectionTwitterShare from '../../Element/TwitterShare/CampaignOrCollectionTwitterShare';
+
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -273,7 +276,8 @@ const CreatorNFTs = () => {
         if (
           creatorsList?.length > 0 &&
           beneficiaries?.length > 0 &&
-          newNFTList?.length > 0&&collectionsList?.length > 0
+          newNFTList?.length > 0 &&
+          collectionsList?.length > 0
         ) {
           newNFTList
             .filter((n) => n.isForSale == 'true')
@@ -439,6 +443,10 @@ const CreatorNFTs = () => {
               {Data[item].price} {Data[item].currency}
               &nbsp;&nbsp;
               <Iconimage nft={Data[item]} />
+              &nbsp;&nbsp;{' '}
+              {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+                <NFTTwitterShare item={Data[item]} />
+              )}
             </p>
           </div>
         );
@@ -470,6 +478,10 @@ const CreatorNFTs = () => {
                   {' '}
                   {collection ? collection : creator}
                 </span>
+                {collection && process.env.REACT_APP_SHOW_TWITTER != "false" &&(
+                  <CampaignOrCollectionTwitterShare campaign={""} beneficiary={""} creator={creator} url={`https://verifiedimpactnfts.com/#/CreatorNFTs?creator=${creator.replace(/ /g,"%20")}&collection=${collection.replace(/ /g,"%20")}`}/>
+              
+                )}
               </h1>
 
               <div className="breadcrumb-row">

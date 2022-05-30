@@ -25,7 +25,8 @@ import {
 import { getNFTsList } from '../../api/nftInfo';
 import { Spinner } from 'react-bootstrap';
 import Layout from '../Layout';
-
+import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
+import CampaignOrCollectionTwitterShare from '../Element/TwitterShare/CampaignOrCollectionTwitterShare';
 //Light Gallery on icon click
 
 const Index4 = () => {
@@ -221,7 +222,10 @@ const Index4 = () => {
           <p className='d-flex align-content-center align-items-center'>
             <b>Price: </b>
             {data[item].price} {data[item].currency}
-            &nbsp;&nbsp; <Iconimage nft={data[item]} />
+            &nbsp;&nbsp; <Iconimage nft={data[item]} />&nbsp;&nbsp;{' '}
+            {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+              <NFTTwitterShare item={data[item]} />
+            )}
           </p>
         </div>
       );
@@ -418,7 +422,7 @@ const Index4 = () => {
                   <div key={index}>
                     <h4 className='text-success text-center  d-flex align-items-center justify-content-center'>
                       <Link
-                        to={`./BenefeiciaryNFTs?beneficiary=${'Ukraine Gov'}&campaign=${
+                        to={`./BenefeiciaryNFTs?beneficiary=${NFts[0].beneficiaryName}&campaign=${
                           NFts[0].campaignName
                         }`}
                         className='mr-1 text-success text-underline'
@@ -426,6 +430,12 @@ const Index4 = () => {
                         Top NFTs from the {NFts[0].campaignName} Campaign, click
                         to see all {NFts.length} NFTs
                       </Link>
+                      {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+                <CampaignOrCollectionTwitterShare
+                  campaign={NFts[0].campaignName}
+                  beneficiary={NFts[0].beneficiaryName}
+                />
+              )}
                     </h4>
                     <SimpleReactLightbox>
                       <SRLWrapper options={options}>
