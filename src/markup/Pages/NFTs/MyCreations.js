@@ -1,8 +1,7 @@
 import React, { Component, useState, useEffect, Fragment } from 'react';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper, useLightbox } from 'simple-react-lightbox';
-import Header from '../../Layout/Header1';
-import Footer from '../../Layout/Footer1';
+
 import Masonry from 'react-masonry-component';
 import NFTCard from '../../Element/NFTCard';
 //images
@@ -22,6 +21,9 @@ import PromptLogin from '../PromptLogin';
 import ListForSaleNFTModal from '../../Element/ListForSaleNFT';
 import { Spinner } from 'react-bootstrap';
 import { getCreatorsList } from '../../../api/creatorInfo';
+import { getCollectionsList } from '../../../api/collectionInfo';
+import Layout from '../../Layout';
+import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
 
 // Masonry section
 const masonryOptions = {
@@ -89,6 +91,7 @@ const MyCreations = () => {
   const [listForSaleNFT, setListForSaleNFT] = useState();
   const [beneficiaries, setbeneficiaries] = useState();
   const [allCreators, setCreators] = useState();
+  const [allCollections, setCollections] = useState();
 
   //function returns button of buying NFT
   const Iconimage = ({ nft }) => {
@@ -306,12 +309,15 @@ const MyCreations = () => {
         !beneficiaries && setbeneficiaries(beneficiaryList);
         let creatorsList = !allCreators && (await getCreatorsList());
         !allCreators && setCreators(creatorsList);
-
+        let collectionsList =
+        !allCollections &&await getCollectionsList();
+      !allCollections &&
+        setCollections(collectionsList);
         //mappign nft details addresses and ids to names
         if (
           creatorsList?.length > 0 &&
           beneficiaries?.length > 0 &&
-          newNFTList?.length > 0
+          newNFTList?.length > 0 &&collectionsList?.length>0
         ) {
           newNFTList.forEach(async (element) => {
             let selectedBene = beneficiaries.filter(
@@ -324,9 +330,11 @@ const MyCreations = () => {
               (c) => c.address === element.creator
             );
 
+            let selectedCollection=collectionsList?.filter((c=>(c.id===element.collection)))
             element['beneficiaryName'] = selectedBene[0].name;
             element['campaignName'] = selectedCampaign[0].name;
             element['creatorName'] = selectedCreator[0].name;
+            element['collectionName'] = selectedCollection[0].name;
 
             nftList.push(element);
           });
@@ -443,7 +451,7 @@ const MyCreations = () => {
 
                   <b className="ml-4">Collection: </b>
                   <Link
-                    to={`./collection?collection=${nftList[item].collectionName}`}
+                    to={`./CreatorNFTs?creator=${nftList[item].creatorName}&collection=${nftList[item].collectionName}`}
                     className="dez-page text-white"
                     onClick={() => {
                       setOpenSlider(false);
@@ -456,7 +464,8 @@ const MyCreations = () => {
                   <b>Price: </b>
                   {nftList[item].price} {nftList[item].currency}
                   &nbsp;&nbsp;
-                  <Iconimage nft={nftList[item]} />
+                  <Iconimage nft={nftList[item]} />&nbsp;&nbsp;{' '}
+                  {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (<NFTTwitterShare item={nftList[item]} />)}
                 </p>
               </div>
             );
@@ -465,7 +474,7 @@ const MyCreations = () => {
         }
       }
     })();
-  }, [entityInfo, selectedNfts, allNfts, beneficiaries, allCreators]);
+  }, [entityInfo, selectedNfts, allNfts, beneficiaries, allCreators,allCollections]);
 
   const options = {
     buttons: { showDownloadButton: false },
@@ -477,8 +486,7 @@ const MyCreations = () => {
   }, [searchFlag]);
 
   return (
-    <Fragment>
-      <Header />
+    <Layout>
       <div className="page-content bg-white">
         {/*  banner  */}
         <div
@@ -672,8 +680,7 @@ const MyCreations = () => {
           data={listForSaleNFT}
         />
       )}
-      <Footer />
-    </Fragment>
+    </Layout>
   );
 };
 export default MyCreations;
