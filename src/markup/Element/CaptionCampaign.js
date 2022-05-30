@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 
+import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
 import VINftsTooltip from '../Element/Tooltip';
 
 export const CaptionCampaign = (data, item, IconImage) => (
@@ -74,6 +75,9 @@ export const CaptionCampaign = (data, item, IconImage) => (
       <b>Price: </b>
       {data[item].price} {data[item].currency}
       &nbsp;&nbsp; <IconImage nft={data[item]} />
+      {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+        <NFTTwitterShare item={data[item]} />
+      )}
     </p>
   </div>
 );

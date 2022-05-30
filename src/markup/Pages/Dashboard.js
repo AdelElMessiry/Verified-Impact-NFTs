@@ -14,6 +14,8 @@ import { CaptionCampaign } from '../Element/CaptionCampaign';
 import NFTCard from '../Element/NFTCard';
 import BuyNFTModal from '../Element/BuyNFT';
 import Layout from '../Layout';
+import CampaignOrCollectionTwitterShare from '../Element/TwitterShare/CampaignOrCollectionTwitterShare';
+//Light Gallery on icon click
 
 //Images..
 import bgImg from './../../images/main-slider/slide6.jpg';
@@ -279,14 +281,18 @@ const Dashboard = () => {
                   <div key={index}>
                     <h4 className='text-success text-center  d-flex align-items-center justify-content-center'>
                       <Link
-                        to={`./BeneficiaryNFTs?beneficiary=${'Ukraine Gov'}&campaign=${
-                          NFts[0].campaignName
-                        }`}
+                        to={`./BeneficiaryNFTs?beneficiary=${NFts[0].beneficiaryName}&campaign=${NFts[0].campaignName}`}
                         className='mr-1 text-success text-underline'
                       >
                         Top NFTs from the {NFts[0].campaignName} Campaign, click
                         to see all {NFts.length} NFTs
                       </Link>
+                      {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+                        <CampaignOrCollectionTwitterShare
+                          campaign={NFts[0].campaignName}
+                          beneficiary={NFts[0].beneficiaryName}
+                        />
+                      )}
                     </h4>
                     <SimpleReactLightbox>
                       <SRLWrapper options={options}>
