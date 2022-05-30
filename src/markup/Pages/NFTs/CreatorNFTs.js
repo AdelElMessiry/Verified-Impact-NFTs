@@ -118,9 +118,8 @@ const CreatorNFTs = () => {
   }, [collection, nfts, creator]);
 
   React.useEffect(() => {
-    !filteredNFTs && getFilteredNFTs();
-    !allNFTs && getFilteredNFTs();
-  }, [filteredNFTs, allNFTs, getFilteredNFTs]);
+    (creator || collection) && getFilteredNFTs();
+  }, [creator, collection, getFilteredNFTs]);
 
   const filterCollectionByTag = React.useCallback(
     (tag, filteredNFTs) =>
