@@ -1,14 +1,14 @@
 import React, { Component, useState, useEffect, Fragment } from 'react';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper, useLightbox } from 'simple-react-lightbox';
-import Header from '../../Layout/Header1';
-import Footer from '../../Layout/Footer1';
+
 import Masonry from 'react-masonry-component';
 import NFTCard from '../../Element/NFTCard';
 //images
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { getNFTsList } from '../../../api/nftInfo';
 import { getCreatorsList } from '../../../api/creatorInfo';
+import { getCollectionsList } from '../../../api/collectionInfo';
 
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Lightbox from 'react-image-lightbox';
@@ -17,6 +17,10 @@ import VINFTsTooltip from '../../Element/Tooltip';
 import BuyNFTModal from '../../Element/BuyNFT';
 import { Spinner } from 'react-bootstrap';
 import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
+import Layout from '../../Layout';
+import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
+import CampaignOrCollectionTwitterShare from '../../Element/TwitterShare/CampaignOrCollectionTwitterShare';
+
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -81,6 +85,8 @@ const CreatorNFTs = () => {
   const [selectedNFT, setSelectedNFT] = useState();
   const [beneficiaries, setbeneficiaries] = useState();
   const [allCreators, setCreators] = useState();
+  const [allCollections, setCollections] = useState();
+
   //function returns button of buying NFT
   const Iconimage = ({ nft }) => {
     return (
@@ -264,11 +270,14 @@ const CreatorNFTs = () => {
         !beneficiaries && setbeneficiaries(beneficiaryList);
         let creatorsList = !allCreators && (await getCreatorsList());
         !allCreators && setCreators(creatorsList);
+        let collectionsList = !allCollections && (await getCollectionsList());
+        !allCollections && setCollections(collectionsList);
         //mappign nft details addresses and ids to names
         if (
           creatorsList?.length > 0 &&
           beneficiaries?.length > 0 &&
-          newNFTList?.length > 0
+          newNFTList?.length > 0 &&
+          collectionsList?.length > 0
         ) {
           newNFTList
             .filter((n) => n.isForSale == 'true')
@@ -282,9 +291,13 @@ const CreatorNFTs = () => {
               let selectedCreator = creatorsList?.filter(
                 (c) => c.address === element.creator
               );
+              let selectedCollection = collectionsList?.filter(
+                (c) => c.id === element.collection
+              );
               element['beneficiaryName'] = selectedBene[0].name;
               element['campaignName'] = selectedCampaign[0].name;
               element['creatorName'] = selectedCreator[0].name;
+              element['collectionName'] = selectedCollection[0].name;
               nftList.push(element);
             });
           !allNfts && setAllNfts(nftList);
@@ -294,7 +307,7 @@ const CreatorNFTs = () => {
         }
       }
     })();
-  }, [allNfts, beneficiaries, allCreators]);
+  }, [allNfts, beneficiaries, allCreators, allCollections]);
 
   //setting nft list according to user selection from menu
   useEffect(async () => {
@@ -416,7 +429,7 @@ const CreatorNFTs = () => {
 
               <b className="ml-4">Collection: </b>
               <Link
-                to={`./collection?collection=${Data[item].collectionName}`}
+                to={`./CreatorNFTs?creator=${Data[item].creatorName}&collection=${Data[item].collectionName}`}
                 className="dez-page text-white"
                 onClick={() => {
                   setOpenSlider(false);
@@ -430,6 +443,10 @@ const CreatorNFTs = () => {
               {Data[item].price} {Data[item].currency}
               &nbsp;&nbsp;
               <Iconimage nft={Data[item]} />
+              &nbsp;&nbsp;{' '}
+              {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+                <NFTTwitterShare item={Data[item]} />
+              )}
             </p>
           </div>
         );
@@ -447,8 +464,7 @@ const CreatorNFTs = () => {
     handleSearch(tagCollection, tagCreator, tagCampaign);
   }, [searchFlag]);
   return (
-    <Fragment>
-      <Header />
+    <Layout>
       <div className="page-content bg-white">
         {/*  banner  */}
         <div
@@ -462,6 +478,10 @@ const CreatorNFTs = () => {
                   {' '}
                   {collection ? collection : creator}
                 </span>
+                {collection && process.env.REACT_APP_SHOW_TWITTER != "false" &&(
+                  <CampaignOrCollectionTwitterShare campaign={""} beneficiary={""} creator={creator} url={`https://verifiedimpactnfts.com/#/CreatorNFTs?creator=${creator.replace(/ /g,"%20")}&collection=${collection.replace(/ /g,"%20")}`}/>
+              
+                )}
               </h1>
 
               <div className="breadcrumb-row">
@@ -620,8 +640,7 @@ const CreatorNFTs = () => {
           isTransfer={false}
         />
       )}
-      <Footer />
-    </Fragment>
+    </Layout>
   );
 };
 export default CreatorNFTs;

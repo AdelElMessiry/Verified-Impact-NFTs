@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import ImageUploader from 'react-images-upload';
 import { toast as VIToast } from 'react-toastify';
 import { Form } from 'react-bootstrap';
@@ -12,13 +12,13 @@ import { uploadImg } from '../../../api/imageCDN';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
 import { numberOfNFTsOwned } from '../../../api/userInfo';
+import validator from 'validator'
 
-import Header from '../../Layout/Header1';
-import Footer from '../../Layout/Footer1';
 import PageTitle from '../../Layout/PageTitle';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import PromptLogin from '../PromptLogin';
+import Layout from '../../Layout';
 
 //minting new nft page
 const MintNFT = () => {
@@ -33,7 +33,9 @@ const MintNFT = () => {
 
   const [options, setOptions] = useState([]);
   const [isCreateNewCollection, setIsCreateNewCollection] = useState();
-
+  const [showURLErrorMsg, setShowURLErrorMsg] = useState(false);
+  const [isMintClicked, setIsMintClicked] = useState(false);
+  
   //handling of creating new option in creatable select control
   const createOption = (label) => ({
     label,
@@ -93,8 +95,10 @@ const MintNFT = () => {
   const [creator, setCreator] = useState('');
   const [isCreatorExist, setIsCreatorExist] = useState(false);
   const [creatorPercentage, setCreatorPercentage] = useState();
+  const [beneficiaryPercentage, setBeneficiaryPercentage] = useState();
 
   //getting beneficiaries and campaigns lists
+  let selectedCamapign=localStorage.getItem('selectedCampaign')
   useEffect(() => {
     (async () => {
       let beneficiaryList =
@@ -102,7 +106,11 @@ const MintNFT = () => {
       !beneficiaries && setBeneficiaries(beneficiaryList);
       !beneficiaries && setCampaigns(beneficiaryList[0]?.campaigns);
       !beneficiaries && setBeneficiary(beneficiaryList[0]?.address);
-      !beneficiaries && setCampaign(beneficiaryList[0]?.campaigns[0]?.id);
+      !beneficiaries &&
+        setCampaignSelectedData(
+          beneficiaryList[0]?.campaigns,
+          selectedCamapign?selectedCamapign:beneficiaryList[0]?.campaigns[0]?.id
+        );
     })();
   }, [beneficiaries]);
 
@@ -138,9 +146,14 @@ const MintNFT = () => {
 
   //handling of selecting image in image control
   const onDrop = (picture) => {
+    if(picture.length>0){
     const newImageUrl = URL.createObjectURL(picture[0]);
     setUploadedImage(newImageUrl);
     setUploadedFile(picture[0]);
+  }else{
+    setUploadedImage(null);
+    setUploadedFile(null);
+  }
   };
 
   //handling minting new NFT
@@ -151,9 +164,12 @@ const MintNFT = () => {
     if (!entityInfo.publicKey) {
       return VIToast.error('Please enter sign in First');
     }
-
+    if(state.inputs.isImageURL&&showURLErrorMsg){
+      return;
+    }
+    setIsMintClicked(true);
     let cloudURL = uploadedImageURL;
-    if (!state.inputs.isImageURL && uploadedFile) {
+    if (!state.inputs.isImageURL && uploadedFile){
       console.log('Img', uploadedFile);
       console.log('Img url', uploadedImageURL);
       setUploadingToCloud(true);
@@ -198,9 +214,13 @@ const MintNFT = () => {
             ? selectedCollectionValue.label
             : '',
           creator: entityInfo.publicKey,
-          creatorPercentage: creatorPercentage || '',
+          creatorPercentage: creatorPercentage
+            ? creatorPercentage.toString()
+            : '',
           beneficiary: beneficiary || '',
-          beneficiaryPercentage: state.inputs.beneficiaryPercentage || '',
+          beneficiaryPercentage: beneficiaryPercentage
+            ? beneficiaryPercentage
+            : '',
         });
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
@@ -213,10 +233,18 @@ const MintNFT = () => {
 
       try {
         const deployResult = await getDeployDetails(mintDeployHash);
+        if(campaign!=="" && campaign!==null){
+          localStorage.setItem('selectedCampaign', campaign);
+        }else{
+          localStorage.setItem('selectedCampaign', null);
+        }
         console.log('...... Token minted successfully', deployResult);
+        VIToast.success('NFT minted successfully');
         window.location.reload();
+        setIsMintClicked(false)
       } catch (err) {
         //   setErrStage(MintingStages.TX_PENDING);
+        VIToast.error(err);
       }
       //  setMintStage(MintingStages.TX_SUCCESS);
       setState({
@@ -238,16 +266,24 @@ const MintNFT = () => {
     }
   }
 
-  const setCampaignSelectedData = (e) => {
-    setCampaign(e.target.value);
-    let creatorPercentage = campaigns.filter((c) => c.id == e.target.value)[0]
+  const setCampaignSelectedData = (allcampains, value) => {
+    setCampaign(value);
+    let campaignPercentage = allcampains.filter((c) => c.id == value)[0]
       .requested_royalty;
-    setCreatorPercentage(100 - creatorPercentage);
+    setCreatorPercentage(100 - campaignPercentage);
+    setBeneficiaryPercentage(campaignPercentage);
   };
 
+  const checkURLValidation=(value)=>{
+    if(validator.isURL(value)){
+      setShowURLErrorMsg(false)
+    }else{
+      setShowURLErrorMsg(true)
+    }
+  }
+
   return (
-    <>
-      <Header />
+    <Layout>
 
       <div className='page-content bg-white'>
         {/* <!-- inner page banner --> */}
@@ -298,7 +334,12 @@ const MintNFT = () => {
                               name='campaign'
                               placeholder='Campaign'
                               className='form-control'
-                              onChange={(e) => setCampaignSelectedData(e)}
+                              onChange={(e) =>
+                                setCampaignSelectedData(
+                                  campaigns,
+                                  e.target.value
+                                )
+                              }
                               value={campaign}
                             >
                               {campaigns?.map(
@@ -328,6 +369,7 @@ const MintNFT = () => {
                               menuPortalTarget={document.body}
                               placeholder='Select...'
                               className='creatable-select'
+                              formatCreateLabel={(v)=>'Click here to create "'+ v +'" Collection'}
                             />
                           </Col>
                         </Row>
@@ -352,7 +394,7 @@ const MintNFT = () => {
                           <Col>
                             <input
                               type='text'
-                              placeholder='Name'
+                              placeholder='NFT Name'
                               name='name'
                               className='form-control'
                               onChange={(e) => handleChange(e)}
@@ -377,21 +419,24 @@ const MintNFT = () => {
                         <Row className='form-group'>
                           <Col>
                             {state.inputs.isImageURL ? (
-                              <input
+                             <> <input
                                 type='text'
                                 placeholder='Image URl'
                                 name='imageUrl'
                                 className='form-control'
-                                onChange={(e) =>
-                                  setUploadedImage(e.target.value)
+                                onChange={(e) =>{
+                                  setUploadedImage(e.target.value);
+                                  checkURLValidation(e.target.value);
+                                }
                                 }
                                 value={uploadedImageURL}
                               />
+                              {showURLErrorMsg&&<span className='text-danger'>Please enter Valid URL </span>}</>
                             ) : (
                               <ImageUploader
                                 singleImage
                                 withIcon={true}
-                                buttonText='Choose images'
+                                buttonText='Choose image'
                                 onChange={onDrop}
                                 imgExtension={['.jpg', '.gif', '.png']}
                                 maxFileSize={20209230}
@@ -422,12 +467,13 @@ const MintNFT = () => {
                         <Row className='form-group'>
                           <Col>
                             <input
-                              type='text'
+                              type='number'
                               placeholder='Price'
                               name='price'
                               className='form-control'
                               onChange={(e) => handleChange(e)}
                               value={state.inputs.price}
+                              min={0}
                             />
                           </Col>
                           <Col>
@@ -449,7 +495,7 @@ const MintNFT = () => {
                         <textarea
                           rows={4}
                           name='description'
-                          placeholder='Description'
+                          placeholder='NFT Description'
                           className='form-control'
                           onChange={(e) => handleChange(e)}
                           value={state.inputs.description}
@@ -459,9 +505,8 @@ const MintNFT = () => {
                     <Row className='form-group'>
                       <Col>
                         <p className='form-submit'>
-                          <input
+                          <button
                             type='button'
-                            value='Mint'
                             className='btn btn-success'
                             name='submit'
                             onClick={mintNFT}
@@ -473,9 +518,12 @@ const MintNFT = () => {
                               selectedCollectionValue === null ||
                               selectedCollectionValue?.value === '' ||
                               creator === '' ||
-                              state.inputs.name === ''
+                              state.inputs.name === ''||
+                              (state.inputs.isForSale&&state.inputs.price==="")||
+                              isMintClicked
                             }
-                          />
+                          >{isMintClicked?<Spinner  animation="border"
+                          variant="light"/>:'Mint'}</button>
                         </p>
                       </Col>
                     </Row>
@@ -490,8 +538,7 @@ const MintNFT = () => {
         {/* <!-- contact area  END --> */}
       </div>
 
-      <Footer />
-    </>
+    </Layout>
   );
 };
 

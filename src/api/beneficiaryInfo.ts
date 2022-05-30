@@ -2,7 +2,7 @@ import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from './campaignInfo';
 
 export async function getBeneficiaryDetails(beneficiaryId: string) {
-  const beneficiaryDetails = await cep47.getBeneficiary('1');
+  const beneficiaryDetails = await cep47.getBeneficiary(beneficiaryId);
   // console.log(`NFT ${beneficiaryId} beneficiary: `, beneficiaryDetails);
   return beneficiaryDetails;
 }
@@ -45,36 +45,34 @@ export async function getBeneficiariesCampaignsList() {
   const campaignsList = await getCampaignsList();
   const mappedBeneficiariesList: any = [];
 
-  beneficiariesList.find((beneficiary: any, index: any) =>
-    campaignsList.length
-      ? campaignsList.map((campaign: any) => {
-          !mappedBeneficiariesList.length &&
-            mappedBeneficiariesList.push({ ...beneficiary, campaigns: [] });
-          return (
-            beneficiary.address === campaign.wallet_address &&
-            mappedBeneficiariesList.find((newBeneficiary: any) => {
-              return beneficiary.id === newBeneficiary.id
-                ? mappedBeneficiariesList[index].campaigns.push(campaign)
-                : mappedBeneficiariesList.push({
-                    ...beneficiary,
-                    campaigns: [campaign],
-                  });
-            })
-          );
+  const pluckedCampaigns = campaignsList
+    .map(({ wallet_address }: any) => wallet_address)
+    .filter(
+      (creator: any, index: any, creators: any) =>
+        creators.indexOf(creator) === index
+    );
+
+  beneficiariesList.forEach((beneficiary: any) =>
+    pluckedCampaigns.includes(beneficiary.address)
+      ? mappedBeneficiariesList.push({
+          ...beneficiary,
+          campaigns: campaignsList.filter(
+            (campaign: any, index: any, campaigns: any) =>
+              campaign.wallet_address === beneficiary.address
+            // &&
+            // index ===
+            //   collections.findIndex(
+            //     (idx: any) => idx.name === collection.name
+            //   )
+          ),
         })
-      : mappedBeneficiariesList.push({ ...beneficiary, campaigns: [] })
+      : mappedBeneficiariesList.push({
+          ...beneficiary,
+          campaigns: [],
+        })
   );
+
   console.log(mappedBeneficiariesList);
 
   return mappedBeneficiariesList;
 }
-
-// mappedBeneficiariesList.reduce((a: any, b: any) => {
-//   const found = a.find((e: any) => e.id == b.id);
-//   return (
-//     found
-//       ? mappedBeneficiariesList.campaigns.push(b)
-//       : a.push({ ...newBeneficiary, campaigns: [campaign] }),
-//     a
-//   );
-// }, [])

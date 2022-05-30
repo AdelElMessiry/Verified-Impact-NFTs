@@ -3,7 +3,6 @@ import { Route, Switch } from 'react-router-dom';
 import { AuthProvider } from '../contexts/AuthContext';
 import Index4 from './Pages/Index4';
 import NFTDetail from './Pages/NFTDetail';
-import SingleCollection from './Pages/singleCollection';
 
 import ScrollToTop from './Element/ScrollToTop';
 import { HashRouter } from 'react-router-dom';
@@ -15,13 +14,14 @@ import AddCampaign from './Pages/Admin/AddCampaign';
 import MyCreations from './Pages/NFTs/MyCreations';
 import MintNFT from './Pages/Admin/MintNFT';
 import Profile from './Pages/Profile';
+import Header1 from './Layout/Header1';
 
-class Markup extends Component {
-  render() {
+const Markup =()=> {
     return (
       <AuthProvider>
         <HashRouter>
           <div className='page-wraper'>
+            <Header1/>
             <Switch>
               <Route path='/' exact component={Index4} />
               <Route path='/nft-detail' exact component={NFTDetail} />
@@ -31,7 +31,6 @@ class Markup extends Component {
                 component={BenefeiciaryNFTs}
               />
               <Route path='/CreatorNFTs' exact component={CreatorNFTs} />
-              <Route path='/collection' exact component={SingleCollection} />
               <Route path='/my-NFTs' exact component={MyNFTs} />
               <Route
                 path='/admin_beneficiary'
@@ -49,7 +48,7 @@ class Markup extends Component {
         </HashRouter>
       </AuthProvider>
     );
-  }
+  
 }
 
 export default Markup;
