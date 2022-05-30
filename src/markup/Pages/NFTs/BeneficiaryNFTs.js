@@ -92,13 +92,16 @@ const BeneficiaryNFTs = () => {
 
   //getting beneficiary details
   const getBeneficiaries = React.useCallback(async () => {
-    // const beneficiariesList = await getBeneficiariesList();
     const setSelectedBeneficiary =
       beneficiaries &&
       beneficiary &&
-      beneficiaries.find(({ address }) => beneficiary === address)?.name;
+      beneficiaries.find(({ name }) => beneficiary === name)?.name;
     setSelectedBeneficiary && setBeneficiaryDescription(setSelectedBeneficiary);
   }, [beneficiary, beneficiaries]);
+
+  React.useEffect(() => {
+    !beneficiaryDescription && getBeneficiaries();
+  }, [beneficiaryDescription, getBeneficiaries]);
 
   const getFilteredNFTs = React.useCallback(async () => {
     const captions = [];
@@ -107,20 +110,22 @@ const BeneficiaryNFTs = () => {
     const nftsList = nfts;
 
     if (beneficiary && !campaign) {
-      filteredNFTs = nftsList.filter(
-        (nft) => nft.beneficiaryName === beneficiary
-      );
+      filteredNFTs =
+        nftsList &&
+        nftsList.filter((nft) => nft.beneficiaryName === beneficiary);
     } else if (beneficiary && campaign) {
-      filteredNFTs = nftsList.filter(
-        (nft) =>
-          nft.beneficiaryName === beneficiary && nft.campaignName === campaign
-      );
+      filteredNFTs =
+        nftsList &&
+        nftsList.filter(
+          (nft) =>
+            nft.beneficiaryName === beneficiary && nft.campaignName === campaign
+        );
     } else {
-      filteredNFTs = nftsList;
+      filteredNFTs = nftsList && nftsList;
     }
 
     filteredNFTs && setFilteredNFTs(filteredNFTs);
-    filteredNFTs && setAllNFTs(filteredNFTs);
+    nftsList && setAllNFTs(nfts);
 
     //setting captions of nfts full screen mode
     filteredNFTs &&
@@ -129,15 +134,13 @@ const BeneficiaryNFTs = () => {
   }, [beneficiary, nfts, campaign]);
 
   React.useEffect(() => {
-    !filteredNFTs && getFilteredNFTs();
-    !allNFTs && getFilteredNFTs();
-    !beneficiaryDescription && getBeneficiaries();
+    // (!filteredNFTs || !allNFTs) &&
+    (campaign || beneficiary) && getFilteredNFTs();
   }, [
-    filteredNFTs,
-    allNFTs,
-    beneficiaryDescription,
+    // filteredNFTs, allNFTs,
     getFilteredNFTs,
-    getBeneficiaries,
+    campaign,
+    beneficiary,
   ]);
 
   const filterCollectionByTag = React.useCallback(
