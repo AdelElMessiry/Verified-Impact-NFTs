@@ -23,6 +23,7 @@ import { Spinner } from 'react-bootstrap';
 import { getCreatorsList } from '../../../api/creatorInfo';
 import { getCollectionsList } from '../../../api/collectionInfo';
 import Layout from '../../Layout';
+import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
 
 // Masonry section
 const masonryOptions = {
@@ -463,7 +464,8 @@ const MyCreations = () => {
                   <b>Price: </b>
                   {nftList[item].price} {nftList[item].currency}
                   &nbsp;&nbsp;
-                  <Iconimage nft={nftList[item]} />
+                  <Iconimage nft={nftList[item]} />&nbsp;&nbsp;{' '}
+                  {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (<NFTTwitterShare item={nftList[item]} />)}
                 </p>
               </div>
             );
