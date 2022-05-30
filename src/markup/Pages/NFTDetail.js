@@ -9,6 +9,7 @@ import VINftsTooltip from '../Element/Tooltip';
 
 import BuyNFTModal from '../Element/BuyNFT';
 import Layout from '../Layout';
+import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
 
 //nft details component
 const NFTDetail = () => {
@@ -128,7 +129,10 @@ const NFTDetail = () => {
                   <p className='d-flex align-content-center align-items-center'>
                     <b>Price: </b>
                     {item[0]?.price} {item[0]?.currency} &nbsp;&nbsp;
-                    <IconImage nft={item[0]} />
+                    <IconImage nft={item[0]} /> &nbsp;&nbsp;{' '}
+                    {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+                      <NFTTwitterShare item={item[0]} />
+                    )}
                   </p>
                 </div>
               </div>

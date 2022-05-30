@@ -9,6 +9,8 @@ import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 
 import { useNFTState } from '../../../contexts/NFTContext';
 
+import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
+import CampaignOrCollectionTwitterShare from '../../Element/TwitterShare/CampaignOrCollectionTwitterShare';
 import NFTCard from '../../Element/NFTCard';
 import VINftsTooltip from '../../Element/Tooltip';
 import BuyNFTModal from '../../Element/BuyNFT';
@@ -98,18 +100,21 @@ const CreatorNFTs = () => {
     const nftsList = nfts;
 
     if (creator && !collection) {
-      filteredNFTs = nftsList.filter((nft) => nft.creatorName === creator);
+      filteredNFTs =
+        nftsList && nftsList.filter((nft) => nft.creatorName === creator);
     } else if (creator && collection) {
-      filteredNFTs = nftsList.filter(
-        (nft) =>
-          nft.creatorName === creator && nft.collectionName === collection
-      );
+      filteredNFTs =
+        nftsList &&
+        nftsList.filter(
+          (nft) =>
+            nft.creatorName === creator && nft.collectionName === collection
+        );
     } else {
-      filteredNFTs = nftsList;
+      filteredNFTs = nftsList && nftsList;
     }
 
     filteredNFTs && setFilteredNFTs(filteredNFTs);
-    filteredNFTs && setAllNFTs(filteredNFTs);
+    nftsList && setAllNFTs(nfts);
 
     //setting captions of nfts full screen mode
     filteredNFTs &&
@@ -380,6 +385,10 @@ const CreatorNFTs = () => {
         {nft.price} {nft.currency}
         &nbsp;&nbsp;
         <IconImage nft={nft} />
+        &nbsp;&nbsp;{' '}
+        {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+          <NFTTwitterShare item={nft} />
+        )}
       </p>
     </div>
   );
@@ -399,6 +408,18 @@ const CreatorNFTs = () => {
                   {' '}
                   {collection ? collection : creator}
                 </span>
+                {collection &&
+                  process.env.REACT_APP_SHOW_TWITTER != 'false' && (
+                    <CampaignOrCollectionTwitterShare
+                      campaign={''}
+                      beneficiary={''}
+                      creator={creator}
+                      url={`https://verifiedimpactnfts.com/#/CreatorNFTs?creator=${creator.replace(
+                        / /g,
+                        '%20'
+                      )}&collection=${collection.replace(/ /g, '%20')}`}
+                    />
+                  )}
               </h1>
 
               <div className='breadcrumb-row'>
