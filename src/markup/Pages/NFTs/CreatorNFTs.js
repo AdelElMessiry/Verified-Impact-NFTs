@@ -118,7 +118,7 @@ const CreatorNFTs = () => {
     const captions = [];
     let filteredNFTs = [];
 
-    const nftsList = nfts;
+    const nftsList = nfts && nfts.filter(({ isForSale }) => isForSale === 'true');
 
     if (creator && !collection) {
       filteredNFTs =
