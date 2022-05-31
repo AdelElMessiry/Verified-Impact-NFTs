@@ -71,7 +71,6 @@ const BeneficiaryNFTs = () => {
   const [tagCollection, setTagCollection] = React.useState('All');
   const [tagCreator, setTagCreator] = React.useState('All');
   const [tagCampaign, setTagCampaign] = React.useState('All');
-  const [currentTagFilter, setCurrentTagFilter] = React.useState('All');
   const [openSlider, setOpenSlider] = React.useState(false);
   const [photoIndex, setPhotoIndex] = React.useState(0);
   const [sliderCaptions, setSliderCaptions] = React.useState([]);
@@ -85,10 +84,6 @@ const BeneficiaryNFTs = () => {
 
   const [allNFTs, setAllNFTs] = React.useState();
   const [filteredNFTs, setFilteredNFTs] = React.useState();
-  const [filteredCreatorsNFTs, setFilteredCreatorsNFTs] = React.useState();
-  const [filteredCampaignsNFTs, setFilteredCampaignsNFTs] = React.useState();
-  const [filteredCollectionsNFTs, setFilteredCollectionsNFTs] =
-    React.useState();
 
   //getting beneficiary details
   const getBeneficiaries = React.useCallback(async () => {
@@ -102,6 +97,55 @@ const BeneficiaryNFTs = () => {
   React.useEffect(() => {
     !beneficiaryDescription && getBeneficiaries();
   }, [beneficiaryDescription, getBeneficiaries]);
+
+  const filterCollectionByTag = React.useCallback(
+    (tag, filteredNFTs) => {
+      // currentTagFilter === 'collection'
+      //   ? allNFTs &&
+      //     allNFTs
+      //       .map(({ collectionName }) => (tag === 'All' ? collectionName : tag))
+      //       .filter((name, index, names) => names.indexOf(name) === index)
+      //   :
+      const collectionsTagsName =
+        filteredNFTs &&
+        filteredNFTs
+          .map(({ collectionName }) => (tag === 'All' ? collectionName : tag))
+          .filter((name, index, names) => names.indexOf(name) === index);
+      collectionsTagsName && setCollectionTags(['All', ...collectionsTagsName]);
+    },
+    []
+    // [currentTagFilter, allNFTs]
+  );
+
+  const filterCampaignByTag = React.useCallback((tag, filteredNFTs) => {
+    // currentTagFilter === 'campaign'
+    //   ? allNFTs &&
+    //     allNFTs
+    //       .map(({ campaignName }) => (tag === 'All' ? campaignName : tag))
+    //       .filter((name, index, names) => names.indexOf(name) === index)
+    //   :
+    const campaignsTagsName =
+      filteredNFTs &&
+      filteredNFTs
+        .map(({ campaignName }) => (tag === 'All' ? campaignName : tag))
+        .filter((name, index, names) => names.indexOf(name) === index);
+    campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
+  }, []);
+
+  const filterCreatorByTag = React.useCallback((tag, filteredNFTs) => {
+    // currentTagFilter === 'creator'
+    //   ? allNFTs &&
+    //     allNFTs
+    //       .map(({ creatorName }) => (tag === 'All' ? creatorName : tag))
+    //       .filter((name, index, names) => names.indexOf(name) === index)
+    //   :
+    const creatorsTagsName =
+      filteredNFTs &&
+      filteredNFTs
+        .map(({ creatorName }) => (tag === 'All' ? creatorName : tag))
+        .filter((name, index, names) => names.indexOf(name) === index);
+    creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
+  }, []);
 
   const getFilteredNFTs = React.useCallback(async () => {
     const captions = [];
@@ -125,72 +169,34 @@ const BeneficiaryNFTs = () => {
     }
 
     filteredNFTs && setFilteredNFTs(filteredNFTs);
-    nftsList && setAllNFTs(nfts);
+    filteredNFTs && filterCollectionByTag('All', filteredNFTs);
+    filteredNFTs && filterCampaignByTag('All', filteredNFTs);
+    filteredNFTs && filterCreatorByTag('All', filteredNFTs);
+    filteredNFTs && setAllNFTs(filteredNFTs);
 
     //setting captions of nfts full screen mode
     filteredNFTs &&
       filteredNFTs.forEach((nft) => captions.push(CaptionItem(nft)));
     filteredNFTs && captions.length && setSliderCaptions(captions);
-  }, [beneficiary, nfts, campaign]);
-
-  React.useEffect(() => {
-    // (!filteredNFTs || !allNFTs) &&
-    (campaign || beneficiary) && getFilteredNFTs();
   }, [
-    // filteredNFTs, allNFTs,
-    getFilteredNFTs,
-    campaign,
     beneficiary,
+    nfts,
+    filterCollectionByTag,
+    filterCampaignByTag,
+    filterCreatorByTag,
+    campaign,
   ]);
 
-  const filterCollectionByTag = React.useCallback(
-    (tag, filteredNFTs) =>
-      currentTagFilter === 'collection'
-        ? allNFTs &&
-          allNFTs
-            .map(({ collectionName }) => (tag === 'All' ? collectionName : tag))
-            .filter((name, index, names) => names.indexOf(name) === index)
-        : filteredNFTs &&
-          filteredNFTs
-            .map(({ collectionName }) => (tag === 'All' ? collectionName : tag))
-            .filter((name, index, names) => names.indexOf(name) === index),
-    [currentTagFilter, allNFTs]
-  );
-
-  const filterCampaignByTag = React.useCallback(
-    (tag, filteredNFTs) =>
-      currentTagFilter === 'campaign'
-        ? allNFTs &&
-          allNFTs
-            .map(({ campaignName }) => (tag === 'All' ? campaignName : tag))
-            .filter((name, index, names) => names.indexOf(name) === index)
-        : filteredNFTs &&
-          filteredNFTs
-            .map(({ campaignName }) => (tag === 'All' ? campaignName : tag))
-            .filter((name, index, names) => names.indexOf(name) === index),
-    [currentTagFilter, allNFTs]
-  );
-
-  const filterCreatorByTag = React.useCallback(
-    (tag, filteredNFTs) =>
-      currentTagFilter === 'creator'
-        ? allNFTs &&
-          allNFTs
-            .map(({ creatorName }) => (tag === 'All' ? creatorName : tag))
-            .filter((name, index, names) => names.indexOf(name) === index)
-        : filteredNFTs &&
-          filteredNFTs
-            .map(({ creatorName }) => (tag === 'All' ? creatorName : tag))
-            .filter((name, index, names) => names.indexOf(name) === index),
-    [currentTagFilter, allNFTs]
-  );
+  React.useEffect(() => {
+    getFilteredNFTs();
+  }, [getFilteredNFTs]);
 
   const getCollectionsBasedOnTag = React.useCallback(
     (tag = 'All') => {
       setTagCollection(tag);
       setTagCreator('All');
       setTagCampaign('All');
-      setCurrentTagFilter('collection');
+
       const collectionsTagsName =
         allNFTs && filterCollectionByTag(tag, allNFTs);
       collectionsTagsName && setCollectionTags(['All', ...collectionsTagsName]);
@@ -200,8 +206,6 @@ const BeneficiaryNFTs = () => {
       );
 
       filteredCollectionsNFTs && setFilteredNFTs(filteredCollectionsNFTs);
-      filteredCollectionsNFTs &&
-        setFilteredCollectionsNFTs(filteredCollectionsNFTs);
 
       const campaignsTagsName =
         filteredCollectionsNFTs &&
@@ -221,7 +225,7 @@ const BeneficiaryNFTs = () => {
       setTagCampaign(tag);
       setTagCreator('All');
       setTagCollection('All');
-      setCurrentTagFilter('campaign');
+
       const campaignsTagsName = allNFTs && filterCampaignByTag(tag, allNFTs);
 
       campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
@@ -233,7 +237,6 @@ const BeneficiaryNFTs = () => {
         );
 
       filteredCampaignsNFTs && setFilteredNFTs(filteredCampaignsNFTs);
-      filteredCampaignsNFTs && setFilteredCampaignsNFTs(filteredCampaignsNFTs);
 
       const collectionsTagsName =
         filteredCampaignsNFTs &&
@@ -253,7 +256,6 @@ const BeneficiaryNFTs = () => {
       setTagCreator(tag);
       setTagCollection('All');
       setTagCampaign('All');
-      setCurrentTagFilter('creator');
 
       const creatorsTagsName = allNFTs && filterCreatorByTag(tag, allNFTs);
 
@@ -266,7 +268,6 @@ const BeneficiaryNFTs = () => {
         );
 
       filteredCreatorsNFTs && setFilteredNFTs(filteredCreatorsNFTs);
-      filteredCreatorsNFTs && setFilteredCreatorsNFTs(filteredCreatorsNFTs);
 
       const collectionsTagsName =
         filteredCreatorsNFTs &&
@@ -287,19 +288,19 @@ const BeneficiaryNFTs = () => {
     ]
   );
 
-  React.useEffect(() => {
-    allNFTs && !filteredCollectionsNFTs && getCollectionsBasedOnTag();
-    allNFTs && !filteredCampaignsNFTs && getCampaignsBasedOnTag();
-    allNFTs && !filteredCreatorsNFTs && getCreatorsBasedOnTag();
-  }, [
-    allNFTs,
-    filteredCollectionsNFTs,
-    filteredCampaignsNFTs,
-    filteredCreatorsNFTs,
-    getCollectionsBasedOnTag,
-    getCampaignsBasedOnTag,
-    getCreatorsBasedOnTag,
-  ]);
+  // React.useEffect(() => {
+  //   allNFTs && !filteredCollectionsNFTs && getCollectionsBasedOnTag();
+  //   allNFTs && !filteredCampaignsNFTs && getCampaignsBasedOnTag();
+  //   allNFTs && !filteredCreatorsNFTs && getCreatorsBasedOnTag();
+  // }, [
+  //   allNFTs,
+  //   filteredCollectionsNFTs,
+  //   filteredCampaignsNFTs,
+  //   filteredCreatorsNFTs,
+  //   getCollectionsBasedOnTag,
+  //   getCampaignsBasedOnTag,
+  //   getCreatorsBasedOnTag,
+  // ]);
 
   //function returns button of buying NFT
   const IconImage = ({ nft }) => {
