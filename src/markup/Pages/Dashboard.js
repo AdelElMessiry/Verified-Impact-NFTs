@@ -58,7 +58,7 @@ const Dashboard = () => {
   const getNftsList = React.useCallback(async () => {
     let nftsList;
     if (!allNfts) {
-      nftsList = nfts && nfts;
+      nftsList = nfts && nfts.filter(({ isForSale }) => isForSale === 'true');
       nftsList && setAllNfts(nfts);
       nfts && setSelectedNFT(nfts);
       nfts &&
