@@ -249,7 +249,7 @@
 	display: inline-block;
 }
 .choseus-tabs .nav li a.active{
-	color:#fff;
+	color:#6cc000;
 }
 .chosesus-content .list-checked li:before{
 	content:"\e64d";
