@@ -19,7 +19,7 @@ import PageTitle from '../../Layout/PageTitle';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import PromptLogin from '../PromptLogin';
 import Layout from '../../Layout';
-
+import { sendDiscordMessage } from '../../../utils/discordEvents';
 //minting new nft page
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
@@ -239,7 +239,10 @@ const MintNFT = () => {
           localStorage.setItem('selectedCampaign', null);
         }
         console.log('...... Token minted successfully', deployResult);
+
         VIToast.success('NFT minted successfully');
+        //NOTE: every channel has a special keys and tokens sorted on .env file 
+      //  sendDiscordMessage( process.env.REACT_APP_NFT_WEBHOOK_ID, process.env.REACT_APP_NFT_TOKEN, beneficiaryInputs.name , "" ,`Great news! [set the nft name] NFT  has been added to #verified-impact-nfts click here to know more about their cause.`)
         window.location.reload();
         setIsMintClicked(false)
       } catch (err) {
