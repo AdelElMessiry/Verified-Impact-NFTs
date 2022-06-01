@@ -13,6 +13,7 @@ import PageTitle from '../../Layout/PageTitle';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { toast as VIToast } from 'react-toastify';
 import Layout from '../../Layout';
+import { sendDiscordMessage } from '../../../utils/discordEvents';
 
 //add new beneficiary page
 const AddBeneficiary = () => {
@@ -44,13 +45,14 @@ const AddBeneficiary = () => {
     const deployResult = await getDeployDetails(savedBeneficiary);
     console.log('...... Beneficiary saved successfully', deployResult);
     VIToast.success("Beneficiary saved successfully");
-
+    sendDiscordMessage( process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID, process.env.REACT_APP_BENEFICIARIES_TOKEN, beneficiaryInputs.name , "" ,`Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts click here to know more about their cause.`)
     setBeneficiaryInputs({
       name: '',
       description: '',
       address: '',
     });
   };
+
 
   return (
     <>
