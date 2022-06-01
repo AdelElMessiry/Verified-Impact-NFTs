@@ -2,16 +2,12 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
-import pic6 from './../../images/icon/icon1.png';
-import pic7 from './../../images/icon/plus.png';
-import pic8 from './../../images/main-slider/slide6.jpg';
 import Layout from '../Layout';
 import bnr1 from './../../images/banner/bnr1.jpg';
 import PromptLogin from './PromptLogin';
 import { useAuth } from '../../contexts/AuthContext';
-import { Row,Col } from 'react-bootstrap';
 import ProfileForm from '../Element/profileForm';
-
+import {ProfileFormsEnum} from "../../Enums/index"
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('1');
@@ -19,21 +15,21 @@ const Profile = () => {
   //setting initial values of controls
   const [state, setState] = useState({
     inputs: {
-		userName:"",
-shortTagLine:"",
-profileImageURL:"",
-profileNFT:"",
-firstName:"",
-lastName:"",
-eullBio:"",
-externalSiteLink:"",
-phone:"",
-twitter:"",
-instagram:"",
-facebook:"",
-medium:"",
-email:"",
-telegram:"",
+      userName: '',
+      shortTagLine: '',
+      profileImageURL: '',
+      profileNFT: '',
+      firstName: '',
+      lastName: '',
+      eullBio: '',
+      externalSiteLink: '',
+      phone: '',
+      twitter: '',
+      instagram: '',
+      facebook: '',
+      medium: '',
+      email: '',
+      telegram: '',
     },
   });
 
@@ -43,14 +39,14 @@ telegram:"",
   };
 
   const handleChange = (e, isBeneficiary = false) => {
-      const { value, name, checked, type } = e.target;
-      const { inputs } = state;
+    const { value, name, checked, type } = e.target;
+    const { inputs } = state;
 
-      inputs[name] = type === 'checkbox' ? checked : value;
-      setState({
-        ...state,
-        inputs,
-      });
+    inputs[name] = type === 'checkbox' ? checked : value;
+    setState({
+      ...state,
+      inputs,
+    });
   };
 
   return (
@@ -108,9 +104,7 @@ telegram:"",
                         toggle('2');
                       }}
                     >
-                      <span className="title-head">
-                        Creator Profile
-                      </span>
+                      <span className="title-head">Creator Profile</span>
                     </Link>
                   </li>
                   <li>
@@ -121,9 +115,7 @@ telegram:"",
                         toggle('3');
                       }}
                     >
-                      <span className="title-head">
-                        Beneficiary Profile
-                      </span>
+                      <span className="title-head">Beneficiary Profile</span>
                     </Link>
                   </li>
                 </ul>
@@ -134,13 +126,13 @@ telegram:"",
                 <div id="cost" className="tab-pane active py-5">
                   <TabContent activeTab={activeTab}>
                     <TabPane tabId="1">
-					<ProfileForm/>
+                      <ProfileForm formName={ProfileFormsEnum.UserProfile}/>
                     </TabPane>
                     <TabPane tabId="2">
-                     <ProfileForm isCollection={true}/>
+                      <ProfileForm formName={ProfileFormsEnum.CreatorProfile} />
                     </TabPane>
                     <TabPane tabId="3">
-                      <ProfileForm/>
+                      <ProfileForm  formName={ProfileFormsEnum.BeneficiaryProfile} />
                     </TabPane>
                   </TabContent>
                 </div>

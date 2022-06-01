@@ -102,11 +102,12 @@ const HeaderMenu = () => {
                     My Creations
                   </Link>
                 </li>
-                <li>
+                {/* commented untill compelete phase2 */}
+                {/* <li>
                   <Link to={'./profile'} className='dez-page'>
                     Profile
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </>
           )}
