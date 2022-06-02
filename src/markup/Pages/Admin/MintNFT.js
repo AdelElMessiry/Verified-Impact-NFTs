@@ -243,6 +243,12 @@ const MintNFT = () => {
         VIToast.success('NFT minted successfully');
         //NOTE: every channel has a special keys and tokens sorted on .env file 
       //  sendDiscordMessage( process.env.REACT_APP_NFT_WEBHOOK_ID, process.env.REACT_APP_NFT_TOKEN, beneficiaryInputs.name , "" ,`Great news! [set the nft name] NFT  has been added to #verified-impact-nfts click here to know more about their cause.`)
+      if(isCreateNewCollection){
+        //add collection discord
+      }
+      if(!isCreatorExist){
+        //add creator discoed
+      }
         window.location.reload();
         setIsMintClicked(false)
       } catch (err) {
