@@ -247,7 +247,7 @@ const MintNFT = () => {
         //add collection discord
       }
       if(!isCreatorExist){
-        //add creator discoed
+        //add creator discord
       }
         window.location.reload();
         setIsMintClicked(false)
