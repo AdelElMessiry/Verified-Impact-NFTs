@@ -12,41 +12,9 @@ import {ProfileFormsEnum} from "../../Enums/index"
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('1');
   const { isLoggedIn } = useAuth();
-  //setting initial values of controls
-  const [state, setState] = useState({
-    inputs: {
-      userName: '',
-      shortTagLine: '',
-      profileImageURL: '',
-      profileNFT: '',
-      firstName: '',
-      lastName: '',
-      eullBio: '',
-      externalSiteLink: '',
-      phone: '',
-      twitter: '',
-      instagram: '',
-      facebook: '',
-      medium: '',
-      email: '',
-      telegram: '',
-    },
-  });
 
   const toggle = (tab) => {
-    debugger;
     if (activeTab !== tab) setActiveTab(tab);
-  };
-
-  const handleChange = (e, isBeneficiary = false) => {
-    const { value, name, checked, type } = e.target;
-    const { inputs } = state;
-
-    inputs[name] = type === 'checkbox' ? checked : value;
-    setState({
-      ...state,
-      inputs,
-    });
   };
 
   return (

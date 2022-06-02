@@ -15,6 +15,7 @@ import MyCreations from './Pages/NFTs/MyCreations';
 import MintNFT from './Pages/Admin/MintNFT';
 import Profile from './Pages/Profile';
 import Header1 from './Layout/Header1';
+import ManageBeneficiaries from './Pages/Admin/ManageBeneficiaries';
 
 const Markup =()=> {
     return (
@@ -41,6 +42,7 @@ const Markup =()=> {
               <Route path='/my-creations' exact component={MyCreations} />
               <Route path='/mint-nft' exact component={MintNFT} />
               <Route path='/profile' exact component={Profile} />
+              <Route path='/manage-beneficiaries' exact component={ManageBeneficiaries} />
             </Switch>
           </div>
           <ScrollToTop />
