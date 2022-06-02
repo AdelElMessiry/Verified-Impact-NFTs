@@ -14,7 +14,7 @@ import Layout from '../../Layout';
 const ManageBeneficiaries = () => {
   const { isLoggedIn } = useAuth();
   const [beneficiaries, setBeneficiaries] = useState();
-  const [masterChecked, setMasterChecked] = useState(true);
+  const [masterChecked, setMasterChecked] = useState(false);
   const [selectedList, setSelectedList] = useState([]);
 
   //getting beneficiary list
@@ -94,6 +94,11 @@ const ManageBeneficiaries = () => {
               <div>
                 <div className=" m-auto m-b30">
                   <Container>
+                    <Row className='mb-4'>
+                      <Col>
+                      <button disabled={selectedList.length<=0} className='btn btn-success'> Approve {selectedList.length} Beneficiaries </button>
+                      </Col>
+                    </Row>
                     <Row>
                       <Col>
                         <table className="table">
