@@ -5,6 +5,7 @@ import VINFTsTooltip from './Tooltip';
 import BuyNFTModal from './BuyNFT';
 import ListForSaleNFTModal from './ListForSaleNFT';
 import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
+import QRCode from "react-qr-code";
 
 //NFT Card component
 const NFTCard = ({
@@ -168,7 +169,10 @@ const NFTCard = ({
                 <b>Price: </b>
                 {item.price} {item.currency}
               </p>
-              <Iconimage />
+              <p className='d-flex align-items-center'> <Iconimage />
+             
+              <QRCode value={`https://verifiedimpactnfts.com/#/nft-detail?id=${item.tokenId}`} size={80} />
+              </p>
             </div>
           </div>
         </div>

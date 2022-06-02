@@ -27,6 +27,8 @@ import { Spinner } from 'react-bootstrap';
 import Layout from '../Layout';
 import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
 import CampaignOrCollectionTwitterShare from '../Element/TwitterShare/CampaignOrCollectionTwitterShare';
+import QRCode from "react-qr-code";
+
 //Light Gallery on icon click
 
 const Index4 = () => {
@@ -80,14 +82,14 @@ const Index4 = () => {
         //mappign nft details addresses and ids to names
         if (
           creatorsList?.length > 0 &&
-          beneficiaries?.length > 0 &&
+          beneficiaryList?.length > 0 &&
           newNFTList?.length > 0 &&
           collectionsList?.length > 0
         ) {
           newNFTList
             .filter((n) => n.isForSale == 'true')
             .forEach(async (element) => {
-              let selectedBene = beneficiaries.filter(
+              let selectedBene = beneficiaryList.filter(
                 (b) => b.address === element.beneficiary
               );
               let selectedCampaign = selectedBene[0]?.campaigns?.filter(
@@ -106,10 +108,9 @@ const Index4 = () => {
 
               nftList.push(element);
             });
-          !allNfts && setAllNfts(nftList);
-          !allNfts && setSelectedNFT(nftList);
+          setAllNfts(nftList);
+          setSelectedNFT(nftList);
           console.log(newNFTList);
-
           setCsprSum(
             nftList
               .map((a) => Number(a.price))
@@ -226,6 +227,9 @@ const Index4 = () => {
             {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
               <NFTTwitterShare item={data[item]} />
             )}
+             &nbsp;&nbsp;{' '}
+             <QRCode value={`https://verifiedimpactnfts.com/#/nft-detail?id=${data[item].tokenId}`} size={80} />
+             
           </p>
         </div>
       );
@@ -356,7 +360,7 @@ const Index4 = () => {
               )}
             </div>
             <div className="col">
-              {allNfts && selectedNFT && displayedCampaigns  ? (
+              {allNfts && displayedCampaigns  ? (
                 <>
                   {' '}
                   <span>{allNfts?.length}</span> NFTs

@@ -24,6 +24,7 @@ import { getCreatorsList } from '../../../api/creatorInfo';
 import { getCollectionsList } from '../../../api/collectionInfo';
 import Layout from '../../Layout';
 import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
+import QRCode from 'react-qr-code';
 
 // Masonry section
 const masonryOptions = {
@@ -466,6 +467,8 @@ const MyCreations = () => {
                   &nbsp;&nbsp;
                   <Iconimage nft={nftList[item]} />&nbsp;&nbsp;{' '}
                   {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (<NFTTwitterShare item={nftList[item]} />)}
+                  &nbsp;&nbsp;{' '}
+                 <QRCode value={`https://verifiedimpactnfts.com/#/nft-detail?id=${nftList[item].tokenId}`} size={80} />
                 </p>
               </div>
             );
