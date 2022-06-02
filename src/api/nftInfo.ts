@@ -139,3 +139,24 @@ export async function getMappedNfts() {
     uniqueCollections,
   };
 }
+
+export function getMappedNftsByList(
+  nftsList: any,
+  beneficiariesList: any,
+  campaignsList: any,
+  creatorsList: any,
+  collectionsList: any
+) {
+  return nftsList.forEach((nft: any) => ({
+    ...nft,
+    campaignName: campaignsList.find(({ id }: any) => nft.campaign === id).name,
+    creatorName: creatorsList.find(
+      ({ address }: any) => nft.creator === address
+    ).name,
+    beneficiaryName: beneficiariesList.find(
+      ({ address }: any) => nft.beneficiary === address
+    ).name,
+    collectionName: collectionsList.find(({ id }: any) => nft.collection === id)
+      .name,
+  }));
+}
