@@ -24,7 +24,7 @@ const ManageBeneficiaries = () => {
       let beneficiaryList = !beneficiaries && (await getBeneficiariesList());
       !beneficiaries &&
         beneficiaryList.forEach(async (element) => {
-          element['isApproved'] = true;
+          element['isApproved'] = false;
           newList.push(element);
         });
       !beneficiaries && setBeneficiaries(newList);
@@ -33,14 +33,16 @@ const ManageBeneficiaries = () => {
 
   // Select/ UnSelect Table rows
   const onMasterCheck = (e) => {
+    debugger
     let tempList = beneficiaries;
     // Check/ UnCheck All Items
-    tempList.map((user) => (user.selected = e.target.checked));
+    tempList.map((beneficiary) => (beneficiary.isApproved = e.target.checked));
 
     //Update State
     setMasterChecked(e.target.checked);
     setBeneficiaries(tempList);
-    setSelectedList(beneficiaries.filter((e) => e.selected));
+    setSelectedList(beneficiaries.filter((beneficiary) => beneficiary.isApproved));
+    debugger;
   };
 
   // Update List Item's state and Master Checkbox State
@@ -48,24 +50,24 @@ const ManageBeneficiaries = () => {
     let tempList = beneficiaries;
     tempList.map((beneficiary) => {
       if (beneficiary.id === item.id) {
-        beneficiary.selected = e.target.checked;
+        beneficiary.isApproved = e.target.checked;
       }
       return beneficiary;
     });
 
     //To Control Master Checkbox State
     const totalItems = beneficiaries.length;
-    const totalCheckedItems = tempList.filter((e) => e.selected).length;
+    const totalCheckedItems = tempList.filter((beneficiary) => beneficiary.isApproved).length;
 
     // Update State
     setMasterChecked(totalItems === totalCheckedItems);
     setBeneficiaries(tempList);
-    setSelectedList(beneficiaries.filter((e) => e.selected));
+    setSelectedList(beneficiaries.filter((beneficiary) => beneficiary.isApproved));
   };
 
   // Event to get selected rows(Optional)
   const getSelectedRows = () => {
-    setSelectedList(beneficiaries.filter((e) => e.selected));
+    setSelectedList(beneficiaries.filter((beneficiary) => beneficiary.isApproved));
   };
 
   return (
@@ -102,7 +104,7 @@ const ManageBeneficiaries = () => {
                                   type={'checkbox'}
                                   id={"mastercheck"}
                                   onChange={(e) => onMasterCheck(e)}
-                                  value={masterChecked}
+                                  checked={masterChecked}
                                   label={""}
                                   name="masterChecked"
                                 />
@@ -124,7 +126,7 @@ const ManageBeneficiaries = () => {
                                   <th scope="row">
                                     <Form.Check
                                       type={"checkbox"}
-                                      value={beneficiary.isApproved}
+                                      checked={beneficiary.isApproved}
                                       id={`rowcheck${beneficiary.address}`}
                                       onChange={(e) =>
                                         onItemCheck(e, beneficiary)
