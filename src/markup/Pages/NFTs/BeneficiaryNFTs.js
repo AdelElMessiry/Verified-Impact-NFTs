@@ -585,4 +585,5 @@ const BeneficiaryNFTs = () => {
     </Layout>
   );
 };
+
 export default BeneficiaryNFTs;
