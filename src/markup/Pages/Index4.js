@@ -2,7 +2,7 @@ import React, { useState, useEffect, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper } from 'simple-react-lightbox';
-import { VideoPopup2 } from './../Element/VideoPopup';
+import  VideoPopup  from './../Element/VideoPopup';
 import NFTCard from '../Element/NFTCard';
 //Images..
 import bgimg from './../../images/main-slider/slide6.jpg';
@@ -287,7 +287,7 @@ const Index4 = () => {
                 <Link to={'#'} className='site-button white btn-icon'>
                   Read more <i className='fa fa-angle-double-right'></i>
                 </Link>
-                <VideoPopup2 />
+                <VideoPopup />
               </div>
             </div>
           </div>
