@@ -8,6 +8,7 @@ const CampaignOrCollectionTwitterShare = ({
   url = '',
   creator = '',
   collection = '',
+  beneficiaryPercentage=''
 }) => {
   return (
     <TwitterShareButton
@@ -22,8 +23,8 @@ const CampaignOrCollectionTwitterShare = ({
       }
       title={
         beneficiary !== ''
-          ? `I support the #NFT "${campaign}" campaign, 80% of the proceeds go to the "${beneficiary}". Check it out at `
-          : `I support the #NFT "${collection}" collection, 80% of the proceeds go to the "${creator}". Check it out at `
+          ? `I support the #NFT "${campaign}" campaign, ${beneficiaryPercentage}% of the proceeds go to the "${beneficiary}". Check it out at `
+          : `I support the #NFT "${collection}" collection, ${beneficiaryPercentage}% of the proceeds go to the "${creator}". Check it out at `
       }
     >
       <TwitterIcon
