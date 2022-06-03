@@ -20,6 +20,7 @@ import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
 import Layout from '../../Layout';
 import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
 import CampaignOrCollectionTwitterShare from '../../Element/TwitterShare/CampaignOrCollectionTwitterShare';
+import QRCode from 'react-qr-code';
 
 // Masonry section
 const masonryOptions = {
@@ -447,6 +448,8 @@ const CreatorNFTs = () => {
               {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
                 <NFTTwitterShare item={Data[item]} />
               )}
+                &nbsp;&nbsp;{' '}
+             <QRCode value={`https://verifiedimpactnfts.com/#/nft-detail?id=${Data[item].tokenId}`} size={80} />
             </p>
           </div>
         );
