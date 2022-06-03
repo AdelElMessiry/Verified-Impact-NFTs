@@ -48,6 +48,7 @@ const Index4 = () => {
   const [allCollections, setCollections] = useState();
   const [displayedCampaigns, setDisplayedCampaigns] = useState();
   const [selectedCampaign, setSelectedCampaign] = useState();
+  const [beneficiaryPercentage, setBeneficiaryPercentage] = useState();
 
   useEffect(() => {
     (async () => {
@@ -75,6 +76,7 @@ const Index4 = () => {
           ? await getBeneficiariesCampaignsList()
           : [];
         !beneficiaries && setbeneficiaries(beneficiaryList);
+        !beneficiaries && setBeneficiaryPercentage(beneficiaryList[0]?.campaigns[0]?.requested_royalty);
         let creatorsList = !allCreators && (await getCreatorsList());
         !allCreators && setCreators(creatorsList);
         let collectionsList = !allCollections && (await getCollectionsList());
@@ -438,6 +440,7 @@ const Index4 = () => {
                 <CampaignOrCollectionTwitterShare
                   campaign={NFts[0].campaignName}
                   beneficiary={NFts[0].beneficiaryName}
+                  beneficiaryPercentage={beneficiaryPercentage}
                 />
               )}
                     </h4>

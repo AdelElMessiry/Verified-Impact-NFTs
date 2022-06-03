@@ -87,6 +87,7 @@ const CreatorNFTs = () => {
   const [beneficiaries, setbeneficiaries] = useState();
   const [allCreators, setCreators] = useState();
   const [allCollections, setCollections] = useState();
+  const [beneficiaryPercentage, setBeneficiaryPercentage] = useState();
 
   //function returns button of buying NFT
   const Iconimage = ({ nft }) => {
@@ -269,6 +270,7 @@ const CreatorNFTs = () => {
         let beneficiaryList =
           !beneficiaries && (await getBeneficiariesCampaignsList());
         !beneficiaries && setbeneficiaries(beneficiaryList);
+        !beneficiaries && setBeneficiaryPercentage(beneficiaryList[0]?.campaigns[0]?.requested_royalty);
         let creatorsList = !allCreators && (await getCreatorsList());
         !allCreators && setCreators(creatorsList);
         let collectionsList = !allCollections && (await getCollectionsList());
@@ -482,7 +484,7 @@ const CreatorNFTs = () => {
                   {collection ? collection : creator}
                 </span>
                 {collection && process.env.REACT_APP_SHOW_TWITTER != "false" &&(
-                  <CampaignOrCollectionTwitterShare campaign={""} beneficiary={""} creator={creator} url={`https://verifiedimpactnfts.com/#/CreatorNFTs?creator=${creator.replace(/ /g,"%20")}&collection=${collection.replace(/ /g,"%20")}`}/>
+                    <CampaignOrCollectionTwitterShare campaign={""} beneficiary={""} collection={collection} creator={creator} url={`https://verifiedimpactnfts.com/#/CreatorNFTs?creator=${creator.replace(/ /g,"%20")}&collection=${collection.replace(/ /g,"%20")}`} beneficiaryPercentage={beneficiaryPercentage}/>
               
                 )}
               </h1>
