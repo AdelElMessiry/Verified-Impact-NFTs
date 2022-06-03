@@ -49,6 +49,7 @@ const Index4 = () => {
   const [displayedCampaigns, setDisplayedCampaigns] = useState();
   const [selectedCampaign, setSelectedCampaign] = useState();
   const [beneficiaryPercentage, setBeneficiaryPercentage] = useState();
+  const [nftsLength, setNFTsLength] = useState();
 
   useEffect(() => {
     (async () => {
@@ -113,6 +114,7 @@ const Index4 = () => {
           setAllNfts(nftList);
           setSelectedNFT(nftList);
           console.log(newNFTList);
+          setNFTsLength(nftList.length);
           setCsprSum(
             nftList
               .map((a) => Number(a.price))
@@ -365,7 +367,7 @@ const Index4 = () => {
               {allNfts && displayedCampaigns  ? (
                 <>
                   {' '}
-                  <span>{allNfts?.length}</span> NFTs
+                  <span>{nftsLength}</span> NFTs
                 </>
               ) : (
                 <>
