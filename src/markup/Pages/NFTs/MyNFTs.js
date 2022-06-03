@@ -437,7 +437,7 @@ const MyNFTs = () => {
                   <Iconimage nft={nftList[item]} />&nbsp;&nbsp;{' '}{process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
                 <NFTTwitterShare item={nftList[item]} />)}
                   &nbsp;&nbsp;{' '}
-                <QRCode value={`https://verifiedimpactnfts.com/#/nft-detail?id=${nftList[item].tokenId}`} size={80} />
+                <QRCode value={`${window.location.origin}/#/nft-detail?id=${nftList[item].tokenId}`} size={80} />
                 </p>
               </div>
             );
