@@ -87,6 +87,7 @@ const BenefeiciaryNFTs = () => {
   const [showBuyModal, setShowBuyModal] = useState(false);
   const [selectedNFT, setSelectedNFT] = useState();
   const [beneficiaryDescription, setBeneficiaryDescription] = useState();
+  const [beneficiaryPercentage, setBeneficiaryPercentage] = useState();
   const [beneficiaries, setbeneficiaries] = useState();
   const [allCreators, setCreators] = useState();
   const [allCollections, setCollections] = useState();
@@ -290,6 +291,7 @@ const BenefeiciaryNFTs = () => {
           ? await getBeneficiariesCampaignsList()
           : [];
         !beneficiaries && setbeneficiaries(beneficiaryList);
+        !beneficiaries && setBeneficiaryPercentage(beneficiaryList[0]?.campaigns[0]?.requested_royalty);
         let creatorsList = !allCreators && (await getCreatorsList());
         !allCreators && setCreators(creatorsList);
         let collectionsList = !allCollections && (await getCollectionsList());
@@ -524,6 +526,7 @@ const BenefeiciaryNFTs = () => {
                             '%20'
                           )}&collection=${campaign.replace(/ /g, '%20')}`
                     }
+                    beneficiaryPercentage={beneficiaryPercentage}
                   />
                 )}
               </h1>
