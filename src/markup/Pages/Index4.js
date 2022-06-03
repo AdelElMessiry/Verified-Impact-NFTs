@@ -232,7 +232,7 @@ const Index4 = () => {
               <NFTTwitterShare item={data[item]} />
             )}
              &nbsp;&nbsp;{' '}
-             <QRCode value={`https://verifiedimpactnfts.com/#/nft-detail?id=${data[item].tokenId}`} size={80} />
+             <QRCode value={`${window.location.origin}/#/nft-detail?id=${data[item].tokenId}`} size={80} />
              
           </p>
         </div>
