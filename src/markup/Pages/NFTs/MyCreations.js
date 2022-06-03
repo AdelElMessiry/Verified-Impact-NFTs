@@ -1,59 +1,63 @@
-import React, { Component, useState, useEffect, Fragment } from 'react';
+import React from 'react';
 import SimpleReactLightbox from 'simple-react-lightbox';
-import { SRLWrapper, useLightbox } from 'simple-react-lightbox';
-
+import { SRLWrapper } from 'simple-react-lightbox';
 import Masonry from 'react-masonry-component';
-import NFTCard from '../../Element/NFTCard';
-//images
-import bnr1 from './../../../images/banner/bnr1.jpg';
-import plusIcon from './../../../images/icon/plus.png';
-
+import { Spinner } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Lightbox from 'react-image-lightbox';
 import { Link } from 'react-router-dom';
 
-import VINftsTooltip from '../../Element/Tooltip';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useNFTState } from '../../../contexts/NFTContext';
 import { getCreatorNftList } from '../../../api/nftInfo';
-import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
+import { getMappedNftsByList } from '../../../api/nftInfo';
+
+import Layout from '../../Layout';
+import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
+import NFTCard from '../../Element/NFTCard';
+import VINftsTooltip from '../../Element/Tooltip';
+
 import BuyNFTModal from '../../Element/BuyNFT';
 import PromptLogin from '../PromptLogin';
 import ListForSaleNFTModal from '../../Element/ListForSaleNFT';
-import { Spinner } from 'react-bootstrap';
-import { getCreatorsList } from '../../../api/creatorInfo';
-import { getCollectionsList } from '../../../api/collectionInfo';
-import Layout from '../../Layout';
-import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
+
+//images
+import bnr1 from './../../../images/banner/bnr1.jpg';
+import plusIcon from './../../../images/icon/plus.png';
 
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
 };
 
+const options = {
+  buttons: { showDownloadButton: false },
+};
+
 const imagesLoadedOptions = { background: '.my-bg-image-el' };
 // Masonry section end
 
 //handling filtration markup
-const TagLi = ({ name, handlesettag, tagActive, type }) => {
+const TagLi = ({ name, handleSetTag, tagActive, type }) => {
   return (
     <VINftsTooltip
       title={`Click to see all NFTs under the "${name}" ${
-        type == 'creator'
-          ? name == 'All'
+        type === 'creator'
+          ? name === 'All'
             ? 'creators'
             : 'creator'
-          : type == 'campaign'
-          ? name == 'All'
+          : type === 'campaign'
+          ? name === 'All'
             ? 'campaigns'
             : 'campaign'
-          : name == 'All'
+          : name === 'All'
           ? 'collections'
           : 'collection'
       } `}
     >
       <li
         className={` tag ${tagActive ? 'btn active' : 'btn'}`}
-        onClick={() => handlesettag(name)}
+        onClick={() => handleSetTag(name)}
       >
         <input type='radio' />
         <button className='site-button-secondry radius-sm'>
@@ -67,34 +71,33 @@ const TagLi = ({ name, handlesettag, tagActive, type }) => {
 };
 
 const MyCreations = () => {
+  const { isLoggedIn, entityInfo } = useAuth();
+  const { beneficiaries, campaigns, collections, creators } = useNFTState();
+
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
-  const beneficiary = queryParams.get('beneficiary');
   const creator = queryParams.get('creator');
   const campaign = queryParams.get('campaign');
-  const [tagCollection, setTagCollection] = useState('All');
-  const [tagCreator, setTagCreator] = useState('All');
-  const [tagCampaign, setTagCampaign] = useState('All');
-  const [filteredImages, setFilterdImages] = useState([]);
-  const [selectedNfts, setSelectedNfts] = useState();
-  const [allNfts, setAllNfts] = useState();
-  const [openSlider, setOpenSlider] = useState(false);
-  const [photoIndex, setPhotoIndex] = useState(0);
-  const [sliderCaptions, setSliderCaptions] = useState([]);
-  const [collectionTags, setCollectionTags] = useState([]);
-  const [campaignTags, setCampaignTags] = useState([]);
-  const [creatorTags, setCreatorTags] = useState([]);
-  const [searchFlag, setSearchFlag] = useState(false);
-  const [showBuyModal, setShowBuyModal] = useState(false);
-  const [selectedNFT, setSelectedNFT] = useState();
-  const [showListForSaleModal, setShowListForSaleModal] = useState(false);
-  const [listForSaleNFT, setListForSaleNFT] = useState();
-  const [beneficiaries, setbeneficiaries] = useState();
-  const [allCreators, setCreators] = useState();
-  const [allCollections, setCollections] = useState();
+
+  const [tagCollection, setTagCollection] = React.useState('All');
+  const [tagCreator, setTagCreator] = React.useState('All');
+  const [tagCampaign, setTagCampaign] = React.useState('All');
+  const [openSlider, setOpenSlider] = React.useState(false);
+  const [photoIndex, setPhotoIndex] = React.useState(0);
+  const [sliderCaptions, setSliderCaptions] = React.useState([]);
+  const [collectionTags, setCollectionTags] = React.useState([]);
+  const [campaignTags, setCampaignTags] = React.useState([]);
+  const [creatorTags, setCreatorTags] = React.useState([]);
+  const [showBuyModal, setShowBuyModal] = React.useState(false);
+  const [selectedNFT, setSelectedNFT] = React.useState();
+  const [showListForSaleModal, setShowListForSaleModal] = React.useState(false);
+  const [listForSaleNFT, setListForSaleNFT] = React.useState();
+
+  const [allNFTs, setAllNFTs] = React.useState();
+  const [filteredNFTs, setFilteredNFTs] = React.useState();
 
   //function returns button of buying NFT
-  const Iconimage = ({ nft }) => {
+  const IconImage = ({ nft }) => {
     return (
       <>
         <VINftsTooltip title={'Transfer NFT'}>
@@ -134,364 +137,264 @@ const MyCreations = () => {
     );
   };
 
-  //set selected collections in filtration
-  const setSelectedCollectionTag = (tag, data = null) => {
-    setTagCollection(tag);
-    if (tag !== 'All') {
-      console.log(allNfts);
-      let campaigns = allNfts
-        .filter((d) => d.collectionName == tag)
-        .map((data) => ({ name: data.campaignName }))
-        .filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t.name === value.name)
-        );
-      setCampaignTags([{ name: 'All' }, ...campaigns]);
-      setTagCampaign('All');
+  const CaptionItem = (nft) => (
+    <div className='text-white text-left port-box'>
+      <h5>{nft.title}</h5>
+      <p>
+        <b>Description: </b>
+        {nft.description}
+      </p>
+      <p>
+        <b>Beneficiary: </b>
+        <VINftsTooltip
+          title={`Click to see all NFTs for "${nft.beneficiaryName}" beneficiary`}
+        >
+          <Link
+            to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiaryName}`}
+            className='dez-page text-white'
+            onClick={() => {
+              setOpenSlider(false);
+            }}
+          >
+            {nft.beneficiaryName}
+          </Link>
+        </VINftsTooltip>
+        <span className='bg-success text-white px-1 ml-1 border-raduis-2'>
+          {nft.beneficiaryPercentage}%
+        </span>
 
-      let creators = allNfts
-        .filter((d) => d.collectionName == tag)
-        .map((data) => ({ name: data.creatorName }))
-        .filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t.name === value.name)
-        );
+        <b className='ml-4'>Campaign: </b>
+        <VINftsTooltip
+          title={`Click to see all NFTs for "${nft.campaignName}" campaign`}
+        >
+          {nft.beneficiary ? (
+            <Link
+              to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiaryName}&campaign=${nft.campaignName}`}
+              className='dez-page text-white'
+              onClick={() => {
+                setOpenSlider(false);
+              }}
+            >
+              {nft.campaignName}
+            </Link>
+          ) : (
+            <Link
+              to={`./CreatorNFTs?creator=${nft.creatorName}&collection=${nft.collectionName}`}
+              className='dez-page text-white'
+              onClick={() => {
+                setOpenSlider(false);
+              }}
+            >
+              {nft.campaignName}
+            </Link>
+          )}
+        </VINftsTooltip>
+        <b className='ml-4'>Creator: </b>
+        <VINftsTooltip
+          title={`Click to see all NFTs created by "${nft.creatorName}"`}
+        >
+          <Link
+            to={`./CreatorNFTs?creator=${nft.creatorName}`}
+            className='dez-page text-white'
+            onClick={() => {
+              setOpenSlider(false);
+            }}
+          >
+            {nft.creatorName}
+          </Link>
+        </VINftsTooltip>
+        <span className='bg-info text-white px-1 ml-1 border-raduis-2'>
+          {nft.creatorPercentage}%
+        </span>
 
-      setCreatorTags([{ name: 'All' }, ...creators]);
-      setTagCreator('All');
-    } else {
-      let campaigns = allNfts
-        .map((data) => ({ name: data.campaignName }))
-        .filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t.name === value.name)
-        );
+        <b className='ml-4'>Collection: </b>
+        <Link
+          to={`./CreatorNFTs?creator=${nft.creatorName}&collection=${nft.collectionName}`}
+          className='dez-page text-white'
+          onClick={() => {
+            setOpenSlider(false);
+          }}
+        >
+          {nft.collectionName}
+        </Link>
+      </p>
+      <p className='d-flex align-content-center align-items-center'>
+        <b>Price: </b>
+        {nft.price} {nft.currency}
+        &nbsp;&nbsp;
+        <IconImage nft={nft} />
+        &nbsp;&nbsp;{' '}
+        {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+          <NFTTwitterShare item={nft} />
+        )}
+      </p>
+    </div>
+  );
 
-      setCampaignTags([{ name: 'All' }, ...campaigns]);
-      setTagCampaign('All');
+  const filterCollectionByTag = React.useCallback(
+    (tag, filteredNFTs) => {
+      const collectionsTagsName =
+        filteredNFTs &&
+        filteredNFTs
+          .map(({ collectionName }) => (tag === 'All' ? collectionName : tag))
+          .filter((name, index, names) => names.indexOf(name) === index);
+      collectionsTagsName && setCollectionTags(['All', ...collectionsTagsName]);
+    },
+    []
+    // [currentTagFilter, allNFTs]
+  );
 
-      let creators = allNfts
-        .map((data) => ({ name: data.creatorName }))
-        .filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t.name === value.name)
-        );
+  const filterCampaignByTag = React.useCallback((tag, filteredNFTs) => {
+    const campaignsTagsName =
+      filteredNFTs &&
+      filteredNFTs
+        .map(({ campaignName }) => (tag === 'All' ? campaignName : tag))
+        .filter((name, index, names) => names.indexOf(name) === index);
+    campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
+  }, []);
 
-      setCreatorTags([{ name: 'All' }, ...creators]);
-      setTagCreator('All');
-    }
-    setSearchFlag(!searchFlag);
-  };
+  const filterCreatorByTag = React.useCallback((tag, filteredNFTs) => {
+    const creatorsTagsName =
+      filteredNFTs &&
+      filteredNFTs
+        .map(({ creatorName }) => (tag === 'All' ? creatorName : tag))
+        .filter((name, index, names) => names.indexOf(name) === index);
+    creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
+  }, []);
 
-  //set selected campaigns in filtration
-  const setSelectedCampaignTag = (tag, data = null) => {
-    setTagCampaign(tag);
-    if (tag !== 'All') {
-      let collections = allNfts
-        .filter((d) => d.campaignName == tag)
-        .map((data) => ({ name: data.collectionName }))
-        .filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t.name === value.name)
-        );
-      setCollectionTags([{ name: 'All' }, ...collections]);
-      setTagCollection('All');
+  const getFilteredNFTs = React.useCallback(async () => {
+    const captions = [];
 
-      let creators = allNfts
-        .filter((d) => d.campaignName == tag)
-        .map((data) => ({ name: data.creatorName }))
-        .filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t.name === value.name)
-        );
+    const nftsList = await getCreatorNftList(entityInfo.publicKey);
+    const mappedNFTsList = getMappedNftsByList(
+      nftsList,
+      beneficiaries,
+      campaigns,
+      creators,
+      collections
+    );
 
-      setCreatorTags([{ name: 'All' }, ...creators]);
-      setTagCreator('All');
-    } else {
-      let collections = allNfts
-        .map((data) => ({ name: data.collectionName }))
-        .filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t.name === value.name)
-        );
+    const filteredNFTs = mappedNFTsList && mappedNFTsList;
+    filteredNFTs && setFilteredNFTs(filteredNFTs);
+    filteredNFTs && filterCollectionByTag('All', filteredNFTs);
+    filteredNFTs && filterCampaignByTag('All', filteredNFTs);
+    filteredNFTs && filterCreatorByTag('All', filteredNFTs);
+    filteredNFTs && setAllNFTs(filteredNFTs);
 
-      setCollectionTags([{ name: 'All' }, ...collections]);
-      setTagCollection('All');
-
-      let creators = allNfts
-        .map((data) => ({ name: data.creatorName }))
-        .filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t.name === value.name)
-        );
-
-      setCreatorTags([{ name: 'All' }, ...creators]);
-      setTagCreator('All');
-    }
-    setSearchFlag(!searchFlag);
-  };
-
-  //set selected creators in filtration
-  const setSelectedCreatorTag = (tag, data = null) => {
-    setTagCreator(tag);
-    if (tag !== 'All') {
-      let campaigns = allNfts
-        .filter((d) => d.creatorName == tag)
-        .map((data) => ({ name: data.campaignName }))
-        .filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t.name === value.name)
-        );
-      setCampaignTags([{ name: 'All' }, ...campaigns]);
-      setTagCampaign('All');
-
-      let collections = allNfts
-        .filter((d) => d.creatorName == tag)
-        .map((data) => ({ name: data.collectionName }))
-        .filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t.name === value.name)
-        );
-
-      setCollectionTags([{ name: 'All' }, ...collections]);
-      setTagCollection('All');
-    } else {
-      let campaigns = allNfts
-        .map((data) => ({ name: data.campaignName }))
-        .filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t.name === value.name)
-        );
-
-      setCampaignTags([{ name: 'All' }, ...campaigns]);
-      setTagCampaign('All');
-      let collections = allNfts
-        .map((data) => ({ name: data.collectionName }))
-        .filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t.name === value.name)
-        );
-
-      setCollectionTags([{ name: 'All' }, ...collections]);
-      setTagCollection('All');
-    }
-    setSearchFlag(!searchFlag);
-  };
-
-  //handling of filter nfts according to selected criteria
-  const handleSearch = (collectionFilter, creatorFilter, campaignFilter) => {
-    let filteredAllData = selectedNfts?.filter((nft) => {
-      return (
-        (collectionFilter === nft.collectionName ||
-          collectionFilter === 'All') &&
-        (creatorFilter === nft.creatorName || creatorFilter === 'All') &&
-        (campaignFilter === nft.campaignName || campaignFilter === 'All')
-      );
-    });
-    setFilterdImages(filteredAllData);
-  };
-
-  const { isLoggedIn, entityInfo } = useAuth();
-
-  //getting list of NFTs
-  useEffect(() => {
-    if (!entityInfo.publicKey) return;
-
-    (async () => {
-      if (!entityInfo.publicKey) return;
-      if (!allNfts) {
-        let newNFTList = await getCreatorNftList(entityInfo.publicKey);
-
-        let nftList = [];
-        let beneficiaryList = !beneficiaries
-          ? await getBeneficiariesCampaignsList()
-          : [];
-        !beneficiaries && setbeneficiaries(beneficiaryList);
-        let creatorsList = !allCreators && (await getCreatorsList());
-        !allCreators && setCreators(creatorsList);
-        let collectionsList = !allCollections && (await getCollectionsList());
-        !allCollections && setCollections(collectionsList);
-        //mappign nft details addresses and ids to names
-        if (
-          creatorsList?.length > 0 &&
-          beneficiaries?.length > 0 &&
-          newNFTList?.length > 0 &&
-          collectionsList?.length > 0
-        ) {
-          newNFTList.forEach(async (element) => {
-            let selectedBene = beneficiaries.filter(
-              (b) => b.address === element.beneficiary
-            );
-            let selectedCampaign = selectedBene[0]?.campaigns?.filter(
-              (c) => c.id === element.campaign
-            );
-            let selectedCreator = creatorsList?.filter(
-              (c) => c.address === element.creator
-            );
-
-            let selectedCollection = collectionsList?.filter(
-              (c) => c.id === element.collection
-            );
-            element['beneficiaryName'] = selectedBene[0].name;
-            element['campaignName'] = selectedCampaign[0].name;
-            element['creatorName'] = selectedCreator[0].name;
-            element['collectionName'] = selectedCollection[0].name;
-
-            nftList.push(element);
-          });
-          !allNfts && setAllNfts(nftList);
-          console.log(newNFTList);
-        } else {
-          setAllNfts([]);
-        }
-        console.log(newNFTList);
-        if (nftList.length > 0) {
-          let collection = nftList
-            .map((data) => ({ name: data.collectionName }))
-            .filter(
-              (value, index, self) =>
-                index === self.findIndex((t) => t.name === value.name)
-            );
-          setCollectionTags([{ name: 'All' }, ...collection]);
-
-          let campaigns = nftList
-            .map((data) => ({ name: data.campaignName }))
-            .filter(
-              (value, index, self) =>
-                index === self.findIndex((t) => t.name === value.name)
-            );
-
-          setCampaignTags([{ name: 'All' }, ...campaigns]);
-
-          let creators = nftList
-            .map((data) => ({ name: data.creatorName }))
-            .filter(
-              (value, index, self) =>
-                index === self.findIndex((t) => t.name === value.name)
-            );
-
-          !allNfts && setSelectedNfts(nftList);
-          setCreatorTags([{ name: 'All' }, ...creators]);
-          setTagCampaign('All');
-          setTagCollection('All');
-          setTagCreator('All');
-          setSearchFlag(!searchFlag);
-
-          //setting captions of nfts full screen mode
-          const captions = [];
-          for (let item = 0; item < nftList?.length; item++) {
-            captions.push(
-              <div className='text-white text-left port-box'>
-                <h5>{nftList[item].title}</h5>
-                <p>
-                  <b>Description: </b>
-                  {nftList[item].description}
-                </p>
-                <p>
-                  <b>Beneficiary: </b>
-                  <VINftsTooltip
-                    title={`Click to see all NFTs for "${nftList[item].beneficiaryName}" beneficiary`}
-                  >
-                    <Link
-                      to={`./BeneficiaryNFTs?beneficiary=${nftList[item].beneficiaryName}`}
-                      className='dez-page text-white'
-                      onClick={() => {
-                        setOpenSlider(false);
-                      }}
-                    >
-                      {nftList[item].beneficiaryName}
-                    </Link>
-                  </VINftsTooltip>
-                  <span className='bg-success text-white px-1 ml-1 border-raduis-2'>
-                    {nftList[item].beneficiaryPercentage}%
-                  </span>
-
-                  <b className='ml-4'>Campaign: </b>
-                  <VINftsTooltip
-                    title={`Click to see all NFTs for "${nftList[item].campaignName}" campaign`}
-                  >
-                    {nftList[item].beneficiary ? (
-                      <Link
-                        to={`./BeneficiaryNFTs?beneficiary=${nftList[item].beneficiaryName}&campaign=${nftList[item].campaignName}`}
-                        className='dez-page text-white'
-                        onClick={() => {
-                          setOpenSlider(false);
-                        }}
-                      >
-                        {nftList[item].campaignName}
-                      </Link>
-                    ) : (
-                      <Link
-                        to={`./CreatorNFTs?creator=${nftList[item].creatorName}&collection=${nftList[item].collectionName}`}
-                        className='dez-page text-white'
-                        onClick={() => {
-                          setOpenSlider(false);
-                        }}
-                      >
-                        {nftList[item].campaignName}
-                      </Link>
-                    )}
-                  </VINftsTooltip>
-                  <b className='ml-4'>Creator: </b>
-                  <VINftsTooltip
-                    title={`Click to see all NFTs created by "${nftList[item].creatorName}"`}
-                  >
-                    <Link
-                      to={`./CreatorNFTs?creator=${nftList[item].creatorName}`}
-                      className='dez-page text-white'
-                      onClick={() => {
-                        setOpenSlider(false);
-                      }}
-                    >
-                      {nftList[item].creatorName}
-                    </Link>
-                  </VINftsTooltip>
-                  <span className='bg-info text-white px-1 ml-1 border-raduis-2'>
-                    {nftList[item].creatorPercentage}%
-                  </span>
-
-                  <b className='ml-4'>Collection: </b>
-                  <Link
-                    to={`./CreatorNFTs?creator=${nftList[item].creatorName}&collection=${nftList[item].collectionName}`}
-                    className='dez-page text-white'
-                    onClick={() => {
-                      setOpenSlider(false);
-                    }}
-                  >
-                    {nftList[item].collectionName}
-                  </Link>
-                </p>
-                <p className='d-flex align-content-center align-items-center'>
-                  <b>Price: </b>
-                  {nftList[item].price} {nftList[item].currency}
-                  &nbsp;&nbsp;
-                  <Iconimage nft={nftList[item]} />&nbsp;&nbsp;{' '}
-                  {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (<NFTTwitterShare item={nftList[item]} />)}
-                </p>
-              </div>
-            );
-          }
-          setSliderCaptions(captions);
-        }
-      }
-    })();
+    filteredNFTs &&
+      filteredNFTs.forEach((nft) => captions.push(CaptionItem(nft)));
+    filteredNFTs && captions.length && setSliderCaptions(captions);
   }, [
-    entityInfo,
-    selectedNfts,
-    allNfts,
+    entityInfo.publicKey,
     beneficiaries,
-    allCreators,
-    allCollections,
+    campaigns,
+    collections,
+    creators,
+    filterCollectionByTag,
+    filterCampaignByTag,
+    filterCreatorByTag,
   ]);
 
-  const options = {
-    buttons: { showDownloadButton: false },
-  };
+  React.useEffect(() => {
+    entityInfo.publicKey && getFilteredNFTs();
+  }, [entityInfo.publicKey, getFilteredNFTs]);
 
-  //calling of handling nfts filtration
-  useEffect(() => {
-    handleSearch(tagCollection, tagCreator, tagCampaign);
-  }, [searchFlag]);
+  const getCollectionsBasedOnTag = React.useCallback(
+    (tag = 'All') => {
+      setTagCollection(tag);
+      setTagCreator('All');
+      setTagCampaign('All');
+
+      const collectionsTagsName =
+        allNFTs && filterCollectionByTag(tag, allNFTs);
+      collectionsTagsName && setCollectionTags(['All', ...collectionsTagsName]);
+
+      const filteredCollectionsNFTs = allNFTs.filter(({ collectionName }) =>
+        tag === 'All' ? collectionName : collectionName === tag
+      );
+
+      filteredCollectionsNFTs && setFilteredNFTs(filteredCollectionsNFTs);
+
+      const campaignsTagsName =
+        filteredCollectionsNFTs &&
+        filterCampaignByTag('All', filteredCollectionsNFTs);
+      campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
+
+      const creatorsTagsName =
+        filteredCollectionsNFTs &&
+        filterCreatorByTag('All', filteredCollectionsNFTs);
+      creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
+    },
+    [allNFTs, filterCampaignByTag, filterCreatorByTag, filterCollectionByTag]
+  );
+
+  const getCampaignsBasedOnTag = React.useCallback(
+    (tag = 'All') => {
+      setTagCampaign(tag);
+      setTagCreator('All');
+      setTagCollection('All');
+
+      const campaignsTagsName = allNFTs && filterCampaignByTag(tag, allNFTs);
+
+      campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
+
+      const filteredCampaignsNFTs =
+        allNFTs &&
+        allNFTs.filter(({ campaignName }) =>
+          tag === 'All' ? campaignName : campaignName === tag
+        );
+
+      filteredCampaignsNFTs && setFilteredNFTs(filteredCampaignsNFTs);
+
+      const collectionsTagsName =
+        filteredCampaignsNFTs &&
+        filterCollectionByTag('All', filteredCampaignsNFTs);
+      collectionsTagsName && setCollectionTags(['All', ...collectionsTagsName]);
+
+      const creatorsTagsName =
+        filteredCampaignsNFTs &&
+        filterCreatorByTag('All', filteredCampaignsNFTs);
+      creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
+    },
+    [allNFTs, filterCollectionByTag, filterCreatorByTag, filterCampaignByTag]
+  );
+
+  const getCreatorsBasedOnTag = React.useCallback(
+    (tag = 'All') => {
+      setTagCreator(tag);
+      setTagCollection('All');
+      setTagCampaign('All');
+
+      const creatorsTagsName = allNFTs && filterCreatorByTag(tag, allNFTs);
+
+      creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
+
+      const filteredCreatorsNFTs =
+        allNFTs &&
+        allNFTs.filter(({ creatorName }) =>
+          tag === 'All' ? creatorName : creatorName === tag
+        );
+
+      filteredCreatorsNFTs && setFilteredNFTs(filteredCreatorsNFTs);
+
+      const collectionsTagsName =
+        filteredCreatorsNFTs &&
+        filterCollectionByTag('All', filteredCreatorsNFTs);
+      collectionsTagsName && setCollectionTags(['All', ...collectionsTagsName]);
+
+      const campaignsTagsName =
+        filteredCreatorsNFTs &&
+        filterCampaignByTag('All', filteredCreatorsNFTs);
+      campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
+    },
+    [
+      allNFTs,
+      setFilteredNFTs,
+      filterCreatorByTag,
+      filterCollectionByTag,
+      filterCampaignByTag,
+    ]
+  );
 
   return (
     <Layout>
@@ -512,6 +415,7 @@ const MyCreations = () => {
                         src={plusIcon}
                         className='img img-fluid'
                         width='40px'
+                        alt='plusIcon'
                       />
                     </Link>
                   </VINftsTooltip>
@@ -544,7 +448,7 @@ const MyCreations = () => {
                       <TagLi
                         key={index}
                         name={singleTag.name}
-                        handlesettag={setSelectedCreatorTag}
+                        handleSetTag={getCreatorsBasedOnTag}
                         tagActive={tagCreator === singleTag.name ? true : false}
                         type='creator'
                       />
@@ -562,7 +466,7 @@ const MyCreations = () => {
                       <TagLi
                         key={index}
                         name={singleTag.name}
-                        handlesettag={setSelectedCampaignTag}
+                        handleSetTag={getCampaignsBasedOnTag}
                         tagActive={
                           tagCampaign === singleTag.name ? true : false
                         }
@@ -581,7 +485,7 @@ const MyCreations = () => {
                     <TagLi
                       key={index}
                       name={singleTag.name}
-                      handlesettag={setSelectedCollectionTag}
+                      handleSetTag={getCollectionsBasedOnTag}
                       tagActive={
                         tagCollection === singleTag.name ? true : false
                       }
@@ -592,31 +496,29 @@ const MyCreations = () => {
             </div>
             {openSlider && (
               <Lightbox
-                mainSrc={filteredImages[photoIndex].image}
+                mainSrc={filteredNFTs[photoIndex].image}
                 nextSrc={
-                  filteredImages[(photoIndex + 1) % filteredImages.length].image
+                  filteredNFTs[(photoIndex + 1) % filteredNFTs.length].image
                 }
                 prevSrc={
-                  filteredImages[
-                    (photoIndex + filteredImages.length - 1) %
-                      filteredImages.length
+                  filteredNFTs[
+                    (photoIndex + filteredNFTs.length - 1) % filteredNFTs.length
                   ].image
                 }
                 onCloseRequest={() => setOpenSlider(false)}
                 onMovePrevRequest={() =>
                   setPhotoIndex(
-                    (photoIndex + filteredImages.length - 1) %
-                      filteredImages.length
+                    (photoIndex + filteredNFTs.length - 1) % filteredNFTs.length
                   )
                 }
                 onMoveNextRequest={() =>
-                  setPhotoIndex((photoIndex + 1) % filteredImages.length)
+                  setPhotoIndex((photoIndex + 1) % filteredNFTs.length)
                 }
                 imageCaption={sliderCaptions[photoIndex]}
               />
             )}
-            {allNfts ? (
-              filteredImages?.length > 0 ? (
+            {filteredNFTs ? (
+              filteredNFTs?.length > 0 ? (
                 <SimpleReactLightbox>
                   <SRLWrapper options={options}>
                     <div className='clearfix'>
@@ -631,7 +533,7 @@ const MyCreations = () => {
                           updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
                           imagesLoadedOptions={imagesLoadedOptions} // default {}
                         >
-                          {filteredImages.map((item, index) => (
+                          {filteredNFTs.map((item, index) => (
                             <li
                               className='web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0'
                               key={index}
@@ -691,4 +593,5 @@ const MyCreations = () => {
     </Layout>
   );
 };
+
 export default MyCreations;
