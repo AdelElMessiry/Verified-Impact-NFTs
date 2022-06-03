@@ -19,7 +19,7 @@ import PageTitle from '../../Layout/PageTitle';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import PromptLogin from '../PromptLogin';
 import Layout from '../../Layout';
-
+import { sendDiscordMessage } from '../../../utils/discordEvents';
 //minting new nft page
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
@@ -239,7 +239,18 @@ const MintNFT = () => {
           localStorage.setItem('selectedCampaign', null);
         }
         console.log('...... Token minted successfully', deployResult);
+
         VIToast.success('NFT minted successfully');
+        //NOTE: every channel has a special keys and tokens sorted on .env file 
+        sendDiscordMessage( process.env.REACT_APP_NFT_WEBHOOK_ID, process.env.REACT_APP_NFT_TOKEN, state.name , "" ,`Great news! [${state.name}] NFT  has been added to #verified-impact-nfts click here to know more about their cause.`)
+      if(isCreateNewCollection){
+        //add collection discord 
+        sendDiscordMessage( process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID, process.env.REACT_APP_COLLECTIONS_TOKEN, selectedCollectionValue.value , "" ,`${creator} creator has just added a new interesting #verified-impact-nfts collection. Click here to see more interesting collections`)
+      }
+      if(!isCreatorExist){
+        //add creator discord
+        sendDiscordMessage( process.env.REACT_APP_CREATORS_WEBHOOK_ID, process.env.REACT_APP_CREATORS_TOKEN, creator , "" ,`We are glad to announce that ${creator} creator has joined #verified-impact-nfts and minted a striking NFT for donations. Click here to see more about creators and their NFTs collections `)
+      }
         window.location.reload();
         setIsMintClicked(false)
       } catch (err) {
