@@ -102,7 +102,7 @@ const NFTCard = ({
         />
         <div className="qr-code-border qr-code-oncard position-absolute">
           <QRCode
-            value={`https://verifiedimpactnfts.com/#/nft-detail?id=${item.tokenId}`}
+            value={`${window.location.origin}/#/nft-detail?id=${item.tokenId}`}
             size={80}
           />
         </div>
@@ -110,10 +110,10 @@ const NFTCard = ({
           <div className="overlay-icon align-b text-white text-left">
             <div className="text-white text-left port-box">
               <h5>{item.title}</h5>
-              <p>
+              {/* <p>
                 <b>Category: </b>
                 {item.category}
-              </p>
+              </p> */}
               <p>
                 <b>Beneficiary: </b>
                 <VINFTsTooltip

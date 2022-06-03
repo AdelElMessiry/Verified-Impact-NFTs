@@ -3,12 +3,15 @@ import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 
 import VINFTsTooltip from '../Element/Tooltip';
-import {Spinner} from 'react-bootstrap';
+import { Spinner } from 'react-bootstrap';
 
 import { getNFTsList } from '../../api/nftInfo';
 import BuyNFTModal from '../Element/BuyNFT';
 import Layout from '../Layout';
 import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
+import { getBeneficiariesCampaignsList } from '../../api/beneficiaryInfo';
+import { getCreatorsList } from '../../api/creatorInfo';
+import { getCollectionsList } from '../../api/collectionInfo';
 
 //nft details component
 const NFTDetail = () => {
@@ -32,22 +35,48 @@ const NFTDetail = () => {
   const [showBuyModal, setShowBuyModal] = useState(false);
   const [selectedNFT, setSelectedNFT] = useState();
   const [allNFTs, setAllNFTs] = useState();
+  const [beneficiaries, setbeneficiaries] = useState();
+  const [allCreators, setCreators] = useState();
+  const [allCollections, setCollections] = useState();
 
   useEffect(() => {
     (async () => {
       if (!allNFTs) {
-        const newNFTList = await getNFTsList();
+        let newNFTList = await getNFTsList();
         setAllNFTs(newNFTList);
-        let nft = newNFTList.filter((nft) => nft.tokenId == id);
-        setItem(nft);
+        let nft = newNFTList.find((nft) => nft.tokenId == id);
+        let beneficiaryList = !beneficiaries
+          ? await getBeneficiariesCampaignsList()
+          : [];
+        !beneficiaries && setbeneficiaries(beneficiaryList);
+        let creatorsList = !allCreators && (await getCreatorsList());
+        !allCreators && setCreators(creatorsList);
+        let collectionsList = !allCollections && (await getCollectionsList());
+        !allCollections && setCollections(collectionsList);
+        setItem({
+          ...nft,
+          campaignName: beneficiaryList.find(
+            ({ address }) => nft.beneficiary === address
+          ).campaigns.find(({ id }) => nft.campaign === id)
+            .name,
+          creatorName: creatorsList.find(
+            ({ address }) => nft.creator === address
+          ).name,
+          beneficiaryName: beneficiaryList.find(
+            ({ address }) => nft.beneficiary === address
+          ).name,
+          collectionName: collectionsList.find(
+            ({ id }) => nft.collection === id
+          ).name,
+        });
       }
     })();
-  }, [id, allNFTs]);
+  }, [id, allNFTs,beneficiaries,allCollections,allCreators]);
 
   return (
     <Layout isNFTDetails={true}>
       <div className="page-content pb-0 bg-black-light pt-5">
-        {item?.length > 0 ? (
+        {item ? (
           <div className="content-block position-relative h-100vh">
             {/* <!-- Project Details --> */}
             <div className="section-full content-inner-2 h-100vh">
@@ -55,7 +84,7 @@ const NFTDetail = () => {
                 <div className="row h-100">
                   <div className="col text-center align-items-center align-content-center d-flex justify-content-center h-100">
                     <img
-                      src={item[0]?.image}
+                      src={item?.image}
                       alt=""
                       className="img img-fluid fit-img"
                     />
@@ -66,82 +95,86 @@ const NFTDetail = () => {
             <div className="detail-page-caption p-3">
               <div className="align-b text-white text-left">
                 <div className="text-white text-left port-box">
-                  <h5>{item[0]?.title}</h5>
-                  <p>Description: {item[0]?.description}</p>
+                  <h5>{item?.title}</h5>
+                  <p>Description: {item?.description}</p>
                   <p>
-                    <b>Category: </b>
-                    {item[0]?.category}
-                    &nbsp;&nbsp;
+                    {/* <b>Category: </b>
+                    {item?.category} 
+                    &nbsp;&nbsp;*/}
                     <b>Beneficiary: </b>
                     <VINFTsTooltip
-                      title={`Click to see all NFTs for "${item[0]?.beneficiaryName}" beneficiary`}
+                      title={`Click to see all NFTs for "${item?.beneficiaryName}" beneficiary`}
                     >
                       <Link
-                        to={`./BenefeiciaryNFTs?beneficiary=${item[0]?.beneficiaryName}`}
+                        to={`./BenefeiciaryNFTs?beneficiary=${item?.beneficiaryName}`}
                         className="dez-page text-white"
                       >
-                        {item[0]?.beneficiaryName}
+                        {item?.beneficiaryName}
                       </Link>
                     </VINFTsTooltip>
                     <span className="bg-success text-white px-1 ml-1 border-raduis-2">
-                      {item[0]?.beneficiaryPercentage}%
+                      {item?.beneficiaryPercentage}%
                     </span>
                     &nbsp;&nbsp;
                     <b>Campaign: </b>
                     <VINFTsTooltip
-                      title={`Click to see all NFTs for "${item[0]?.campaignName}" campaign`}
+                      title={`Click to see all NFTs for "${item?.campaignName}" campaign`}
                     >
-                      {item[0]?.beneficiary ? (
+                      {item?.beneficiary ? (
                         <Link
-                          to={`./BenefeiciaryNFTs?beneficiary=${item[0]?.beneficiaryName}&campaign=${item[0]?.campaignName}`}
+                          to={`./BenefeiciaryNFTs?beneficiary=${item?.beneficiaryName}&campaign=${item?.campaignName}`}
                           className="dez-page text-white"
                         >
-                          {item[0]?.campaign}
+                          {item?.campaignName}
                         </Link>
                       ) : (
                         <Link
-                          to={`./CreatorNFTs?creator=${item[0]?.creator}&collection=${item[0]?.collectionName}`}
+                          to={`./CreatorNFTs?creator=${item?.creator}&collection=${item?.collectionName}`}
                           className="dez-page text-white"
                         >
-                          {item[0]?.campaignName}
+                          {item?.campaignName}
                         </Link>
                       )}
                     </VINFTsTooltip>
                     &nbsp;&nbsp;
                     <b>Creator: </b>
                     <VINFTsTooltip
-                      title={`Click to see all NFTs created by "${item[0]?.creator}"`}
+                      title={`Click to see all NFTs created by "${item?.creator}"`}
                     >
                       <Link
-                        to={`./CreatorNFTs?creator=${item[0]?.creator}`}
+                        to={`./CreatorNFTs?creator=${item?.creator}`}
                         className="dez-page text-white"
                       >
-                        {item[0]?.creator}
+                        {item?.creatorName}
                       </Link>
                     </VINFTsTooltip>
                     <span className="bg-info text-white px-1 ml-1 border-raduis-2">
-                      {item[0]?.creatorPercentage}%
+                      {item?.creatorPercentage}%
                     </span>
                     &nbsp;&nbsp;
                     <b>Collection: </b>
-                    {item[0]?.collectionName}
+                    {item?.collectionName}
                   </p>
                   <p className="d-flex align-content-center align-items-center">
                     <b>Price: </b>
-                    {item[0]?.price} {item[0]?.currency} &nbsp;&nbsp;
-                    <Iconimage nft={item[0]} />  &nbsp;&nbsp; {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
-                  <NFTTwitterShare item={item[0]} />)}
+                    {item?.price} {item?.currency} &nbsp;&nbsp;
+                    <Iconimage nft={item} /> &nbsp;&nbsp;{' '}
+                    {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+                      <NFTTwitterShare item={item} />
+                    )}
                   </p>
                 </div>
               </div>
             </div>
           </div>
-        ):   (<div className="vinft-page-loader">
-        <div className="vinft-spinner-body">
-          <Spinner animation="border" variant="success" />
-          <p>Fetching NFT Details Please wait...</p>
-        </div>
-      </div>)}
+        ) : (
+          <div className="vinft-page-loader">
+            <div className="vinft-spinner-body">
+              <Spinner animation="border" variant="success" />
+              <p>Fetching NFT Details Please wait...</p>
+            </div>
+          </div>
+        )}
         {/* <!-- contact area END --> */}
       </div>
       {showBuyModal && (

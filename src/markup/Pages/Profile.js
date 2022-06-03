@@ -34,7 +34,6 @@ const Profile = () => {
   });
 
   const toggle = (tab) => {
-    debugger;
     if (activeTab !== tab) setActiveTab(tab);
   };
 
