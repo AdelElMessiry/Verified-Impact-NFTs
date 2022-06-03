@@ -317,11 +317,11 @@ const MyCreations = () => {
         //mappign nft details addresses and ids to names
         if (
           creatorsList?.length > 0 &&
-          beneficiaries?.length > 0 &&
+          beneficiaryList?.length > 0 &&
           newNFTList?.length > 0 &&collectionsList?.length>0
         ) {
           newNFTList.forEach(async (element) => {
-            let selectedBene = beneficiaries.filter(
+            let selectedBene = beneficiaryList.filter(
               (b) => b.address === element.beneficiary
             );
             let selectedCampaign = selectedBene[0]?.campaigns?.filter(
@@ -468,7 +468,7 @@ const MyCreations = () => {
                   <Iconimage nft={nftList[item]} />&nbsp;&nbsp;{' '}
                   {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (<NFTTwitterShare item={nftList[item]} />)}
                   &nbsp;&nbsp;{' '}
-                 <QRCode value={`https://verifiedimpactnfts.com/#/nft-detail?id=${nftList[item].tokenId}`} size={80} />
+                 <QRCode value={`${window.location.origin}/#/nft-detail?id=${nftList[item].tokenId}`} size={80} />
                 </p>
               </div>
             );

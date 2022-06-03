@@ -5,7 +5,7 @@ import VINFTsTooltip from './Tooltip';
 import BuyNFTModal from './BuyNFT';
 import ListForSaleNFTModal from './ListForSaleNFT';
 import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
-import QRCode from "react-qr-code";
+import QRCode from 'react-qr-code';
 
 //NFT Card component
 const NFTCard = ({
@@ -25,7 +25,7 @@ const NFTCard = ({
           to={'/#'}
           onClick={(e) => {
             e.preventDefault();
-            openSlider(index,item.campaign);
+            openSlider(index, item.campaign);
           }}
           className="mfp-link portfolio-fullscreen"
         >
@@ -85,7 +85,7 @@ const NFTCard = ({
             data={item}
           />
         )}
-         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+        {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
           <NFTTwitterShare item={item} isWithoutText={true} />
         )}
       </>
@@ -94,20 +94,26 @@ const NFTCard = ({
 
   return (
     <div className="dlab-box dlab-gallery-box">
-      <div className="dlab-media dlab-img-overlay1 dlab-img-effect">
+      <div className="dlab-media dlab-img-overlay1 position-relative dlab-img-effect">
         <img
           src={item.image}
           alt=""
           className="img img-fluid fit-img fit-img-cover"
         />
+        <div className="qr-code-border qr-code-oncard position-absolute">
+          <QRCode
+            value={`${window.location.origin}/#/nft-detail?id=${item.tokenId}`}
+            size={80}
+          />
+        </div>
         <div className="overlay-bx">
           <div className="overlay-icon align-b text-white text-left">
             <div className="text-white text-left port-box">
               <h5>{item.title}</h5>
-              <p>
+              {/* <p>
                 <b>Category: </b>
                 {item.category}
-              </p>
+              </p> */}
               <p>
                 <b>Beneficiary: </b>
                 <VINFTsTooltip
@@ -169,9 +175,9 @@ const NFTCard = ({
                 <b>Price: </b>
                 {item.price} {item.currency}
               </p>
-              <p className='d-flex align-items-center'> <Iconimage />
-             
-              <QRCode value={`https://verifiedimpactnfts.com/#/nft-detail?id=${item.tokenId}`} size={80} />
+              <p>
+                {' '}
+                <Iconimage />
               </p>
             </div>
           </div>

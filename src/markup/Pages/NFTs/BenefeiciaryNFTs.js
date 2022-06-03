@@ -477,7 +477,7 @@ const BenefeiciaryNFTs = () => {
                 <Iconimage nft={Data[item]} />&nbsp;&nbsp;{' '}
                 {process.env.REACT_APP_SHOW_TWITTER !== 'false' && ( <NFTTwitterShare item={Data[item]} />)}
                 &nbsp;&nbsp;{' '}
-               <QRCode value={`https://verifiedimpactnfts.com/#/nft-detail?id=${Data[item].tokenId}`} size={80} />
+               <QRCode value={`${window.location.origin}/#/nft-detail?id=${Data[item].tokenId}`} size={80} />
               </p>
             </div>
           );
