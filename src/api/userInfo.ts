@@ -44,7 +44,7 @@ export async function getNFTsOwned(publicKeyHex: string): Promise<any[]> {
     const nftID = await cep47.getTokenByIndex(publicKeyCLValue, String(idx));
 
     const rawNFT = await cep47.getMappedTokenMeta(nftID);
-    nfts.push(rawNFT);
+    nfts.push({ ...rawNFT, tokenId: nftID });
   }
 
   return nfts;
