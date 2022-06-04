@@ -127,13 +127,19 @@ const MyNFTs = () => {
     const captions = [];
 
     const nftsList = await getNFTsOwned(entityInfo.publicKey);
-    const mappedNFTsList = getMappedNftsByList(
-      nftsList,
-      beneficiaries,
-      campaigns,
-      creators,
-      collections
-    );
+    const mappedNFTsList =
+      nftsList &&
+      beneficiaries &&
+      campaigns &&
+      creators &&
+      collections &&
+      getMappedNftsByList(
+        nftsList,
+        beneficiaries,
+        campaigns,
+        creators,
+        collections
+      );
 
     const filteredNFTs = mappedNFTsList && mappedNFTsList;
     filteredNFTs && setFilteredNFTs(filteredNFTs);
@@ -405,9 +411,9 @@ const MyNFTs = () => {
                     creatorTags.map((singleTag, index) => (
                       <TagLi
                         key={index}
-                        name={singleTag.name}
+                        name={singleTag}
                         handleSetTag={getCreatorsBasedOnTag}
-                        tagActive={tagCreator === singleTag.name ? true : false}
+                        tagActive={tagCreator === singleTag ? true : false}
                         type='creator'
                       />
                     ))}
@@ -423,11 +429,9 @@ const MyNFTs = () => {
                     campaignTags.map((singleTag, index) => (
                       <TagLi
                         key={index}
-                        name={singleTag.name}
+                        name={singleTag}
                         handleSetTag={getCampaignsBasedOnTag}
-                        tagActive={
-                          tagCampaign === singleTag.name ? true : false
-                        }
+                        tagActive={tagCampaign === singleTag ? true : false}
                         type='campaign'
                       />
                     ))}
@@ -442,11 +446,9 @@ const MyNFTs = () => {
                   collectionTags.map((singleTag, index) => (
                     <TagLi
                       key={index}
-                      name={singleTag.name}
-                      handleSetTag={getCreatorsBasedOnTag}
-                      tagActive={
-                        tagCollection === singleTag.name ? true : false
-                      }
+                      name={singleTag}
+                      handleSetTag={getCollectionsBasedOnTag}
+                      tagActive={tagCollection === singleTag ? true : false}
                       type='collection'
                     />
                   ))}
