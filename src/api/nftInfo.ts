@@ -147,7 +147,7 @@ export function getMappedNftsByList(
   creatorsList: any,
   collectionsList: any
 ) {
-  return nftsList.forEach((nft: any) => ({
+  const mappedList = nftsList.map((nft: any) => ({
     ...nft,
     campaignName: campaignsList.find(({ id }: any) => nft.campaign === id).name,
     creatorName: creatorsList.find(
@@ -159,4 +159,5 @@ export function getMappedNftsByList(
     collectionName: collectionsList.find(({ id }: any) => nft.collection === id)
       .name,
   }));
+  return mappedList;
 }
