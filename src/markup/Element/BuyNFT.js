@@ -64,6 +64,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
         );
 
         VIToast.success('Transaction ended successfully');
+        handleClose();
         sendDiscordMessage( process.env.REACT_APP_NFT_WEBHOOK_ID, process.env.REACT_APP_NFT_TOKEN, "" , "" ,`Exciting news! [${data.title}] NFT of [${data.creatorName}] creator has been sold as a donation for [${data.campaignName}] campaign. Click here to buy #verified-impact-nfts and support more causes.`)
       } catch (err) {
         console.log('Transfer Fees Err ' + err);
@@ -89,6 +90,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
       });
       if (transferDeployHash) {
         VIToast.success('NFT transfered successfully');
+        handleClose();
       } else {
         VIToast.error('Error happend please try again later');
       }
