@@ -8,22 +8,23 @@ const CampaignOrCollectionTwitterShare = ({
   url = '',
   creator = '',
   collection = '',
+  beneficiaryPercentage=''
 }) => {
   return (
     <TwitterShareButton
-      className='twitter-icon mfp-link portfolio-fullscreen pt-2'
+      className='twitter-icon mfp-link portfolio-fullscreen'
       url={
         url
           ? url
-          : `https://verifiedimpactnfts.com/#/BenefeiciaryNFTs?beneficiary=${beneficiary.replace(
+          : `${window.location.origin}/#/BenefeiciaryNFTs?beneficiary=${beneficiary.replace(
               / /g,
               '%20'
             )}&campaign=${campaign.replace(/ /g, '%20')}`
       }
       title={
         beneficiary !== ''
-          ? `I support the #NFT "${campaign}" campaign, 80% of the proceeds go to the "${beneficiary}". Check it out at `
-          : `I support the #NFT "${collection}" collection, 80% of the proceeds go to the "${creator}". Check it out at `
+          ? `I support the #NFT "${campaign}" campaign, ${beneficiaryPercentage}% of the proceeds go to the "${beneficiary}". Check it out at `
+          : `I support the #NFT "${collection}" collection, ${beneficiaryPercentage}% of the proceeds go to the "${creator}". Check it out at `
       }
     >
       <TwitterIcon

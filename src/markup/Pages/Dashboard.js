@@ -9,16 +9,17 @@ import { SRLWrapper } from 'simple-react-lightbox';
 
 import { useNFTState } from '../../contexts/NFTContext';
 
-import { VideoPopup2 } from '../Element/VideoPopup';
+import  VideoPopup  from '../Element/VideoPopup';
 import { CaptionCampaign } from '../Element/CaptionCampaign';
 import NFTCard from '../Element/NFTCard';
 import BuyNFTModal from '../Element/BuyNFT';
 import Layout from '../Layout';
 import CampaignOrCollectionTwitterShare from '../Element/TwitterShare/CampaignOrCollectionTwitterShare';
+import bgImg from './../../images/main-slider/slide6.jpg';
+
 //Light Gallery on icon click
 
 //Images..
-import bgImg from './../../images/main-slider/slide6.jpg';
 
 const breakPoints = [
   { width: 1, itemsToShow: 1 },
@@ -106,10 +107,12 @@ const Dashboard = () => {
   }, [getNftsList, displayedCampaigns, allNfts]);
 
   const setCaptions = (data) => {
+    debugger;
     const captionsCamp = [];
     for (let item = 0; item < data?.length; item++) {
       captionsCamp.push(CaptionCampaign(data, item, IconImage));
     }
+    debugger;
     setSliderCaptionsCamp(captionsCamp);
   };
 
@@ -143,7 +146,7 @@ const Dashboard = () => {
                 <Link to={'#'} className='site-button white btn-icon'>
                   Read more <i className='fa fa-angle-double-right'></i>
                 </Link>
-                <VideoPopup2 />
+                <VideoPopup />
               </div>
             </div>
           </div>
@@ -278,7 +281,7 @@ const Dashboard = () => {
                 let campaignsName = Object.keys(n);
                 let NFts = Object.values(n)[0];
                 return (
-                  <div key={index}>
+                  <div key={index} className="mb-5">
                     <h4 className='text-success text-center  d-flex align-items-center justify-content-center'>
                       <Link
                         to={`./BeneficiaryNFTs?beneficiary=${NFts[0].beneficiaryName}&campaign=${NFts[0].campaignName}`}
@@ -291,6 +294,7 @@ const Dashboard = () => {
                         <CampaignOrCollectionTwitterShare
                           campaign={NFts[0].campaignName}
                           beneficiary={NFts[0].beneficiaryName}
+                          beneficiaryPercentage={NFts[0].beneficiaryPercentage}
                         />
                       )}
                     </h4>

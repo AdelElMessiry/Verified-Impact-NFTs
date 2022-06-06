@@ -18,6 +18,7 @@ import BuyNFTModal from '../../Element/BuyNFT';
 import PromptLogin from '../PromptLogin';
 import Layout from '../../Layout';
 import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
+import QRCode from 'react-qr-code';
 
 //images
 import bnr1 from './../../../images/banner/bnr1.jpg';
@@ -365,9 +366,10 @@ const MyNFTs = () => {
         &nbsp;&nbsp;
         <IconImage nft={nft} />
         &nbsp;&nbsp;{' '}
-        {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
-          <NFTTwitterShare item={nft} />
-        )}
+        &nbsp;&nbsp;{' '}
+        {process.env.REACT_APP_SHOW_TWITTER !== 'false' && ( <NFTTwitterShare item={nft} />)}
+        &nbsp;&nbsp;{' '}
+        <QRCode value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`} size={80} />
       </p>
     </div>
   );
