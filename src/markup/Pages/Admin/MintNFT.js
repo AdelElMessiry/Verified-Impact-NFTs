@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import ImageUploader from 'react-images-upload';
 import { toast as VIToast } from 'react-toastify';
@@ -6,76 +6,48 @@ import { Form } from 'react-bootstrap';
 import CreatableSelect from 'react-select/creatable';
 
 import { useAuth } from '../../../contexts/AuthContext';
-import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
-import { getCreatorsCollectionsList } from '../../../api/creatorInfo';
+import { useNFTState } from '../../../contexts/NFTContext';
+
 import { uploadImg } from '../../../api/imageCDN';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
-import { numberOfNFTsOwned } from '../../../api/userInfo';
-import validator from 'validator'
+import validator from 'validator';
 
 import PageTitle from '../../Layout/PageTitle';
-
-import bnr1 from './../../../images/banner/bnr1.jpg';
 import PromptLogin from '../PromptLogin';
 import Layout from '../../Layout';
+
+import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
+
+//handling of creating new option in creatable select control
+const createOption = (label) => ({
+  label,
+  value: label.toLowerCase().replace(/\W/g, ''),
+});
+
 //minting new nft page
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
-  const [uploadedImageURL, setUploadedImage] = useState(null);
-  const [uploadedFile, setUploadedFile] = useState(null);
-  const [uploadingToCloud, setUploadingToCloud] = useState(false);
-  const [selectedCollectionValue, setSelectedCollectionValue] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [beneficiary, setBeneficiary] = useState();
-  const [campaign, setCampaign] = useState();
-
-  const [options, setOptions] = useState([]);
-  const [isCreateNewCollection, setIsCreateNewCollection] = useState();
-  const [showURLErrorMsg, setShowURLErrorMsg] = useState(false);
-  const [isMintClicked, setIsMintClicked] = useState(false);
-  
-  //handling of creating new option in creatable select control
-  const createOption = (label) => ({
-    label,
-    value: label.toLowerCase().replace(/\W/g, ''),
-  });
-
-  //handling of adding new option to the existing options in creatable select
-  const handleCreate = (inputValue) => {
-    setIsLoading(true);
-    console.group('Option created');
-    console.log('Wait a moment...');
-    setTimeout(() => {
-      const newOption = createOption(inputValue);
-      console.log(newOption);
-      console.groupEnd();
-      setIsLoading(false);
-      setOptions([...options, newOption]);
-      setSelectedCollectionValue(newOption);
-      setIsCreateNewCollection(true);
-    }, 1000);
-  };
-
-  const handleChange = (e, isBeneficiary = false) => {
-    const { value, name, checked, type } = e.target;
-    const { inputs } = state;
-    if (isBeneficiary) {
-      let selectedBeneficiary = beneficiaries.filter(
-        (b) => b.address === value
-      );
-      setCampaigns(selectedBeneficiary[0].campaigns);
-    }
-    inputs[name] = type === 'checkbox' ? checked : value;
-    setState({
-      ...state,
-      inputs,
-    });
-  };
-
-  //intialize of controls values
-  const [state, setState] = useState({
+  const { campaigns, beneficiaries, creators, collections } = useNFTState();
+  const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
+  const [isMintClicked, setIsMintClicked] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [beneficiary, setBeneficiary] = React.useState();
+  const [campaign, setCampaign] = React.useState();
+  const [collectionsList, setCollectionsList] = React.useState();
+  const [campaignsList, setCampaignsList] = React.useState();
+  const [creator, setCreator] = React.useState('');
+  const [isCreatorExist, setIsCreatorExist] = React.useState(false);
+  const [creatorPercentage, setCreatorPercentage] = React.useState();
+  const [uploadedImageURL, setUploadedImage] = React.useState(null);
+  const [uploadedFile, setUploadedFile] = React.useState(null);
+  const [selectedCollectionValue, setSelectedCollectionValue] = React.useState(
+    {}
+  );
+  const [isCreateNewCollection, setIsCreateNewCollection] = React.useState();
+  const [beneficiaryPercentage, setBeneficiaryPercentage] = React.useState();
+  const [state, setState] = React.useState({
     inputs: {
       imageUrl: '',
       name: '',
@@ -89,71 +61,105 @@ const MintNFT = () => {
       isImageURL: false,
     },
   });
-  const [beneficiaries, setBeneficiaries] = useState();
-  const [campaigns, setCampaigns] = useState();
-  const [creators, setCreators] = useState();
-  const [creator, setCreator] = useState('');
-  const [isCreatorExist, setIsCreatorExist] = useState(false);
-  const [creatorPercentage, setCreatorPercentage] = useState();
-  const [beneficiaryPercentage, setBeneficiaryPercentage] = useState();
 
-  //getting beneficiaries and campaigns lists
-  let selectedCamapign=localStorage.getItem('selectedCampaign')
-  useEffect(() => {
-    (async () => {
-      let beneficiaryList =
-        !beneficiaries && (await getBeneficiariesCampaignsList());
-      !beneficiaries && setBeneficiaries(beneficiaryList);
-      !beneficiaries && setCampaigns(beneficiaryList[0]?.campaigns);
-      !beneficiaries && setBeneficiary(beneficiaryList[0]?.address);
-      !beneficiaries &&
-        setCampaignSelectedData(
-          beneficiaryList[0]?.campaigns,
-          selectedCamapign?selectedCamapign:beneficiaryList[0]?.campaigns[0]?.id
-        );
-    })();
-  }, [beneficiaries]);
+  const loadCollections = React.useCallback(async () => {
+    if (entityInfo.publicKey && creators && collections) {
+      const existingCreator = creators.find(
+        ({ address }) => address === entityInfo.publicKey
+      );
+      existingCreator && setIsCreatorExist(true);
+      existingCreator && setCreator(existingCreator.name);
 
-  useEffect(() => {
-    (async () => {
-      let creatorList = !creators && (await getCreatorsCollectionsList());
-      !creators && setCreators(creatorList);
-      if (creatorList.length > 0) {
-        let selectedCreator = creatorList.filter(
-          (c) => c.address === entityInfo.publicKey
-        );
-        if (selectedCreator.length > 0) {
-          setCreator(selectedCreator[0].name);
-          if (selectedCreator[0].collections) {
-            let selectedOptions = [];
-            selectedCreator[0].collections.forEach((col) => {
-              let singleoption = {
-                value: col.id,
-                label: <div>&nbsp;{col.name} </div>,
-              };
-              selectedOptions.push(singleoption);
-            });
-            setOptions(selectedOptions);
-            setSelectedCollectionValue(selectedOptions[0]);
-          } else {
-            setOptions([]);
-          }
-          setIsCreatorExist(true);
-        }
-      }
-    })();
-  }, [creators, entityInfo]);
+      const _collections =
+        // existingCreator &&
+        collections.filter(({ creator }) => creator === entityInfo.publicKey);
+
+      const selectedCollections =
+        _collections &&
+        _collections?.map((col) => ({
+          value: col.id,
+          label: <div>&nbsp;{col.name} </div>,
+        }));
+
+      selectedCollections && setCollectionsList(selectedCollections);
+      selectedCollections && setSelectedCollectionValue(selectedCollections[0]);
+    }
+  }, [
+    entityInfo.publicKey,
+    creators,
+    collections,
+    setCollectionsList,
+    setCreator,
+    setIsCreatorExist,
+    setSelectedCollectionValue,
+  ]);
+
+  React.useEffect(() => {
+    beneficiaries && !beneficiary && setBeneficiary(beneficiaries[0].address);
+    campaigns && !campaign && setCampaign(campaigns[0].id);
+    !campaignsList && campaigns && setCampaignsList(campaigns);
+    !collectionsList && collections && loadCollections();
+  }, [
+    collectionsList,
+    collections,
+    campaignsList,
+    campaigns,
+    beneficiaries,
+    beneficiary,
+    campaign,
+    loadCollections,
+    setBeneficiary,
+    setCampaign,
+    setCampaignsList,
+  ]);
+
+  //handling of adding new option to the existing collections in creatable select
+  const handleCreate = (inputValue) => {
+    setIsLoading(true);
+    console.group('Option created');
+    console.log('Wait a moment...');
+    setTimeout(() => {
+      const newOption = createOption(inputValue);
+      console.log(newOption);
+      console.groupEnd();
+      setIsLoading(false);
+      setCollectionsList([...collections, newOption]);
+      setSelectedCollectionValue(newOption);
+      setIsCreateNewCollection(true);
+    }, 1000);
+  };
+
+  const handleChange = (e, isBeneficiary = false) => {
+    const { value, name, checked, type } = e.target;
+    const { inputs } = state;
+
+    if (isBeneficiary) {
+      let selectedBeneficiary = beneficiaries.find(
+        ({ address }) => address === value
+      );
+      const filteredCampaigns = campaignsList.filter(
+        ({ wallet_address }) => selectedBeneficiary.address === wallet_address
+      );
+      setCampaignsList(filteredCampaigns);
+    }
+
+    inputs[name] = type === 'checkbox' ? checked : value;
+    setState({
+      ...state,
+      inputs,
+    });
+  };
 
   //handling of selecting image in image control
   const onDrop = (picture) => {
-    if(picture.length>0){
-    const newImageUrl = URL.createObjectURL(picture[0]);
-    setUploadedImage(newImageUrl);
-    setUploadedFile(picture[0]);
-  }else{
-    setUploadedImage(null);
-    setUploadedFile(null);
-  }
+    if (picture.length > 0) {
+      const newImageUrl = URL.createObjectURL(picture[0]);
+      setUploadedImage(newImageUrl);
+      setUploadedFile(picture[0]);
+    } else {
+      setUploadedImage(null);
+      setUploadedFile(null);
+    }
   };
 
   //handling minting new NFT
@@ -164,25 +170,24 @@ const MintNFT = () => {
     if (!entityInfo.publicKey) {
       return VIToast.error('Please enter sign in First');
     }
-    if(state.inputs.isImageURL&&showURLErrorMsg){
+    if (state.inputs.isImageURL && showURLErrorMsg) {
       return;
     }
     setIsMintClicked(true);
     let cloudURL = uploadedImageURL;
-    if (!state.inputs.isImageURL && uploadedFile){
+    if (!state.inputs.isImageURL && uploadedFile) {
       console.log('Img', uploadedFile);
       console.log('Img url', uploadedImageURL);
-      setUploadingToCloud(true);
+
       try {
         cloudURL = await uploadImg(uploadedFile);
       } catch (err) {
         console.log(err);
         VIToast.error("Image couldn't be uploaded to cloud CDN !");
-        setUploadingToCloud(false);
+
         return;
       }
       VIToast.success('Image uploaded to cloud CDN successfully !');
-      setUploadingToCloud(false);
     }
     mintNewNFT(cloudURL);
   }
@@ -193,10 +198,6 @@ const MintNFT = () => {
     }
 
     if (entityInfo.publicKey) {
-      console.log('Your pub key: ', entityInfo.publicKey);
-
-      // setMintStage(MintingStages.STARTED);
-
       let mintDeployHash;
 
       try {
@@ -207,7 +208,6 @@ const MintNFT = () => {
           price: state.inputs.price,
           isForSale: state.inputs.isForSale,
           campaign: campaign || '',
-          // category: state.inputs.category,
           currency: state.inputs.currency,
           collection: isCreateNewCollection ? 0 : selectedCollectionValue.value,
           collectionName: isCreateNewCollection
@@ -224,18 +224,15 @@ const MintNFT = () => {
         });
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
-          // setErrStage(MintingStages.STARTED);
         }
         return;
       }
 
-      //setMintStage(MintingStages.TX_PENDING);
-
       try {
         const deployResult = await getDeployDetails(mintDeployHash);
-        if(campaign!=="" && campaign!==null){
+        if (campaign !== '' && campaign !== null) {
           localStorage.setItem('selectedCampaign', campaign);
-        }else{
+        } else {
           localStorage.setItem('selectedCampaign', null);
         }
         console.log('...... Token minted successfully', deployResult);
@@ -252,12 +249,13 @@ const MintNFT = () => {
         sendDiscordMessage( process.env.REACT_APP_CREATORS_WEBHOOK_ID, process.env.REACT_APP_CREATORS_TOKEN, creator , "" ,`We are glad to announce that ${creator} creator has joined #verified-impact-nfts and minted a striking NFT for donations. Click here to see more about creators and their NFTs collections `)
       }
         window.location.reload();
-        setIsMintClicked(false)
+        setIsMintClicked(false);
       } catch (err) {
+        console.log(err);
         //   setErrStage(MintingStages.TX_PENDING);
         VIToast.error(err);
       }
-      //  setMintStage(MintingStages.TX_SUCCESS);
+
       setState({
         inputs: {
           title: '',
@@ -271,31 +269,27 @@ const MintNFT = () => {
         },
       });
       refreshAuth();
-
-      const newBalance = await numberOfNFTsOwned(entityInfo.publicKey);
-      console.log('...... No. of NFTs in your account: ', newBalance);
     }
   }
 
-  const setCampaignSelectedData = (allcampains, value) => {
+  const setCampaignSelectedData = (allCampaigns, value) => {
     setCampaign(value);
-    let campaignPercentage = allcampains.filter((c) => c.id == value)[0]
+    let campaignPercentage = allCampaigns.filter((c) => c.id === value)[0]
       .requested_royalty;
     setCreatorPercentage(100 - campaignPercentage);
     setBeneficiaryPercentage(campaignPercentage);
   };
 
-  const checkURLValidation=(value)=>{
-    if(validator.isURL(value)){
-      setShowURLErrorMsg(false)
-    }else{
-      setShowURLErrorMsg(true)
+  const checkURLValidation = (value) => {
+    if (validator.isURL(value)) {
+      setShowURLErrorMsg(false);
+    } else {
+      setShowURLErrorMsg(true);
     }
-  }
+  };
 
   return (
     <Layout>
-
       <div className='page-content bg-white'>
         {/* <!-- inner page banner --> */}
         <div
@@ -353,7 +347,7 @@ const MintNFT = () => {
                               }
                               value={campaign}
                             >
-                              {campaigns?.map(
+                              {campaignsList?.map(
                                 ({ name, id, requested_royalty }) => (
                                   <option key={id} value={id}>
                                     {name} (creator Percentage is{' '}
@@ -375,12 +369,14 @@ const MintNFT = () => {
                               isLoading={isLoading}
                               onChange={(v) => setSelectedCollectionValue(v)}
                               onCreateOption={(v) => handleCreate(v)}
-                              options={options}
+                              options={collectionsList}
                               value={selectedCollectionValue}
                               menuPortalTarget={document.body}
                               placeholder='Select...'
                               className='creatable-select'
-                              formatCreateLabel={(v)=>'Click here to create "'+ v +'" Collection'}
+                              formatCreateLabel={(v) =>
+                                'Click here to create "' + v + '" Collection'
+                              }
                             />
                           </Col>
                         </Row>
@@ -430,19 +426,25 @@ const MintNFT = () => {
                         <Row className='form-group'>
                           <Col>
                             {state.inputs.isImageURL ? (
-                             <> <input
-                                type='text'
-                                placeholder='Image URl'
-                                name='imageUrl'
-                                className='form-control'
-                                onChange={(e) =>{
-                                  setUploadedImage(e.target.value);
-                                  checkURLValidation(e.target.value);
-                                }
-                                }
-                                value={uploadedImageURL}
-                              />
-                              {showURLErrorMsg&&<span className='text-danger'>Please enter Valid URL </span>}</>
+                              <>
+                                {' '}
+                                <input
+                                  type='text'
+                                  placeholder='Image URl'
+                                  name='imageUrl'
+                                  className='form-control'
+                                  onChange={(e) => {
+                                    setUploadedImage(e.target.value);
+                                    checkURLValidation(e.target.value);
+                                  }}
+                                  value={uploadedImageURL || ''}
+                                />
+                                {showURLErrorMsg && (
+                                  <span className='text-danger'>
+                                    Please enter Valid URL{' '}
+                                  </span>
+                                )}
+                              </>
                             ) : (
                               <ImageUploader
                                 singleImage
@@ -529,12 +531,18 @@ const MintNFT = () => {
                               selectedCollectionValue === null ||
                               selectedCollectionValue?.value === '' ||
                               creator === '' ||
-                              state.inputs.name === ''||
-                              (state.inputs.isForSale&&state.inputs.price==="")||
+                              state.inputs.name === '' ||
+                              (state.inputs.isForSale &&
+                                state.inputs.price === '') ||
                               isMintClicked
                             }
-                          >{isMintClicked?<Spinner  animation="border"
-                          variant="light"/>:'Mint'}</button>
+                          >
+                            {isMintClicked ? (
+                              <Spinner animation='border' variant='light' />
+                            ) : (
+                              'Mint'
+                            )}
+                          </button>
                         </p>
                       </Col>
                     </Row>
@@ -548,7 +556,6 @@ const MintNFT = () => {
 
         {/* <!-- contact area  END --> */}
       </div>
-
     </Layout>
   );
 };

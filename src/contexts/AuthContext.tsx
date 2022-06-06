@@ -35,7 +35,7 @@ async function getConnectionStatus(): Promise<null | string> {
   if (isConnected) {
     let pk = await getActivePublicKey();
     if (pk) {
-      console.log('connected to signer successfuly');
+      console.log('connected to signer successfully');
       return pk;
     }
     console.log(`connected to signer, but it is locked`);

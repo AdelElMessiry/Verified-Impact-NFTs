@@ -8,7 +8,7 @@ export async function getCampaignDetails(campaignId: string) {
   return campaignDetails;
 }
 
-export async function parseCampaign(maybeValue: any) {
+export function parseCampaign(maybeValue: any) {
   const jsMap: any = new Map();
 
   for (const [innerKey, value] of maybeValue) {
@@ -27,14 +27,13 @@ export async function getCampaignsList() {
     await getCampaignDetails((id + 1).toString())
       .then(async (rawCampaign: any) => {
         // console.log(rawCampaign);
-        const parsedCampaigns = await parseCampaign(rawCampaign);
+        const parsedCampaigns = parseCampaign(rawCampaign);
         campaignsList.push(parsedCampaigns);
       })
       .catch((err) => {
         console.log(err);
       });
   }
-  console.log(campaignsList);
 
   return campaignsList;
 }

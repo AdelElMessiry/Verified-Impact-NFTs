@@ -1,9 +1,9 @@
-import React,{useState} from 'react';
+import React from 'react';
 import ModalVideo from 'react-modal-video';
 import video from "../../images/video/siteVideo.mp4"
 
 const VideoPopup = () => {
-  const [isOpen, setOpen] = useState(false)
+  const [isOpen, setOpen] = React.useState(false);
 
   return (
     <React.Fragment>
