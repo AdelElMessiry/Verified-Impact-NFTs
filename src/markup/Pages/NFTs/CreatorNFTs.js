@@ -14,12 +14,10 @@ import CampaignOrCollectionTwitterShare from '../../Element/TwitterShare/Campaig
 import NFTCard from '../../Element/NFTCard';
 import VINftsTooltip from '../../Element/Tooltip';
 import BuyNFTModal from '../../Element/BuyNFT';
-
 import Layout from '../../Layout';
-
 //images
 import bnr1 from './../../../images/banner/bnr1.jpg';
-
+import QRCode from "react-qr-code";
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -370,9 +368,10 @@ const CreatorNFTs = () => {
         &nbsp;&nbsp;
         <IconImage nft={nft} />
         &nbsp;&nbsp;{' '}
-        {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
-          <NFTTwitterShare item={nft} />
-        )}
+        &nbsp;&nbsp;{' '}
+        {process.env.REACT_APP_SHOW_TWITTER !== 'false' && ( <NFTTwitterShare item={nft} />)}
+        &nbsp;&nbsp;{' '}
+        <QRCode value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`} size={80} />
       </p>
     </div>
   );
@@ -398,10 +397,12 @@ const CreatorNFTs = () => {
                       campaign={''}
                       beneficiary={''}
                       creator={creator}
-                      url={`https://verifiedimpactnfts.com/#/CreatorNFTs?creator=${creator.replace(
+                      collection={collection}
+                      url={`${window.location.origin}/#/CreatorNFTs?creator=${creator.replace(
                         / /g,
                         '%20'
                       )}&collection=${collection.replace(/ /g, '%20')}`}
+                      beneficiaryPercentage={allNFTs&&allNFTs[0]?.beneficiaryPercentage}
                     />
                   )}
               </h1>

@@ -13,8 +13,9 @@ import VINftsTooltip from '../../Element/Tooltip';
 import NFTCard from '../../Element/NFTCard';
 import BuyNFTModal from '../../Element/BuyNFT';
 import Layout from '../../Layout';
-
 import bnr1 from './../../../images/banner/bnr1.jpg';
+import QRCode from "react-qr-code";
+import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
 
 // Masonry section
 const masonryOptions = {
@@ -403,7 +404,10 @@ const BeneficiaryNFTs = () => {
         <b>Price: </b>
         {nft.price} {nft.currency}
         &nbsp;&nbsp;
-        <IconImage nft={nft} />
+        <IconImage nft={nft} />&nbsp;&nbsp;{' '}
+        {process.env.REACT_APP_SHOW_TWITTER !== 'false' && ( <NFTTwitterShare item={nft} />)}
+        &nbsp;&nbsp;{' '}
+        <QRCode value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`} size={80} />
       </p>
     </div>
   );

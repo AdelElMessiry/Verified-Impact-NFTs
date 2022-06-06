@@ -14,6 +14,7 @@ import AddBeneficiary from './Pages/Admin/AddBeneficiary';
 import AddCampaign from './Pages/Admin/AddCampaign';
 import MyCreations from './Pages/NFTs/MyCreations';
 import MintNFT from './Pages/Admin/MintNFT';
+import Profile from './Pages/Profile';
 
 import Header from './Layout/Header';
 import ScrollToTop from './Element/ScrollToTop';
@@ -43,6 +44,7 @@ const Markup = () => {
               <Route path='/admin_campaign' exact component={AddCampaign} />
               <Route path='/my-creations' exact component={MyCreations} />
               <Route path='/mint-nft' exact component={MintNFT} />
+              <Route path='/profile' exact component={Profile} />
             </Switch>
           </div>
           <ScrollToTop />

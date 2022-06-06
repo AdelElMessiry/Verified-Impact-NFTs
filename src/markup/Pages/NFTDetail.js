@@ -2,14 +2,11 @@ import React from 'react';
 import { Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
-
 import { useNFTState } from '../../contexts/NFTContext';
-
-import VINftsTooltip from '../Element/Tooltip';
-
 import BuyNFTModal from '../Element/BuyNFT';
 import Layout from '../Layout';
 import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
+import VINftsTooltip from '../Element/Tooltip';
 
 //nft details component
 const NFTDetail = () => {
@@ -23,12 +20,16 @@ const NFTDetail = () => {
   const [allNFTs, setAllNFTs] = React.useState();
 
   React.useEffect(() => {
-    if (!allNFTs) {
+    (async () => {
+      if(!allNFTs){
       nfts && setAllNFTs(nfts);
-      let nft = nfts && nfts.find(({ tokenId }) => tokenId === id);
+      let nft = nfts && nfts.find(({ tokenId }) => tokenId == id);
       nft && setItem(nft);
-    }
-  }, [nfts, allNFTs, id]);
+      debugger;
+      }
+    })();
+  }, [allNFTs, nfts, id]);
+
 
   const IconImage = ({ nft }) => {
     return (
@@ -47,7 +48,7 @@ const NFTDetail = () => {
   return (
     <Layout isNFTDetails={true}>
       <div className='page-content pb-0 bg-black-light pt-5'>
-        {item?.length > 0 ? (
+        {item ? (
           <div className='content-block position-relative h-100vh'>
             {/* <!-- Project Details --> */}
             <div className='section-full content-inner-2 h-100vh'>
@@ -55,7 +56,7 @@ const NFTDetail = () => {
                 <div className='row h-100'>
                   <div className='col text-center align-items-center align-content-center d-flex justify-content-center h-100'>
                     <img
-                      src={item[0]?.image}
+                      src={item?.image}
                       alt=''
                       className='img img-fluid fit-img'
                     />
@@ -66,72 +67,72 @@ const NFTDetail = () => {
             <div className='detail-page-caption p-3'>
               <div className='align-b text-white text-left'>
                 <div className='text-white text-left port-box'>
-                  <h5>{item[0]?.title}</h5>
-                  <p>Description: {item[0]?.description}</p>
+                  <h5>{item?.title}</h5>
+                  <p>Description: {item?.description}</p>
                   <p>
-                    <b>Category: </b>
-                    {item[0]?.category}
-                    &nbsp;&nbsp;
+                    {/* <b>Category: </b>
+                    {item?.category} 
+                    &nbsp;&nbsp;*/}
                     <b>Beneficiary: </b>
                     <VINftsTooltip
-                      title={`Click to see all NFTs for "${item[0]?.beneficiaryName}" beneficiary`}
+                      title={`Click to see all NFTs for "${item?.beneficiaryName}" beneficiary`}
                     >
                       <Link
-                        to={`./BeneficiaryNFTs?beneficiary=${item[0]?.beneficiaryName}`}
+                        to={`./BeneficiaryNFTs?beneficiary=${item?.beneficiaryName}`}
                         className='dez-page text-white'
                       >
-                        {item[0]?.beneficiaryName}
+                        {item?.beneficiaryName}
                       </Link>
                     </VINftsTooltip>
                     <span className='bg-success text-white px-1 ml-1 border-raduis-2'>
-                      {item[0]?.beneficiaryPercentage}%
+                      {item?.beneficiaryPercentage}%
                     </span>
                     &nbsp;&nbsp;
                     <b>Campaign: </b>
                     <VINftsTooltip
-                      title={`Click to see all NFTs for "${item[0]?.campaignName}" campaign`}
+                      title={`Click to see all NFTs for "${item?.campaignName}" campaign`}
                     >
-                      {item[0]?.beneficiary ? (
+                      {item?.beneficiary ? (
                         <Link
-                          to={`./BeneficiaryNFTs?beneficiary=${item[0]?.beneficiaryName}&campaign=${item[0]?.campaignName}`}
+                          to={`./BeneficiaryNFTs?beneficiary=${item?.beneficiaryName}&campaign=${item?.campaignName}`}
                           className='dez-page text-white'
                         >
-                          {item[0]?.campaign}
+                          {item?.campaignName}
                         </Link>
                       ) : (
                         <Link
-                          to={`./CreatorNFTs?creator=${item[0]?.creator}&collection=${item[0]?.collectionName}`}
+                          to={`./CreatorNFTs?creator=${item?.creator}&collection=${item?.collectionName}`}
                           className='dez-page text-white'
                         >
-                          {item[0]?.campaignName}
+                          {item?.campaignName}
                         </Link>
                       )}
                     </VINftsTooltip>
                     &nbsp;&nbsp;
                     <b>Creator: </b>
                     <VINftsTooltip
-                      title={`Click to see all NFTs created by "${item[0]?.creator}"`}
+                      title={`Click to see all NFTs created by "${item?.creator}"`}
                     >
                       <Link
-                        to={`./CreatorNFTs?creator=${item[0]?.creator}`}
+                        to={`./CreatorNFTs?creator=${item?.creator}`}
                         className='dez-page text-white'
                       >
-                        {item[0]?.creator}
+                        {item?.creatorName}
                       </Link>
                     </VINftsTooltip>
                     <span className='bg-info text-white px-1 ml-1 border-raduis-2'>
-                      {item[0]?.creatorPercentage}%
+                      {item?.creatorPercentage}%
                     </span>
                     &nbsp;&nbsp;
                     <b>Collection: </b>
-                    {item[0]?.collectionName}
+                    {item?.collectionName}
                   </p>
                   <p className='d-flex align-content-center align-items-center'>
                     <b>Price: </b>
-                    {item[0]?.price} {item[0]?.currency} &nbsp;&nbsp;
-                    <IconImage nft={item[0]} /> &nbsp;&nbsp;{' '}
+                    {item?.price} {item?.currency} &nbsp;&nbsp;
+                    <IconImage nft={item} /> &nbsp;&nbsp;{' '}
                     {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
-                      <NFTTwitterShare item={item[0]} />
+                      <NFTTwitterShare item={item} />
                     )}
                   </p>
                 </div>
