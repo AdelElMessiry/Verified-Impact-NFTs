@@ -9,6 +9,7 @@ import { transfer, purchaseNFT } from '../../api/transfer';
 import { getDeployDetails } from '../../api/universal';
 import { useAuth } from '../../contexts/AuthContext';
 import { sendDiscordMessage } from '../../utils/discordEvents';
+import { SendTweetWithImage } from '../../utils/VINFTsTweets';
 
 const InitialInputs = () => ({
   inputs: {
@@ -53,6 +54,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
         VIToast.success('Transaction ended successfully');
         handleClose();
         sendDiscordMessage( process.env.REACT_APP_NFT_WEBHOOK_ID, process.env.REACT_APP_NFT_TOKEN, "" , "" ,`Exciting news! [${data.title}] NFT of [${data.creatorName}] creator has been sold as a donation for [${data.campaignName}] campaign. Click here to buy #verified-impact-nfts and support more causes.`)
+        SendTweetWithImage(data.image,`Exciting news! ${data.title} NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here to buy #verified_impact_nfts and support more causes.`)
       } catch (err) {
         console.log('Transfer Fees Err ' + err);
         VIToast.error('Error happened please try again later');

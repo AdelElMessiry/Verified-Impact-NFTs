@@ -107,12 +107,10 @@ const Dashboard = () => {
   }, [getNftsList, displayedCampaigns, allNfts]);
 
   const setCaptions = (data) => {
-    debugger;
     const captionsCamp = [];
     for (let item = 0; item < data?.length; item++) {
       captionsCamp.push(CaptionCampaign(data, item, IconImage));
     }
-    debugger;
     setSliderCaptionsCamp(captionsCamp);
   };
 
@@ -336,17 +334,17 @@ const Dashboard = () => {
                                       />
                                     </li>
                                     {openSliderCamp &&
-                                      campaignsName === selectedCampaign && (
+                                      campaignsName[0] === selectedCampaign && (
                                         <Lightbox
                                           mainSrc={NFts[photoIndex].image}
                                           nextSrc={
-                                            NFts[(photoIndex + 1) % NFts.length]
+                                            NFts[(photoIndex + 1) % NFts.slice(0,5).length]
                                               .image
                                           }
                                           prevSrc={
                                             NFts[
-                                              (photoIndex + NFts.length - 1) %
-                                                NFts.length
+                                              (photoIndex + NFts.slice(0,5).length - 1) %
+                                                NFts.slice(0,5).length
                                             ].image
                                           }
                                           onCloseRequest={() =>
@@ -354,13 +352,13 @@ const Dashboard = () => {
                                           }
                                           onMovePrevRequest={() =>
                                             setPhotoIndex(
-                                              (photoIndex + NFts.length - 1) %
-                                                NFts.length
+                                              (photoIndex + NFts.slice(0,5).length - 1) %
+                                                NFts.slice(0,5).length
                                             )
                                           }
                                           onMoveNextRequest={() =>
                                             setPhotoIndex(
-                                              (photoIndex + 1) % NFts.length
+                                              (photoIndex + 1) % NFts.slice(0,5).length
                                             )
                                           }
                                           imageCaption={

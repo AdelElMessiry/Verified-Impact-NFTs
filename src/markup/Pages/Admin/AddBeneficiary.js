@@ -13,6 +13,7 @@ import PageTitle from '../../Layout/PageTitle';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
+import { SendTweet } from '../../../utils/VINFTsTweets';
 
 //add new beneficiary page
 const AddBeneficiary = () => {
@@ -24,15 +25,6 @@ const AddBeneficiary = () => {
     address: '',
   });
 
-  // React.useEffect(() => {
-  //   (async () => {
-  //     setBeneficiaryInputs({
-  //       name: '',
-  //       description: '',
-  //       address: '',
-  //     });
-  //   })();
-  // }, [entityInfo.publicKey]);
 
   //saving new beneficiary function
   const saveBeneficiary = async () => {
@@ -47,6 +39,7 @@ const AddBeneficiary = () => {
     console.log('...... Beneficiary saved successfully', deployResult);
     VIToast.success("Beneficiary saved successfully");
     sendDiscordMessage( process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID, process.env.REACT_APP_BENEFICIARIES_TOKEN, beneficiaryInputs.name , "" ,`Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts click here to know more about their cause.`)
+    SendTweet(`Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts click here to know more about their cause.`)
     setBeneficiaryInputs({
       name: '',
       description: '',
