@@ -298,7 +298,7 @@ const BenefeiciaryNFTs = () => {
         !allCollections && setCollections(collectionsList);
         //mappign nft details addresses and ids to names
         if (
-          creatorsList?.length > 0 &&
+          allCreators?.length > 0 &&
           beneficiaries?.length > 0 &&
           newNFTList?.length > 0&&collectionsList?.length > 0
         ) {
@@ -311,7 +311,7 @@ const BenefeiciaryNFTs = () => {
               let selectedCampaign = selectedBene[0]?.campaigns?.filter(
                 (c) => c.id === element.campaign
               );
-              let selectedCreator = creatorsList?.filter(
+              let selectedCreator = allCreators?.filter(
                 (c) => c.address === element.creator
               );
               let selectedCollection = collectionsList?.filter(
