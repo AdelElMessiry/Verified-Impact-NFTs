@@ -120,12 +120,18 @@ export const getAccountBalance: any = async (publicKey: string) => {
   const latestBlock: any = await client.getLatestBlockInfo();
   const root = await client.getStateRootHash(latestBlock.block.hash);
   const MOTE_RATE = 1000000000;
-  const balanceUref = await client.getAccountBalanceUrefByPublicKey(
-    root,
-    CLPublicKey.fromHex(publicKey)
-  );
+  let balanceUref;
+  try {
+    balanceUref = await client.getAccountBalanceUrefByPublicKey(
+      root,
+      CLPublicKey.fromHex(publicKey)
+    );
+  } catch (err) {
+    return 0;
+  }
 
   //account balance from the last block
+
   const balance: any = await client.getAccountBalance(
     latestBlock.block.header.state_root_hash,
     balanceUref

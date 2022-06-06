@@ -16,7 +16,7 @@ const CampaignOrCollectionTwitterShare = ({
       url={
         url
           ? url
-          : `https://verifiedimpactnfts.com/#/BenefeiciaryNFTs?beneficiary=${beneficiary.replace(
+          : `${window.location.origin}/#/BenefeiciaryNFTs?beneficiary=${beneficiary.replace(
               / /g,
               '%20'
             )}&campaign=${campaign.replace(/ /g, '%20')}`

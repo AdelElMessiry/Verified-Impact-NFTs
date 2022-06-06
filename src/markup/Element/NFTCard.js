@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
-import VINFTsTooltip from './Tooltip';
+import VINftsTooltip from './Tooltip';
 import BuyNFTModal from './BuyNFT';
 import ListForSaleNFTModal from './ListForSaleNFT';
 import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
@@ -15,10 +15,11 @@ const NFTCard = ({
   isTransfer = false,
   isCreation = false,
 }) => {
-  const [showBuyModal, setShowBuyModal] = useState(false);
-  const [showListForSaleModal, setShowListForSaleModal] = useState(false);
+  const [showBuyModal, setShowBuyModal] = React.useState(false);
+  const [showListForSaleModal, setShowListForSaleModal] = React.useState(false);
+
   //function which return buttons (buy NFT) & (expand NFT) on nft card
-  const Iconimage = () => {
+  const IconImage = () => {
     return (
       <>
         <Link
@@ -27,29 +28,29 @@ const NFTCard = ({
             e.preventDefault();
             openSlider(index, item.campaign);
           }}
-          className="mfp-link portfolio-fullscreen"
+          className='mfp-link portfolio-fullscreen'
         >
-          <i className="ti-fullscreen icon-bx-xs"></i>
+          <i className='ti-fullscreen icon-bx-xs'></i>
         </Link>
         {isTransfer ? (
           <i
-            className="ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"
+            className='ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
             onClick={() => {
               setShowBuyModal(true);
             }}
           ></i>
         ) : (
           <i
-            className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"
+            className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
             onClick={() => {
               setShowBuyModal(true);
             }}
           ></i>
         )}
         {isCreation && (
-          <VINFTsTooltip
+          <VINftsTooltip
             title={
-              item.isForSale == 'true'
+              item.isForSale === 'true'
                 ? 'Unlist NFT for Sale'
                 : 'List NFT for sale'
             }
@@ -59,12 +60,12 @@ const NFTCard = ({
                 setShowListForSaleModal(true);
               }}
             >
-              {item.isForSale == 'true' && (
-                <i className="ti-close sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+              {item.isForSale === 'true' && (
+                <i className='ti-close sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'></i>
               )}
-              <i className="ti-money sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+              <i className='ti-money sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'></i>
             </div>
-          </VINFTsTooltip>
+          </VINftsTooltip>
         )}
         {showBuyModal && (
           <BuyNFTModal
@@ -97,8 +98,8 @@ const NFTCard = ({
       <div className="dlab-media dlab-img-overlay1 position-relative dlab-img-effect">
         <img
           src={item.image}
-          alt=""
-          className="img img-fluid fit-img fit-img-cover"
+          alt=''
+          className='img img-fluid fit-img fit-img-cover'
         />
         <div className="qr-code-border qr-code-oncard position-absolute">
           <QRCode
@@ -116,49 +117,49 @@ const NFTCard = ({
               </p> */}
               <p>
                 <b>Beneficiary: </b>
-                <VINFTsTooltip
+                <VINftsTooltip
                   title={`Click to see all NFTs for "${item.beneficiaryName}" beneficiary`}
                 >
                   <Link
-                    to={`./BenefeiciaryNFTs?beneficiary=${item.beneficiaryName}`}
-                    className="dez-page text-white"
+                    to={`./BeneficiaryNFTs?beneficiary=${item.beneficiaryName}`}
+                    className='dez-page text-white'
                   >
                     {item.beneficiaryName}
                   </Link>
-                </VINFTsTooltip>
-                <span className="bg-success text-white px-1 ml-1 border-raduis-2">
+                </VINftsTooltip>
+                <span className='bg-success text-white px-1 ml-1 border-raduis-2'>
                   {item.beneficiaryPercentage}%
                 </span>
               </p>
               <p>
                 <b>Campaign: </b>
 
-                <VINFTsTooltip
+                <VINftsTooltip
                   title={`Click to see all NFTs for "${item.campaignName}" campaign`}
                 >
                   {item.beneficiary && (
                     <Link
-                      to={`./BenefeiciaryNFTs?beneficiary=${item.beneficiaryName}&campaign=${item.campaignName}`}
-                      className="dez-page text-white"
+                      to={`./BeneficiaryNFTs?beneficiary=${item.beneficiaryName}&campaign=${item.campaignName}`}
+                      className='dez-page text-white'
                     >
                       {item.campaignName}
                     </Link>
                   )}
-                </VINFTsTooltip>
+                </VINftsTooltip>
               </p>
               <p>
                 <b>Creator: </b>
-                <VINFTsTooltip
+                <VINftsTooltip
                   title={`Click to see all NFTs created by "${item.creatorName}"`}
                 >
                   <Link
                     to={`./CreatorNFTs?creator=${item.creatorName}`}
-                    className="dez-page text-white"
+                    className='dez-page text-white'
                   >
                     {item.creatorName}
                   </Link>
-                </VINFTsTooltip>
-                <span className="bg-info text-white px-1 ml-1 border-raduis-2">
+                </VINftsTooltip>
+                <span className='bg-info text-white px-1 ml-1 border-raduis-2'>
                   {item.creatorPercentage}%
                 </span>
               </p>
@@ -166,7 +167,7 @@ const NFTCard = ({
                 <b>Collection: </b>
                 <Link
                   to={`./CreatorNFTs?creator=${item.creatorName}&collection=${item.collectionName}`}
-                  className="dez-page text-white"
+                  className='dez-page text-white'
                 >
                   {item.collectionName}
                 </Link>
@@ -177,7 +178,7 @@ const NFTCard = ({
               </p>
               <p>
                 {' '}
-                <Iconimage />
+                <IconImage />
               </p>
             </div>
           </div>
