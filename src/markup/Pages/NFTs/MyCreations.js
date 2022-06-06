@@ -312,10 +312,6 @@ const MyCreations = () => {
       setTagCreator('All');
       setTagCampaign('All');
 
-      const collectionsTagsName =
-        allNFTs && filterCollectionByTag(tag, allNFTs);
-      collectionsTagsName && setCollectionTags(['All', ...collectionsTagsName]);
-
       const filteredCollectionsNFTs = allNFTs.filter(({ collectionName }) =>
         tag === 'All' ? collectionName : collectionName === tag
       );
@@ -340,10 +336,6 @@ const MyCreations = () => {
       setTagCampaign(tag);
       setTagCreator('All');
       setTagCollection('All');
-
-      const campaignsTagsName = allNFTs && filterCampaignByTag(tag, allNFTs);
-
-      campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
 
       const filteredCampaignsNFTs =
         allNFTs &&
@@ -371,10 +363,6 @@ const MyCreations = () => {
       setTagCreator(tag);
       setTagCollection('All');
       setTagCampaign('All');
-
-      const creatorsTagsName = allNFTs && filterCreatorByTag(tag, allNFTs);
-
-      creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
 
       const filteredCreatorsNFTs =
         allNFTs &&
