@@ -107,12 +107,10 @@ const Dashboard = () => {
   }, [getNftsList, displayedCampaigns, allNfts]);
 
   const setCaptions = (data) => {
-    debugger;
     const captionsCamp = [];
     for (let item = 0; item < data?.length; item++) {
       captionsCamp.push(CaptionCampaign(data, item, IconImage));
     }
-    debugger;
     setSliderCaptionsCamp(captionsCamp);
   };
 

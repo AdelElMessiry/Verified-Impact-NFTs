@@ -25,7 +25,6 @@ const NFTDetail = () => {
       nfts && setAllNFTs(nfts);
       let nft = nfts && nfts.find(({ tokenId }) => tokenId == id);
       nft && setItem(nft);
-      debugger;
       }
     })();
   }, [allNFTs, nfts, id]);

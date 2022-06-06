@@ -10,12 +10,10 @@ export const SendTweetWithImage = async (image: any, body: any) => {
     .then((res) => res.json())
     .then((result) => {
       console.log(result);
-      debugger;
     });
 };
 
 export const SendTweet = async (body: any) => {
-  debugger;
   await fetch(
     `https://kr9d5y7ibh.execute-api.us-east-2.amazonaws.com/dev/tweet`,
     {
@@ -27,6 +25,5 @@ export const SendTweet = async (body: any) => {
     .then((res) => res.json())
     .then((result) => {
       console.log(result);
-      debugger;
     });
 };
