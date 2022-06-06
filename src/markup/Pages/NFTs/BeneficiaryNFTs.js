@@ -29,7 +29,7 @@ const options = {
 const imagesLoadedOptions = { background: '.my-bg-image-el' };
 
 //handling filtration markup
-const TagLi = ({ name, handleSetTag, tagActive, type }) => {
+const TagLi = ({ name, handleSetTag, tagActive, type,beneficiary }) => {
   return (
     <VINftsTooltip
       title={`Click to see all NFTs under the "${name}" ${
@@ -56,6 +56,15 @@ const TagLi = ({ name, handleSetTag, tagActive, type }) => {
             {name} {''}
           </span>{' '}
         </button>
+        &nbsp;&nbsp;
+      {name!=='All'&&  <QRCode className='mr-1'
+          value={type === 'creator'
+          ? `${window.location.origin}/#/CreatorNFTs?creator=${name}`
+          : type === 'campaign'
+          ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${name}`
+          : `${window.location.origin}/#/CreatorNFTs?creator=${beneficiary}&collection=${name}`}
+          size={50}
+        />}
       </li>
     </VINftsTooltip>
   );
@@ -378,10 +387,16 @@ const BeneficiaryNFTs = () => {
         <b>Price: </b>
         {nft.price} {nft.currency}
         &nbsp;&nbsp;
-        <IconImage nft={nft} />&nbsp;&nbsp;{' '}
-        {process.env.REACT_APP_SHOW_TWITTER !== 'false' && ( <NFTTwitterShare item={nft} />)}
+        <IconImage nft={nft} />
         &nbsp;&nbsp;{' '}
-        <QRCode value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`} size={80} />
+        {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+          <NFTTwitterShare item={nft} />
+        )}
+        &nbsp;&nbsp;{' '}
+        <QRCode
+          value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
+          size={80}
+        />
       </p>
     </div>
   );
@@ -437,6 +452,7 @@ const BeneficiaryNFTs = () => {
                       handleSetTag={getCreatorsBasedOnTag}
                       tagActive={tagCreator === singleTag ? true : false}
                       type='creator'
+                      beneficiary={beneficiary}
                     />
                   ))}
               </ul>
@@ -455,6 +471,7 @@ const BeneficiaryNFTs = () => {
                       handleSetTag={getCampaignsBasedOnTag}
                       tagActive={tagCampaign === singleTag ? true : false}
                       type='campaign'
+                      beneficiary={beneficiary}
                     />
                   ))}
               </ul>
@@ -472,6 +489,7 @@ const BeneficiaryNFTs = () => {
                     handleSetTag={getCollectionsBasedOnTag}
                     tagActive={tagCollection === singleTag ? true : false}
                     type='collection'
+                    beneficiary={beneficiary}
                   />
                 ))}
             </ul>
