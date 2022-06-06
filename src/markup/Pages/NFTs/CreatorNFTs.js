@@ -267,8 +267,9 @@ const CreatorNFTs = () => {
       if (!allNfts) {
         let newNFTList = await getNFTsList();
         let nftList = [];
-        let beneficiaryList =
-          !beneficiaries && (await getBeneficiariesCampaignsList());
+        let beneficiaryList = !beneficiaries
+        ? await getBeneficiariesCampaignsList()
+        : [];
         !beneficiaries && setbeneficiaries(beneficiaryList);
         !beneficiaries && setBeneficiaryPercentage(beneficiaryList[0]?.campaigns[0]?.requested_royalty);
         let creatorsList = !allCreators && (await getCreatorsList());
@@ -277,7 +278,7 @@ const CreatorNFTs = () => {
         !allCollections && setCollections(collectionsList);
         //mappign nft details addresses and ids to names
         if (
-          creatorsList?.length > 0 &&
+          allCreators?.length > 0 &&
           beneficiaries?.length > 0 &&
           newNFTList?.length > 0 &&
           collectionsList?.length > 0
@@ -291,7 +292,7 @@ const CreatorNFTs = () => {
               let selectedCampaign = selectedBene[0]?.campaigns?.filter(
                 (c) => c.id === element.campaign
               );
-              let selectedCreator = creatorsList?.filter(
+              let selectedCreator = allCreators?.filter(
                 (c) => c.address === element.creator
               );
               let selectedCollection = collectionsList?.filter(
