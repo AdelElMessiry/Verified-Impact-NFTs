@@ -92,18 +92,14 @@ const MyNFTs = () => {
   const [allNFTs, setAllNFTs] = React.useState();
   const [filteredNFTs, setFilteredNFTs] = React.useState();
 
-  const filterCollectionByTag = React.useCallback(
-    (tag, filteredNFTs) => {
-      const collectionsTagsName =
-        filteredNFTs &&
-        filteredNFTs
-          .map(({ collectionName }) => (tag === 'All' ? collectionName : tag))
-          .filter((name, index, names) => names.indexOf(name) === index);
-      collectionsTagsName && setCollectionTags(['All', ...collectionsTagsName]);
-    },
-    []
-    // [currentTagFilter, allNFTs]
-  );
+  const filterCollectionByTag = React.useCallback((tag, filteredNFTs) => {
+    const collectionsTagsName =
+      filteredNFTs &&
+      filteredNFTs
+        .map(({ collectionName }) => (tag === 'All' ? collectionName : tag))
+        .filter((name, index, names) => names.indexOf(name) === index);
+    collectionsTagsName && setCollectionTags(['All', ...collectionsTagsName]);
+  }, []);
 
   const filterCampaignByTag = React.useCallback((tag, filteredNFTs) => {
     const campaignsTagsName =
@@ -172,9 +168,9 @@ const MyNFTs = () => {
       setTagCreator('All');
       setTagCampaign('All');
 
-      const collectionsTagsName =
-        allNFTs && filterCollectionByTag(tag, allNFTs);
-      collectionsTagsName && setCollectionTags(['All', ...collectionsTagsName]);
+      // const collectionsTagsName =
+      //   allNFTs && filterCollectionByTag(tag, allNFTs);
+      // collectionsTagsName && setCollectionTags(['All', ...collectionsTagsName]);
 
       const filteredCollectionsNFTs = allNFTs.filter(({ collectionName }) =>
         tag === 'All' ? collectionName : collectionName === tag
@@ -201,9 +197,9 @@ const MyNFTs = () => {
       setTagCreator('All');
       setTagCollection('All');
 
-      const campaignsTagsName = allNFTs && filterCampaignByTag(tag, allNFTs);
+      // const campaignsTagsName = allNFTs && filterCampaignByTag(tag, allNFTs);
 
-      campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
+      // campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
 
       const filteredCampaignsNFTs =
         allNFTs &&
@@ -232,9 +228,9 @@ const MyNFTs = () => {
       setTagCollection('All');
       setTagCampaign('All');
 
-      const creatorsTagsName = allNFTs && filterCreatorByTag(tag, allNFTs);
+      // const creatorsTagsName = allNFTs && filterCreatorByTag(tag, allNFTs);
 
-      creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
+      // creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
 
       const filteredCreatorsNFTs =
         allNFTs &&
