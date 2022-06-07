@@ -27,7 +27,7 @@ pipelines:
           caches:
             - node
           script:
-            - npm install
-            - CI=false npm run build
+            - yarn install
+            - CI=false yarn build
             - pip install awscli --upgrade --ignore-installed six
             - aws s3 sync ./build s3://dev.verifiedimpactnfts.com --acl bucket-owner-full-control --acl public-read
