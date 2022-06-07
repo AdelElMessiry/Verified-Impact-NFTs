@@ -69,11 +69,11 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
             <div className='row form-group justify-content-center'>
               <div className='col-6'>
                 <input
-                  type='text'
+                  type='number'
                   className='form-control'
-                  name='address'
+                  name='price'
                   placeholder='Price in CSPR*'
-                  onChange={(e) => setPrice(price)}
+                  onChange={(e) => setPrice(e.target.value)}
                   value={price}
                 />
               </div>
