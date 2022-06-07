@@ -16,6 +16,7 @@ import Layout from '../../Layout';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import QRCode from "react-qr-code";
 import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
+import CampaignOrCollectionTwitterShare from '../../Element/TwitterShare/CampaignOrCollectionTwitterShare';
 
 // Masonry section
 const masonryOptions = {
@@ -100,7 +101,7 @@ const BeneficiaryNFTs = () => {
     const setSelectedBeneficiary =
       beneficiaries &&
       beneficiary &&
-      beneficiaries.find(({ name }) => beneficiary === name)?.name;
+      beneficiaries.find(({ name }) => beneficiary === name)?.description;
     setSelectedBeneficiary && setBeneficiaryDescription(setSelectedBeneficiary);
   }, [beneficiary, beneficiaries]);
 
@@ -416,6 +417,24 @@ const BeneficiaryNFTs = () => {
                   {' '}
                   {campaign ? campaign : beneficiary ? beneficiary : creator}
                 </span>
+                {campaign && process.env.REACT_APP_SHOW_TWITTER != 'false' && (
+                  <CampaignOrCollectionTwitterShare
+                    campaign={campaign}
+                    beneficiary={beneficiary ? beneficiary : creator}
+                    beneficiaryPercentage={allNFTs&&allNFTs[0]?.beneficiaryPercentage}
+                    url={
+                      beneficiary
+                        ? `${window.location.origin}/#/BenefeiciaryNFTs?beneficiary=${beneficiary.replace(
+                            / /g,
+                            '%20'
+                          )}&campaign=${campaign.replace(/ /g, '%20')}`
+                        : `${window.location.origin}/#/CreatorNFTs?creator=${creator.replace(
+                            / /g,
+                            '%20'
+                          )}&collection=${campaign.replace(/ /g, '%20')}`
+                    }
+                  />
+                )}
               </h1>
               <p className='text-white ben-desc'>
                 {!campaign && beneficiaryDescription

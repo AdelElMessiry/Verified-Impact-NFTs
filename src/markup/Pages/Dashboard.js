@@ -265,6 +265,24 @@ const Dashboard = () => {
                         to={`./BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName}&campaign=${NFts[0]?.campaignName}`}
                         className='mr-1 text-success text-underline'
                       >
+                        <QRCode
+                          value={`${
+                            window.location.origin
+                          }/#/BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName.replace(
+                            / /g,
+                            '%20'
+                          )}&campaign=${NFts[0]?.campaignName.replace(
+                            / /g,
+                            '%20'
+                          )}`}
+                          size={70}
+                        />
+                      </Link>
+                      &nbsp;&nbsp;
+                      <Link
+                        to={`./BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName}&campaign=${NFts[0]?.campaignName}`}
+                        className='mr-1 text-success text-underline'
+                      >
                         Top NFTs from the {NFts[0]?.campaignName} Campaign,
                         click to see all {NFts.length} NFTs
                       </Link>
@@ -275,19 +293,6 @@ const Dashboard = () => {
                           beneficiaryPercentage={NFts[0]?.beneficiaryPercentage}
                         />
                       )}
-                      &nbsp;&nbsp;
-                      <QRCode
-                        value={`${
-                          window.location.origin
-                        }/#/BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName?.replace(
-                          / /g,
-                          '%20'
-                        )}&campaign=${NFts[0]?.campaignName?.replace(
-                          / /g,
-                          '%20'
-                        )}`}
-                        size={60}
-                      />
                     </h4>
                     <SimpleReactLightbox>
                       <SRLWrapper options={options}>

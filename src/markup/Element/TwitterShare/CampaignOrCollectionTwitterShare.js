@@ -22,9 +22,9 @@ const CampaignOrCollectionTwitterShare = ({
             )}&campaign=${campaign.replace(/ /g, '%20')}`
       }
       title={
-        beneficiary !== ''
-          ? `I support the #NFT "${campaign}" campaign, ${beneficiaryPercentage}% of the proceeds go to the "${beneficiary}". Check it out at `
-          : `I support the #NFT "${collection}" collection, ${beneficiaryPercentage}% of the proceeds go to the "${creator}". Check it out at `
+        creator === ''
+          ? `@vinfts @Casper_Network @DEVXDAO \nI support the "${campaign}" #NFT campaign, ${beneficiaryPercentage}% of the proceeds go to the "${beneficiary}". check it out`
+          : `@vinfts @Casper_Network @DEVXDAO \nI support the "${collection}" #NFT collection, ${beneficiaryPercentage}% of the proceeds go to the "${beneficiary}" and ${100-Number(beneficiaryPercentage)}% go to"${creator}". check it out`
       }
     >
       <TwitterIcon
