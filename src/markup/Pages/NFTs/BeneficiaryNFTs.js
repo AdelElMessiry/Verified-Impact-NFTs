@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Lightbox from 'react-image-lightbox';
 import { Link } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
+import QRCode from "react-qr-code";
 
 import { useNFTState } from '../../../contexts/NFTContext';
 
@@ -14,7 +15,6 @@ import NFTCard from '../../Element/NFTCard';
 import BuyNFTModal from '../../Element/BuyNFT';
 import Layout from '../../Layout';
 import bnr1 from './../../../images/banner/bnr1.jpg';
-import QRCode from "react-qr-code";
 import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
 import CampaignOrCollectionTwitterShare from '../../Element/TwitterShare/CampaignOrCollectionTwitterShare';
 

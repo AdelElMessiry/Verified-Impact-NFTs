@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
+import QRCode from "react-qr-code";
 
 import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
 import VINftsTooltip from '../Element/Tooltip';
-import QRCode from "react-qr-code";
 
 export const CaptionCampaign = (data, item, IconImage) => (
   <div className='text-white text-left port-box'>
