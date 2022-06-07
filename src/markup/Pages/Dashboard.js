@@ -6,6 +6,7 @@ import Masonry from 'react-masonry-component';
 import Carousel from 'react-elastic-carousel';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper } from 'simple-react-lightbox';
+import QRCode from 'react-qr-code';
 
 import { useNFTState } from '../../contexts/NFTContext';
 
@@ -16,7 +17,6 @@ import BuyNFTModal from '../Element/BuyNFT';
 import Layout from '../Layout';
 import CampaignOrCollectionTwitterShare from '../Element/TwitterShare/CampaignOrCollectionTwitterShare';
 import bgImg from './../../images/main-slider/slide6.jpg';
-import QRCode from 'react-qr-code';
 
 //Light Gallery on icon click
 
