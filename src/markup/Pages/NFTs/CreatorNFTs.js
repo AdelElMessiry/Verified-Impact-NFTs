@@ -6,6 +6,7 @@ import Lightbox from 'react-image-lightbox';
 import { Link } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
+import QRCode from "react-qr-code";
 
 import { useNFTState } from '../../../contexts/NFTContext';
 
@@ -17,7 +18,6 @@ import BuyNFTModal from '../../Element/BuyNFT';
 import Layout from '../../Layout';
 //images
 import bnr1 from './../../../images/banner/bnr1.jpg';
-import QRCode from "react-qr-code";
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,

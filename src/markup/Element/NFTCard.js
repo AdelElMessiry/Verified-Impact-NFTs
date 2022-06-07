@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import QRCode from 'react-qr-code';
 
 import VINftsTooltip from './Tooltip';
 import BuyNFTModal from './BuyNFT';
 import ListForSaleNFTModal from './ListForSaleNFT';
 import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
-import QRCode from 'react-qr-code';
 
 //NFT Card component
 const NFTCard = ({
