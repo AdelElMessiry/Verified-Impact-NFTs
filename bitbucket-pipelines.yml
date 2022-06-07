@@ -11,7 +11,7 @@ pipelines:
             - CI=false yarn build
             - pip install awscli --upgrade --ignore-installed six
             - aws s3 sync ./build s3://verifiedimpactnfts.com --acl bucket-owner-full-control --acl public-read
-    bf-staging:
+    staging:
       - step:
           deployment: Production
           caches:
@@ -21,8 +21,7 @@ pipelines:
             - CI=false yarn build
             - pip install awscli --upgrade --ignore-installed six
             - aws s3 sync ./build s3://staging.verifiedimpactnfts.com --acl bucket-owner-full-control --acl public-read
-    
-            dev:
+    bf-staging:
       - step:
           deployment: Staging
           caches:
