@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import { CLPublicKey } from 'casper-js-sdk';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Spinner } from 'react-bootstrap';
 import { toast as VIToast } from 'react-toastify';
 
 import { transferFees } from '../../utils/contract-utils';
@@ -22,10 +22,12 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
   const { entityInfo } = useAuth();
   const [showModal, setShowModal] = React.useState(show);
   const [state, setState] = React.useState(InitialInputs());
-
+  const [isBuyClicked, setIsBuyClicked] = React.useState(false);
+  
   //buy NFT Function
   const buyNFT = async () => {
     if (entityInfo.publicKey) {
+      setIsBuyClicked(true);
       const nftID = data.tokenId.toString();
 
       try {
@@ -50,13 +52,26 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
           '...... Token fees transferred successfully',
           deployTransferResult
         );
-
-        VIToast.success('Transaction ended successfully');
-        handleClose();
-        sendDiscordMessage( process.env.REACT_APP_NFT_WEBHOOK_ID, process.env.REACT_APP_NFT_TOKEN, "" , "" ,`Exciting news! [${data.title}] NFT of [${data.creatorName}] creator has been sold as a donation for [${data.campaignName}] campaign. Click here to buy #verified-impact-nfts and support more causes.`)
-        SendTweetWithImage(data.image,`Exciting news! ${data.title} NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here to buy #verified_impact_nfts and support more causes.`)
+        if (deployTransferResult) {
+          VIToast.success('Transaction ended successfully');
+          handleClose();
+          sendDiscordMessage(
+            process.env.REACT_APP_NFT_WEBHOOK_ID,
+            process.env.REACT_APP_NFT_TOKEN,
+            '',
+            '',
+            `Exciting news! [${data.title}] NFT of [${data.creatorName}] creator has been sold as a donation for [${data.campaignName}] campaign. Click here to buy #verified-impact-nfts and support more causes.`
+          );
+          SendTweetWithImage(
+            data.image,
+            `Exciting news! ${data.title} NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here to buy #verified_impact_nfts and support more causes.`
+          );
+        }else{
+          setIsBuyClicked(false);
+        }
       } catch (err) {
         console.log('Transfer Fees Err ' + err);
+        handleClose();
         VIToast.error('Error happened please try again later');
       }
     }
@@ -65,6 +80,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
   //transfer nft Function
   const transferNFT = async () => {
     const nftID = data.tokenId;
+    setIsBuyClicked(true);
     try {
       const transferDeployHash = await transfer({
         signer: CLPublicKey.fromHex(entityInfo.publicKey),
@@ -79,6 +95,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
       }
     } catch (err) {
       console.log('Transfer Err ' + err);
+      handleClose();
       VIToast.error('Error happened please try again later');
     }
   };
@@ -119,7 +136,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
           <Row>
             <Col>
               <h5>{data.title}</h5>
-              <p className='text-muted'>{data.description}</p>
+              <p className="text-muted">{data.description}</p>
             </Col>
           </Row>
           {isTransfer ? (
@@ -149,8 +166,13 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
           onClick={() => {
             isTransfer ? transferNFT() : buyNFT();
           }}
+          disabled={isBuyClicked}
         >
-          Buy
+          {isBuyClicked ? (
+            <Spinner animation="border" variant="light" />
+          ) : (
+            'Buy'
+          )}
         </button>
       </Modal.Footer>
     </Modal>
