@@ -268,10 +268,10 @@ const Dashboard = () => {
                         <QRCode
                           value={`${
                             window.location.origin
-                          }/#/BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName.replace(
+                          }/#/BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName?.replace(
                             / /g,
                             '%20'
-                          )}&campaign=${NFts[0]?.campaignName.replace(
+                          )}&campaign=${NFts[0]?.campaignName?.replace(
                             / /g,
                             '%20'
                           )}`}
