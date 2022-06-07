@@ -370,7 +370,7 @@ const CreatorNFTs = () => {
                   process.env.REACT_APP_SHOW_TWITTER != 'false' && (
                     <CampaignOrCollectionTwitterShare
                       campaign={''}
-                      beneficiary={''}
+                      beneficiary={filteredNFTs&&filteredNFTs[0]?.beneficiaryName}
                       creator={creator}
                       collection={collection}
                       url={`${window.location.origin}/#/CreatorNFTs?creator=${creator.replace(
