@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { getBeneficiariesList } from '../api/beneficiaryInfo';
+import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from '../api/campaignInfo';
 import { getCreatorsList } from '../api/creatorInfo';
 import { getUniqueCollectionsList } from '../api/collectionInfo';
@@ -20,6 +21,10 @@ interface NFTState {
   uniqueCollections?: [];
   creators?: [];
   isLoading: boolean;
+  beneficiaryCount?: Number;
+  campaignsCount?: Number;
+  creatorsCount?: Number;
+  collectionsCount?: Number;
 }
 
 type NFTDispatch = (action: NFTAction) => void;
@@ -29,8 +34,9 @@ type NFTAction =
   | { type: NFTActionTypes.SUCCESS; payload: any };
 
 const NFTStateContext = React.createContext<NFTState | undefined>(undefined);
-const NFTDispatchContext =
-  React.createContext<NFTDispatch | undefined>(undefined);
+const NFTDispatchContext = React.createContext<NFTDispatch | undefined>(
+  undefined
+);
 
 function nftReducer(state: NFTState, action: NFTAction): NFTState {
   switch (action.type) {
@@ -49,6 +55,10 @@ function nftReducer(state: NFTState, action: NFTAction): NFTState {
         creators: action.payload.creators,
         collections: action.payload.collections,
         uniqueCollections: action.payload.uniqueCollections,
+        beneficiaryCount: action.payload.beneficiaryCount,
+        campaignsCount: action.payload.campaignsCount,
+        creatorsCount: action.payload.creatorsCount,
+        collectionsCount: action.payload.collectionsCount,
       };
     }
     default: {
@@ -60,91 +70,111 @@ function nftReducer(state: NFTState, action: NFTAction): NFTState {
 export const NFTProvider: React.FC<{}> = ({ children }: any) => {
   const [state, dispatch] = React.useReducer(nftReducer, { isLoading: true });
 
-  const [beneficiaries, setBeneficiaries] = React.useState();
-  const [campaigns, setCampaigns] = React.useState();
-  const [creators, setCreators] = React.useState();
-  const [collections, setCollections] = React.useState();
-  const [uniqueCollections, setUniqueCollections] = React.useState();
-  const [nfts, setNFTs] = React.useState();
+  // const [beneficiaries, setBeneficiaries] = React.useState();
+  // const [campaigns, setCampaigns] = React.useState();
+  // const [creators, setCreators] = React.useState();
+  // const [collections, setCollections] = React.useState();
+  // // const [uniqueCollections, setUniqueCollections] = React.useState();
+  // const [nfts, setNFTs] = React.useState();
 
   const getList = React.useCallback(async () => {
     dispatch({ type: NFTActionTypes.LOADING });
 
-    const beneficiariesList = !beneficiaries
-      ? await getBeneficiariesList()
-      : beneficiaries;
-    beneficiariesList && setBeneficiaries(beneficiariesList);
+    const nftsList = await getNFTsList();
+    const beneficiaryCount = await cep47.totalBeneficiaries();
+    console.log(beneficiaryCount.toString());
 
-    const campaignsList = !campaigns ? await getCampaignsList() : campaigns;
-    campaignsList && setCampaigns(campaignsList);
+    const campaignsCount = await cep47.totalCampaigns();
+    console.log(campaignsCount.toString());
+    const creatorsCount = await cep47.totalCreators();
+    console.log(creatorsCount.toString());
+    const collectionsCount = await cep47.totalCollections();
+    console.log(collectionsCount.toString());
 
-    const creatorsList = !creators ? await getCreatorsList() : creators;
-    creatorsList && setCreators(creatorsList);
+    dispatch({
+      type: NFTActionTypes.SUCCESS,
+      payload: {
+        nfts: nftsList,
+        beneficiaryCount: parseInt(beneficiaryCount.toString()),
+        campaignsCount: parseInt(campaignsCount.toString()),
+        creatorsCount: parseInt(creatorsCount.toString()),
+        collectionsCount: parseInt(collectionsCount.toString()),
+        collections: [],
+        uniqueCollections: [],
+        creators: [],
+        campaigns: [],
+        beneficiaries: [],
+      },
+    });
 
-    const collectionsList = !collections
-      ? await getUniqueCollectionsList()
-      : collections;
-    collectionsList &&
-      collectionsList.collectionsList &&
-      setCollections(collectionsList.collectionsList);
-    collectionsList &&
-      collectionsList.uniqueCollections &&
-      setUniqueCollections(collectionsList.uniqueCollections);
+    const beneficiariesList = await getBeneficiariesList();
+    // beneficiariesList && setBeneficiaries(beneficiariesList);
 
-    const nftsList = !nfts ? await getNFTsList() : nfts;
+    const campaignsList = await getCampaignsList();
+    // campaignsList && setCampaigns(campaignsList);
+
+    const creatorsList = await getCreatorsList();
+    // creatorsList && setCreators(creatorsList);
+
+    const collectionsList = await getUniqueCollectionsList();
+    // collectionsList &&
+    // collectionsList.collectionsList &&
+    // setCollections(collectionsList.collectionsList);
 
     const mappedNFTS =
-      beneficiariesList &&
-      campaignsList &&
-      creatorsList &&
-      collectionsList?.collectionsList &&
-      nftsList &&
-      nftsList.map((nft: any) => ({
+      // beneficiariesList &&
+      // campaignsList &&
+      // creatorsList &&
+      // collectionsList?.collectionsList &&
+      // nftsList &&
+      nftsList?.map((nft: any) => ({
         ...nft,
-        campaignName: campaignsList.find(({ id }: any) => nft.campaign === id)
-          .name,
-        creatorName: creatorsList.find(
-          ({ address }: any) => nft.creator === address
-        ).name,
-        beneficiaryName: beneficiariesList.find(
-          ({ address }: any) => nft.beneficiary === address
-        ).name,
-        collectionName: collectionsList.collectionsList.find(
-          ({ id }: any) => nft.collection === id
-        ).name,
+        campaignName:
+          campaignsList.find(({ id }: any) => nft.campaign === id)?.name || '',
+        creatorName:
+          creatorsList.find(({ address }: any) => nft.creator === address)
+            ?.name || '',
+        beneficiaryName:
+          beneficiariesList.find(
+            ({ address }: any) => nft.beneficiary === address
+          )?.name || '',
+        collectionName:
+          collectionsList.collectionsList.find(
+            ({ id }: any) => nft.collection === id
+          )?.name || '',
       }));
     // &&
     // setNFTs(nftsList);
 
-    mappedNFTS && setNFTs(mappedNFTS);
+    // mappedNFTS && setNFTs(mappedNFTS);
 
-    beneficiariesList &&
-      campaignsList &&
-      creatorsList &&
-      collectionsList?.collectionsList &&
-      mappedNFTS &&
+    // beneficiariesList &&
+    //   campaignsList &&
+    //   creatorsList &&
+    //   collectionsList?.collectionsList &&
+    mappedNFTS &&
       dispatch({
         type: NFTActionTypes.SUCCESS,
         payload: {
           nfts: mappedNFTS,
+          beneficiaryCount: parseInt(beneficiaryCount.toString()),
+          campaignsCount: parseInt(campaignsCount.toString()),
+          creatorsCount: parseInt(creatorsCount.toString()),
+          collectionsCount: parseInt(collectionsCount.toString()),
           collections: collectionsList.collectionsList,
           uniqueCollections: collectionsList.uniqueCollections,
           creators: creatorsList,
           campaigns: campaignsList,
           beneficiaries: beneficiariesList,
-          // beneficiaries: beneficiariesList,
-          // campaigns: campaignsList,
-          // creators: creatorsList,
-          // collections: collectionsList,
-          // nfts: nftsList,
         },
       });
-  }, [beneficiaries, campaigns, creators, collections, nfts]);
+  }, []);
 
   React.useEffect(() => {
-    (!beneficiaries || !campaigns || !creators || !collections || !nfts) &&
-      getList();
-  }, [beneficiaries, campaigns, creators, collections, nfts, getList]);
+    // (!beneficiaries || !campaigns || !creators || !collections || !nfts) &&
+    getList();
+  }, [getList]);
+  // }, [beneficiaries, campaigns, creators, collections, nfts, getList]);
 
   return (
     <NFTStateContext.Provider value={state}>

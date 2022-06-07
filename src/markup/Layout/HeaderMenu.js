@@ -16,28 +16,20 @@ const HeaderMenu = () => {
   const loadSubMenu = React.useCallback(async () => {
     const beneficiaryList =
       beneficiaries &&
-      !beneficiariesList &&
+      campaigns &&
       (await _getBeneficiariesCampaignsList(beneficiaries, campaigns));
     beneficiaryList && setBeneficiariesList(beneficiaryList);
 
     const creatorList =
       creators &&
       collections &&
-      !creatorsList &&
       (await _getCreatorsCollectionsList(creators, collections));
     creatorList && setCreatorsList(creatorList);
-  }, [
-    beneficiaries,
-    creatorsList,
-    beneficiariesList,
-    collections,
-    campaigns,
-    creators,
-  ]);
+  }, [beneficiaries, campaigns, collections, creators]);
 
   React.useEffect(() => {
-    (!creatorsList || !beneficiariesList) && loadSubMenu();
-  }, [creatorsList, beneficiariesList, loadSubMenu]);
+    loadSubMenu();
+  }, [loadSubMenu]);
 
   return (
     <>
