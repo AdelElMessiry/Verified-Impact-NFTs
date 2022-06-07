@@ -34,9 +34,8 @@ type NFTAction =
   | { type: NFTActionTypes.SUCCESS; payload: any };
 
 const NFTStateContext = React.createContext<NFTState | undefined>(undefined);
-const NFTDispatchContext = React.createContext<NFTDispatch | undefined>(
-  undefined
-);
+const NFTDispatchContext =
+  React.createContext<NFTDispatch | undefined>(undefined);
 
 function nftReducer(state: NFTState, action: NFTAction): NFTState {
   switch (action.type) {
@@ -82,23 +81,18 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
 
     const nftsList = await getNFTsList();
     const beneficiaryCount = await cep47.totalBeneficiaries();
-    console.log(beneficiaryCount.toString());
-
     const campaignsCount = await cep47.totalCampaigns();
-    console.log(campaignsCount.toString());
     const creatorsCount = await cep47.totalCreators();
-    console.log(creatorsCount.toString());
     const collectionsCount = await cep47.totalCollections();
-    console.log(collectionsCount.toString());
 
     dispatch({
       type: NFTActionTypes.SUCCESS,
       payload: {
         nfts: nftsList,
-        beneficiaryCount: parseInt(beneficiaryCount.toString()),
-        campaignsCount: parseInt(campaignsCount.toString()),
-        creatorsCount: parseInt(creatorsCount.toString()),
-        collectionsCount: parseInt(collectionsCount.toString()),
+        beneficiaryCount: parseInt(beneficiaryCount.toString()) || 0,
+        campaignsCount: parseInt(campaignsCount.toString()) || 0,
+        creatorsCount: parseInt(creatorsCount.toString()) || 0,
+        collectionsCount: parseInt(collectionsCount.toString()) || 0,
         collections: [],
         uniqueCollections: [],
         creators: [],

@@ -9,7 +9,7 @@ import { SRLWrapper } from 'simple-react-lightbox';
 
 import { useNFTState } from '../../contexts/NFTContext';
 
-import  VideoPopup  from '../Element/VideoPopup';
+import VideoPopup from '../Element/VideoPopup';
 import { CaptionCampaign } from '../Element/CaptionCampaign';
 import NFTCard from '../Element/NFTCard';
 import BuyNFTModal from '../Element/BuyNFT';
@@ -19,8 +19,6 @@ import bgImg from './../../images/main-slider/slide6.jpg';
 import QRCode from 'react-qr-code';
 
 //Light Gallery on icon click
-
-//Images..
 
 const breakPoints = [
   { width: 1, itemsToShow: 1 },
@@ -48,42 +46,40 @@ const Dashboard = () => {
     collectionsCount,
     nfts,
   } = useNFTState();
-  // const { beneficiaries, campaigns, creators, nfts, uniqueCollections } =
-  //   useNFTState();
+
   const [openSliderCamp, setOpenSliderCamp] = React.useState(false);
   const [photoIndex, setPhotoIndex] = React.useState();
   const [sliderCaptionsCamp, setSliderCaptionsCamp] = React.useState([]);
   const [showBuyModal, setShowBuyModal] = React.useState(false);
   const [selectedNFT, setSelectedNFT] = React.useState();
-  const [beneficiariesLength, setBeneficiariesLength] = React.useState();
-  const [campaignsLength, setCampaignsLength] = React.useState();
-  const [creatorsLength, setCreatorsLength] = React.useState();
-  const [collectionsLength, setCollectionLength] = React.useState();
+  const [beneficiariesLength, setBeneficiariesLength] =
+    React.useState(undefined);
+  const [campaignsLength, setCampaignsLength] = React.useState(undefined);
+  const [creatorsLength, setCreatorsLength] = React.useState(undefined);
+  const [collectionsLength, setCollectionLength] = React.useState(undefined);
   const [csprSum, setCsprSum] = React.useState();
   const [allNfts, setAllNfts] = React.useState();
   const [displayedCampaigns, setDisplayedCampaigns] = React.useState();
   const [selectedCampaign, setSelectedCampaign] = React.useState();
 
   const getNftsList = React.useCallback(async () => {
-    let nftsList;
+    const nftsList =
+      nfts && nfts.filter(({ isForSale }) => isForSale === 'true');
 
-    nftsList = nfts && nfts.filter(({ isForSale }) => isForSale === 'true');
-    nftsList && setAllNfts(nfts);
-    nfts && setSelectedNFT(nfts);
+    nftsList && setAllNfts(nftsList);
+    nfts && setSelectedNFT(nftsList);
     nfts &&
       setCsprSum(
-        nfts.reduce((xPrice, { price }) => Number(xPrice) + Number(price), 0)
+        nftsList.reduce(
+          (xPrice, { price }) => Number(xPrice) + Number(price),
+          0
+        )
       );
 
-    console.log(beneficiaryCount);
-    console.log(campaignsCount);
-    console.log(creatorsCount);
-    console.log(collectionsCount);
-
-    beneficiaryCount && setBeneficiariesLength(beneficiaryCount);
-    campaignsCount && setCampaignsLength(campaignsCount);
-    creatorsCount && setCreatorsLength(creatorsCount);
-    collectionsCount && setCollectionLength(collectionsCount);
+    setBeneficiariesLength(beneficiaryCount);
+    setCampaignsLength(campaignsCount);
+    setCreatorsLength(creatorsCount);
+    setCollectionLength(collectionsCount);
 
     const pluckedCampaigns =
       nftsList &&
@@ -135,10 +131,10 @@ const Dashboard = () => {
           </div>
           <div className='row stats-section'>
             <div className='col'>
-              {allNfts ? (
+              {beneficiariesLength !== undefined ? (
                 <>
                   {' '}
-                  <span>{beneficiariesLength}</span> Beneficiaries
+                  <span>{beneficiariesLength || 0}</span> Beneficiaries
                 </>
               ) : (
                 <>
@@ -152,10 +148,10 @@ const Dashboard = () => {
               )}
             </div>
             <div className='col'>
-              {allNfts ? (
+              {campaignsLength !== undefined ? (
                 <>
                   {' '}
-                  <span>{campaignsLength}</span> Campaigns
+                  <span>{campaignsLength || 0}</span> Campaigns
                 </>
               ) : (
                 <>
@@ -169,10 +165,10 @@ const Dashboard = () => {
               )}
             </div>
             <div className='col'>
-              {allNfts ? (
+              {creatorsLength !== undefined ? (
                 <>
                   {' '}
-                  <span>{creatorsLength}</span> Creators
+                  <span>{creatorsLength || 0}</span> Creators
                 </>
               ) : (
                 <>
@@ -186,11 +182,10 @@ const Dashboard = () => {
               )}
             </div>
             <div className='col'>
-              {allNfts ? (
+              {collectionsLength !== undefined ? (
                 <>
                   {' '}
-                  <span>{collectionsLength ? collectionsLength : 0}</span>{' '}
-                  Collections
+                  <span>{collectionsLength || 0}</span> Collections
                 </>
               ) : (
                 <>
@@ -264,25 +259,34 @@ const Dashboard = () => {
                 let campaignsName = Object.keys(n);
                 let NFts = Object.values(n)[0];
                 return (
-                  <div key={index} className="mb-5">
+                  <div key={index} className='mb-5'>
                     <h4 className='text-success text-center  d-flex align-items-center justify-content-center'>
                       <Link
-                        to={`./BeneficiaryNFTs?beneficiary=${NFts[0].beneficiaryName}&campaign=${NFts[0].campaignName}`}
+                        to={`./BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName}&campaign=${NFts[0]?.campaignName}`}
                         className='mr-1 text-success text-underline'
                       >
-                        Top NFTs from the {NFts[0].campaignName} Campaign, click
-                        to see all {NFts.length} NFTs
+                        Top NFTs from the {NFts[0]?.campaignName} Campaign,
+                        click to see all {NFts.length} NFTs
                       </Link>
                       {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
                         <CampaignOrCollectionTwitterShare
-                          campaign={NFts[0].campaignName}
-                          beneficiary={NFts[0].beneficiaryName}
-                          beneficiaryPercentage={NFts[0].beneficiaryPercentage}
+                          campaign={NFts[0]?.campaignName}
+                          beneficiary={NFts[0]?.beneficiaryName}
+                          beneficiaryPercentage={NFts[0]?.beneficiaryPercentage}
                         />
-                      )}&nbsp;&nbsp;
+                      )}
+                      &nbsp;&nbsp;
                       <QRCode
-                         value={`${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${NFts[0].beneficiaryName.replace(/ /g, '%20')}&campaign=${NFts[0].campaignName.replace(/ /g, '%20')}`}
-                         size={60}
+                        value={`${
+                          window.location.origin
+                        }/#/BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName?.replace(
+                          / /g,
+                          '%20'
+                        )}&campaign=${NFts[0]?.campaignName?.replace(
+                          / /g,
+                          '%20'
+                        )}`}
+                        size={60}
                       />
                     </h4>
                     <SimpleReactLightbox>
@@ -328,13 +332,17 @@ const Dashboard = () => {
                                         <Lightbox
                                           mainSrc={NFts[photoIndex].image}
                                           nextSrc={
-                                            NFts[(photoIndex + 1) % NFts.slice(0,5).length]
-                                              .image
+                                            NFts[
+                                              (photoIndex + 1) %
+                                                NFts.slice(0, 5).length
+                                            ].image
                                           }
                                           prevSrc={
                                             NFts[
-                                              (photoIndex + NFts.slice(0,5).length - 1) %
-                                                NFts.slice(0,5).length
+                                              (photoIndex +
+                                                NFts.slice(0, 5).length -
+                                                1) %
+                                                NFts.slice(0, 5).length
                                             ].image
                                           }
                                           onCloseRequest={() =>
@@ -342,13 +350,16 @@ const Dashboard = () => {
                                           }
                                           onMovePrevRequest={() =>
                                             setPhotoIndex(
-                                              (photoIndex + NFts.slice(0,5).length - 1) %
-                                                NFts.slice(0,5).length
+                                              (photoIndex +
+                                                NFts.slice(0, 5).length -
+                                                1) %
+                                                NFts.slice(0, 5).length
                                             )
                                           }
                                           onMoveNextRequest={() =>
                                             setPhotoIndex(
-                                              (photoIndex + 1) % NFts.slice(0,5).length
+                                              (photoIndex + 1) %
+                                                NFts.slice(0, 5).length
                                             )
                                           }
                                           imageCaption={
