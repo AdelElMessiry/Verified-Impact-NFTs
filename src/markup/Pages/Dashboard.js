@@ -297,7 +297,7 @@ const Dashboard = () => {
                         />
                       )}&nbsp;&nbsp;
                       <QRCode
-                         value={`./BeneficiaryNFTs?beneficiary=${NFts[0].beneficiaryName}&campaign=${NFts[0].campaignName}`}
+                         value={`${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${NFts[0].beneficiaryName.replace(/ /g, '%20')}&campaign=${NFts[0].campaignName.replace(/ /g, '%20')}`}
                          size={60}
                       />
                     </h4>
