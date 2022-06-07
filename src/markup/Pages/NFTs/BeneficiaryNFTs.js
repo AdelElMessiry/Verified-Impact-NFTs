@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Lightbox from 'react-image-lightbox';
 import { Link } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
-import QRCode from "react-qr-code";
+import QRCode from 'react-qr-code';
 
 import { useNFTState } from '../../../contexts/NFTContext';
 
@@ -30,7 +30,7 @@ const options = {
 const imagesLoadedOptions = { background: '.my-bg-image-el' };
 
 //handling filtration markup
-const TagLi = ({ name, handleSetTag, tagActive, type,beneficiary }) => {
+const TagLi = ({ name, handleSetTag, tagActive, type, beneficiary }) => {
   return (
     <VINftsTooltip
       title={`Click to see all NFTs under the "${name}" ${
@@ -58,14 +58,31 @@ const TagLi = ({ name, handleSetTag, tagActive, type,beneficiary }) => {
           </span>{' '}
         </button>
         &nbsp;&nbsp;
-      {name!=='All'&&  <QRCode className='mr-1'
-          value={type === 'creator'
-          ? `${window.location.origin}/#/CreatorNFTs?creator=${name.replace(/ /g, '%20')}`
-          : type === 'campaign'
-          ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary.replace(/ /g, '%20')}&campaign=${name.replace(/ /g, '%20')}`
-          : `${window.location.origin}/#/CreatorNFTs?creator=${beneficiary.replace(/ /g, '%20')}&collection=${name.replace(/ /g, '%20')}`}
-          size={70}
-        />}
+        {name !== 'All' && (
+          <QRCode
+            className='mr-1'
+            value={
+              type === 'creator'
+                ? `${
+                    window.location.origin
+                  }/#/CreatorNFTs?creator=${name.replace(/ /g, '%20')}`
+                : type === 'campaign'
+                ? `${
+                    window.location.origin
+                  }/#/BeneficiaryNFTs?beneficiary=${beneficiary.replace(
+                    / /g,
+                    '%20'
+                  )}&campaign=${name.replace(/ /g, '%20')}`
+                : `${
+                    window.location.origin
+                  }/#/CreatorNFTs?creator=${beneficiary.replace(
+                    / /g,
+                    '%20'
+                  )}&collection=${name.replace(/ /g, '%20')}`
+            }
+            size={70}
+          />
+        )}
       </li>
     </VINftsTooltip>
   );
@@ -225,7 +242,7 @@ const BeneficiaryNFTs = () => {
         filterCreatorByTag('All', filteredCollectionsNFTs);
       creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
     },
-    [allNFTs, filterCampaignByTag, filterCreatorByTag, filterCollectionByTag]
+    [allNFTs, filterCampaignByTag, filterCreatorByTag]
   );
 
   const getCampaignsBasedOnTag = React.useCallback(
@@ -252,7 +269,7 @@ const BeneficiaryNFTs = () => {
         filterCreatorByTag('All', filteredCampaignsNFTs);
       creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
     },
-    [allNFTs, filterCollectionByTag, filterCreatorByTag, filterCampaignByTag]
+    [allNFTs, filterCollectionByTag, filterCreatorByTag]
   );
 
   const getCreatorsBasedOnTag = React.useCallback(
@@ -279,13 +296,7 @@ const BeneficiaryNFTs = () => {
         filterCampaignByTag('All', filteredCreatorsNFTs);
       campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
     },
-    [
-      allNFTs,
-      setFilteredNFTs,
-      filterCreatorByTag,
-      filterCollectionByTag,
-      filterCampaignByTag,
-    ]
+    [allNFTs, setFilteredNFTs, filterCollectionByTag, filterCampaignByTag]
   );
 
   //function returns button of buying NFT
@@ -421,14 +432,20 @@ const BeneficiaryNFTs = () => {
                   <CampaignOrCollectionTwitterShare
                     campaign={campaign}
                     beneficiary={beneficiary ? beneficiary : creator}
-                    beneficiaryPercentage={allNFTs&&allNFTs[0]?.beneficiaryPercentage}
+                    beneficiaryPercentage={
+                      allNFTs && allNFTs[0]?.beneficiaryPercentage
+                    }
                     url={
                       beneficiary
-                        ? `${window.location.origin}/#/BenefeiciaryNFTs?beneficiary=${beneficiary.replace(
+                        ? `${
+                            window.location.origin
+                          }/#/BenefeiciaryNFTs?beneficiary=${beneficiary.replace(
                             / /g,
                             '%20'
                           )}&campaign=${campaign.replace(/ /g, '%20')}`
-                        : `${window.location.origin}/#/CreatorNFTs?creator=${creator.replace(
+                        : `${
+                            window.location.origin
+                          }/#/CreatorNFTs?creator=${creator.replace(
                             / /g,
                             '%20'
                           )}&collection=${campaign.replace(/ /g, '%20')}`

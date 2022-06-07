@@ -6,7 +6,7 @@ import { Spinner } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Lightbox from 'react-image-lightbox';
 import { Link } from 'react-router-dom';
-import QRCode from "react-qr-code";
+import QRCode from 'react-qr-code';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNFTState } from '../../../contexts/NFTContext';
@@ -223,11 +223,15 @@ const MyCreations = () => {
         {nft.price} {nft.currency}
         &nbsp;&nbsp;
         <IconImage nft={nft} />
+        &nbsp;&nbsp; &nbsp;&nbsp;{' '}
+        {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+          <NFTTwitterShare item={nft} />
+        )}
         &nbsp;&nbsp;{' '}
-        &nbsp;&nbsp;{' '}
-         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && ( <NFTTwitterShare item={nft} />)}
-         &nbsp;&nbsp;{' '}
-        <QRCode value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`} size={80} />
+        <QRCode
+          value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
+          size={80}
+        />
       </p>
     </div>
   );
@@ -328,7 +332,7 @@ const MyCreations = () => {
         filterCreatorByTag('All', filteredCollectionsNFTs);
       creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
     },
-    [allNFTs, filterCampaignByTag, filterCreatorByTag, filterCollectionByTag]
+    [allNFTs, filterCampaignByTag, filterCreatorByTag]
   );
 
   const getCampaignsBasedOnTag = React.useCallback(
@@ -355,7 +359,7 @@ const MyCreations = () => {
         filterCreatorByTag('All', filteredCampaignsNFTs);
       creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
     },
-    [allNFTs, filterCollectionByTag, filterCreatorByTag, filterCampaignByTag]
+    [allNFTs, filterCollectionByTag, filterCreatorByTag]
   );
 
   const getCreatorsBasedOnTag = React.useCallback(
@@ -382,13 +386,7 @@ const MyCreations = () => {
         filterCampaignByTag('All', filteredCreatorsNFTs);
       campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
     },
-    [
-      allNFTs,
-      setFilteredNFTs,
-      filterCreatorByTag,
-      filterCollectionByTag,
-      filterCampaignByTag,
-    ]
+    [allNFTs, setFilteredNFTs, filterCollectionByTag, filterCampaignByTag]
   );
 
   return (
