@@ -9,7 +9,7 @@ import { SRLWrapper } from 'simple-react-lightbox';
 
 import { useNFTState } from '../../contexts/NFTContext';
 
-import  VideoPopup  from '../Element/VideoPopup';
+import VideoPopup from '../Element/VideoPopup';
 import { CaptionCampaign } from '../Element/CaptionCampaign';
 import NFTCard from '../Element/NFTCard';
 import BuyNFTModal from '../Element/BuyNFT';
@@ -286,6 +286,23 @@ const Dashboard = () => {
                         to={`./BeneficiaryNFTs?beneficiary=${NFts[0].beneficiaryName}&campaign=${NFts[0].campaignName}`}
                         className='mr-1 text-success text-underline'
                       >
+                        <QRCode
+                          value={`${
+                            window.location.origin
+                          }/#/BeneficiaryNFTs?beneficiary=${NFts[0].beneficiaryName.replace(
+                            / /g,
+                            '%20'
+                          )}&campaign=${NFts[0].campaignName.replace(
+                            / /g,
+                            '%20'
+                          )}`}
+                          size={70}
+                        />
+                      </Link>&nbsp;&nbsp;
+                      <Link
+                        to={`./BeneficiaryNFTs?beneficiary=${NFts[0].beneficiaryName}&campaign=${NFts[0].campaignName}`}
+                        className='mr-1 text-success text-underline'
+                      >
                         Top NFTs from the {NFts[0].campaignName} Campaign, click
                         to see all {NFts.length} NFTs
                       </Link>
@@ -295,11 +312,7 @@ const Dashboard = () => {
                           beneficiary={NFts[0].beneficiaryName}
                           beneficiaryPercentage={NFts[0].beneficiaryPercentage}
                         />
-                      )}&nbsp;&nbsp;
-                      <QRCode
-                         value={`${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${NFts[0].beneficiaryName.replace(/ /g, '%20')}&campaign=${NFts[0].campaignName.replace(/ /g, '%20')}`}
-                         size={60}
-                      />
+                      )}
                     </h4>
                     <SimpleReactLightbox>
                       <SRLWrapper options={options}>
@@ -343,13 +356,17 @@ const Dashboard = () => {
                                         <Lightbox
                                           mainSrc={NFts[photoIndex].image}
                                           nextSrc={
-                                            NFts[(photoIndex + 1) % NFts.slice(0,5).length]
-                                              .image
+                                            NFts[
+                                              (photoIndex + 1) %
+                                                NFts.slice(0, 5).length
+                                            ].image
                                           }
                                           prevSrc={
                                             NFts[
-                                              (photoIndex + NFts.slice(0,5).length - 1) %
-                                                NFts.slice(0,5).length
+                                              (photoIndex +
+                                                NFts.slice(0, 5).length -
+                                                1) %
+                                                NFts.slice(0, 5).length
                                             ].image
                                           }
                                           onCloseRequest={() =>
@@ -357,13 +374,16 @@ const Dashboard = () => {
                                           }
                                           onMovePrevRequest={() =>
                                             setPhotoIndex(
-                                              (photoIndex + NFts.slice(0,5).length - 1) %
-                                                NFts.slice(0,5).length
+                                              (photoIndex +
+                                                NFts.slice(0, 5).length -
+                                                1) %
+                                                NFts.slice(0, 5).length
                                             )
                                           }
                                           onMoveNextRequest={() =>
                                             setPhotoIndex(
-                                              (photoIndex + 1) % NFts.slice(0,5).length
+                                              (photoIndex + 1) %
+                                                NFts.slice(0, 5).length
                                             )
                                           }
                                           imageCaption={
