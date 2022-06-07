@@ -237,7 +237,7 @@ export const transferFees = async (buyer: string, tokenId: string) => {
     const { beneficiary, price, campaign } = tokenDetails;
 
     const campaignDetails: any = await getCampaignDetails(campaign);
-    const parsedCampaigns = parseCampaign(campaignDetails);
+    const parsedCampaigns: any = parseCampaign(campaignDetails);
 
     const beneficiaryPercentage = parseInt(parsedCampaigns.requested_royalty);
     const creatorPercentage = 100 - beneficiaryPercentage;
