@@ -431,9 +431,9 @@ impl ViToken {
         // let caller = ViToken::default().get_caller();
         let owner = CEP47::owner_of(self, token_id).unwrap_or_revert();
 
-        // if owner == caller {
-        //     revert(ApiError::User(20));
-        // }
+        if owner == recipient {
+            revert(ApiError::User(20));
+        }
 
         // Allowances::instance().set(&caller, &token_id, recipient);
         ViToken::default()

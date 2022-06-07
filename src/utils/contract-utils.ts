@@ -234,10 +234,13 @@ export const transferFees = async (buyer: string, tokenId: string) => {
     owner = await hashToURef(owner);
     const deployer = DEPLOYER_ACC;
 
-    const { beneficiary, price, campaign } = tokenDetails;
-    const campaignDetails: any = await getCampaignDetails(campaign);
-    const parsedCampaigns = await parseCampaign(campaignDetails);
-    const beneficiaryPercentage = parseInt(parsedCampaigns.requested_royalty);
+    const price = 100;
+    const beneficiary = DEPLOYER_ACC;
+    // const { beneficiary, price, campaign } = tokenDetails;
+    // const campaignDetails: any = await getCampaignDetails(campaign);
+    // const parsedCampaigns = await parseCampaign(campaignDetails);
+    // const beneficiaryPercentage = parseInt(parsedCampaigns.requested_royalty);
+    const beneficiaryPercentage = 20;
     const creatorPercentage = 100 - beneficiaryPercentage;
 
     const portalFees = (price / 100) * 2;

@@ -41,8 +41,15 @@ const masonryOptions = {
 const imagesLoadedOptions = { background: '.my-bg-image-el' };
 
 const Dashboard = () => {
-  const { beneficiaries, campaigns, creators, nfts, uniqueCollections } =
-    useNFTState();
+  const {
+    beneficiaryCount,
+    campaignsCount,
+    creatorsCount,
+    collectionsCount,
+    nfts,
+  } = useNFTState();
+  // const { beneficiaries, campaigns, creators, nfts, uniqueCollections } =
+  //   useNFTState();
   const [openSliderCamp, setOpenSliderCamp] = React.useState(false);
   const [photoIndex, setPhotoIndex] = React.useState();
   const [sliderCaptionsCamp, setSliderCaptionsCamp] = React.useState([]);
@@ -59,75 +66,52 @@ const Dashboard = () => {
 
   const getNftsList = React.useCallback(async () => {
     let nftsList;
-    if (!allNfts) {
-      nftsList = nfts && nfts.filter(({ isForSale }) => isForSale === 'true');
-      nftsList && setAllNfts(nfts);
-      nfts && setSelectedNFT(nfts);
-      nfts &&
-        setCsprSum(
-          nfts.reduce((xPrice, { price }) => Number(xPrice) + Number(price), 0)
-        );
 
-      beneficiaries && setBeneficiariesLength(beneficiaries.length);
-      campaigns && setCampaignsLength(campaigns.length);
-      creators && setCreatorsLength(creators.length);
-      uniqueCollections && setCollectionLength(uniqueCollections.length);
-    }
+    nftsList = nfts && nfts.filter(({ isForSale }) => isForSale === 'true');
+    nftsList && setAllNfts(nfts);
+    nfts && setSelectedNFT(nfts);
+    nfts &&
+      setCsprSum(
+        nfts.reduce((xPrice, { price }) => Number(xPrice) + Number(price), 0)
+      );
 
-    if (!displayedCampaigns && nftsList) {
-      const pluckedCampaigns =
-        nftsList &&
-        nftsList
-          .map(({ campaign }) => campaign)
-          .filter((id, index, ids) => ids.indexOf(id) === index);
-      const nftBasedCampaigns = [];
+    console.log(beneficiaryCount);
+    console.log(campaignsCount);
+    console.log(creatorsCount);
+    console.log(collectionsCount);
+
+    beneficiaryCount && setBeneficiariesLength(beneficiaryCount);
+    campaignsCount && setCampaignsLength(campaignsCount);
+    creatorsCount && setCreatorsLength(creatorsCount);
+    collectionsCount && setCollectionLength(collectionsCount);
+
+    const pluckedCampaigns =
       nftsList &&
-        nftsList.forEach((nft) =>
-          pluckedCampaigns.includes(nft.campaign) &&
-          !!nftBasedCampaigns[pluckedCampaigns.indexOf(nft.campaign)]
-            ? nftBasedCampaigns[pluckedCampaigns.indexOf(nft.campaign)][
-                nft.campaign
-              ].push(nft)
-            : nftBasedCampaigns.push({ [nft.campaign]: [nft] })
-        );
-      nftBasedCampaigns && setDisplayedCampaigns(nftBasedCampaigns);
-    }
-  }, [
-    allNfts,
-    displayedCampaigns,
-    beneficiaries,
-    campaigns,
-    uniqueCollections,
-    creators,
-    nfts,
-  ]);
+      nftsList
+        .map(({ campaign }) => campaign)
+        .filter((id, index, ids) => ids.indexOf(id) === index);
+    const nftBasedCampaigns = [];
+    nftsList &&
+      nftsList.forEach((nft) =>
+        pluckedCampaigns.includes(nft.campaign) &&
+        !!nftBasedCampaigns[pluckedCampaigns.indexOf(nft.campaign)]
+          ? nftBasedCampaigns[pluckedCampaigns.indexOf(nft.campaign)][
+              nft.campaign
+            ].push(nft)
+          : nftBasedCampaigns.push({ [nft.campaign]: [nft] })
+      );
+    nftBasedCampaigns && setDisplayedCampaigns(nftBasedCampaigns);
+  }, [beneficiaryCount, campaignsCount, collectionsCount, creatorsCount, nfts]);
 
   //getting list of NFTs
   React.useEffect(() => {
-    (!allNfts || !displayedCampaigns) && getNftsList();
-  }, [getNftsList, displayedCampaigns, allNfts]);
+    getNftsList();
+  }, [getNftsList]);
 
   const setCaptions = (data) => {
     const captionsCamp = [];
-    for (let item = 0; item < data?.length; item++) {
-      captionsCamp.push(CaptionCampaign(data, item, IconImage));
-    }
-    setSliderCaptionsCamp(captionsCamp);
-  };
-
-  //function returns button of buying NFT
-  const IconImage = ({ nft }) => {
-    return (
-      <>
-        <i
-          className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
-          onClick={() => {
-            setSelectedNFT(nft);
-            setShowBuyModal(true);
-          }}
-        ></i>
-      </>
-    );
+    data && data.forEach((nft) => captionsCamp.push(CaptionCampaign(nft)));
+    captionsCamp && setSliderCaptionsCamp(captionsCamp);
   };
 
   return (
@@ -332,7 +316,8 @@ const Dashboard = () => {
                                         ) => {
                                           setPhotoIndex(newIndex);
                                           setOpenSliderCamp(true);
-                                          setSelectedCampaign(itemCampaign);
+                                          itemCampaign &&
+                                            setSelectedCampaign(itemCampaign);
                                           setCaptions(NFts.slice(0, 5));
                                         }}
                                         index={index}

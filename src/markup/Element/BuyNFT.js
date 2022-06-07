@@ -31,17 +31,17 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
       const nftID = data.tokenId.toString();
 
       try {
-        const transferFeesHash = await transferFees(
-          entityInfo.publicKey,
-          nftID
-        );
-        const deployFeesResult = await getDeployDetails(transferFeesHash);
+        // const transferFeesHash = await transferFees(
+        //   entityInfo.publicKey,
+        //   nftID
+        // );
+        // const deployFeesResult = await getDeployDetails(transferFeesHash);
 
-        console.log(
-          '...... Token fees transferred successfully',
-          deployFeesResult
-        );
-        VIToast.success('Token fees transferred successfully');
+        // console.log(
+        //   '...... Token fees transferred successfully',
+        //   deployFeesResult
+        // );
+        // VIToast.success('Token fees transferred successfully');
 
         const transferDeployHash = await purchaseNFT(
           CLPublicKey.fromHex(entityInfo.publicKey),

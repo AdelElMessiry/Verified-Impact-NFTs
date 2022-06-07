@@ -96,10 +96,12 @@ const MintNFT = () => {
   ]);
 
   React.useEffect(() => {
-    beneficiaries && !beneficiary && setBeneficiary(beneficiaries[0].address);
-    campaigns && !campaign && setCampaign(campaigns[0].id);
-    !campaignsList && campaigns && setCampaignsList(campaigns);
-    !collectionsList && collections && loadCollections();
+    beneficiaries?.length &&
+      !beneficiary &&
+      setBeneficiary(beneficiaries[0].address);
+    campaigns?.length && !campaign && setCampaign(campaigns[0].id);
+    !campaignsList && campaigns?.length && setCampaignsList(campaigns);
+    !collectionsList && collections?.length && loadCollections();
   }, [
     collectionsList,
     collections,
