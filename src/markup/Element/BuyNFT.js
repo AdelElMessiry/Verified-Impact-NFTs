@@ -23,7 +23,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
   const [showModal, setShowModal] = React.useState(show);
   const [state, setState] = React.useState(InitialInputs());
   const [isBuyClicked, setIsBuyClicked] = React.useState(false);
-  
+
   //buy NFT Function
   const buyNFT = async () => {
     if (entityInfo.publicKey) {
@@ -31,17 +31,17 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
       const nftID = data.tokenId.toString();
 
       try {
-        // const transferFeesHash = await transferFees(
-        //   entityInfo.publicKey,
-        //   nftID
-        // );
-        // const deployFeesResult = await getDeployDetails(transferFeesHash);
+        const transferFeesHash = await transferFees(
+          entityInfo.publicKey,
+          nftID
+        );
+        const deployFeesResult = await getDeployDetails(transferFeesHash);
 
-        // console.log(
-        //   '...... Token fees transferred successfully',
-        //   deployFeesResult
-        // );
-        // VIToast.success('Token fees transferred successfully');
+        console.log(
+          '...... Token fees transferred successfully',
+          deployFeesResult
+        );
+        VIToast.success('Token fees transferred successfully');
 
         const transferDeployHash = await purchaseNFT(
           CLPublicKey.fromHex(entityInfo.publicKey),
@@ -66,7 +66,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
             data.image,
             `Exciting news! ${data.title} NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here to buy #verified_impact_nfts and support more causes.`
           );
-        }else{
+        } else {
           setIsBuyClicked(false);
         }
       } catch (err) {
@@ -136,7 +136,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
           <Row>
             <Col>
               <h5>{data.title}</h5>
-              <p className="text-muted">{data.description}</p>
+              <p className='text-muted'>{data.description}</p>
             </Col>
           </Row>
           {isTransfer ? (
@@ -169,7 +169,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
           disabled={isBuyClicked}
         >
           {isBuyClicked ? (
-            <Spinner animation="border" variant="light" />
+            <Spinner animation='border' variant='light' />
           ) : (
             'Buy'
           )}

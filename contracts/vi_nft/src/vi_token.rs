@@ -260,53 +260,6 @@ impl ViToken {
         Ok(())
     }
 
-    // fn set_collection(
-    //     &mut self,
-    //     token_ids: Vec<TokenId>,
-    //     mode: String,
-    //     name: String,
-    //     description: String,
-    //     creator: String,
-    //     url: String,
-    // ) -> Result<(), Error> {
-    //     let collections_dict = Collections::instance();
-
-    //     match mode.as_str() {
-    //         "ADD" | "UPDATE" => {
-    //             let new_collection_count = collection_data::total_collections()
-    //                 .checked_add(U256::one())
-    //                 .unwrap();
-    //             let mut collection = collections_dict
-    //                 .get(new_collection_count)
-    //                 .unwrap_or_default();
-
-    //             collection.insert(
-    //                 format!("token_ids: "),
-    //                 token_ids.iter().map(ToString::to_string).collect(),
-    //             );
-    //             collection.insert(format!("id: "), new_collection_count.to_string());
-    //             collection.insert(format!("name: "), name);
-    //             collection.insert(format!("description: "), description);
-    //             collection.insert(format!("url: "), url);
-    //             collection.insert(format!("creator: "), creator);
-
-    //             collections_dict.set(new_collection_count, collection);
-    //             collection_data::set_total_collections(new_collection_count);
-    //         }
-    //         // "DELETE" => {
-    //         //     let new_collection_count = collection_data::total_collections()
-    //         //         .checked_sub(U256::one())
-    //         //         .unwrap();
-    //         //     collections_dict.remove(caller);
-    //         //     collection_data::set_total_collections(new_collection_count);
-    //         // }
-    //         _ => {
-    //             return Err(Error::WrongArguments);
-    //         }
-    //     }
-    //     Ok(())
-    // }
-
     fn set_collection(
         &mut self,
         token_ids: Vec<TokenId>,
@@ -422,24 +375,22 @@ impl ViToken {
         Ok(confirmed_token_ids)
     }
 
-    fn purchase_token(
-        &mut self,
-        // owner: Key,
-        recipient: Key,
-        token_id: TokenId,
-    ) -> Result<(), Error> {
-        // let caller = ViToken::default().get_caller();
+    fn purchase_token(&mut self, recipient: Key, token_id: TokenId) -> Result<(), Error> {
         let owner = CEP47::owner_of(self, token_id).unwrap_or_revert();
+        let mut token_meta = ViToken::default()
+            .token_meta(token_id.clone())
+            .unwrap_or_revert();
 
         if owner == recipient {
             revert(ApiError::User(20));
         }
 
-        // Allowances::instance().set(&caller, &token_id, recipient);
+        token_meta.insert(format!("isForSale"), "false".to_string());
+        CEP47::set_token_meta(self, token_id, token_meta).unwrap_or_revert();
+
         ViToken::default()
             .transfer_from_internal(owner, recipient, vec![token_id])
             .unwrap_or_revert();
-        // CEP47::transfer(self, owner, vec![token_id]).unwrap_or_revert();
 
         Ok(())
     }
@@ -907,7 +858,7 @@ fn call() {
     let admin: Key = runtime::get_named_arg("admin");
     let contract_name: String = runtime::get_named_arg("contract_name");
 
-    let (contract_hash, _) = storage::new_contract(
+    let (contract_hash, contract_version) = storage::new_contract(
         get_entry_points(),
         None,
         Some(String::from(&format!(
@@ -916,6 +867,7 @@ fn call() {
         ))),
         Some(format!("{}_package_access_token", contract_name)),
     );
+    let version_uref = storage::new_uref(contract_version);
 
     // Prepare constructor args
     let constructor_args = runtime_args! {
@@ -960,6 +912,11 @@ fn call() {
     runtime::put_key(
         &format!("{}_package_hash_wrapped", contract_name),
         storage::new_uref(package_hash).into(),
+    );
+
+    runtime::put_key(
+        &format!("{}_version_wrapped", contract_name),
+        version_uref.into(),
     );
 }
 
