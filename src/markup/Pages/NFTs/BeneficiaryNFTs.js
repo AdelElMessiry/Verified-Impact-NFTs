@@ -59,11 +59,11 @@ const TagLi = ({ name, handleSetTag, tagActive, type,beneficiary }) => {
         &nbsp;&nbsp;
       {name!=='All'&&  <QRCode className='mr-1'
           value={type === 'creator'
-          ? `${window.location.origin}/#/CreatorNFTs?creator=${name}`
+          ? `${window.location.origin}/#/CreatorNFTs?creator=${name.replace(/ /g, '%20')}`
           : type === 'campaign'
-          ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${name}`
-          : `${window.location.origin}/#/CreatorNFTs?creator=${beneficiary}&collection=${name}`}
-          size={50}
+          ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary.replace(/ /g, '%20')}&campaign=${name.replace(/ /g, '%20')}`
+          : `${window.location.origin}/#/CreatorNFTs?creator=${beneficiary.replace(/ /g, '%20')}&collection=${name.replace(/ /g, '%20')}`}
+          size={70}
         />}
       </li>
     </VINftsTooltip>
