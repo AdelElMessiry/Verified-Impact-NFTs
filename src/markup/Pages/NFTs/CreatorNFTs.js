@@ -6,7 +6,7 @@ import Lightbox from 'react-image-lightbox';
 import { Link } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
-import QRCode from "react-qr-code";
+import QRCode from 'react-qr-code';
 
 import { useNFTState } from '../../../contexts/NFTContext';
 
@@ -178,7 +178,7 @@ const CreatorNFTs = () => {
         filterCreatorByTag('All', filteredCollectionsNFTs);
       creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
     },
-    [allNFTs, filterCampaignByTag, filterCreatorByTag, filterCollectionByTag]
+    [allNFTs, filterCampaignByTag, filterCreatorByTag]
   );
 
   const getCampaignsBasedOnTag = React.useCallback(
@@ -205,7 +205,7 @@ const CreatorNFTs = () => {
         filterCreatorByTag('All', filteredCampaignsNFTs);
       creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
     },
-    [allNFTs, filterCollectionByTag, filterCreatorByTag, filterCampaignByTag]
+    [allNFTs, filterCollectionByTag, filterCreatorByTag]
   );
 
   const getCreatorsBasedOnTag = React.useCallback(
@@ -232,13 +232,7 @@ const CreatorNFTs = () => {
         filterCampaignByTag('All', filteredCreatorsNFTs);
       campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
     },
-    [
-      allNFTs,
-      setFilteredNFTs,
-      filterCreatorByTag,
-      filterCollectionByTag,
-      filterCampaignByTag,
-    ]
+    [allNFTs, setFilteredNFTs, filterCollectionByTag, filterCampaignByTag]
   );
 
   //function returns button of buying NFT
@@ -342,11 +336,15 @@ const CreatorNFTs = () => {
         {nft.price} {nft.currency}
         &nbsp;&nbsp;
         <IconImage nft={nft} />
+        &nbsp;&nbsp; &nbsp;&nbsp;{' '}
+        {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+          <NFTTwitterShare item={nft} />
+        )}
         &nbsp;&nbsp;{' '}
-        &nbsp;&nbsp;{' '}
-        {process.env.REACT_APP_SHOW_TWITTER !== 'false' && ( <NFTTwitterShare item={nft} />)}
-        &nbsp;&nbsp;{' '}
-        <QRCode value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`} size={80} />
+        <QRCode
+          value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
+          size={80}
+        />
       </p>
     </div>
   );
@@ -370,14 +368,20 @@ const CreatorNFTs = () => {
                   process.env.REACT_APP_SHOW_TWITTER != 'false' && (
                     <CampaignOrCollectionTwitterShare
                       campaign={''}
-                      beneficiary={filteredNFTs&&filteredNFTs[0]?.beneficiaryName}
+                      beneficiary={
+                        filteredNFTs && filteredNFTs[0]?.beneficiaryName
+                      }
                       creator={creator}
                       collection={collection}
-                      url={`${window.location.origin}/#/CreatorNFTs?creator=${creator.replace(
+                      url={`${
+                        window.location.origin
+                      }/#/CreatorNFTs?creator=${creator.replace(
                         / /g,
                         '%20'
                       )}&collection=${collection.replace(/ /g, '%20')}`}
-                      beneficiaryPercentage={allNFTs&&allNFTs[0]?.beneficiaryPercentage}
+                      beneficiaryPercentage={
+                        allNFTs && allNFTs[0]?.beneficiaryPercentage
+                      }
                     />
                   )}
               </h1>
