@@ -76,7 +76,7 @@ export async function setIsTokenForSale(
   price?: string
 ) {
   const nftDetails = await cep47.getMappedTokenMeta(tokenId);
-  nftDetails['isForSale'] = isForSale;
+  nftDetails['isForSale'] = isForSale.toString();
   isForSale && (nftDetails['price'] = price);
 
   const mappedNft = new Map(Object.entries(nftDetails));
