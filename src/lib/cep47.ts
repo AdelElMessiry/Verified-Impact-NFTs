@@ -114,8 +114,8 @@ class CEP47Client {
     // if (contractHash) {
     // this.contractClient.setContractHash(contractHash, contractPackageHash);
     this.contractClient.setContractHash(
-      'hash-2d51e23ef5eb30d1e5e36f911705d08b0298f6d7712cea53fdcdb682e717356b',
-      'hash-674bc1942089919ed7b7fe2fb93a236d58e77996d2a3eb6b8e23677903c57306'
+      'hash-fdf3fc5725427a6d51d83ccbb990ee007bff533b0f9801c858bd9bdebd9cc66c',
+      'hash-ef9c73c946fb0de803bbe88a03a7aaca3ce5b10b9620ad01c3e3ecc93870fb97'
       // 'hash-b719909a345f675935a2b5ba15d783a152998e9a0d7754e787ece873845600fa',
       // 'hash-d01f56e224ef7a7dc7b78e4b24d788a17e40edb186b0cfa750af4f33b4d38a1d'
     );
