@@ -247,7 +247,8 @@ export const transferFees = async (buyer: string, tokenId: string) => {
 
     const beneficiaryAmount =
       beneficiaryPercentage && (finalPrice / 100) * beneficiaryPercentage;
-    const ownerAmount = (finalPrice / 100) * creatorPercentage;
+    const ownerAmount =
+      creatorPercentage && (finalPrice / 100) * creatorPercentage;
 
     console.log(tokenDetails);
 
@@ -257,13 +258,9 @@ export const transferFees = async (buyer: string, tokenId: string) => {
       beneficiaryAmount &&
       (await nativeTransfer(deployer, beneficiary, beneficiaryAmount, false));
 
-    const ownerTransfer = await nativeTransfer(
-      deployer,
-      owner,
-      ownerAmount,
-      false,
-      true
-    );
+    const ownerTransfer =
+      ownerAmount &&
+      (await nativeTransfer(deployer, owner, ownerAmount, false, true));
 
     return ownerTransfer;
   } catch (e) {
