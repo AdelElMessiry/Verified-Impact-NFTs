@@ -63,8 +63,18 @@ export async function getNFTsList() {
 }
 
 export async function getCreatorNftList(address: string) {
+  const creator = CLPublicKey.fromHex(address).toAccountHashStr();
   const nftList = await getNFTsList();
-  const creatorList = nftList.filter((nft: any) => nft.creator === address);
+
+  for (const [index, nft] of nftList.entries()) {
+    const owner = await cep47.getOwnerOf(nft.tokenId.toString());
+    nftList[index].isOwner = owner === creator;
+  }
+
+  const creatorList = nftList.filter(
+    (nft: any) => nft.creator === address
+    // && nft.isOwner
+  );
 
   return creatorList || [];
 }
