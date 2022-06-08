@@ -2,7 +2,7 @@ import React from 'react';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper } from 'simple-react-lightbox';
 import Masonry from 'react-masonry-component';
-import { Spinner } from 'react-bootstrap';
+import { Row, Col, Spinner } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Lightbox from 'react-image-lightbox';
 import { Link } from 'react-router-dom';
@@ -92,6 +92,7 @@ const MyCreations = () => {
   const [selectedNFT, setSelectedNFT] = React.useState();
   const [showListForSaleModal, setShowListForSaleModal] = React.useState(false);
   const [listForSaleNFT, setListForSaleNFT] = React.useState();
+  const [soldNFTsFilter, setSoldNFTsFilter] = React.useState();
 
   const [allNFTs, setAllNFTs] = React.useState();
   const [filteredNFTs, setFilteredNFTs] = React.useState();
@@ -389,6 +390,17 @@ const MyCreations = () => {
     [allNFTs, setFilteredNFTs, filterCollectionByTag, filterCampaignByTag]
   );
 
+  const handleNFTStatus = (value) => {
+    setSoldNFTsFilter(value);
+    setFilteredNFTs(
+      value !== '0'
+        ? allNFTs.filter(({ isOwner }) =>
+            (isOwner === (value == '1' ? false : true))
+          )
+        : allNFTs
+    );
+  };
+
   return (
     <Layout>
       <div className='page-content bg-white'>
@@ -483,6 +495,34 @@ const MyCreations = () => {
                   ))}
               </ul>
             </div>
+            <Row>
+              <Col
+                lg={4}
+                md={6}
+                xs={12}
+                className='site-filters clearfix  left mx-5   m-b40 form-group'
+              >
+                <Row className='align-items-center'>
+                  <Col className='col-auto pr-1'>
+                    <span className='float-left'>
+                      NFT status:
+                    </span>
+                  </Col>
+                  <Col className='pl-0'>
+                    <select
+                      onChange={(e) => handleNFTStatus(e.target.value)}
+                      value={soldNFTsFilter}
+                      className='form-control'
+                      name='soldNFTsFilter'
+                    >
+                      <option value='0'>All NFTs</option>
+                      <option value='1'>Sold NFTs</option>
+                      <option value='2'>Not Sold NFTs</option>
+                    </select>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
             {openSlider && (
               <Lightbox
                 mainSrc={filteredNFTs[photoIndex].image}
