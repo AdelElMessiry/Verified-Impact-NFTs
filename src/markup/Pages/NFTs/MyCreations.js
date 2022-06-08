@@ -332,6 +332,8 @@ const MyCreations = () => {
         filteredCollectionsNFTs &&
         filterCreatorByTag('All', filteredCollectionsNFTs);
       creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
+
+      setSoldNFTsFilter('All');
     },
     [allNFTs, filterCampaignByTag, filterCreatorByTag]
   );
@@ -359,6 +361,8 @@ const MyCreations = () => {
         filteredCampaignsNFTs &&
         filterCreatorByTag('All', filteredCampaignsNFTs);
       creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
+
+      setSoldNFTsFilter('All');
     },
     [allNFTs, filterCollectionByTag, filterCreatorByTag]
   );
@@ -386,19 +390,27 @@ const MyCreations = () => {
         filteredCreatorsNFTs &&
         filterCampaignByTag('All', filteredCreatorsNFTs);
       campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
+
+      setSoldNFTsFilter('All');
     },
     [allNFTs, setFilteredNFTs, filterCollectionByTag, filterCampaignByTag]
   );
 
   const handleNFTStatus = (value) => {
     setSoldNFTsFilter(value);
-    setFilteredNFTs(
-      value !== '0'
-        ? allNFTs.filter(({ isOwner }) =>
-            (isOwner === (value == '1' ? false : true))
-          )
-        : allNFTs
+    const newFilteredNFTs = allNFTs.filter(
+      ({ isOwner }) => isOwner === (value === 'sold' ? false : true)
     );
+    setFilteredNFTs(value !== 'All' ? newFilteredNFTs : allNFTs);
+
+    const collectionsTagsName = filterCollectionByTag('All', newFilteredNFTs);
+    collectionsTagsName && setCollectionTags(['All', ...collectionsTagsName]);
+
+    const creatorsTagsName = filterCreatorByTag('All', newFilteredNFTs);
+    creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
+
+    const campaignsTagsName = filterCampaignByTag('All', newFilteredNFTs);
+    campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
   };
 
   return (
@@ -504,9 +516,7 @@ const MyCreations = () => {
               >
                 <Row className='align-items-center'>
                   <Col className='col-auto pr-1'>
-                    <span className='float-left'>
-                      NFT status:
-                    </span>
+                    <span className='float-left'>NFT status:</span>
                   </Col>
                   <Col className='pl-0'>
                     <select
@@ -515,9 +525,9 @@ const MyCreations = () => {
                       className='form-control'
                       name='soldNFTsFilter'
                     >
-                      <option value='0'>All NFTs</option>
-                      <option value='1'>Sold NFTs</option>
-                      <option value='2'>Not Sold NFTs</option>
+                      <option value='All'>All NFTs</option>
+                      <option value='sold'>Sold NFTs</option>
+                      <option value='notSold'>Not Sold NFTs</option>
                     </select>
                   </Col>
                 </Row>
