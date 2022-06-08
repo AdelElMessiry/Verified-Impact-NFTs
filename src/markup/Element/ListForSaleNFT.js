@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import { CLPublicKey } from 'casper-js-sdk';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Spinner } from 'react-bootstrap';
 import { toast as VIToast } from 'react-toastify';
 
 import { setIsTokenForSale } from '../../api/nftInfo';
@@ -12,11 +12,14 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
   const { entityInfo } = useAuth();
   const [price, setPrice] = React.useState('');
   const [showModal, setShowModal] = React.useState(show);
+  const [isListForSaleClicked, setIsListForSaleClicked] = React.useState(false);
+
   if (!data) return <></>;
 
   //list NFT forSale Function
   const ListNFTForSale = async () => {
     const nftID = data.tokenId.toString();
+    setIsListForSaleClicked(true);
     try {
       const deployUpdatedNftResult = await setIsTokenForSale(
         data.isForSale === 'true' ? false : true,
@@ -26,9 +29,11 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
       );
       if (deployUpdatedNftResult) {
         VIToast.success('NFT transferred successfully');
+        setIsListForSaleClicked(false);
         handleClose();
       } else {
         VIToast.error('Error happened please try again later');
+        setIsListForSaleClicked(false);
       }
     } catch (err) {
       console.log('Transfer Err ' + err);
@@ -91,10 +96,16 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
           onClick={() => {
             ListNFTForSale();
           }}
+          disabled={isListForSaleClicked}
         >
-          {data.isForSale === 'true'
+          {isListForSaleClicked ? (
+            <Spinner animation='border' variant='light' />
+          ) : (
+            data.isForSale === 'true'
             ? 'UnList NFT For Sale'
-            : 'List NFT For Sale'}
+            : 'List NFT For Sale'
+          )}
+          
         </button>
       </Modal.Footer>
     </Modal>
