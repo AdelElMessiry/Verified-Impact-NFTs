@@ -543,7 +543,7 @@ class CEP47Client {
     });
 
     return this.contractClient.callEntrypoint(
-      'update_token_meta',
+      'set_token_meta',
       runtimeArgs,
       deploySender,
       this.networkName,
