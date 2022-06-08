@@ -26,6 +26,7 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
       );
       if (deployUpdatedNftResult) {
         VIToast.success('NFT transferred successfully');
+        handleClose();
       } else {
         VIToast.error('Error happened please try again later');
       }
