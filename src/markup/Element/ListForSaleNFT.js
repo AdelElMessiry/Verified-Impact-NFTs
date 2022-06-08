@@ -74,7 +74,7 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
                   className='form-control'
                   name='address'
                   placeholder='Price in CSPR*'
-                  onChange={(e) => setPrice(price)}
+                  onChange={(e) => setPrice(e.target.value)}
                   value={price}
                 />
               </div>
