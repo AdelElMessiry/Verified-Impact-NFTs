@@ -149,15 +149,16 @@ export function getMappedNftsByList(
 ) {
   const mappedList = nftsList.map((nft: any) => ({
     ...nft,
-    campaignName: campaignsList.find(({ id }: any) => nft.campaign === id).name,
+    campaignName: campaignsList.find(({ id }: any) => nft.campaign === id)
+      ?.name,
     creatorName: creatorsList.find(
       ({ address }: any) => nft.creator === address
-    ).name,
+    )?.name,
     beneficiaryName: beneficiariesList.find(
       ({ address }: any) => nft.beneficiary === address
-    ).name,
+    )?.name,
     collectionName: collectionsList.find(({ id }: any) => nft.collection === id)
-      .name,
+      ?.name,
   }));
   return mappedList;
 }
