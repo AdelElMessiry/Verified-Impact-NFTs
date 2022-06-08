@@ -433,20 +433,7 @@ impl ViToken {
         Ok(())
     }
 
-    fn update_token_meta(
-        &mut self,
-        token_id: TokenId,
-        token_meta_key: String,
-        token_meta_value: String,
-    ) -> Result<(), Error> {
-        // let caller = ViToken::default().get_caller();
-        // if !ViToken::default().is_minter() && !ViToken::default().is_admin(caller) {
-        //     revert(ApiError::User(20));
-        // }
-        let mut token_meta = ViToken::default()
-            .token_meta(token_id.clone())
-            .unwrap_or_revert();
-        token_meta.insert(token_meta_key, token_meta_value);
+    fn update_token_meta(&mut self, token_id: TokenId, token_meta: Meta) -> Result<(), Error> {
         CEP47::set_token_meta(self, token_id, token_meta).unwrap_or_revert();
         Ok(())
     }
@@ -658,10 +645,9 @@ fn set_token_meta() {
 #[no_mangle]
 fn update_token_meta() {
     let token_id = runtime::get_named_arg::<TokenId>("token_id");
-    let token_meta_key = runtime::get_named_arg::<String>("token_meta_key");
-    let token_meta_value = runtime::get_named_arg::<String>("token_meta_value");
+    let token_meta = runtime::get_named_arg::<Meta>("token_meta");
     ViToken::default()
-        .update_token_meta(token_id, token_meta_key, token_meta_value)
+        .update_token_meta(token_id, token_meta)
         .unwrap_or_revert();
 }
 
@@ -1105,8 +1091,7 @@ fn get_entry_points() -> EntryPoints {
         "update_token_meta",
         vec![
             Parameter::new("token_id", TokenId::cl_type()),
-            Parameter::new("token_meta_key", String::cl_type()),
-            Parameter::new("token_meta_value", String::cl_type()),
+            Parameter::new("token_meta", Meta::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
