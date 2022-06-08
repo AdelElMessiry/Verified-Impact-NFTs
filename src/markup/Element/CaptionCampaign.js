@@ -4,83 +4,83 @@ import QRCode from "react-qr-code";
 import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
 import VINftsTooltip from '../Element/Tooltip';
 
-export const CaptionCampaign = (data, item, IconImage) => (
+export const CaptionCampaign = (data,IconImage) => (
   <div className='text-white text-left port-box'>
-    <h5>{data[item].title}</h5>
+    <h5>{data.title}</h5>
     <p>
       <b>Description: </b>
-      {data[item].description}
+      {data.description}
     </p>
     <p>
       <b>Beneficiary: </b>
       <VINftsTooltip
-        title={`Click to see all NFTs for "${data[item].beneficiaryName}" beneficiary`}
+        title={`Click to see all NFTs for "${data.beneficiaryName}" beneficiary`}
       >
         <Link
-          to={`./BeneficiaryNFTs?beneficiary=${data[item].beneficiaryName}`}
+          to={`./BeneficiaryNFTs?beneficiary=${data.beneficiaryName}`}
           className='dez-page text-white'
         >
-          {data[item].beneficiaryName}
+          {data.beneficiaryName}
         </Link>
       </VINftsTooltip>
       <span className='bg-success text-white px-1 ml-1 border-raduis-2'>
-        {data[item].beneficiaryPercentage}%
+        {data.beneficiaryPercentage}%
       </span>
 
       <b className='ml-4'>Campaign: </b>
       <VINftsTooltip
-        title={`Click to see all NFTs for "${data[item].campaignName}" campaign`}
+        title={`Click to see all NFTs for "${data.campaignName}" campaign`}
       >
-        {data[item].beneficiary ? (
+        {data.beneficiary ? (
           <Link
-            to={`./BeneficiaryNFTs?beneficiary=${data[item].beneficiaryName}&campaign=${data[item].campaignName}`}
+            to={`./BeneficiaryNFTs?beneficiary=${data.beneficiaryName}&campaign=${data.campaignName}`}
             className='dez-page text-white'
           >
-            {data[item].campaignName}
+            {data.campaignName}
           </Link>
         ) : (
           <Link
-            to={`./CreatorNFTs?creator=${data[item].creatorName}&collection=${data[item].collectionName}`}
+            to={`./CreatorNFTs?creator=${data.creatorName}&collection=${data.collectionName}`}
             className='dez-page text-white'
           >
-            {data[item].campaignName}
+            {data.campaignName}
           </Link>
         )}
       </VINftsTooltip>
       <b className='ml-4'>Creator: </b>
       <VINftsTooltip
-        title={`Click to see all NFTs created by "${data[item].creatorName}"`}
+        title={`Click to see all NFTs created by "${data.creatorName}"`}
       >
         <Link
-          to={`./CreatorNFTs?creator=${data[item].creatorName}`}
+          to={`./CreatorNFTs?creator=${data.creatorName}`}
           className='dez-page text-white'
         >
-          {data[item].creatorName}
+          {data.creatorName}
         </Link>
       </VINftsTooltip>
       <span className='bg-info text-white px-1 ml-1 border-raduis-2'>
-        {data[item].creatorPercentage}%
+        {data.creatorPercentage}%
       </span>
 
       <b className='ml-4'>Collection: </b>
       <Link
-        to={`./CreatorNFTs?creator=${data[item].creatorName}&collection=${data[item].collectionName}`}
+        to={`./CreatorNFTs?creator=${data.creatorName}&collection=${data.collectionName}`}
         className='dez-page text-white'
       >
         {' '}
-        {data[item].collectionName}
+        {data.collectionName}
       </Link>
     </p>
 
     <p className='d-flex align-content-center align-items-center'>
       <b>Price: </b>
-      {data[item].price} {data[item].currency}
-      &nbsp;&nbsp; <IconImage nft={data[item]} />
+      {data.price} {data.currency}
+      &nbsp;&nbsp; <IconImage nft={data} />
       {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
-        <NFTTwitterShare item={data[item]} />
+        <NFTTwitterShare item={data} />
       )}
           &nbsp;&nbsp;{' '}
-       <QRCode value={`${window.location.origin}/#/nft-detail?id=${data[item].tokenId}`} size={80} />
+       <QRCode value={`${window.location.origin}/#/nft-detail?id=${data.tokenId}`} size={80} />
             
     </p>
   </div>
