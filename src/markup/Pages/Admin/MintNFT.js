@@ -147,6 +147,7 @@ const MintNFT = () => {
         ({ wallet_address }) => selectedBeneficiary.address === wallet_address
       );
       setCampaignsList(filteredCampaigns);
+      filteredCampaigns.length>0&&setCampaignSelectedData(filteredCampaigns,filteredCampaigns[0].id)
     }
 
     inputs[name] = type === 'checkbox' ? checked : value;
