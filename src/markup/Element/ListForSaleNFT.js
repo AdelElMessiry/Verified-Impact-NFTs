@@ -16,14 +16,14 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
 
   //list NFT forSale Function
   const ListNFTForSale = async () => {
-    const nftID = data.tokenId;
+    const nftID = data.tokenId.toString();
     try {
-      const deployUpdatedNftResult = setIsTokenForSale({
-        isForSale: data.isForSale === 'true' ? false : true,
-        tokenId: nftID,
-        deploySender: CLPublicKey.fromHex(entityInfo.publicKey),
-        price: price,
-      });
+      const deployUpdatedNftResult = await setIsTokenForSale(
+        data.isForSale === 'true' ? false : true,
+        nftID,
+        CLPublicKey.fromHex(entityInfo.publicKey),
+        price
+      );
       if (deployUpdatedNftResult) {
         VIToast.success('NFT transferred successfully');
       } else {
