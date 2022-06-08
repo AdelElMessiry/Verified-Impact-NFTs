@@ -106,8 +106,23 @@ const Dashboard = () => {
 
   const setCaptions = (data) => {
     const captionsCamp = [];
-    data && data.forEach((nft) => captionsCamp.push(CaptionCampaign(nft)));
+    data && data.forEach((nft) => captionsCamp.push(CaptionCampaign(nft,IconImage)));
     captionsCamp && setSliderCaptionsCamp(captionsCamp);
+  };
+
+  //function returns button of buying NFT
+  const IconImage = ({ nft }) => {
+    return (
+      <>
+        <i
+          className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
+          onClick={() => {
+            setSelectedNFT(nft);
+            setShowBuyModal(true);
+          }}
+        ></i>
+      </>
+    );
   };
 
   return (
