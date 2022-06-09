@@ -133,7 +133,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
       backdrop='static'
     >
       <Modal.Header closeButton>
-        <Modal.Title>Buy {data.title} NFT</Modal.Title>
+        <Modal.Title>{isTransfer ? "Transfer" : "Buy"} {data.title} NFT</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div className='reserve-form'>
@@ -175,7 +175,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
           {isBuyClicked ? (
             <Spinner animation='border' variant='light' />
           ) : (
-            'Buy'
+            isTransfer ? "Transfer" : "Buy"
           )}
         </button>
       </Modal.Footer>
