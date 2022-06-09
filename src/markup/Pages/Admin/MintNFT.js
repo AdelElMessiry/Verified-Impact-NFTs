@@ -38,6 +38,7 @@ const MintNFT = () => {
   const [campaign, setCampaign] = React.useState();
   const [collectionsList, setCollectionsList] = React.useState();
   const [campaignsList, setCampaignsList] = React.useState();
+  const [allCampaignsList, setAllCampaignsList] = React.useState();
   const [creator, setCreator] = React.useState('');
   const [isCreatorExist, setIsCreatorExist] = React.useState(false);
   const [creatorPercentage, setCreatorPercentage] = React.useState();
@@ -101,7 +102,11 @@ const MintNFT = () => {
       setBeneficiary(beneficiaries[0].address);
     campaigns?.length && !campaign && setCampaign(campaigns[0].id);
     !campaignsList && campaigns?.length && setCampaignsList(campaigns);
+    !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
     !collectionsList && collections?.length && loadCollections();
+    !campaignsList &&
+      campaigns?.length &&
+      setCampaignSelectedData(campaigns, campaigns[0].id);
   }, [
     collectionsList,
     collections,
@@ -140,10 +145,12 @@ const MintNFT = () => {
       let selectedBeneficiary = beneficiaries.find(
         ({ address }) => address === value
       );
-      const filteredCampaigns = campaignsList.filter(
+      const filteredCampaigns = allCampaignsList.filter(
         ({ wallet_address }) => selectedBeneficiary.address === wallet_address
       );
       setCampaignsList(filteredCampaigns);
+      filteredCampaigns.length > 0 &&
+        setCampaignSelectedData(filteredCampaigns, filteredCampaigns[0].id);
     }
 
     inputs[name] = type === 'checkbox' ? checked : value;
@@ -208,11 +215,13 @@ const MintNFT = () => {
           title: state.inputs.name,
           description: state.inputs.description,
           image: imgURL,
-          price: state.inputs.price,
-          isForSale: state.inputs.isForSale,
+          price: state.inputs.price || '0',
+          isForSale: !!state.inputs.isForSale,
           campaign: campaign || '',
           currency: state.inputs.currency,
-          collection: isCreateNewCollection ? 0 : selectedCollectionValue.value,
+          collection: isCreateNewCollection
+            ? '0'
+            : selectedCollectionValue.value,
           collectionName: isCreateNewCollection
             ? selectedCollectionValue.label
             : '',
@@ -227,7 +236,11 @@ const MintNFT = () => {
         });
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
+          VIToast.error('User Cancelled Signing');
+        } else {
+          VIToast.error(err.message);
         }
+        setIsMintClicked(false);
         return;
       }
 
@@ -241,25 +254,51 @@ const MintNFT = () => {
         console.log('...... Token minted successfully', deployResult);
 
         VIToast.success('NFT minted successfully');
-        //NOTE: every channel has a special keys and tokens sorted on .env file 
-        sendDiscordMessage( process.env.REACT_APP_NFT_WEBHOOK_ID, process.env.REACT_APP_NFT_TOKEN, state.name , "" ,`Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts click here to know more about their cause.`)
-        SendTweetWithImage(imgURL,`Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.`)
-      if(isCreateNewCollection){
-        //add collection discord 
-        sendDiscordMessage( process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID, process.env.REACT_APP_COLLECTIONS_TOKEN, selectedCollectionValue.value , "" ,`${creator} creator has just added a new interesting #verified-impact-nfts collection. Click here to see more interesting collections`)
-        SendTweet(`${creator} creator has just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections`)
-      }
-      if(!isCreatorExist){
-        //add creator discord
-        sendDiscordMessage( process.env.REACT_APP_CREATORS_WEBHOOK_ID, process.env.REACT_APP_CREATORS_TOKEN, creator , "" ,`We are glad to announce that ${creator} creator has joined #verified-impact-nfts and minted a striking NFT for donations. Click here to see more about creators and their NFTs collections `)
-        SendTweet(`We are glad to announce that ${creator} creator has joined #verified_impact_nfts and minted a striking NFT for donations. Click here ${window.location.origin}/#/ to see more about creators and their NFTs collections `)
-      }
+        //NOTE: every channel has a special keys and tokens sorted on .env file
+        sendDiscordMessage(
+          process.env.REACT_APP_NFT_WEBHOOK_ID,
+          process.env.REACT_APP_NFT_TOKEN,
+          state.name,
+          '',
+          `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts click here to know more about their cause.`
+        );
+        SendTweetWithImage(
+          imgURL,
+          `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.`
+        );
+        if (isCreateNewCollection) {
+          //add collection discord
+          sendDiscordMessage(
+            process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
+            process.env.REACT_APP_COLLECTIONS_TOKEN,
+            selectedCollectionValue.value,
+            '',
+            `${creator} creator has just added a new interesting #verified-impact-nfts collection. Click here to see more interesting collections`
+          );
+          SendTweet(
+            `${creator} creator has just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections`
+          );
+        }
+        if (!isCreatorExist) {
+          //add creator discord
+          sendDiscordMessage(
+            process.env.REACT_APP_CREATORS_WEBHOOK_ID,
+            process.env.REACT_APP_CREATORS_TOKEN,
+            creator,
+            '',
+            `We are glad to announce that ${creator} creator has joined #verified-impact-nfts and minted a striking NFT for donations. Click here to see more about creators and their NFTs collections `
+          );
+          SendTweet(
+            `We are glad to announce that ${creator} creator has joined #verified_impact_nfts and minted a striking NFT for donations. Click here ${window.location.origin}/#/ to see more about creators and their NFTs collections `
+          );
+        }
         window.location.reload();
         setIsMintClicked(false);
       } catch (err) {
         console.log(err);
         //   setErrStage(MintingStages.TX_PENDING);
         VIToast.error(err);
+        setIsMintClicked(false);
       }
 
       setState({

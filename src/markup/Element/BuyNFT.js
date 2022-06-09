@@ -70,9 +70,13 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
           setIsBuyClicked(false);
         }
       } catch (err) {
-        console.log('Transfer Fees Err ' + err);
+        if (err.message.includes('User Cancelled')) {
+          VIToast.error('User Cancelled Signing');
+        } else {
+          VIToast.error('Error happened please try again later');
+        }
+
         handleClose();
-        VIToast.error('Error happened please try again later');
       }
     }
   };
