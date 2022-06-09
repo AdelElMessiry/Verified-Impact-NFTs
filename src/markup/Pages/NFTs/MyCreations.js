@@ -2,7 +2,7 @@ import React from 'react';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper } from 'simple-react-lightbox';
 import Masonry from 'react-masonry-component';
-import { Spinner } from 'react-bootstrap';
+import { Row, Col, Spinner } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Lightbox from 'react-image-lightbox';
 import { Link } from 'react-router-dom';
@@ -92,6 +92,7 @@ const MyCreations = () => {
   const [selectedNFT, setSelectedNFT] = React.useState();
   const [showListForSaleModal, setShowListForSaleModal] = React.useState(false);
   const [listForSaleNFT, setListForSaleNFT] = React.useState();
+  const [soldNFTsFilter, setSoldNFTsFilter] = React.useState();
 
   const [allNFTs, setAllNFTs] = React.useState();
   const [filteredNFTs, setFilteredNFTs] = React.useState();
@@ -331,6 +332,8 @@ const MyCreations = () => {
         filteredCollectionsNFTs &&
         filterCreatorByTag('All', filteredCollectionsNFTs);
       creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
+
+      setSoldNFTsFilter('All');
     },
     [allNFTs, filterCampaignByTag, filterCreatorByTag]
   );
@@ -358,6 +361,8 @@ const MyCreations = () => {
         filteredCampaignsNFTs &&
         filterCreatorByTag('All', filteredCampaignsNFTs);
       creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
+
+      setSoldNFTsFilter('All');
     },
     [allNFTs, filterCollectionByTag, filterCreatorByTag]
   );
@@ -385,9 +390,28 @@ const MyCreations = () => {
         filteredCreatorsNFTs &&
         filterCampaignByTag('All', filteredCreatorsNFTs);
       campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
+
+      setSoldNFTsFilter('All');
     },
     [allNFTs, setFilteredNFTs, filterCollectionByTag, filterCampaignByTag]
   );
+
+  const handleNFTStatus = (value) => {
+    setSoldNFTsFilter(value);
+    const newFilteredNFTs = allNFTs.filter(
+      ({ isOwner }) => isOwner === (value === 'sold' ? false : true)
+    );
+    setFilteredNFTs(value !== 'All' ? newFilteredNFTs : allNFTs);
+
+    const collectionsTagsName = filterCollectionByTag('All', newFilteredNFTs);
+    collectionsTagsName && setCollectionTags(['All', ...collectionsTagsName]);
+
+    const creatorsTagsName = filterCreatorByTag('All', newFilteredNFTs);
+    creatorsTagsName && setCreatorTags(['All', ...creatorsTagsName]);
+
+    const campaignsTagsName = filterCampaignByTag('All', newFilteredNFTs);
+    campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
+  };
 
   return (
     <Layout>
@@ -483,6 +507,32 @@ const MyCreations = () => {
                   ))}
               </ul>
             </div>
+            <Row>
+              <Col
+                lg={4}
+                md={6}
+                xs={12}
+                className='site-filters clearfix  left mx-5   m-b40 form-group'
+              >
+                <Row className='align-items-center'>
+                  <Col className='col-auto pr-1'>
+                    <span className='float-left'>NFT status:</span>
+                  </Col>
+                  <Col className='pl-0'>
+                    <select
+                      onChange={(e) => handleNFTStatus(e.target.value)}
+                      value={soldNFTsFilter}
+                      className='form-control'
+                      name='soldNFTsFilter'
+                    >
+                      <option value='All'>All NFTs</option>
+                      <option value='sold'>Sold NFTs</option>
+                      <option value='notSold'>Not Sold NFTs</option>
+                    </select>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
             {openSlider && (
               <Lightbox
                 mainSrc={filteredNFTs[photoIndex].image}

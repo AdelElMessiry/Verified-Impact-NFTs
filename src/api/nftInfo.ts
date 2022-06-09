@@ -63,8 +63,18 @@ export async function getNFTsList() {
 }
 
 export async function getCreatorNftList(address: string) {
+  const creator = CLPublicKey.fromHex(address).toAccountHashStr();
   const nftList = await getNFTsList();
-  const creatorList = nftList.filter((nft: any) => nft.creator === address);
+
+  for (const [index, nft] of nftList.entries()) {
+    const owner = await cep47.getOwnerOf(nft.tokenId.toString());
+    nftList[index].isOwner = owner === creator;
+  }
+
+  const creatorList = nftList.filter(
+    (nft: any) => nft.creator === address
+    // && nft.isOwner
+  );
 
   return creatorList || [];
 }
@@ -76,7 +86,7 @@ export async function setIsTokenForSale(
   price?: string
 ) {
   const nftDetails = await cep47.getMappedTokenMeta(tokenId);
-  nftDetails['isForSale'] = isForSale;
+  nftDetails['isForSale'] = isForSale.toString();
   isForSale && (nftDetails['price'] = price);
 
   const mappedNft = new Map(Object.entries(nftDetails));
@@ -149,15 +159,16 @@ export function getMappedNftsByList(
 ) {
   const mappedList = nftsList.map((nft: any) => ({
     ...nft,
-    campaignName: campaignsList.find(({ id }: any) => nft.campaign === id).name,
+    campaignName: campaignsList.find(({ id }: any) => nft.campaign === id)
+      ?.name,
     creatorName: creatorsList.find(
       ({ address }: any) => nft.creator === address
-    ).name,
+    )?.name,
     beneficiaryName: beneficiariesList.find(
       ({ address }: any) => nft.beneficiary === address
-    ).name,
+    )?.name,
     collectionName: collectionsList.find(({ id }: any) => nft.collection === id)
-      .name,
+      ?.name,
   }));
   return mappedList;
 }
