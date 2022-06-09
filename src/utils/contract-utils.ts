@@ -167,7 +167,7 @@ export const nativeTransfer = async (
 
   const fromAccount = CLPublicKey.fromHex(selectedAddress);
   const toAccount = !ifOwner ? CLPublicKey.fromHex(toAddress) : toAddress;
-  amount = amount * MOTE_RATE;
+  amount = parseInt(amount) * MOTE_RATE;
   const ttl = 1800000;
 
   const PAYMENT_AMOUNT = PAYMENT_AMOUNTS.NATIVE_TRANSFER_PAYMENT_AMOUNT;
@@ -191,81 +191,62 @@ export const nativeTransfer = async (
   let signedDeployJson;
 
   if (isSignerTransfer) {
-    try {
-      signedDeployJson = await Signer.sign(
-        deployJson,
-        selectedAddress,
-        toAddress
-      );
-    } catch (e) {
-      console.log(e);
+    signedDeployJson = await Signer.sign(
+      deployJson,
+      selectedAddress,
+      toAddress
+    );
 
-      return;
-    }
     signedDeployJson = DeployUtil.deployFromJson(signedDeployJson).unwrap();
   } else {
     const client: any = new CasperClient(CONNECTION.NODE_ADDRESS);
     const KEYS_USER = await mapOwnerKeys();
     signedDeployJson = client.signDeploy(deploy, KEYS_USER);
-    // const KEYS_USER: any = Keys.Ed25519.parseKeyFiles(
-    //   `${USER_KEY_PAIR_PATH}/NFT_Deploy_public_key.pem`,
-    //   `${USER_KEY_PAIR_PATH}/NFT_Deploy_secret_key.pem`
-    // );
   }
 
-  try {
-    const transferDeployHash = await signedDeployJson.send(
-      CONNECTION.NODE_ADDRESS
-    );
-    console.log('Transfer Deploy hash', transferDeployHash);
+  const transferDeployHash = await signedDeployJson.send(
+    CONNECTION.NODE_ADDRESS
+  );
 
-    return transferDeployHash;
-  } catch (e) {
-    console.log(e);
-
-    return;
-  }
+  return transferDeployHash;
 };
 
 export const transferFees = async (buyer: string, tokenId: string) => {
-  try {
-    const tokenDetails = await cep47.getMappedTokenMeta(tokenId);
-    let owner = await cep47.getOwnerOf(tokenId);
-    owner = await hashToURef(owner);
-    const deployer = DEPLOYER_ACC;
+  // try {
+  const tokenDetails = await cep47.getMappedTokenMeta(tokenId);
+  let owner = await cep47.getOwnerOf(tokenId);
+  owner = await hashToURef(owner);
+  const deployer = DEPLOYER_ACC;
 
-    const { beneficiary, price, campaign } = tokenDetails;
+  const { beneficiary, price, campaign } = tokenDetails;
 
-    const campaignDetails: any = await getCampaignDetails(campaign);
-    const parsedCampaigns: any = parseCampaign(campaignDetails);
+  const campaignDetails: any = await getCampaignDetails(campaign);
+  const parsedCampaigns: any = parseCampaign(campaignDetails);
 
-    const beneficiaryPercentage = parseInt(parsedCampaigns.requested_royalty);
-    const creatorPercentage = 100 - beneficiaryPercentage;
+  const beneficiaryPercentage = parseInt(parsedCampaigns.requested_royalty);
+  const creatorPercentage = 100 - beneficiaryPercentage;
 
-    const portalFees = (price / 100) * 2;
-    const finalPrice = price - portalFees;
+  const portalFees = (price / 100) * 2;
+  const finalPrice = price - portalFees;
 
-    const beneficiaryAmount =
-      beneficiaryPercentage && (finalPrice / 100) * beneficiaryPercentage;
-    const ownerAmount =
-      creatorPercentage && (finalPrice / 100) * creatorPercentage;
+  const beneficiaryAmount =
+    beneficiaryPercentage && (finalPrice / 100) * beneficiaryPercentage;
+  const ownerAmount =
+    creatorPercentage && (finalPrice / 100) * creatorPercentage;
 
-    console.log(tokenDetails);
+  await nativeTransfer(buyer, deployer, price, true);
 
-    const deployerTransfer = await nativeTransfer(buyer, deployer, price, true);
+  const beneficiaryTransfer =
+    beneficiaryAmount &&
+    (await nativeTransfer(deployer, beneficiary, beneficiaryAmount, false));
 
-    const beneficiaryTransfer =
-      beneficiaryAmount &&
-      (await nativeTransfer(deployer, beneficiary, beneficiaryAmount, false));
+  const ownerTransfer =
+    ownerAmount &&
+    (await nativeTransfer(deployer, owner, ownerAmount, false, true));
 
-    const ownerTransfer =
-      ownerAmount &&
-      (await nativeTransfer(deployer, owner, ownerAmount, false, true));
-
-    return ownerTransfer;
-  } catch (e) {
-    console.log(e);
-
-    return;
-  }
+  return ownerAmount ? ownerTransfer : beneficiaryTransfer;
+  // } catch (e) {
+  //   console.log(e);
+  //   return e;
+  // }
 };
