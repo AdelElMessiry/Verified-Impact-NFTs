@@ -226,7 +226,7 @@ const MintNFT = () => {
             ? selectedCollectionValue.label
             : '',
           creator: entityInfo.publicKey,
-          creatorPercentage: creatorPercentage
+          creatorPercentage: creatorPercentage?.toString()
             ? creatorPercentage.toString()
             : '',
           beneficiary: beneficiary || '',
