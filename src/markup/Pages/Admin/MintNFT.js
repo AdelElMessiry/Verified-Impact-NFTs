@@ -38,7 +38,7 @@ const MintNFT = () => {
   const [campaign, setCampaign] = React.useState();
   const [collectionsList, setCollectionsList] = React.useState();
   const [campaignsList, setCampaignsList] = React.useState();
-  const [allcampaignsList, setAllCampaignsList] = React.useState();
+  const [allCampaignsList, setAllCampaignsList] = React.useState();
   const [creator, setCreator] = React.useState('');
   const [isCreatorExist, setIsCreatorExist] = React.useState(false);
   const [creatorPercentage, setCreatorPercentage] = React.useState();
@@ -104,7 +104,9 @@ const MintNFT = () => {
     !campaignsList && campaigns?.length && setCampaignsList(campaigns);
     !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
     !collectionsList && collections?.length && loadCollections();
-    !campaignsList && campaigns?.length && setCampaignSelectedData(campaigns,campaigns[0].id);
+    !campaignsList &&
+      campaigns?.length &&
+      setCampaignSelectedData(campaigns, campaigns[0].id);
   }, [
     collectionsList,
     collections,
@@ -143,11 +145,12 @@ const MintNFT = () => {
       let selectedBeneficiary = beneficiaries.find(
         ({ address }) => address === value
       );
-      const filteredCampaigns = allcampaignsList.filter(
+      const filteredCampaigns = allCampaignsList.filter(
         ({ wallet_address }) => selectedBeneficiary.address === wallet_address
       );
       setCampaignsList(filteredCampaigns);
-      filteredCampaigns.length>0&&setCampaignSelectedData(filteredCampaigns,filteredCampaigns[0].id)
+      filteredCampaigns.length > 0 &&
+        setCampaignSelectedData(filteredCampaigns, filteredCampaigns[0].id);
     }
 
     inputs[name] = type === 'checkbox' ? checked : value;
