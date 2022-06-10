@@ -28,7 +28,7 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
         price
       );
       if (deployUpdatedNftResult) {
-        VIToast.success('NFT transferred successfully');
+        VIToast.success(data.isForSale === 'true' ? "NFT is unlisted for sale" : 'NFT is listed for sale');
         setIsListForSaleClicked(false);
         handleClose();
         window.location.reload();

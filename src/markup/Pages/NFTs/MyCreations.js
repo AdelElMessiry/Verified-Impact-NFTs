@@ -229,10 +229,15 @@ const MyCreations = () => {
           <NFTTwitterShare item={nft} />
         )}
         &nbsp;&nbsp;{' '}
+        <Link
+        to={`./nft-detail?id=${nft.tokenId}`}
+        className="mr-1 text-success text-underline"
+      >
         <QRCode
           value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
           size={80}
         />
+        </Link>
       </p>
     </div>
   );
