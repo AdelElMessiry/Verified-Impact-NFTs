@@ -27,7 +27,7 @@ const imagesLoadedOptions = { background: '.my-bg-image-el' };
 // Masonry section end
 
 //handling filtration markup
-const TagLi = ({ name, handleSetTag, tagActive, type }) => {
+const TagLi = ({ name, handleSetTag, tagActive, type ,creator}) => {
   return (
     <VINftsTooltip
       title={`Click to see all NFTs under the "${
@@ -65,7 +65,7 @@ const TagLi = ({ name, handleSetTag, tagActive, type }) => {
                     / /g,
                     '%20'
                   )}&campaign=${name?.name?.replace(/ /g, '%20')}`
-                : `./CreatorNFTs?creator=${name?.replace(/ /g, '%20')}`
+                : `./CreatorNFTs?creator=${creator.replace(/ /g, '%20')}&collection=${name?.replace(/ /g, '%20')}`
             }
             className='mr-1 text-success text-underline'
           >
@@ -77,7 +77,7 @@ const TagLi = ({ name, handleSetTag, tagActive, type }) => {
                       / /g,
                       '%20'
                     )}&campaign=${name?.name?.replace(/ /g, '%20')}`
-                  : `${window.location.origin}/#/CreatorNFTs?creator=${name?.replace(/ /g, '%20')}`
+                  : `${window.location.origin}/#/CreatorNFTs?creator=${creator.replace(/ /g, '%20')}&collection=${name?.replace(/ /g, '%20')}`
               }
               size={70}
             />
@@ -475,6 +475,7 @@ const CreatorNFTs = () => {
                       handleSetTag={getCreatorsBasedOnTag}
                       tagActive={tagCreator === singleTag ? true : false}
                       type='creator'
+                      creator={creator}
                     />
                   ))}
               </ul>
@@ -493,6 +494,7 @@ const CreatorNFTs = () => {
                     handleSetTag={getCampaignsBasedOnTag}
                     tagActive={tagCampaign.name === singleTag.name ? true : false}
                     type='campaign'
+                    creator={creator}
                   />
                 ))}
             </ul>
@@ -511,6 +513,7 @@ const CreatorNFTs = () => {
                       handleSetTag={getCollectionsBasedOnTag}
                       tagActive={tagCollection === singleTag ? true : false}
                       type='collection'
+                      creator={creator}
                     />
                   ))}
               </ul>
