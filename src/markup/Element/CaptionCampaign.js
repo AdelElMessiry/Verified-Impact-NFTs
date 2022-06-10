@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
-import QRCode from "react-qr-code";
+import QRCode from 'react-qr-code';
 
 import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
 import VINftsTooltip from '../Element/Tooltip';
 
-export const CaptionCampaign = (data,IconImage) => (
+export const CaptionCampaign = (data, IconImage) => (
   <div className='text-white text-left port-box'>
     <h5>{data.title}</h5>
     <p>
@@ -79,9 +79,16 @@ export const CaptionCampaign = (data,IconImage) => (
       {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
         <NFTTwitterShare item={data} />
       )}
-          &nbsp;&nbsp;{' '}
-       <QRCode value={`${window.location.origin}/#/nft-detail?id=${data.tokenId}`} size={80} />
-            
+      &nbsp;&nbsp;{' '}
+      <Link
+        to={`./nft-detail?id=${data.tokenId}`}
+        className="mr-1 text-success text-underline"
+      >
+        <QRCode
+          value={`${window.location.origin}/#/nft-detail?id=${data.tokenId}`}
+          size={80}
+        />
+      </Link>
     </p>
   </div>
 );
