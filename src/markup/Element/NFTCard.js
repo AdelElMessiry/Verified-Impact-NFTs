@@ -32,22 +32,25 @@ const NFTCard = ({
         >
           <i className='ti-fullscreen icon-bx-xs'></i>
         </Link>
-        {((isTransfer &&isCreation && item.isOwner)||(isTransfer &&!isCreation ))? (
+        {(isTransfer && isCreation && item.isOwner) ||
+        (isTransfer && !isCreation) ? (
           <i
             className='ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
             onClick={() => {
               setShowBuyModal(true);
             }}
           ></i>
-        ) : (!isCreation&&
-          <i
-            className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
-            onClick={() => {
-              setShowBuyModal(true);
-            }}
-          ></i>
+        ) : (
+          !isCreation && (
+            <i
+              className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
+              onClick={() => {
+                setShowBuyModal(true);
+              }}
+            ></i>
+          )
         )}
-        {(isCreation && item.isOwner)&&(
+        {(isCreation && item.isOwner) && (
           <VINftsTooltip
             title={
               item.isForSale === 'true'
@@ -102,10 +105,15 @@ const NFTCard = ({
           className='img img-fluid fit-img fit-img-cover'
         />
         <div className='qr-code-border qr-code-oncard position-absolute'>
-          <QRCode
-            value={`${window.location.origin}/#/nft-detail?id=${item.tokenId}`}
-            size={80}
-          />
+          <Link
+            to={`./nft-detail?id=${item.tokenId}`}
+            className='mr-1 text-success text-underline'
+          >
+            <QRCode
+              value={`${window.location.origin}/#/nft-detail?id=${item.tokenId}`}
+              size={80}
+            />
+          </Link>
         </div>
         <div className='overlay-bx'>
           <div className='overlay-icon align-b text-white text-left'>
