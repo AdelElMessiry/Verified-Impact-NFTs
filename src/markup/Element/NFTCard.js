@@ -33,10 +33,9 @@ const NFTCard = ({
         >
           <i className='ti-fullscreen icon-bx-xs'></i>
         </Link>
-        {item.isForSale==="true" && (
-        <>
+
         {(isTransfer && isCreation && item.isOwner) ||
-        (isTransfer && !isCreation) ? (
+        (isTransfer && !isCreation && item.isForSale==="true") ? (
           <i
             className='ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
             onClick={() => {
@@ -44,7 +43,7 @@ const NFTCard = ({
             }}
           ></i>
         ) : (
-          !isCreation && (
+          (!isCreation && item.isForSale==="true")&& (
             <i
               className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
               onClick={() => {
@@ -73,8 +72,7 @@ const NFTCard = ({
             </div>
           </VINftsTooltip>
         )}
-        </>
-        )}
+      
         {showBuyModal && (
           <BuyNFTModal
             show={showBuyModal}
