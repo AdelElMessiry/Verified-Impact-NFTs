@@ -6,7 +6,7 @@ extern crate alloc;
 use alloc::{
     boxed::Box,
     collections::{BTreeMap, BTreeSet},
-    string::String,
+    string::{String, ToString},
 };
 
 use casper_contract::{
@@ -28,8 +28,6 @@ use contract_utils::{AdminControl, ContractContext, OnChainContractStorage};
 pub enum Error {
     PermissionDenied = 1,
     WrongArguments = 2,
-    TokenIdAlreadyExists = 3,
-    TokenIdDoesntExist = 4,
 }
 
 impl From<Error> for ApiError {
@@ -66,8 +64,8 @@ impl ViProfile {
         ProfileControl::is_profile(self)
     }
 
-    fn get_profile(&self, index: U256) -> Option<Profile> {
-        ProfileControl::get_profile(self, index)
+    fn get_profile(&self, address: Key) -> Option<Profile> {
+        ProfileControl::get_profile(self, address)
     }
 
     fn total_profiles(&self) -> U256 {
@@ -77,6 +75,7 @@ impl ViProfile {
     fn set_profile(
         &mut self,
         mode: String,
+        address: Key,
         username: String,
         tagline: String,
         img_url: String,
@@ -107,28 +106,26 @@ impl ViProfile {
                     .checked_add(U256::one())
                     .unwrap();
 
-                let mut profile =
-                    ProfileControl::get_profile(self, new_profile_count).unwrap_or_default();
+                let mut profile = ProfileControl::get_profile(self, address).unwrap_or_default();
 
-                profile.insert(format!("mode"), mode);
-                profile.insert(format!("username"), username);
-                profile.insert(format!("tagline"), tagline);
-                profile.insert(format!("img_url"), img_url);
-                profile.insert(format!("nft_url"), nft_url);
-                profile.insert(format!("first_name"), first_name);
-                profile.insert(format!("last_name"), last_name);
-                profile.insert(format!("bio"), bio);
-                profile.insert(format!("external_link"), external_link);
-                profile.insert(format!("phone"), phone);
-                profile.insert(format!("twitter"), twitter);
-                profile.insert(format!("instagram"), instagram);
-                profile.insert(format!("facebook"), facebook);
-                profile.insert(format!("medium"), medium);
-                profile.insert(format!("telegram"), telegram);
-                profile.insert(format!("mail"), mail);
-                profile.insert(format!("profile_type"), profile_type);
+                profile.insert(format!("{}_address", profile_type), address.to_string());
+                profile.insert(format!("{}_username", profile_type), username);
+                profile.insert(format!("{}_tagline", profile_type), tagline);
+                profile.insert(format!("{}_imgUrl", profile_type), img_url);
+                profile.insert(format!("{}_nftUrl", profile_type), nft_url);
+                profile.insert(format!("{}_firstName", profile_type), first_name);
+                profile.insert(format!("{}_lastName", profile_type), last_name);
+                profile.insert(format!("{}_bio", profile_type), bio);
+                profile.insert(format!("{}_externalLink", profile_type), external_link);
+                profile.insert(format!("{}_phone", profile_type), phone);
+                profile.insert(format!("{}_twitter", profile_type), twitter);
+                profile.insert(format!("{}_instagram", profile_type), instagram);
+                profile.insert(format!("{}_facebook", profile_type), facebook);
+                profile.insert(format!("{}_medium", profile_type), medium);
+                profile.insert(format!("{}_telegram", profile_type), telegram);
+                profile.insert(format!("{}_mail", profile_type), mail);
 
-                ProfileControl::add_profile(self, new_profile_count, profile);
+                ProfileControl::add_profile(self, address, profile);
 
                 if cloned_mode == "ADD" {
                     profiles_control::set_total_profiles(new_profile_count);
@@ -141,14 +138,14 @@ impl ViProfile {
         Ok(())
     }
 
-    fn remove_profile(&mut self, index: U256, address: Key) -> Result<(), Error> {
+    fn remove_profile(&mut self, address: Key) -> Result<(), Error> {
         let caller = ViProfile::default().get_caller();
 
         if !ViProfile::default().is_admin(caller) {
             revert(ApiError::User(20));
         }
 
-        ProfileControl::revoke_profile(self, index, address);
+        ProfileControl::revoke_profile(self, address);
 
         Ok(())
     }
@@ -156,6 +153,7 @@ impl ViProfile {
     fn create_profile(
         &mut self,
         mode: String,
+        address: Key,
         username: String,
         tagline: String,
         img_url: String,
@@ -179,6 +177,7 @@ impl ViProfile {
         }
         self.set_profile(
             mode,
+            address,
             username,
             tagline,
             img_url,
@@ -200,8 +199,8 @@ impl ViProfile {
         Ok(())
     }
 
-    fn delete_profile(&mut self, index: U256, address: Key) -> Result<(), Error> {
-        self.remove_profile(index, address).unwrap_or_revert();
+    fn delete_profile(&mut self, address: Key) -> Result<(), Error> {
+        self.remove_profile(address).unwrap_or_revert();
         Ok(())
     }
 }
@@ -221,8 +220,8 @@ fn total_profiles() {
 
 #[no_mangle]
 fn get_profile() {
-    let index = runtime::get_named_arg::<U256>("index");
-    let ret = ViProfile::default().get_profile(index);
+    let address = runtime::get_named_arg::<Key>("address");
+    let ret = ViProfile::default().get_profile(address);
     runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
 }
 
@@ -235,14 +234,15 @@ fn is_profile_exist() {
 #[no_mangle]
 fn add_profile() {
     let mode = runtime::get_named_arg::<String>("mode");
+    let address = runtime::get_named_arg::<Key>("address");
     let username = runtime::get_named_arg::<String>("username");
     let tagline = runtime::get_named_arg::<String>("tagline");
-    let img_url = runtime::get_named_arg::<String>("img_url");
-    let nft_url = runtime::get_named_arg::<String>("nft_url");
-    let first_name = runtime::get_named_arg::<String>("first_name");
-    let last_name = runtime::get_named_arg::<String>("last_name");
+    let img_url = runtime::get_named_arg::<String>("imgUrl");
+    let nft_url = runtime::get_named_arg::<String>("nftUrl");
+    let first_name = runtime::get_named_arg::<String>("firstName");
+    let last_name = runtime::get_named_arg::<String>("lastName");
     let bio = runtime::get_named_arg::<String>("bio");
-    let external_link = runtime::get_named_arg::<String>("external_link");
+    let external_link = runtime::get_named_arg::<String>("externalLink");
     let phone = runtime::get_named_arg::<String>("phone");
     let twitter = runtime::get_named_arg::<String>("twitter");
     let instagram = runtime::get_named_arg::<String>("instagram");
@@ -250,11 +250,12 @@ fn add_profile() {
     let medium = runtime::get_named_arg::<String>("medium");
     let telegram = runtime::get_named_arg::<String>("telegram");
     let mail = runtime::get_named_arg::<String>("mail");
-    let profile_type = runtime::get_named_arg::<String>("profile_type");
+    let profile_type = runtime::get_named_arg::<String>("profileType");
 
     ViProfile::default()
         .create_profile(
             mode,
+            address,
             username,
             tagline,
             img_url,
@@ -277,11 +278,10 @@ fn add_profile() {
 
 #[no_mangle]
 fn remove_profile() {
-    let index = runtime::get_named_arg::<U256>("index");
     let address = runtime::get_named_arg::<Key>("address");
 
     ViProfile::default()
-        .delete_profile(index, address)
+        .delete_profile(address)
         .unwrap_or_revert();
 }
 
@@ -368,9 +368,23 @@ fn get_entry_points() -> EntryPoints {
         "add_profile",
         vec![
             Parameter::new("mode", String::cl_type()),
-            Parameter::new("name", String::cl_type()),
-            Parameter::new("description", String::cl_type()),
-            Parameter::new("address", String::cl_type()),
+            Parameter::new("address", Key::cl_type()),
+            Parameter::new("username", String::cl_type()),
+            Parameter::new("tagline", String::cl_type()),
+            Parameter::new("imgUrl", String::cl_type()),
+            Parameter::new("nftUrl", String::cl_type()),
+            Parameter::new("firstName", String::cl_type()),
+            Parameter::new("lastName", String::cl_type()),
+            Parameter::new("bio", String::cl_type()),
+            Parameter::new("externalLink", String::cl_type()),
+            Parameter::new("phone", String::cl_type()),
+            Parameter::new("twitter", String::cl_type()),
+            Parameter::new("instagram", String::cl_type()),
+            Parameter::new("facebook", String::cl_type()),
+            Parameter::new("medium", String::cl_type()),
+            Parameter::new("telegram", String::cl_type()),
+            Parameter::new("mail", String::cl_type()),
+            Parameter::new("profileType", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
@@ -378,10 +392,7 @@ fn get_entry_points() -> EntryPoints {
     ));
     entry_points.add_entry_point(EntryPoint::new(
         "delete_profile",
-        vec![
-            Parameter::new("index", U256::cl_type()),
-            Parameter::new("address", Key::cl_type()),
-        ],
+        vec![Parameter::new("address", Key::cl_type())],
         <()>::cl_type(),
         EntryPointAccess::Public,
         EntryPointType::Contract,
