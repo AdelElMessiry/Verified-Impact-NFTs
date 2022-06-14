@@ -12,12 +12,12 @@ pub trait ProfileControl<Storage: ContractStorage>: ContractContext<Storage> {
         Profiles::init();
     }
 
-    fn revoke_profile(&mut self, index: U256, address: Key) {
-        Profiles::instance().revoke_profile(index, &address);
+    fn revoke_profile(&mut self, address: Key) {
+        Profiles::instance().revoke_profile(address);
     }
 
-    fn add_profile(&self, index: U256, value: Profile) {
-        Profiles::instance().add_profile(index, value);
+    fn add_profile(&self, address: Key, value: Profile) {
+        Profiles::instance().add_profile(address, value);
     }
 
     fn is_profile(&self) -> bool {
@@ -25,8 +25,8 @@ pub trait ProfileControl<Storage: ContractStorage>: ContractContext<Storage> {
         Profiles::instance().is_profile(&caller)
     }
 
-    fn get_profile(&self, index: U256) -> Option<Profile> {
-        Profiles::instance().get_profile(index)
+    fn get_profile(&self, address: Key) -> Option<Profile> {
+        Profiles::instance().get_profile(address)
     }
 }
 
@@ -47,22 +47,23 @@ impl Profiles {
         storage::new_dictionary(PROFILES_LIST).unwrap_or_revert();
     }
 
-    pub fn is_profile(&self, key: &Key) -> bool {
-        self.dict.get_by_key::<()>(key).is_some()
+    pub fn is_profile(&self, address: &Key) -> bool {
+        self.dict.get_by_key::<()>(address).is_some()
     }
 
-    pub fn add_profile(&self, index: U256, value: Profile) {
-        self.profiles_list_dict.set(&index.to_string(), value);
+    pub fn add_profile(&self, address: Key, value: Profile) {
+        self.dict.set_by_key(&address, ());
+        self.profiles_list_dict.set(&address.to_string(), value);
     }
 
-    pub fn revoke_profile(&self, index: U256, key: &Key) {
-        self.dict.remove_by_key::<()>(key);
+    pub fn revoke_profile(&self, address: Key) {
+        self.dict.remove_by_key::<()>(&address);
         self.profiles_list_dict
-            .remove::<Profile>(&index.to_string());
+            .remove::<Profile>(&address.to_string());
     }
 
-    pub fn get_profile(&self, index: U256) -> Option<Profile> {
-        self.profiles_list_dict.get(&index.to_string())
+    pub fn get_profile(&self, address: Key) -> Option<Profile> {
+        self.profiles_list_dict.get(&address.to_string())
     }
 }
 
