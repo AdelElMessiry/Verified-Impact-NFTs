@@ -87,11 +87,11 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
     const nftID = data.tokenId;
     setIsBuyClicked(true);
     try {
-      const transferDeployHash = await transfer({
-        signer: CLPublicKey.fromHex(entityInfo.publicKey),
-        recipient: CLPublicKey.fromHex(state.inputs.address),
-        nftId: nftID,
-      });
+      const transferDeployHash = await transfer(
+        CLPublicKey.fromHex(entityInfo.publicKey),
+        CLPublicKey.fromHex(state.inputs.address),
+        nftID,
+      );
       if (transferDeployHash) {
         VIToast.success('NFT transfered successfully');
         handleClose();
