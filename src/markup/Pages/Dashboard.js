@@ -64,7 +64,12 @@ const Dashboard = () => {
 
   const getNftsList = React.useCallback(async () => {
     const nftsList =
-      nfts && nfts.filter(({ isForSale }) => isForSale === 'true');
+      nfts &&
+      nfts.filter(
+        (nft) =>
+          nft.isForSale === 'true' ||
+          (nft.isForSale === 'false' && nft.isCreatorOwner === false)
+      );
 
     nftsList && setAllNfts(nftsList);
     nfts && setSelectedNFT(nftsList);
@@ -106,7 +111,8 @@ const Dashboard = () => {
 
   const setCaptions = (data) => {
     const captionsCamp = [];
-    data && data.forEach((nft) => captionsCamp.push(CaptionCampaign(nft,IconImage)));
+    data &&
+      data.forEach((nft) => captionsCamp.push(CaptionCampaign(nft, IconImage)));
     captionsCamp && setSliderCaptionsCamp(captionsCamp);
   };
 

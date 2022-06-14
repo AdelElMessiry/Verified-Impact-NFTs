@@ -7,6 +7,7 @@ import BuyNFTModal from './BuyNFT';
 import ListForSaleNFTModal from './ListForSaleNFT';
 import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
 
+import soldIcon from '../../images/icon/sold.png';
 //NFT Card component
 const NFTCard = ({
   index,
@@ -32,6 +33,8 @@ const NFTCard = ({
         >
           <i className='ti-fullscreen icon-bx-xs'></i>
         </Link>
+        {item.isForSale==="true" && (
+        <>
         {(isTransfer && isCreation && item.isOwner) ||
         (isTransfer && !isCreation) ? (
           <i
@@ -69,6 +72,8 @@ const NFTCard = ({
               <i className='ti-money sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'></i>
             </div>
           </VINftsTooltip>
+        )}
+        </>
         )}
         {showBuyModal && (
           <BuyNFTModal
@@ -115,6 +120,11 @@ const NFTCard = ({
             />
           </Link>
         </div>
+        {item.isCreatorOwner === false && item.isForSale === 'false' && (
+          <div className='sold-icon'>
+            <img src={soldIcon} />
+          </div>
+        )}
         <div className='overlay-bx'>
           <div className='overlay-icon align-b text-white text-left'>
             <div className='text-white text-left port-box'>

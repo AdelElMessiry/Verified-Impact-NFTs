@@ -27,7 +27,7 @@ const imagesLoadedOptions = { background: '.my-bg-image-el' };
 // Masonry section end
 
 //handling filtration markup
-const TagLi = ({ name, handleSetTag, tagActive, type ,creator}) => {
+const TagLi = ({ name, handleSetTag, tagActive, type, creator }) => {
   return (
     <VINftsTooltip
       title={`Click to see all NFTs under the "${
@@ -65,7 +65,10 @@ const TagLi = ({ name, handleSetTag, tagActive, type ,creator}) => {
                     / /g,
                     '%20'
                   )}&campaign=${name?.name?.replace(/ /g, '%20')}`
-                : `./CreatorNFTs?creator=${creator.replace(/ /g, '%20')}&collection=${name?.replace(/ /g, '%20')}`
+                : `./CreatorNFTs?creator=${creator.replace(
+                    / /g,
+                    '%20'
+                  )}&collection=${name?.replace(/ /g, '%20')}`
             }
             className='mr-1 text-success text-underline'
           >
@@ -73,11 +76,18 @@ const TagLi = ({ name, handleSetTag, tagActive, type ,creator}) => {
               className='mr-1'
               value={
                 type === 'campaign'
-                  ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${name.beneficiary.replace(
+                  ? `${
+                      window.location.origin
+                    }/#/BeneficiaryNFTs?beneficiary=${name.beneficiary.replace(
                       / /g,
                       '%20'
                     )}&campaign=${name?.name?.replace(/ /g, '%20')}`
-                  : `${window.location.origin}/#/CreatorNFTs?creator=${creator.replace(/ /g, '%20')}&collection=${name?.replace(/ /g, '%20')}`
+                  : `${
+                      window.location.origin
+                    }/#/CreatorNFTs?creator=${creator.replace(
+                      / /g,
+                      '%20'
+                    )}&collection=${name?.replace(/ /g, '%20')}`
               }
               size={70}
             />
@@ -159,7 +169,12 @@ const CreatorNFTs = () => {
     let filteredNFTs = [];
 
     const nftsList =
-      nfts && nfts.filter(({ isForSale }) => isForSale === 'true');
+      nfts &&
+      nfts.filter(
+        (nft) =>
+          nft.isForSale === 'true' ||
+          (nft.isForSale === 'false' && nft.isCreatorOwner === false)
+      );
 
     if (creator && !collection) {
       filteredNFTs =
@@ -392,7 +407,7 @@ const CreatorNFTs = () => {
         <b>Price: </b>
         {nft.price} {nft.currency}
         &nbsp;&nbsp;
-        <IconImage nft={nft} />
+        {nft.isForSale === 'true' && <IconImage nft={nft} />} 
         &nbsp;&nbsp; &nbsp;&nbsp;{' '}
         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
           <NFTTwitterShare item={nft} />
@@ -492,7 +507,9 @@ const CreatorNFTs = () => {
                     key={index}
                     name={singleTag}
                     handleSetTag={getCampaignsBasedOnTag}
-                    tagActive={tagCampaign.name === singleTag.name ? true : false}
+                    tagActive={
+                      tagCampaign.name === singleTag.name ? true : false
+                    }
                     type='campaign'
                     creator={creator}
                   />
