@@ -217,7 +217,12 @@ const BeneficiaryNFTs = () => {
     let filteredNFTs = [];
 
     const nftsList =
-      nfts && nfts.filter(({ isForSale }) => isForSale === 'true');
+      nfts &&
+      nfts.filter(
+        (nft) =>
+          nft.isForSale === 'true' ||
+          (nft.isForSale === 'false' && nft.isCreatorOwner === false)
+      );
 
     if (beneficiary && !campaign) {
       filteredNFTs =
@@ -302,7 +307,11 @@ const BeneficiaryNFTs = () => {
           { name: 'All', creator: '' },
           filteredCampaignsNFTs
         );
-      collectionsTagsName && setCollectionTags([{ name: 'All', creator: '' }, ...collectionsTagsName]);
+      collectionsTagsName &&
+        setCollectionTags([
+          { name: 'All', creator: '' },
+          ...collectionsTagsName,
+        ]);
 
       const creatorsTagsName =
         filteredCampaignsNFTs &&
@@ -332,7 +341,11 @@ const BeneficiaryNFTs = () => {
           { name: 'All', creator: '' },
           filteredCreatorsNFTs
         );
-      collectionsTagsName && setCollectionTags([{ name: 'All', creator: '' }, ...collectionsTagsName]);
+      collectionsTagsName &&
+        setCollectionTags([
+          { name: 'All', creator: '' },
+          ...collectionsTagsName,
+        ]);
 
       const campaignsTagsName =
         filteredCreatorsNFTs &&
@@ -442,7 +455,7 @@ const BeneficiaryNFTs = () => {
         <b>Price: </b>
         {nft.price} {nft.currency}
         &nbsp;&nbsp;
-        <IconImage nft={nft} />
+        {nft.isForSale === 'true' && <IconImage nft={nft} />}
         &nbsp;&nbsp;{' '}
         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
           <NFTTwitterShare item={nft} />

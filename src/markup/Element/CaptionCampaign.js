@@ -75,7 +75,7 @@ export const CaptionCampaign = (data, IconImage) => (
     <p className='d-flex align-content-center align-items-center'>
       <b>Price: </b>
       {data.price} {data.currency}
-      &nbsp;&nbsp; <IconImage nft={data} />
+      &nbsp;&nbsp; {data.isForSale === 'true' && <IconImage nft={data} />}
       {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
         <NFTTwitterShare item={data} />
       )}
