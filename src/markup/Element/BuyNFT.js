@@ -66,6 +66,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
             data.image,
             `Exciting news! ${data.title} NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.`
           );
+          window.location.reload();
         } else {
           setIsBuyClicked(false);
         }
