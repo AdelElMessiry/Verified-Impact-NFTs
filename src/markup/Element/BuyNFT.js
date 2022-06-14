@@ -87,11 +87,11 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
     const nftID = data.tokenId;
     setIsBuyClicked(true);
     try {
-      const transferDeployHash = await transfer({
-        signer: CLPublicKey.fromHex(entityInfo.publicKey),
-        recipient: CLPublicKey.fromHex(state.inputs.address),
-        nftId: nftID,
-      });
+      const transferDeployHash = await transfer(
+        CLPublicKey.fromHex(entityInfo.publicKey),
+        CLPublicKey.fromHex(state.inputs.address),
+        nftID
+      );
       if (transferDeployHash) {
         VIToast.success('NFT transfered successfully');
         handleClose();
@@ -134,7 +134,9 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
       backdrop='static'
     >
       <Modal.Header closeButton>
-        <Modal.Title>{isTransfer ? "Transfer" : "Buy"} {data.title} NFT</Modal.Title>
+        <Modal.Title>
+          {isTransfer ? 'Transfer' : 'Buy'} {data.title} NFT
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div className='reserve-form'>
@@ -175,8 +177,10 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
         >
           {isBuyClicked ? (
             <Spinner animation='border' variant='light' />
+          ) : isTransfer ? (
+            'Transfer'
           ) : (
-            isTransfer ? "Transfer" : "Buy"
+            'Buy'
           )}
         </button>
       </Modal.Footer>
