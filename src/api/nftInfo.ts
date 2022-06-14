@@ -56,10 +56,11 @@ export async function getNFTsList() {
 
     const nft_metadata = await cep47.getMappedTokenMeta(tokenId.toString());
     const ownerAddress = await cep47.getOwnerOf(tokenId.toString());
-    let isCreatorOwner=ownerAddress===CLPublicKey.fromHex(nft_metadata.creator).toAccountHashStr();
-    nftsList.push({ ...nft_metadata,isCreatorOwner, tokenId });
+    const isCreatorOwner =
+      ownerAddress ===
+      CLPublicKey.fromHex(nft_metadata.creator).toAccountHashStr();
+    nftsList.push({ ...nft_metadata, isCreatorOwner, tokenId });
   }
-  // console.log(nftsList);
 
   return nftsList;
 }
