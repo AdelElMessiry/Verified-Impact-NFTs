@@ -391,7 +391,7 @@ fn get_entry_points() -> EntryPoints {
         EntryPointType::Contract,
     ));
     entry_points.add_entry_point(EntryPoint::new(
-        "delete_profile",
+        "remove_profile",
         vec![Parameter::new("address", Key::cl_type())],
         <()>::cl_type(),
         EntryPointAccess::Public,

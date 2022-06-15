@@ -42,6 +42,10 @@ class ProfileClient {
     return this.contractClient.queryContractData(['total_profiles']);
   }
 
+  public async profilesList() {
+    return this.contractClient.queryContractData(['profiles']);
+  }
+
   public async getProfile(address: string) {
     const result = await this.contractClient.queryContractDictionary(
       'profiles_list',
@@ -138,25 +142,18 @@ class ProfileClient {
     );
   }
 
-  // public async getProfilesList() {
-  //   const beneficiaryCount: any = await profiles();
+  public async getProfilesList() {
+    const addresses: any = await this.profilesList();
 
-  //   const beneficiariesList: any = [];
-  //   for (const id of [...(Array(parseInt(beneficiaryCount)).keys() as any)]) {
-  //     // console.log((id + 1).toString());
-  //     // await getBeneficiaryDetails((id + 1).toString())
-  //     //   .then(async (rawBeneficiary: any) => {
-  //     //     // console.log(rawBeneficiary);
-  //     //     const parsedBeneficiary = parseBeneficiary(rawBeneficiary);
-  //     //     beneficiariesList.push(parsedBeneficiary);
-  //     //   })
-  //     //   .catch((err) => {
-  //     //     console.log(err);
-  //     //   });
-  //   }
+    const mappedProfiles: any = [];
+    for (const address of addresses) {
+      console.log(address);
+      const profile = await this.getProfile(address);
+      mappedProfiles.push(profile);
+    }
 
-  //   return beneficiariesList;
-  // }
+    return mappedProfiles;
+  }
 }
 
 export const profileClient = new ProfileClient();
