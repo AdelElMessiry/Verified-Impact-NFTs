@@ -14,7 +14,12 @@ import { concat } from '@ethersproject/bytes';
 import blake from 'blakejs';
 import BufferImported from 'buffer/';
 
-import { CONNECTION, KEYS } from '../constants/blockchain';
+import {
+  CONNECTION,
+  KEYS,
+  NFT_CONTRACT_HASH,
+  NFT_PACKAGE_HASH,
+} from '../constants/blockchain';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import {
   getAccountInfo,
@@ -101,26 +106,18 @@ const keyAndValueToHex = (key: CLValue, value: CLValue) => {
 class CEP47Client {
   casperClient: CasperClient;
   contractClient: Contracts.Contract;
+  networkName: string;
   isContractIHashSetup = false;
 
-  constructor(
-    public nodeAddress: string,
-    public networkName: string,
-    contractHash?: string,
-    contractPackageHash?: string
-  ) {
-    this.casperClient = new CasperClient(nodeAddress);
+  constructor() {
+    this.casperClient = new CasperClient(NODE_ADDRESS!);
     this.contractClient = new Contract(this.casperClient);
-    // if (contractHash) {
-    // this.contractClient.setContractHash(contractHash, contractPackageHash);
+    this.networkName = CHAIN_NAME;
     this.contractClient.setContractHash(
-      'hash-a68eb0fef519b865861b1ce4f60ba08990ffb170ed5b2964814f24b53751803c',
-      'hash-77ef5aea4f1a1826b9fe95b88d096f678674d21b26f0e2d350802190ee767e75'
-      // 'hash-ff21f2fc8e3f9e98a831eedae350c22549ab8248bbcbbf67f26a0fbc85c52774',
-      // 'hash-12a8e6d9becb8baf229389b324852c1ef8bd3d80ca3f3e7c646fe6830e5825d1'
+      `hash-${NFT_CONTRACT_HASH as string}`,
+      `hash-${NFT_PACKAGE_HASH}`
     );
     this.isContractIHashSetup = true;
-    // }
   }
 
   public install(
@@ -607,7 +604,28 @@ class CEP47Client {
     );
   }
 
+  public async approveBeneficiary(
+    index: string,
+    status: boolean,
+    paymentAmount: string,
+    deploySender: CLPublicKey
+  ) {
+    const runtimeArgs = RuntimeArgs.fromMap({
+      index: CLValueBuilder.u256(index),
+      status: CLValueBuilder.bool(status),
+    });
+
+    return this.contractClient.callEntrypoint(
+      'approve_beneficiary',
+      runtimeArgs,
+      deploySender,
+      this.networkName,
+      paymentAmount
+    );
+  }
+
   public async addCollection(
+    mode: string,
     name: string,
     description: string,
     creator: string,
@@ -617,7 +635,7 @@ class CEP47Client {
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       token_ids: CLValueBuilder.list([CLValueBuilder.u256(0)]),
-      mode: CLValueBuilder.string('ADD'),
+      mode: CLValueBuilder.string(mode),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       creator: CLValueBuilder.string(creator),
@@ -659,7 +677,7 @@ class CEP47Client {
   }
 }
 
-export const cep47 = new CEP47Client(NODE_ADDRESS!, CHAIN_NAME!);
+export const cep47 = new CEP47Client();
 export const isContractIHashSetup = () => cep47.isContractIHashSetup;
 
 export async function setupContractHash() {
