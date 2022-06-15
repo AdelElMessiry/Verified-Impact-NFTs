@@ -1,84 +1,60 @@
 import React, { useState, useEffect } from 'react';
 import { Col, Container, Row, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { CLPublicKey } from 'casper-js-sdk';
+import { toast as VIToast } from 'react-toastify';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { getBeneficiariesList } from '../../../api/beneficiaryInfo';
+import { approveBeneficiary } from '../../../api/addBeneficiary';
 import PromptLogin from '../PromptLogin';
 import Layout from '../../Layout';
 import VINFTsTooltip from '../../Element/Tooltip';
+import { getDeployDetails } from '../../../api/universal';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import plusIcon from './../../../images/icon/plus.png';
 
-
 //Manage Beneficiaries page
 const ManageBeneficiaries = () => {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, entityInfo } = useAuth();
   const [beneficiaries, setBeneficiaries] = useState();
-  const [masterChecked, setMasterChecked] = useState(false);
-  const [selectedList, setSelectedList] = useState([]);
 
   //getting beneficiary list
   useEffect(() => {
     (async () => {
-      let newList = [];
       let beneficiaryList = !beneficiaries && (await getBeneficiariesList());
-      !beneficiaries &&
-        beneficiaryList.forEach(async (element) => {
-          element['isApproved'] = false;
-          newList.push(element);
-        });
-      !beneficiaries && setBeneficiaries(newList);
+      !beneficiaries && setBeneficiaries(beneficiaryList);
     })();
   }, [beneficiaries]);
 
-  // Select/ UnSelect Table rows
-  const onMasterCheck = (e) => {
-    let tempList = beneficiaries;
-    // Check/ UnCheck All Items
-    tempList.map((beneficiary) => (beneficiary.isApproved = e.target.checked));
+  //saving new collection function
+  const handleApproveBeneficiary = async (beneficiary) => {
+    const approveBeneficiaryOut = await approveBeneficiary(
+      beneficiary.id,
+      beneficiary.isApproved=="true" ? false : true,
+      CLPublicKey.fromHex(entityInfo.publicKey)
+    );
+    const deployResult = await getDeployDetails(approveBeneficiaryOut);
+    console.log('......  saved successfully', deployResult);
+    VIToast.success(
+      `Beneficiary is ${
+        beneficiary.isApproved=="true" ? 'unapproved' : 'approved'
+      } successfully`
+    );
 
-    //Update State
-    setMasterChecked(e.target.checked);
-    setBeneficiaries(tempList);
-    setSelectedList(beneficiaries.filter((beneficiary) => beneficiary.isApproved));
-  };
-
-  // Update List Item's state and Master Checkbox State
-  const onItemCheck = (e, item) => {
-    let tempList = beneficiaries;
-    tempList.map((beneficiary) => {
-      if (beneficiary.id === item.id) {
-        beneficiary.isApproved = e.target.checked;
-      }
-      return beneficiary;
-    });
-
-    //To Control Master Checkbox State
-    const totalItems = beneficiaries.length;
-    const totalCheckedItems = tempList.filter((beneficiary) => beneficiary.isApproved).length;
-
-    // Update State
-    setMasterChecked(totalItems === totalCheckedItems);
-    setBeneficiaries(tempList);
-    setSelectedList(beneficiaries.filter((beneficiary) => beneficiary.isApproved));
-  };
-
-  // Event to get selected rows(Optional)
-  const getSelectedRows = () => {
-    setSelectedList(beneficiaries.filter((beneficiary) => beneficiary.isApproved));
+    window.location.reload();
   };
 
   return (
     <Layout>
       <div className="page-content bg-white">
-       {/* <!-- inner page banner --> */}
-       <div
-          className='dlab-bnr-inr overlay-primary bg-pt'
+        {/* <!-- inner page banner --> */}
+        <div
+          className="dlab-bnr-inr overlay-primary bg-pt"
           style={{ backgroundImage: 'url(' + bnr1 + ')' }}
         >
-                <div className="container">
+          <div className="container">
             <div className="dlab-bnr-inr-entry">
               <h1 className="text-white d-flex align-items-center">
                 <span className="mr-1">
@@ -117,26 +93,12 @@ const ManageBeneficiaries = () => {
               <div>
                 <div className=" m-auto m-b30">
                   <Container>
-                    <Row className='mb-4'>
-                      <Col>
-                      <button disabled={selectedList.length<=0} className='btn btn-success'> Approve {selectedList.length} Beneficiaries </button>
-                      </Col>
-                    </Row>
                     <Row>
                       <Col>
                         <table className="table">
                           <thead>
                             <tr>
-                              <th scope="col">
-                                <Form.Check
-                                  type={'checkbox'}
-                                  id={"mastercheck"}
-                                  onChange={(e) => onMasterCheck(e)}
-                                  checked={masterChecked}
-                                  label={""}
-                                  name="masterChecked"
-                                />
-                              </th>
+                              <th scope="col"></th>
                               <th scope="col">Name</th>
                               <th scope="col">Address</th>
                               <th scope="col">Description</th>
@@ -147,21 +109,11 @@ const ManageBeneficiaries = () => {
                               beneficiaries?.map((beneficiary) => (
                                 <tr
                                   key={beneficiary.address}
-                                  className={
-                                    beneficiary.isApproved ? 'selected' : ''
-                                  }
                                 >
                                   <th scope="row">
-                                    <Form.Check
-                                      type={"checkbox"}
-                                      checked={beneficiary.isApproved}
-                                      id={`rowcheck${beneficiary.address}`}
-                                      onChange={(e) =>
-                                        onItemCheck(e, beneficiary)
-                                      }
-                                      label={""}
-                                      name="isApproved"
-                                    />
+                                    <button className="btn btn-success" onClick={()=>handleApproveBeneficiary(beneficiary)}>
+                                    {beneficiary.isApproved=="true" ? 'Unapprove' : 'Approve'}
+                                    </button>
                                   </th>
                                   <td>{beneficiary.name}</td>
                                   <td>{beneficiary.address}</td>
