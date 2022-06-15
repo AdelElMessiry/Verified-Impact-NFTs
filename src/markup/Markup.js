@@ -15,7 +15,6 @@ import AddCampaign from './Pages/Admin/AddCampaign';
 import MyCreations from './Pages/NFTs/MyCreations';
 import MintNFT from './Pages/Admin/MintNFT';
 import Profile from './Pages/Profile';
-import Header1 from './Layout/Header1';
 import ManageBeneficiaries from './Pages/Admin/ManageBeneficiaries';
 import AddFullBeneficiary from './Pages/Admin/AddFullBeneficiary';
 
