@@ -33,3 +33,7 @@ export const KEYS = {
     process.env.REACT_APP_DEPLOYER_ACC_HASH ||
     '01e23d200eb0f3c8a3dacc8453644e6fcf4462585a68234ebb1c3d6cc8971148c2',
 };
+
+export const NFT_CONTRACT_HASH = process.env.REACT_APP_CASPER_NFT_CONTRACT_HASH;
+export const NFT_PACKAGE_HASH =
+  process.env.REACT_APP_CASPER_NFT_CONTRACT_PACKAGE_HASH;
