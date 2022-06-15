@@ -174,13 +174,6 @@ impl ViToken {
 
                 campaign_data::set_total_campaigns(new_campaign_count);
             }
-            // "DELETE" => {
-            //     let new_campaign_count = campaign_data::total_campaigns()
-            //         .checked_sub(U256::one())
-            //         .unwrap();
-            //     campaigns_dict.remove(caller);
-            //     campaign_data::set_total_campaigns(new_campaign_count);
-            // }
             _ => {
                 return Err(Error::WrongArguments);
             }
@@ -215,6 +208,7 @@ impl ViToken {
                 beneficiary.insert(format!("name: "), name);
                 beneficiary.insert(format!("description: "), description);
                 beneficiary.insert(format!("address: "), address);
+                beneficiary.insert(format!("isApproved: "), "false".to_string());
 
                 BeneficiaryControl::add_beneficiary(self, new_beneficiary_count, beneficiary);
                 beneficiaries_control::set_total_beneficiaries(new_beneficiary_count);
@@ -223,6 +217,22 @@ impl ViToken {
                 return Err(Error::WrongArguments);
             }
         }
+        Ok(())
+    }
+
+    fn set_is_approved_beneficiary(&mut self, index: U256, status: bool) -> Result<(), Error> {
+        let caller = ViToken::default().get_caller();
+
+        if !ViToken::default().is_admin(caller) {
+            revert(ApiError::User(20));
+        }
+
+        let mut beneficiary = BeneficiaryControl::get_beneficiary(self, index).unwrap_or_default();
+
+        beneficiary.insert(format!("isApproved: "), status.to_string());
+
+        BeneficiaryControl::add_beneficiary(self, index, beneficiary);
+
         Ok(())
     }
 
@@ -475,10 +485,22 @@ impl ViToken {
         address: String,
     ) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
+
         if !ViToken::default().is_admin(caller) {
             revert(ApiError::User(20));
         }
         self.set_beneficiary(mode, name, description, address)
+            .unwrap_or_revert();
+        Ok(())
+    }
+
+    fn approve_beneficiary(&mut self, index: U256, status: bool) -> Result<(), Error> {
+        let caller = ViToken::default().get_caller();
+
+        if !ViToken::default().is_admin(caller) {
+            revert(ApiError::User(20));
+        }
+        self.set_is_approved_beneficiary(index, status)
             .unwrap_or_revert();
         Ok(())
     }
@@ -807,6 +829,16 @@ fn add_beneficiary() {
 
     ViToken::default()
         .create_beneficiary(mode, name, description, address)
+        .unwrap_or_revert();
+}
+
+#[no_mangle]
+fn approve_beneficiary() {
+    let index = runtime::get_named_arg::<U256>("index");
+    let status = runtime::get_named_arg::<bool>("status");
+
+    ViToken::default()
+        .approve_beneficiary(index, status)
         .unwrap_or_revert();
 }
 
@@ -1199,6 +1231,16 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
             Parameter::new("address", String::cl_type()),
+        ],
+        <()>::cl_type(),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "approve_beneficiary",
+        vec![
+            Parameter::new("index", U256::cl_type()),
+            Parameter::new("status", bool::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
