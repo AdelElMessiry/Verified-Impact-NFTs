@@ -10,9 +10,11 @@ export async function addCollection(
   description: string,
   url: string,
   creator: string,
-  deploySender: CLPublicKey
+  deploySender: CLPublicKey,
+  mode?: string
 ) {
   const collectionDeploy = await cep47.addCollection(
+    mode ? mode : 'ADD',
     name,
     description,
     creator,
@@ -33,4 +35,23 @@ export async function addCollection(
   );
   console.log('Deploy hash', collectionDeployHash);
   return collectionDeployHash;
+}
+
+export async function updateCollection(
+  name: string,
+  description: string,
+  url: string,
+  creator: string,
+  deploySender: CLPublicKey
+) {
+  const updateCollectionDeployHash = await addCollection(
+    name,
+    description,
+    creator,
+    url,
+    deploySender,
+    'UPDATE'
+  );
+
+  return updateCollectionDeployHash;
 }

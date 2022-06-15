@@ -32,3 +32,29 @@ export async function addBeneficiary(
   console.log('Deploy hash', beneficiaryDeployHash);
   return beneficiaryDeployHash;
 }
+
+export async function approveBeneficiary(
+  index: string,
+  status: boolean,
+  deploySender: CLPublicKey
+) {
+  const beneficiaryDeploy = await cep47.approveBeneficiary(
+    index,
+    status,
+    PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
+    deploySender
+  );
+  console.log('Beneficiary Approval deploy:', beneficiaryDeploy);
+
+  const signedBeneficiaryDeploy = await signDeploy(
+    beneficiaryDeploy,
+    deploySender
+  );
+  console.log('Signed Beneficiary Approval deploy:', signedBeneficiaryDeploy);
+
+  const beneficiaryDeployHash = await signedBeneficiaryDeploy.send(
+    CONNECTION.NODE_ADDRESS
+  );
+  console.log('Deploy hash', beneficiaryDeployHash);
+  return beneficiaryDeployHash;
+}
