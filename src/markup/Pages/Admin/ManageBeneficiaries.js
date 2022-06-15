@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Col, Container, Row, Form } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { getBeneficiariesList } from '../../../api/beneficiaryInfo';
 import PromptLogin from '../PromptLogin';
-
-import PageTitle from '../../Layout/PageTitle';
+import Layout from '../../Layout';
+import VINFTsTooltip from '../../Element/Tooltip';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
-import Layout from '../../Layout';
+import plusIcon from './../../../images/icon/plus.png';
+
 
 //Manage Beneficiaries page
 const ManageBeneficiaries = () => {
@@ -33,7 +35,6 @@ const ManageBeneficiaries = () => {
 
   // Select/ UnSelect Table rows
   const onMasterCheck = (e) => {
-    debugger
     let tempList = beneficiaries;
     // Check/ UnCheck All Items
     tempList.map((beneficiary) => (beneficiary.isApproved = e.target.checked));
@@ -42,7 +43,6 @@ const ManageBeneficiaries = () => {
     setMasterChecked(e.target.checked);
     setBeneficiaries(tempList);
     setSelectedList(beneficiaries.filter((beneficiary) => beneficiary.isApproved));
-    debugger;
   };
 
   // Update List Item's state and Master Checkbox State
@@ -73,15 +73,38 @@ const ManageBeneficiaries = () => {
   return (
     <Layout>
       <div className="page-content bg-white">
-        {/* <!-- inner page banner --> */}
-        <div
-          className="dlab-bnr-inr overlay-primary bg-pt"
+       {/* <!-- inner page banner --> */}
+       <div
+          className='dlab-bnr-inr overlay-primary bg-pt'
           style={{ backgroundImage: 'url(' + bnr1 + ')' }}
         >
-          <PageTitle
-            motherMenu="Manage Beneficiaries"
-            activeMenu="ManageBeneficiaries"
-          />
+                <div className="container">
+            <div className="dlab-bnr-inr-entry">
+              <h1 className="text-white d-flex align-items-center">
+                <span className="mr-1">
+                  Manage Beneficiaries{' '}
+                  <VINFTsTooltip title={`Add New Beneficiary`}>
+                    <Link to={'./add-beneficiary'}>
+                      <img
+                        src={plusIcon}
+                        className="img img-fluid"
+                        width="40px"
+                      />
+                    </Link>
+                  </VINFTsTooltip>
+                </span>
+              </h1>
+
+              <div className="breadcrumb-row">
+                <ul className="list-inline">
+                  <li>
+                    <Link to={'#'}>Home</Link>
+                  </li>
+                  <li className="ml-1">Manage Beneficiaries</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
         {/* <!-- inner page banner END --> */}
         {/* <!-- contact area --> */}
