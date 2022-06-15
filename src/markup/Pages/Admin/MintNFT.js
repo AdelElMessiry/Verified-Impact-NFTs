@@ -101,7 +101,9 @@ const MintNFT = () => {
       !beneficiary &&
       setBeneficiary(beneficiaries[0].address);
     campaigns?.length && !campaign && setCampaign(campaigns[0].id);
-    !campaignsList && campaigns?.length && setCampaignsList(campaigns);
+    !campaignsList && campaigns?.length && setCampaignsList(campaigns.filter(
+      ({ wallet_address }) => beneficiaries[0].address === wallet_address
+    ));
     !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
     !collectionsList && collections?.length && loadCollections();
     !campaignsList &&
