@@ -5,7 +5,7 @@ import { CLPublicKey } from 'casper-js-sdk';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 
 import { getDeployDetails } from '../../../api/universal';
-import { addBeneficiary } from '../../../api/addBeneficiary';
+import { addCollection, updateCollection } from '../../../api/addCollection';
 import { useAuth } from '../../../contexts/AuthContext';
 import PromptLogin from '../PromptLogin';
 
@@ -22,47 +22,83 @@ const AddCollection = () => {
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
   const id = queryParams.get('id');
-  const [beneficiaryInputs, setBeneficiaryInputs] = React.useState({
+  debugger;
+  const [isSaveClicked, setIsSaveClicked] = React.useState(false);
+  const [collectionInputs, setCollectionInputs] = React.useState({
     name: '',
     description: '',
     address: '',
   });
 
-
-  //saving new beneficiary function
-  const saveBeneficiary = async () => {
-    const savedBeneficiary = await addBeneficiary(
-      beneficiaryInputs.name,
-      beneficiaryInputs.description,
-      beneficiaryInputs.address,
+  //saving new collection function
+  const addNewCollection = async () => {
+    const savedBeneficiary = await addCollection(
+      collectionInputs.name,
+      collectionInputs.description,
+      collectionInputs.address,
       CLPublicKey.fromHex(entityInfo.publicKey)
     );
 
     const deployResult = await getDeployDetails(savedBeneficiary);
     console.log('...... Beneficiary saved successfully', deployResult);
-    VIToast.success("Beneficiary saved successfully");
-    sendDiscordMessage( process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID, process.env.REACT_APP_BENEFICIARIES_TOKEN, beneficiaryInputs.name , "" ,`Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts click here to know more about their cause.`)
-    SendTweet(`Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.`)
-    setBeneficiaryInputs({
+    VIToast.success('Beneficiary saved successfully');
+    sendDiscordMessage(
+      process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
+      process.env.REACT_APP_BENEFICIARIES_TOKEN,
+      collectionInputs.name,
+      '',
+      `Great news! [${collectionInputs.name}] beneficiary has been added to #verified-impact-nfts click here to know more about their cause.`
+    );
+    SendTweet(
+      `Great news! ${collectionInputs.name} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.`
+    );
+    setCollectionInputs({
       name: '',
       description: '',
       address: '',
     });
   };
 
+  const editCollection = async () => {
+    const savedBeneficiary = await updateCollection(
+      collectionInputs.name,
+      collectionInputs.description,
+      collectionInputs.address,
+      CLPublicKey.fromHex(entityInfo.publicKey)
+    );
+
+    const deployResult = await getDeployDetails(savedBeneficiary);
+    console.log('...... Beneficiary saved successfully', deployResult);
+    VIToast.success('Beneficiary saved successfully');
+    sendDiscordMessage(
+      process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
+      process.env.REACT_APP_BENEFICIARIES_TOKEN,
+      collectionInputs.name,
+      '',
+      `Great news! [${collectionInputs.name}] beneficiary has been added to #verified-impact-nfts click here to know more about their cause.`
+    );
+    SendTweet(
+      `Great news! ${collectionInputs.name} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.`
+    );
+    setCollectionInputs({
+      name: '',
+      description: '',
+      address: '',
+    });
+  };
 
   return (
     <>
       <Layout>
-        <div className='page-content bg-white'>
+        <div className="page-content bg-white">
           {/* <!-- inner page banner --> */}
           <div
-            className='dlab-bnr-inr overlay-primary bg-pt'
+            className="dlab-bnr-inr overlay-primary bg-pt"
             style={{ backgroundImage: 'url(' + bnr1 + ')' }}
           >
             <PageTitle
-              motherMenu={`${id?'Edit':'Add'} Collection`}
-              activeMenu={`${id?'Edit':'Add'} Collection`}
+              motherMenu={`${id ? 'Edit' : 'Add'} Collection`}
+              activeMenu={`${id ? 'Edit' : 'Add'} Collection`}
             />
           </div>
           {/* <!-- inner page banner END --> */}
@@ -70,23 +106,23 @@ const AddCollection = () => {
           {!isLoggedIn ? (
             <PromptLogin />
           ) : (
-            <div className='section-full content-inner shop-account'>
+            <div className="section-full content-inner shop-account">
               {/* <!-- Product --> */}
-              <div className='container'>
+              <div className="container">
                 <div>
-                  <div className=' m-auto m-b30'>
+                  <div className=" m-auto m-b30">
                     <Container>
                       <Row>
                         <Col>
                           <input
-                            type='text'
-                            name='name'
-                            placeholder='Name'
-                            className='form-control'
-                            value={beneficiaryInputs.name}
+                            type="text"
+                            name="name"
+                            placeholder="Name"
+                            className="form-control"
+                            value={collectionInputs.name}
                             onChange={(e) =>
-                              setBeneficiaryInputs({
-                                ...beneficiaryInputs,
+                              setCollectionInputs({
+                                ...collectionInputs,
                                 name: e.target.value,
                               })
                             }
@@ -94,48 +130,54 @@ const AddCollection = () => {
                         </Col>
                         <Col>
                           <input
-                            type='text'
-                            placeholder='Address'
-                            name='address'
-                            className='form-control'
-                            value={beneficiaryInputs.address}
+                            type="text"
+                            placeholder="Address"
+                            name="address"
+                            className="form-control"
+                            value={collectionInputs.address}
                             onChange={(e) =>
-                              setBeneficiaryInputs({
-                                ...beneficiaryInputs,
+                              setCollectionInputs({
+                                ...collectionInputs,
                                 address: e.target.value,
                               })
                             }
                           />
                         </Col>
                       </Row>
-                      <Row className='mt-4'>
+                      <Row className="mt-4">
                         <Col>
                           <textarea
                             rows={4}
-                            name='description'
-                            placeholder='Description'
-                            className='form-control'
-                            value={beneficiaryInputs.description}
+                            name="description"
+                            placeholder="Description"
+                            className="form-control"
+                            value={collectionInputs.description}
                             onChange={(e) =>
-                              setBeneficiaryInputs({
-                                ...beneficiaryInputs,
+                              setCollectionInputs({
+                                ...collectionInputs,
                                 description: e.target.value,
                               })
                             }
                           ></textarea>
                         </Col>
                       </Row>
-                      <Row className='mt-4'>
+                      <Row className="mt-4">
                         <Col>
                           {' '}
-                          <p className='form-submit'>
-                            <input
-                              type='button'
-                              value='Create'
-                              className='btn btn-success'
-                              name='submit'
-                              onClick={saveBeneficiary}
-                            />
+                          <p className="form-submit">
+                            <button
+                              className="btn btn-success"
+                              name="submit"
+                              onClick={id == '0'?addNewCollection:editCollection}
+                            >
+                              {isSaveClicked ? (
+                                <Spinner animation="border" variant="light" />
+                              ) : id == '0' ? (
+                                'Add'
+                              ) : (
+                                'Edit'
+                              )}
+                            </button>
                           </p>
                         </Col>
                       </Row>
