@@ -18,6 +18,8 @@ import Profile from './Pages/Profile';
 
 import Header from './Layout/Header';
 import ScrollToTop from './Element/ScrollToTop';
+import MyCollections from './Pages/MyCollections';
+import AddCollection from './Pages/Admin/AddEditCollection';
 
 const Markup = () => {
   return (
@@ -45,6 +47,8 @@ const Markup = () => {
               <Route path='/my-creations' exact component={MyCreations} />
               <Route path='/mint-nft' exact component={MintNFT} />
               <Route path='/profile' exact component={Profile} />
+              <Route path='/my-collections' exact component={MyCollections} />
+              <Route path='/add-collection' exact component={AddCollection} />
             </Switch>
           </div>
           <ScrollToTop />

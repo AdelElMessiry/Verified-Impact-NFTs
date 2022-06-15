@@ -110,7 +110,7 @@ const HeaderMenu = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to={'./my-creations'} className='dez-page'>
+                  <Link to={'./my-collections'} className='dez-page'>
                     My Creations
                   </Link>
                 </li>
