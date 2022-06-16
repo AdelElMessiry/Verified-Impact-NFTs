@@ -34,24 +34,25 @@ const AddCollection = () => {
 
   const getSelectedCollection = React.useCallback(async () => {
     const collectionData =
-      collections && collections.find(({ id }) => id == collectionId);
+      collections && collections.find(({ id }) => id === collectionId);
     collections && setSelectedCollection(collectionData);
+
     setCollectionInputs({
       name: collectionData ? collectionData.name : '',
       description: collectionData ? collectionData.description : '',
       creator: collectionData ? collectionData.creator : '',
       url: collectionData ? collectionData.url : '',
     });
-  }, [collections, selectedCollection]);
+  }, [collections, collectionId]);
 
   //getting list of NFTs
   React.useEffect(() => {
-    if (collectionId != '0') {
+    if (collectionId !== '0') {
       getSelectedCollection();
     } else {
       setSelectedCollection(true);
     }
-  }, [getSelectedCollection]);
+  }, [collectionId, getSelectedCollection]);
 
   //saving new collection function
   const addNewCollection = async () => {
@@ -92,10 +93,10 @@ const AddCollection = () => {
   return (
     <>
       <Layout>
-        <div className="page-content bg-white">
+        <div className='page-content bg-white'>
           {/* <!-- inner page banner --> */}
           <div
-            className="dlab-bnr-inr overlay-primary bg-pt"
+            className='dlab-bnr-inr overlay-primary bg-pt'
             style={{ backgroundImage: 'url(' + bnr1 + ')' }}
           >
             <PageTitle
@@ -108,21 +109,21 @@ const AddCollection = () => {
           {!isLoggedIn ? (
             <PromptLogin />
           ) : (
-            <div className="section-full content-inner shop-account">
+            <div className='section-full content-inner shop-account'>
               {/* <!-- Product --> */}
-              <div className="container">
+              <div className='container'>
                 <div>
-                  <div className=" m-auto m-b30">
+                  <div className=' m-auto m-b30'>
                     {collectionId == '0' ||
                     (collectionId != '0' && selectedCollection) ? (
                       <Container>
                         <Row>
                           <Col>
                             <input
-                              type="text"
-                              name="name"
-                              placeholder="Name"
-                              className="form-control"
+                              type='text'
+                              name='name'
+                              placeholder='Name'
+                              className='form-control'
                               value={collectionInputs.name}
                               onChange={(e) =>
                                 setCollectionInputs({
@@ -134,10 +135,10 @@ const AddCollection = () => {
                           </Col>
                           <Col>
                             <input
-                              type="text"
-                              placeholder="URL"
-                              name="url"
-                              className="form-control"
+                              type='text'
+                              placeholder='URL'
+                              name='url'
+                              className='form-control'
                               value={collectionInputs.url}
                               onChange={(e) =>
                                 setCollectionInputs({
@@ -148,13 +149,13 @@ const AddCollection = () => {
                             />
                           </Col>
                         </Row>
-                        <Row className="mt-4">
+                        <Row className='mt-4'>
                           <Col>
                             <textarea
                               rows={4}
-                              name="description"
-                              placeholder="Description"
-                              className="form-control"
+                              name='description'
+                              placeholder='Description'
+                              className='form-control'
                               value={collectionInputs.description}
                               onChange={(e) =>
                                 setCollectionInputs({
@@ -165,13 +166,13 @@ const AddCollection = () => {
                             ></textarea>
                           </Col>
                         </Row>
-                        <Row className="mt-4">
+                        <Row className='mt-4'>
                           <Col>
                             {' '}
-                            <p className="form-submit">
+                            <p className='form-submit'>
                               <button
-                                className="btn btn-success"
-                                name="submit"
+                                className='btn btn-success'
+                                name='submit'
                                 onClick={
                                   collectionId == '0'
                                     ? addNewCollection
@@ -179,7 +180,7 @@ const AddCollection = () => {
                                 }
                               >
                                 {isSaveClicked ? (
-                                  <Spinner animation="border" variant="light" />
+                                  <Spinner animation='border' variant='light' />
                                 ) : collectionId == '0' ? (
                                   'Add'
                                 ) : (
@@ -191,9 +192,9 @@ const AddCollection = () => {
                         </Row>
                       </Container>
                     ) : (
-                      <div className="vinft-section-loader">
-                        <div className="vinft-spinner-body">
-                          <Spinner animation="border" variant="success" />
+                      <div className='vinft-section-loader'>
+                        <div className='vinft-spinner-body'>
+                          <Spinner animation='border' variant='success' />
                           <p>Fetching Collection Detail Please wait...</p>
                         </div>
                       </div>
