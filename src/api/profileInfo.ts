@@ -43,7 +43,7 @@ class ProfileClient {
   }
 
   public async profilesList() {
-    return this.contractClient.queryContractData(['profiles']);
+    return this.contractClient.queryContractData(['profiles_addresses']);
   }
 
   public async getProfile(address: string) {

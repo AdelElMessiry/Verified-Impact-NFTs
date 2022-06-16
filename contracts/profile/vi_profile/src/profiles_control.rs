@@ -1,10 +1,11 @@
 use crate::Profile;
-use alloc::string::ToString;
+use alloc::{string::ToString, vec::Vec};
 use casper_contract::{contract_api::storage, unwrap_or_revert::UnwrapOrRevert};
 use casper_types::{Key, U256};
 use contract_utils::{get_key, set_key, ContractContext, ContractStorage, Dict};
 
 const PROFILES_DICT: &str = "profiles";
+const PROFILES_ADDRESSES_DICT: &str = "profiles_addresses";
 pub const TOTAL_PROFILES: &str = "total_profiles";
 pub const PROFILES_LIST: &str = "profiles_list";
 pub trait ProfileControl<Storage: ContractStorage>: ContractContext<Storage> {
@@ -73,4 +74,12 @@ pub fn total_profiles() -> U256 {
 
 pub fn set_total_profiles(profile_counter: U256) {
     set_key(TOTAL_PROFILES, profile_counter);
+}
+
+pub fn set_all_profiles(all_profiles: Vec<Key>) {
+    set_key(PROFILES_ADDRESSES_DICT, all_profiles);
+}
+
+pub fn get_all_profiles() -> Vec<Key> {
+    get_key(PROFILES_ADDRESSES_DICT).unwrap_or_revert()
 }
