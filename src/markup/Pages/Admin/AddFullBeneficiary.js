@@ -12,7 +12,7 @@ import PageTitle from '../../Layout/PageTitle';
 
 import Layout from '../../Layout';
 import ProfileForm from '../../Element/profileForm';
-import {ProfileFormsEnum} from "../../../Enums/index";
+import { ProfileFormsEnum } from '../../../Enums/index';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 
@@ -45,7 +45,7 @@ const AddFullBeneficiary = () => {
 
     const deployResult = await getDeployDetails(savedBeneficiary);
     console.log('...... Beneficiary saved successfully', deployResult);
-    VIToast.success("Beneficiary saved successfully");
+    VIToast.success('Beneficiary saved successfully');
 
     setBeneficiaryInputs({
       name: '',
@@ -57,40 +57,40 @@ const AddFullBeneficiary = () => {
   return (
     <>
       <Layout>
-
-      <div className='page-content bg-white'>
-        {/* <!-- inner page banner --> */}
-        <div
-          className='dlab-bnr-inr overlay-primary bg-pt'
-          style={{ backgroundImage: 'url(' + bnr1 + ')' }}
-        >
-          <PageTitle
-            motherMenu='Add Beneficiary'
-            activeMenu='Add Beneficiary'
-          />
-        </div>
-        {/* <!-- inner page banner END --> */}
-        {/* <!-- contact area --> */}
-        {!isLoggedIn ? (
-          <PromptLogin />
-        ) : (
-          <div className='section-full content-inner shop-account'>
-            {/* <!-- Product --> */}
-            <div className='container'>
-              <div>
-                <div className=' m-auto m-b30'>
-                  <Container>
-                  <ProfileForm  formName={ProfileFormsEnum.BeneficiaryProfile} />
-                  </Container>
+        <div className='page-content bg-white'>
+          {/* <!-- inner page banner --> */}
+          <div
+            className='dlab-bnr-inr overlay-primary bg-pt'
+            style={{ backgroundImage: 'url(' + bnr1 + ')' }}
+          >
+            <PageTitle
+              motherMenu='Add Beneficiary'
+              activeMenu='Add Beneficiary'
+            />
+          </div>
+          {/* <!-- inner page banner END --> */}
+          {/* <!-- contact area --> */}
+          {!isLoggedIn ? (
+            <PromptLogin />
+          ) : (
+            <div className='section-full content-inner shop-account'>
+              {/* <!-- Product --> */}
+              <div className='container'>
+                <div>
+                  <div className=' m-auto m-b30'>
+                    <Container>
+                      <ProfileForm
+                        formName={ProfileFormsEnum.BeneficiaryProfile}
+                      />
+                    </Container>
+                  </div>
                 </div>
               </div>
+              {/* <!-- Product END --> */}
             </div>
-            {/* <!-- Product END --> */}
-          </div>
-        )}
-        {/* <!-- contact area  END --> */}
-      </div>
-
+          )}
+          {/* <!-- contact area  END --> */}
+        </div>
       </Layout>
     </>
   );

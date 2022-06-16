@@ -71,8 +71,8 @@ const TagLi = ({ name, handleSetTag, tagActive, type }) => {
         className={` tag ${tagActive ? 'btn active' : 'btn'}`}
         onClick={() => handleSetTag(name)}
       >
-        <input type="radio" />
-        <button className="site-button-secondry radius-sm">
+        <input type='radio' />
+        <button className='site-button-secondry radius-sm'>
           <span>
             {name} {''}
           </span>{' '}
@@ -117,7 +117,7 @@ const MyCollections = () => {
       <>
         <VINftsTooltip title={'Transfer NFT'}>
           <i
-            className="ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"
+            className='ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
             onClick={() => {
               setSelectedNFT(nft);
               setShowBuyModal(true);
@@ -126,7 +126,7 @@ const MyCollections = () => {
         </VINftsTooltip>
         <VINftsTooltip
           title={
-            nft.isForSale == 'true'
+            nft.isForSale === 'true'
               ? 'Unlist NFT for Sale'
               : 'List NFT for sale'
           }
@@ -137,14 +137,14 @@ const MyCollections = () => {
               setShowListForSaleModal(true);
             }}
           >
-            {nft.isForSale == 'true' ? (
+            {nft.isForSale === 'true' ? (
               <div>
                 {' '}
-                <i className="ti-close sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen position-absolute"></i>
-                <i className="ti-money transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+                <i className='ti-close sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen position-absolute'></i>
+                <i className='ti-money transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'></i>
               </div>
             ) : (
-              <i className="ti-money transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"></i>
+              <i className='ti-money transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'></i>
             )}
           </div>
         </VINftsTooltip>
@@ -153,7 +153,7 @@ const MyCollections = () => {
   };
 
   const CaptionItem = (nft) => (
-    <div className="text-white text-left port-box">
+    <div className='text-white text-left port-box'>
       <h5>{nft.title}</h5>
       <p>
         <b>Description: </b>
@@ -166,7 +166,7 @@ const MyCollections = () => {
         >
           <Link
             to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiaryName}`}
-            className="dez-page text-white"
+            className='dez-page text-white'
             onClick={() => {
               setOpenSlider(false);
             }}
@@ -174,18 +174,18 @@ const MyCollections = () => {
             {nft.beneficiaryName}
           </Link>
         </VINftsTooltip>
-        <span className="bg-success text-white px-1 ml-1 border-raduis-2">
+        <span className='bg-success text-white px-1 ml-1 border-raduis-2'>
           {nft.beneficiaryPercentage}%
         </span>
 
-        <b className="ml-4">Campaign: </b>
+        <b className='ml-4'>Campaign: </b>
         <VINftsTooltip
           title={`Click to see all NFTs for "${nft.campaignName}" campaign`}
         >
           {nft.beneficiary ? (
             <Link
               to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiaryName}&campaign=${nft.campaignName}`}
-              className="dez-page text-white"
+              className='dez-page text-white'
               onClick={() => {
                 setOpenSlider(false);
               }}
@@ -195,7 +195,7 @@ const MyCollections = () => {
           ) : (
             <Link
               to={`./CreatorNFTs?creator=${nft.creatorName}&collection=${nft.collectionName}`}
-              className="dez-page text-white"
+              className='dez-page text-white'
               onClick={() => {
                 setOpenSlider(false);
               }}
@@ -204,13 +204,13 @@ const MyCollections = () => {
             </Link>
           )}
         </VINftsTooltip>
-        <b className="ml-4">Creator: </b>
+        <b className='ml-4'>Creator: </b>
         <VINftsTooltip
           title={`Click to see all NFTs created by "${nft.creatorName}"`}
         >
           <Link
             to={`./CreatorNFTs?creator=${nft.creatorName}`}
-            className="dez-page text-white"
+            className='dez-page text-white'
             onClick={() => {
               setOpenSlider(false);
             }}
@@ -218,14 +218,14 @@ const MyCollections = () => {
             {nft.creatorName}
           </Link>
         </VINftsTooltip>
-        <span className="bg-info text-white px-1 ml-1 border-raduis-2">
+        <span className='bg-info text-white px-1 ml-1 border-raduis-2'>
           {nft.creatorPercentage}%
         </span>
 
-        <b className="ml-4">Collection: </b>
+        <b className='ml-4'>Collection: </b>
         <Link
           to={`./CreatorNFTs?creator=${nft.creatorName}&collection=${nft.collectionName}`}
-          className="dez-page text-white"
+          className='dez-page text-white'
           onClick={() => {
             setOpenSlider(false);
           }}
@@ -233,7 +233,7 @@ const MyCollections = () => {
           {nft.collectionName}
         </Link>
       </p>
-      <p className="d-flex align-content-center align-items-center">
+      <p className='d-flex align-content-center align-items-center'>
         <b>Price: </b>
         {nft.price} {nft.currency}
         &nbsp;&nbsp;
@@ -245,7 +245,7 @@ const MyCollections = () => {
         &nbsp;&nbsp;{' '}
         <Link
           to={`./nft-detail?id=${nft.tokenId}`}
-          className="mr-1 text-success text-underline"
+          className='mr-1 text-success text-underline'
         >
           <QRCode
             value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
@@ -474,36 +474,36 @@ const MyCollections = () => {
 
   return (
     <Layout>
-      <div className="page-content bg-white">
+      <div className='page-content bg-white'>
         {/*  banner  */}
         <div
-          className="dlab-bnr-inr dlab-bnr-inr-sm overlay-primary bg-pt"
+          className='dlab-bnr-inr dlab-bnr-inr-sm overlay-primary bg-pt'
           style={{ backgroundImage: 'url(' + bnr1 + ')' }}
         >
-          <div className="container">
-            <div className="dlab-bnr-inr-entry">
-              <h1 className="text-white d-flex align-items-center">
-                <span className="mr-1">
+          <div className='container'>
+            <div className='dlab-bnr-inr-entry'>
+              <h1 className='text-white d-flex align-items-center'>
+                <span className='mr-1'>
                   My Collections{' '}
                   <VINftsTooltip title={`Add New Collection`}>
                     <Link to={'./add-collection?id=0'}>
                       <img
                         src={plusIcon}
-                        className="img img-fluid"
-                        width="40px"
-                        alt="plusIcon"
+                        className='img img-fluid'
+                        width='40px'
+                        alt='plusIcon'
                       />
                     </Link>
                   </VINftsTooltip>
                 </span>
               </h1>
 
-              <div className="breadcrumb-row">
-                <ul className="list-inline">
+              <div className='breadcrumb-row'>
+                <ul className='list-inline'>
                   <li>
                     <Link to={'#'}>Home</Link>
                   </li>
-                  <li className="ml-1">My Collections</li>
+                  <li className='ml-1'>My Collections</li>
                 </ul>
               </div>
             </div>
@@ -513,10 +513,10 @@ const MyCollections = () => {
         {!isLoggedIn ? (
           <PromptLogin />
         ) : (
-          <div className="section-full content-inner-1 portfolio text-uppercase">
+          <div className='section-full content-inner-1 portfolio text-uppercase'>
             {(creator === undefined || creator === null) && (
-              <div className="site-filters clearfix  left mx-5   m-b40">
-                <ul className="filters" data-toggle="buttons">
+              <div className='site-filters clearfix  left mx-5   m-b40'>
+                <ul className='filters' data-toggle='buttons'>
                   Creator:{' '}
                   {creatorTags &&
                     creatorTags.length > 0 &&
@@ -526,15 +526,15 @@ const MyCollections = () => {
                         name={singleTag}
                         handleSetTag={getCreatorsBasedOnTag}
                         tagActive={tagCreator === singleTag ? true : false}
-                        type="creator"
+                        type='creator'
                       />
                     ))}
                 </ul>
               </div>
             )}
             {(campaign === undefined || campaign === null) && (
-              <div className="site-filters clearfix  left mx-5   m-b40">
-                <ul className="filters" data-toggle="buttons">
+              <div className='site-filters clearfix  left mx-5   m-b40'>
+                <ul className='filters' data-toggle='buttons'>
                   Campaign:{' '}
                   {campaignTags &&
                     campaignTags.length > 0 &&
@@ -544,14 +544,14 @@ const MyCollections = () => {
                         name={singleTag}
                         handleSetTag={getCampaignsBasedOnTag}
                         tagActive={tagCampaign === singleTag ? true : false}
-                        type="campaign"
+                        type='campaign'
                       />
                     ))}
                 </ul>
               </div>
             )}
-            <div className="site-filters clearfix left mx-5  m-b40">
-              <ul className="filters" data-toggle="buttons">
+            <div className='site-filters clearfix left mx-5  m-b40'>
+              <ul className='filters' data-toggle='buttons'>
                 Collection:{' '}
                 {collectionTags &&
                   collectionTags.length > 0 &&
@@ -561,7 +561,7 @@ const MyCollections = () => {
                       name={singleTag}
                       handleSetTag={getCollectionsBasedOnTag}
                       tagActive={tagCollection === singleTag ? true : false}
-                      type="collection"
+                      type='collection'
                     />
                   ))}
               </ul>
@@ -571,22 +571,22 @@ const MyCollections = () => {
                 lg={4}
                 md={6}
                 xs={12}
-                className="site-filters clearfix  left mx-5   m-b40 form-group"
+                className='site-filters clearfix  left mx-5   m-b40 form-group'
               >
-                <Row className="align-items-center">
-                  <Col className="col-auto pr-1">
-                    <span className="float-left">NFT status:</span>
+                <Row className='align-items-center'>
+                  <Col className='col-auto pr-1'>
+                    <span className='float-left'>NFT status:</span>
                   </Col>
-                  <Col className="pl-0">
+                  <Col className='pl-0'>
                     <select
                       onChange={(e) => handleNFTStatus(e.target.value)}
                       value={soldNFTsFilter}
-                      className="form-control"
-                      name="soldNFTsFilter"
+                      className='form-control'
+                      name='soldNFTsFilter'
                     >
-                      <option value="All">All NFTs</option>
-                      <option value="sold">Sold NFTs</option>
-                      <option value="notSold">Not Sold NFTs</option>
+                      <option value='All'>All NFTs</option>
+                      <option value='sold'>Sold NFTs</option>
+                      <option value='notSold'>Not Sold NFTs</option>
                     </select>
                   </Col>
                 </Row>
@@ -600,8 +600,8 @@ const MyCollections = () => {
                     let collectionsName = Object.keys(n);
                     let NFts = Object.values(n)[0];
                     return (
-                      <div key={index} className="mb-5">
-                        <h4 className="text-success text-center  d-flex align-items-center justify-content-center">
+                      <div key={index} className='mb-5'>
+                        <h4 className='text-success text-center  d-flex align-items-center justify-content-center'>
                           <Link
                             to={`${
                               window.location.origin
@@ -612,7 +612,7 @@ const MyCollections = () => {
                               / /g,
                               '%20'
                             )}`}
-                            className="mr-1 text-success text-underline"
+                            className='mr-1 text-success text-underline'
                           >
                             <QRCode
                               value={`${
@@ -630,7 +630,7 @@ const MyCollections = () => {
                           &nbsp;&nbsp;
                           <Link
                             to={`./BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName}&campaign=${NFts[0]?.campaignName}`}
-                            className="mr-1 text-success text-underline"
+                            className='mr-1 text-success text-underline'
                           >
                             {NFts.length} NFTs from the{' '}
                             {NFts[0]?.collectionName} Collection
@@ -640,9 +640,9 @@ const MyCollections = () => {
                             <Link to={`./add-collection?id=${collectionsName}`}>
                               <img
                                 src={editIcon}
-                                className="img img-fluid"
-                                width="40px"
-                                alt="plusIcon"
+                                className='img img-fluid'
+                                width='40px'
+                                alt='plusIcon'
                               />
                             </Link>
                           </VINftsTooltip>
@@ -669,10 +669,10 @@ const MyCollections = () => {
                         </h4>
                         <SimpleReactLightbox>
                           <SRLWrapper options={options}>
-                            <div className="clearfix portfolio nfts-slider">
+                            <div className='clearfix portfolio nfts-slider'>
                               <ul
-                                id="masonry"
-                                className="dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1"
+                                id='masonry'
+                                className='dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1'
                               >
                                 <Masonry
                                   className={'my-gallery-class'} // default ''
@@ -689,7 +689,7 @@ const MyCollections = () => {
                                       <React.Fragment
                                         key={`${index}${item.tokenId}`}
                                       >
-                                        <li className="web design card-container p-a0">
+                                        <li className='web design card-container p-a0'>
                                           <NFTCard
                                             item={item}
                                             openSlider={(
@@ -760,14 +760,14 @@ const MyCollections = () => {
                   })}
                 </>
               ) : (
-                <h4 className="text-muted text-center mb-5">
+                <h4 className='text-muted text-center mb-5'>
                   You Don't have NFTS yet!
                 </h4>
               )
             ) : (
-              <div className="vinft-page-loader">
-                <div className="vinft-spinner-body">
-                  <Spinner animation="border" variant="success" />
+              <div className='vinft-page-loader'>
+                <div className='vinft-spinner-body'>
+                  <Spinner animation='border' variant='success' />
                   <p>Fetching your NFTs Please wait...</p>
                 </div>
               </div>

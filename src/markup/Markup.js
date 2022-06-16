@@ -51,8 +51,16 @@ const Markup = () => {
               <Route path='/profile' exact component={Profile} />
               <Route path='/my-collections' exact component={MyCollections} />
               <Route path='/add-collection' exact component={AddCollection} />
-              <Route path='/manage-beneficiaries' exact component={ManageBeneficiaries} />
-              <Route path='/add-beneficiary' exact component={AddFullBeneficiary} />
+              <Route
+                path='/manage-beneficiaries'
+                exact
+                component={ManageBeneficiaries}
+              />
+              <Route
+                path='/add-beneficiary'
+                exact
+                component={AddFullBeneficiary}
+              />
             </Switch>
           </div>
           <ScrollToTop />

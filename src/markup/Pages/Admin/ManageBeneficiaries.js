@@ -32,14 +32,14 @@ const ManageBeneficiaries = () => {
   const handleApproveBeneficiary = async (beneficiary) => {
     const approveBeneficiaryOut = await approveBeneficiary(
       beneficiary.id,
-      beneficiary.isApproved=="true" ? false : true,
+      beneficiary.isApproved === 'true' ? false : true,
       CLPublicKey.fromHex(entityInfo.publicKey)
     );
     const deployResult = await getDeployDetails(approveBeneficiaryOut);
     console.log('......  saved successfully', deployResult);
     VIToast.success(
       `Beneficiary is ${
-        beneficiary.isApproved=="true" ? 'unapproved' : 'approved'
+        beneficiary.isApproved === 'true' ? 'unapproved' : 'approved'
       } successfully`
     );
 
@@ -48,35 +48,36 @@ const ManageBeneficiaries = () => {
 
   return (
     <Layout>
-      <div className="page-content bg-white">
+      <div className='page-content bg-white'>
         {/* <!-- inner page banner --> */}
         <div
-          className="dlab-bnr-inr overlay-primary bg-pt"
+          className='dlab-bnr-inr overlay-primary bg-pt'
           style={{ backgroundImage: 'url(' + bnr1 + ')' }}
         >
-          <div className="container">
-            <div className="dlab-bnr-inr-entry">
-              <h1 className="text-white d-flex align-items-center">
-                <span className="mr-1">
+          <div className='container'>
+            <div className='dlab-bnr-inr-entry'>
+              <h1 className='text-white d-flex align-items-center'>
+                <span className='mr-1'>
                   Manage Beneficiaries{' '}
                   <VINFTsTooltip title={`Add New Beneficiary`}>
                     <Link to={'./add-beneficiary'}>
                       <img
+                        alt='plusIcon'
                         src={plusIcon}
-                        className="img img-fluid"
-                        width="40px"
+                        className='img img-fluid'
+                        width='40px'
                       />
                     </Link>
                   </VINFTsTooltip>
                 </span>
               </h1>
 
-              <div className="breadcrumb-row">
-                <ul className="list-inline">
+              <div className='breadcrumb-row'>
+                <ul className='list-inline'>
                   <li>
                     <Link to={'#'}>Home</Link>
                   </li>
-                  <li className="ml-1">Manage Beneficiaries</li>
+                  <li className='ml-1'>Manage Beneficiaries</li>
                 </ul>
               </div>
             </div>
@@ -87,32 +88,37 @@ const ManageBeneficiaries = () => {
         {!isLoggedIn ? (
           <PromptLogin />
         ) : (
-          <div className="section-full content-inner shop-account">
+          <div className='section-full content-inner shop-account'>
             {/* <!-- Product --> */}
-            <div className="container">
+            <div className='container'>
               <div>
-                <div className=" m-auto m-b30">
+                <div className=' m-auto m-b30'>
                   <Container>
                     <Row>
                       <Col>
-                        <table className="table">
+                        <table className='table'>
                           <thead>
                             <tr>
-                              <th scope="col"></th>
-                              <th scope="col">Name</th>
-                              <th scope="col">Address</th>
-                              <th scope="col">Description</th>
+                              <th scope='col'></th>
+                              <th scope='col'>Name</th>
+                              <th scope='col'>Address</th>
+                              <th scope='col'>Description</th>
                             </tr>
                           </thead>
                           <tbody>
                             {beneficiaries &&
                               beneficiaries?.map((beneficiary) => (
-                                <tr
-                                  key={beneficiary.address}
-                                >
-                                  <th scope="row">
-                                    <button className="btn btn-success" onClick={()=>handleApproveBeneficiary(beneficiary)}>
-                                    {beneficiary.isApproved=="true" ? 'Unapprove' : 'Approve'}
+                                <tr key={beneficiary.address}>
+                                  <th scope='row'>
+                                    <button
+                                      className='btn btn-success'
+                                      onClick={() =>
+                                        handleApproveBeneficiary(beneficiary)
+                                      }
+                                    >
+                                      {beneficiary.isApproved == 'true'
+                                        ? 'Unapprove'
+                                        : 'Approve'}
                                     </button>
                                   </th>
                                   <td>{beneficiary.name}</td>
