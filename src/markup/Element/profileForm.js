@@ -12,7 +12,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { getDeployDetails } from '../../api/universal';
 import { uploadImg } from '../../api/imageCDN';
 
-const ProfileForm = ({ formName,isProfileExist }) => {
+const ProfileForm = ({ formName, isProfileExist }) => {
   const { entityInfo, refreshAuth } = useAuth();
 
   //setting initial values of controls
@@ -132,8 +132,8 @@ const ProfileForm = ({ formName,isProfileExist }) => {
       return;
     }
     setIsSaveButtonClicked(true);
-    let cloudProfileURL = uploadedProfileImageURL
-    let cloudNFTURL = uploadedNFTImageURL
+    let cloudProfileURL = uploadedProfileImageURL;
+    let cloudNFTURL = uploadedNFTImageURL;
     if (!state.inputs.isProfileImageURL && uploadedProfileFile) {
       console.log('Img', uploadedProfileFile);
       console.log('Img url', uploadedProfileImageURL);
@@ -162,40 +162,44 @@ const ProfileForm = ({ formName,isProfileExist }) => {
       }
       VIToast.success('NFT Image uploaded to cloud CDN successfully !');
     }
-    saveProfile(cloudProfileURL,cloudNFTURL);
+    saveProfile(cloudProfileURL, cloudNFTURL);
   }
 
-  async function saveProfile(ProfileImgURL,NFTImgURL) {
-    if (!uploadedProfileImageURL||!uploadedNFTImageURL) {
+  async function saveProfile(ProfileImgURL, NFTImgURL) {
+    if (!uploadedProfileImageURL || !uploadedNFTImageURL) {
       return VIToast.error('Please upload image or enter direct URL');
     }
 
     if (entityInfo.publicKey) {
       let saveDeployHash;
-debugger
+      debugger;
       try {
-        saveDeployHash = await profileClient.addUpdateProfile({
-          address: CLPublicKey.fromHex(entityInfo.publicKey),
-          username: state.inputs.userName,
-          tagline: state.inputs.tagline,
-          imgUrl: ProfileImgURL,
-          nftUrl: NFTImgURL,
-          firstName: state.inputs.firstName,
-          lastName: state.inputs.lastName,
-          bio: state.inputs.fullBio,
-          externalLink: state.inputs.externalSiteLink,
-          phone: state.inputs.phone,
-          twitter: state.inputs.twitter,
-          instagram: state.inputs.instagram,
-          facebook: state.inputs.facebook,
-          medium: state.inputs.medium,
-          telegram: state.inputs.telegram,
-          mail: state.inputs.email,
-          profileType: formName===ProfileFormsEnum.NormalProfile? 'normal':formName===ProfileFormsEnum.BeneficiaryProfile? 'beneficiary':'creator',
-          paymentAmount: '',
-          deploySender: CLPublicKey.fromHex(entityInfo.publicKey),
-          mode: isProfileExist?'UPDATE':'ADD'
-        });
+        saveDeployHash = await profileClient.addUpdateProfile(
+          CLPublicKey.fromHex(entityInfo.publicKey),
+          state.inputs.userName,
+          state.inputs.shortTagLine,
+          ProfileImgURL,
+          NFTImgURL,
+          state.inputs.firstName,
+          state.inputs.lastName,
+          state.inputs.fullBio,
+          state.inputs.externalSiteLink,
+          state.inputs.phone,
+          state.inputs.twitter,
+          state.inputs.instagram,
+          state.inputs.facebook,
+          state.inputs.medium,
+          state.inputs.telegram,
+          state.inputs.email,
+          formName === ProfileFormsEnum.NormalProfile
+            ? 'normal'
+            : formName === ProfileFormsEnum.BeneficiaryProfile
+            ? 'beneficiary'
+            : 'creator',
+          '',
+          CLPublicKey.fromHex(entityInfo.publicKey),
+          isProfileExist ? 'UPDATE' : 'ADD'
+        );
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
@@ -247,28 +251,6 @@ debugger
                 name="shortTagLine"
                 className="form-control"
                 value={state.inputs.shortTagLine}
-                onChange={(e) => handleChange(e)}
-              />
-            </Col>
-          </Row>
-          <Row className="form-group">
-            <Col>
-              <span>profile Image URL</span>
-              <input
-                type="text"
-                name="ProfileImageURL"
-                className="form-control"
-                value={state.inputs.profileImageURL}
-                onChange={(e) => handleChange(e)}
-              />
-            </Col>
-            <Col>
-              <span>Profile NFT</span>
-              <input
-                type="text"
-                name="profileNFT"
-                className="form-control"
-                value={state.inputs.profileNFT}
                 onChange={(e) => handleChange(e)}
               />
             </Col>
@@ -520,7 +502,7 @@ debugger
         <Col>
           <button
             className="btn btn-success"
-            disabled={state.inputs.userName == ''||isSaveButtonClicked}
+            disabled={state.inputs.userName == '' || isSaveButtonClicked}
             onClick={(e) => {
               handleSave(e);
             }}

@@ -13,9 +13,10 @@ import { profileClient } from '../../api/profileInfo';
 import bnr1 from './../../images/banner/bnr1.jpg';
 
 const Profile = () => {
-  const { isLoggedIn, entityInfo} = useAuth();
+  const { isLoggedIn, entityInfo } = useAuth();
   const [activeTab, setActiveTab] = useState('1');
   const [profilesList, setProfilesList] = useState();
+  const [noProfilesForThisUser, setNoProfilesForThisUser] = useState(false);
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -24,9 +25,22 @@ const Profile = () => {
   const getUserProfiles = React.useCallback(async () => {
     debugger;
 
-    const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
-debugger;
-    userProfiles && setProfilesList(userProfiles);
+    try {
+      const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
+      debugger;
+      console.log(userProfiles);
+      if (userProfiles) {
+        debugger;
+        if (userProfiles.err == 'Address Not Found') {
+          setNoProfilesForThisUser(true);
+        } else {
+          setProfilesList(userProfiles);
+        }
+      }
+      userProfiles && setProfilesList(userProfiles);
+    } catch (e) {
+      console.log(e);
+    }
   }, [entityInfo.publicKey]);
 
   React.useEffect(() => {
@@ -110,14 +124,21 @@ debugger;
                 <div id="cost" className="tab-pane active py-5">
                   <TabContent activeTab={activeTab}>
                     <TabPane tabId="1">
-                      <ProfileForm formName={ProfileFormsEnum.NormalProfile} />
+                      <ProfileForm
+                        formName={ProfileFormsEnum.NormalProfile}
+                        isProfileExist={noProfilesForThisUser ? false : true}
+                      />
                     </TabPane>
                     <TabPane tabId="2">
-                      <ProfileForm formName={ProfileFormsEnum.CreatorProfile} />
+                      <ProfileForm
+                        formName={ProfileFormsEnum.CreatorProfile}
+                        isProfileExist={noProfilesForThisUser ? false : true}
+                      />
                     </TabPane>
                     <TabPane tabId="3">
                       <ProfileForm
                         formName={ProfileFormsEnum.BeneficiaryProfile}
+                        isProfileExist={noProfilesForThisUser ? false : true}
                       />
                     </TabPane>
                   </TabContent>
