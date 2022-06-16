@@ -196,7 +196,6 @@ const ProfileForm = ({ formName, isProfileExist }) => {
             : formName === ProfileFormsEnum.BeneficiaryProfile
             ? 'beneficiary'
             : 'creator',
-          '',
           CLPublicKey.fromHex(entityInfo.publicKey),
           isProfileExist ? 'UPDATE' : 'ADD'
         );
@@ -230,16 +229,16 @@ const ProfileForm = ({ formName, isProfileExist }) => {
   }
 
   return (
-    <div className="shop-account ">
+    <div className='shop-account '>
       <Row>
         <Col>
-          <Row className="form-group">
+          <Row className='form-group'>
             <Col>
               <span>User Name</span>
               <input
-                type="text"
-                name="userName"
-                className="form-control"
+                type='text'
+                name='userName'
+                className='form-control'
                 value={state.inputs.userName}
                 onChange={(e) => handleChange(e)}
               />
@@ -247,21 +246,21 @@ const ProfileForm = ({ formName, isProfileExist }) => {
             <Col>
               <span>Short Tag Line</span>
               <input
-                type="text"
-                name="shortTagLine"
-                className="form-control"
+                type='text'
+                name='shortTagLine'
+                className='form-control'
                 value={state.inputs.shortTagLine}
                 onChange={(e) => handleChange(e)}
               />
             </Col>
           </Row>
-          <Row className="form-group">
+          <Row className='form-group'>
             <Col>
               <span>First Name</span>
               <input
-                type="text"
-                name="firstName"
-                className="form-control"
+                type='text'
+                name='firstName'
+                className='form-control'
                 value={state.inputs.firstName}
                 onChange={(e) => handleChange(e)}
               />
@@ -269,21 +268,21 @@ const ProfileForm = ({ formName, isProfileExist }) => {
             <Col>
               <span>Last Name</span>
               <input
-                type="text"
-                name="lastName"
-                className="form-control"
+                type='text'
+                name='lastName'
+                className='form-control'
                 value={state.inputs.lastName}
                 onChange={(e) => handleChange(e)}
               />
             </Col>
           </Row>
-          <Row className="form-group">
+          <Row className='form-group'>
             <Col>
               <span>External Site Link</span>
               <input
-                type="text"
-                name="externalSiteLink"
-                className="form-control"
+                type='text'
+                name='externalSiteLink'
+                className='form-control'
                 value={state.inputs.externalSiteLink}
                 onChange={(e) => handleChange(e)}
               />
@@ -291,21 +290,21 @@ const ProfileForm = ({ formName, isProfileExist }) => {
             <Col>
               <span>Phone</span>
               <input
-                type="text"
-                name="phone"
-                className="form-control"
+                type='text'
+                name='phone'
+                className='form-control'
                 value={state.inputs.phone}
                 onChange={(e) => handleChange(e)}
               />
             </Col>
           </Row>
-          <Row className="form-group">
+          <Row className='form-group'>
             <Col>
               <span>Twitter</span>
               <input
-                type="text"
-                name="twitter"
-                className="form-control"
+                type='text'
+                name='twitter'
+                className='form-control'
                 value={state.inputs.twitter}
                 onChange={(e) => handleChange(e)}
               />
@@ -313,21 +312,21 @@ const ProfileForm = ({ formName, isProfileExist }) => {
             <Col>
               <span>Instagram</span>
               <input
-                type="text"
-                name="instagram"
-                className="form-control"
+                type='text'
+                name='instagram'
+                className='form-control'
                 value={state.inputs.instagram}
                 onChange={(e) => handleChange(e)}
               />
             </Col>
           </Row>
-          <Row className="form-group">
+          <Row className='form-group'>
             <Col>
               <span>Facebook</span>
               <input
-                type="text"
-                name="facebook"
-                className="form-control"
+                type='text'
+                name='facebook'
+                className='form-control'
                 value={state.inputs.facebook}
                 onChange={(e) => handleChange(e)}
               />
@@ -335,21 +334,21 @@ const ProfileForm = ({ formName, isProfileExist }) => {
             <Col>
               <span>Medium</span>
               <input
-                type="text"
-                name="medium"
-                className="form-control"
+                type='text'
+                name='medium'
+                className='form-control'
                 value={state.inputs.medium}
                 onChange={(e) => handleChange(e)}
               />
             </Col>
           </Row>
-          <Row className="form-group">
+          <Row className='form-group'>
             <Col>
               <span>E-mail</span>
               <input
-                type="text"
-                name="email"
-                className="form-control"
+                type='text'
+                name='email'
+                className='form-control'
                 value={state.inputs.email}
                 onChange={(e) => handleChange(e)}
               />
@@ -357,9 +356,9 @@ const ProfileForm = ({ formName, isProfileExist }) => {
             <Col>
               <span>Telegram</span>
               <input
-                type="text"
-                name="telegram"
-                className="form-control"
+                type='text'
+                name='telegram'
+                className='form-control'
                 value={state.inputs.telegram}
                 onChange={(e) => handleChange(e)}
               />
@@ -367,7 +366,7 @@ const ProfileForm = ({ formName, isProfileExist }) => {
           </Row>
         </Col>
         <Col>
-          <Row className="form-group">
+          <Row className='form-group'>
             <Col>
               <Form.Check
                 type={'checkbox'}
@@ -375,19 +374,19 @@ const ProfileForm = ({ formName, isProfileExist }) => {
                 label={`Already hosted profile image, enter direct url ?`}
                 onChange={(e) => handleChange(e)}
                 value={state.inputs.isProfileImageURL}
-                name="isProfileImageURL"
+                name='isProfileImageURL'
               />
             </Col>
           </Row>
-          <Row className="form-group">
+          <Row className='form-group'>
             <Col>
               {state.inputs.isProfileImageURL ? (
                 <>
                   <input
-                    type="text"
-                    placeholder="Profile image URL"
-                    name="profileImageUrl"
-                    className="form-control"
+                    type='text'
+                    placeholder='Profile image URL'
+                    name='profileImageUrl'
+                    className='form-control'
                     onChange={(e) => {
                       setUploadedProfileImage(e.target.value);
                       checkURLValidation(e.target.value, true);
@@ -395,14 +394,14 @@ const ProfileForm = ({ formName, isProfileExist }) => {
                     value={uploadedProfileImageURL || ''}
                   />
                   {showProfileURLErrorMsg && (
-                    <span className="text-danger">Please enter Valid URL </span>
+                    <span className='text-danger'>Please enter Valid URL </span>
                   )}
                 </>
               ) : (
                 <ImageUploader
                   singleImage
                   withIcon={true}
-                  buttonText="Choose image"
+                  buttonText='Choose image'
                   onChange={(e) => {
                     onDrop(e, true);
                   }}
@@ -414,7 +413,7 @@ const ProfileForm = ({ formName, isProfileExist }) => {
               )}
             </Col>
           </Row>
-          <Row className="form-group">
+          <Row className='form-group'>
             <Col>
               <Form.Check
                 type={'checkbox'}
@@ -422,20 +421,20 @@ const ProfileForm = ({ formName, isProfileExist }) => {
                 label={`Already hosted NFT image, enter direct url ?`}
                 onChange={(e) => handleChange(e)}
                 value={state.inputs.isNFTImageURL}
-                name="isNFTImageURL"
+                name='isNFTImageURL'
               />
             </Col>
           </Row>
-          <Row className="form-group">
+          <Row className='form-group'>
             <Col>
               {state.inputs.isNFTImageURL ? (
                 <>
                   {' '}
                   <input
-                    type="text"
-                    placeholder="NFT Image URL"
-                    name="nftImageUrl"
-                    className="form-control"
+                    type='text'
+                    placeholder='NFT Image URL'
+                    name='nftImageUrl'
+                    className='form-control'
                     onChange={(e) => {
                       setUploadedNFTImage(e.target.value);
                       setUploadedNFTFile(e.target.value);
@@ -443,14 +442,14 @@ const ProfileForm = ({ formName, isProfileExist }) => {
                     value={uploadedNFTImageURL || ''}
                   />
                   {showNFTURLErrorMsg && (
-                    <span className="text-danger">Please enter Valid URL </span>
+                    <span className='text-danger'>Please enter Valid URL </span>
                   )}
                 </>
               ) : (
                 <ImageUploader
                   singleImage
                   withIcon={true}
-                  buttonText="Choose image"
+                  buttonText='Choose image'
                   onChange={(e) => {
                     onDrop(e, false);
                   }}
@@ -464,19 +463,19 @@ const ProfileForm = ({ formName, isProfileExist }) => {
           </Row>
         </Col>
       </Row>
-      <Row className="form-group">
+      <Row className='form-group'>
         <Col>
           <span>Full Bio</span>
           <textarea
-            name="fullBio"
-            className="form-control"
+            name='fullBio'
+            className='form-control'
             value={state.inputs.fullBio}
             onChange={(e) => handleChange(e)}
           />
         </Col>
       </Row>
       {ProfileFormsEnum.CreatorProfile === formName && (
-        <Row className="form-group">
+        <Row className='form-group'>
           <Col>
             <span>Collection List</span>
             <CreatableSelect
@@ -488,8 +487,8 @@ const ProfileForm = ({ formName, isProfileExist }) => {
               options={options}
               value={collectionList}
               menuPortalTarget={document.body}
-              placeholder="Select..."
-              className="creatable-select"
+              placeholder='Select...'
+              className='creatable-select'
               formatCreateLabel={(v) =>
                 'Click here to create "' + v + '" Collection'
               }
@@ -498,17 +497,17 @@ const ProfileForm = ({ formName, isProfileExist }) => {
         </Row>
       )}
 
-      <Row className="form-group">
+      <Row className='form-group'>
         <Col>
           <button
-            className="btn btn-success"
+            className='btn btn-success'
             disabled={state.inputs.userName == '' || isSaveButtonClicked}
             onClick={(e) => {
               handleSave(e);
             }}
           >
             {isSaveButtonClicked ? (
-              <Spinner animation="border" variant="light" />
+              <Spinner animation='border' variant='light' />
             ) : (
               'Save'
             )}
