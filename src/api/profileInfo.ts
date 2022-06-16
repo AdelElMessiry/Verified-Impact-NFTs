@@ -47,47 +47,54 @@ class ProfileClient {
   }
 
   public async getProfile(address: string) {
-    const result = await this.contractClient.queryContractDictionary(
-      'profiles_list',
-      CLPublicKey.fromHex(address).toAccountHashStr().slice(13)
-    );
+    try {
+      const result = await this.contractClient.queryContractDictionary(
+        'profiles_list',
+        CLPublicKey.fromHex(address).toAccountHashStr().slice(13)
+      );
 
-    const maybeValue = result.value().unwrap().value();
+      const maybeValue = result.value().unwrap().value();
 
-    const jsMap: any = new Map();
+      const jsMap: any = new Map();
 
-    for (const [innerKey, value] of maybeValue) {
-      jsMap.set(innerKey, value);
+      for (const [innerKey, value] of maybeValue) {
+        jsMap.set(innerKey, value);
+      }
+      let mapObj = Object.fromEntries(jsMap);
+
+      const isNormalProfile = Object.keys(mapObj).join('-').includes('normal');
+      const isBeneficiaryProfile = Object.keys(mapObj).includes('beneficiary');
+      const isCreatorProfile = Object.keys(mapObj).includes('creator');
+
+      const filteredNormalAccount: any =
+        isNormalProfile &&
+        Object.fromEntries(
+          Object.entries(mapObj).filter(([key]) => key.includes('normal'))
+        );
+      const filteredBeneficiaryAccount: any =
+        isBeneficiaryProfile &&
+        Object.fromEntries(
+          Object.entries(mapObj).filter(([key]) => key.includes('beneficiary'))
+        );
+      const filteredCreatorAccount: any =
+        isCreatorProfile &&
+        Object.fromEntries(
+          Object.entries(mapObj).filter(([key]) => key.includes('creator'))
+        );
+
+      return {
+        [address]: {
+          normal: { ...filteredNormalAccount },
+          beneficiary: { ...filteredBeneficiaryAccount },
+          creator: { ...filteredCreatorAccount },
+        },
+      };
+    } catch (err: any) {
+      if (err.message.includes('ValueNotFound')) {
+        return { err: 'Address Not Found' };
+      }
+      return { err };
     }
-    let mapObj = Object.fromEntries(jsMap);
-
-    const isNormalProfile = Object.keys(mapObj).join('-').includes('normal');
-    const isBeneficiaryProfile = Object.keys(mapObj).includes('beneficiary');
-    const isCreatorProfile = Object.keys(mapObj).includes('creator');
-
-    const filteredNormalAccount: any =
-      isNormalProfile &&
-      Object.fromEntries(
-        Object.entries(mapObj).filter(([key]) => key.includes('normal'))
-      );
-    const filteredBeneficiaryAccount: any =
-      isBeneficiaryProfile &&
-      Object.fromEntries(
-        Object.entries(mapObj).filter(([key]) => key.includes('beneficiary'))
-      );
-    const filteredCreatorAccount: any =
-      isCreatorProfile &&
-      Object.fromEntries(
-        Object.entries(mapObj).filter(([key]) => key.includes('creator'))
-      );
-
-    return {
-      [address]: {
-        normal: { ...filteredNormalAccount },
-        beneficiary: { ...filteredBeneficiaryAccount },
-        creator: { ...filteredCreatorAccount },
-      },
-    };
   }
 
   public async addUpdateProfile(
