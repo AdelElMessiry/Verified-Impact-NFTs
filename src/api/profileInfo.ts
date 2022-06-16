@@ -6,6 +6,7 @@ import {
   CLValueBuilder,
 } from 'casper-js-sdk';
 
+import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import {
   CONNECTION,
   PROFILE_CONTRACT_HASH,
@@ -115,7 +116,6 @@ class ProfileClient {
     telegram: string,
     mail: string,
     profileType: string,
-    paymentAmount: string,
     deploySender: CLPublicKey,
     mode?: string
   ) {
@@ -145,7 +145,7 @@ class ProfileClient {
       runtimeArgs,
       deploySender,
       this.networkName,
-      paymentAmount
+      PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT
     );
   }
 
