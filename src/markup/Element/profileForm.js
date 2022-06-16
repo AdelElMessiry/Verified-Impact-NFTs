@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
-import { Row, Col, Form } from 'react-bootstrap';
+import { Row, Col, Form, Spinner } from 'react-bootstrap';
 import ImageUploader from 'react-images-upload';
 import CreatableSelect from 'react-select/creatable';
 import validator from 'validator';
+import { toast as VIToast } from 'react-toastify';
+import { CLPublicKey } from 'casper-js-sdk';
 
+import { profileClient } from '../../api/profileInfo';
 import { ProfileFormsEnum } from '../../Enums/index';
+import { useAuth } from '../../contexts/AuthContext';
+import { getDeployDetails } from '../../api/universal';
+import { uploadImg } from '../../api/imageCDN';
 
-const ProfileForm = ({ formName }) => {
+const ProfileForm = ({ formName,isProfileExist }) => {
+  const { entityInfo, refreshAuth } = useAuth();
+
   //setting initial values of controls
   const [state, setState] = useState({
     inputs: {
       userName: '',
       shortTagLine: '',
-      profileImageURL: '',
-      profileNFT: '',
       firstName: '',
       lastName: '',
       fullBio: '',
@@ -25,6 +31,8 @@ const ProfileForm = ({ formName }) => {
       medium: '',
       email: '',
       telegram: '',
+      isProfileImageURL: '',
+      isNFTImageURL: '',
     },
   });
 
@@ -35,9 +43,16 @@ const ProfileForm = ({ formName }) => {
   const [options, setOptions] = useState([
     { id: 1, label: 'Stand With Ukraine' },
   ]);
-  const [uploadedImageURL, setUploadedImage] = React.useState(null);
-  const [uploadedFile, setUploadedFile] = React.useState(null);
-  const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
+  const [uploadedProfileImageURL, setUploadedProfileImage] =
+    React.useState(null);
+  const [uploadedProfileFile, setUploadedProfileFile] = React.useState(null);
+  const [uploadedNFTImageURL, setUploadedNFTImage] = React.useState(null);
+  const [uploadedNFTFile, setUploadedNFTFile] = React.useState(null);
+  const [isSaveButtonClicked, setIsSaveButtonClicked] = React.useState(false);
+
+  const [showProfileURLErrorMsg, setShowProfileURLErrorMsg] =
+    React.useState(false);
+  const [showNFTURLErrorMsg, setShowNFTURLErrorMsg] = React.useState(false);
 
   const handleChange = (e) => {
     const { value, name, checked, type } = e.target;
@@ -72,24 +87,143 @@ const ProfileForm = ({ formName }) => {
   };
 
   //handling of selecting image in image control
-  const onDrop = (picture) => {
+  const onDrop = (picture, isProfile) => {
     if (picture.length > 0) {
       const newImageUrl = URL.createObjectURL(picture[0]);
-      setUploadedImage(newImageUrl);
-      setUploadedFile(picture[0]);
+      isProfile
+        ? setUploadedProfileImage(newImageUrl)
+        : setUploadedNFTImage(newImageUrl);
+      isProfile
+        ? setUploadedProfileFile(picture[0])
+        : setUploadedNFTFile(picture[0]);
     } else {
-      setUploadedImage(null);
-      setUploadedFile(null);
+      isProfile ? setUploadedProfileImage(null) : setUploadedNFTImage(null);
+      isProfile ? setUploadedProfileFile(null) : setUploadedNFTFile(null);
     }
   };
 
-  const checkURLValidation = (value) => {
+  const checkURLValidation = (value, isProfile) => {
     if (validator.isURL(value)) {
-      setShowURLErrorMsg(false);
+      isProfile
+        ? setShowProfileURLErrorMsg(false)
+        : setShowNFTURLErrorMsg(false);
     } else {
-      setShowURLErrorMsg(true);
+      isProfile
+        ? setShowProfileURLErrorMsg(true)
+        : setShowNFTURLErrorMsg(false);
     }
   };
+
+  //handling minting new NFT
+  async function handleSave() {
+    if (!uploadedProfileImageURL) {
+      return VIToast.error('Please upload profile image or enter direct URL');
+    }
+    if (!uploadedNFTImageURL) {
+      return VIToast.error('Please upload NFT image or enter direct URL');
+    }
+    if (!entityInfo.publicKey) {
+      return VIToast.error('Please enter sign in First');
+    }
+    if (
+      (state.inputs.isProfileImageURL && showProfileURLErrorMsg) ||
+      (state.inputs.isNFTImageURL && showNFTURLErrorMsg)
+    ) {
+      return;
+    }
+    setIsSaveButtonClicked(true);
+    let cloudProfileURL = uploadedProfileImageURL
+    let cloudNFTURL = uploadedNFTImageURL
+    if (!state.inputs.isProfileImageURL && uploadedProfileFile) {
+      console.log('Img', uploadedProfileFile);
+      console.log('Img url', uploadedProfileImageURL);
+
+      try {
+        cloudProfileURL = await uploadImg(uploadedProfileFile);
+      } catch (err) {
+        console.log(err);
+        VIToast.error("Profile Image couldn't be uploaded to cloud CDN !");
+
+        return;
+      }
+      VIToast.success('Profile Image uploaded to cloud CDN successfully !');
+    }
+    if (!state.inputs.isNFTImageURL && uploadedNFTFile) {
+      console.log('Img', uploadedNFTFile);
+      console.log('Img url', uploadedNFTImageURL);
+
+      try {
+        cloudNFTURL = await uploadImg(uploadedNFTFile);
+      } catch (err) {
+        console.log(err);
+        VIToast.error("NFT Image couldn't be uploaded to cloud CDN !");
+
+        return;
+      }
+      VIToast.success('NFT Image uploaded to cloud CDN successfully !');
+    }
+    saveProfile(cloudProfileURL,cloudNFTURL);
+  }
+
+  async function saveProfile(ProfileImgURL,NFTImgURL) {
+    if (!uploadedProfileImageURL||!uploadedNFTImageURL) {
+      return VIToast.error('Please upload image or enter direct URL');
+    }
+
+    if (entityInfo.publicKey) {
+      let saveDeployHash;
+debugger
+      try {
+        saveDeployHash = await profileClient.addUpdateProfile({
+          address: CLPublicKey.fromHex(entityInfo.publicKey),
+          username: state.inputs.userName,
+          tagline: state.inputs.tagline,
+          imgUrl: ProfileImgURL,
+          nftUrl: NFTImgURL,
+          firstName: state.inputs.firstName,
+          lastName: state.inputs.lastName,
+          bio: state.inputs.fullBio,
+          externalLink: state.inputs.externalSiteLink,
+          phone: state.inputs.phone,
+          twitter: state.inputs.twitter,
+          instagram: state.inputs.instagram,
+          facebook: state.inputs.facebook,
+          medium: state.inputs.medium,
+          telegram: state.inputs.telegram,
+          mail: state.inputs.email,
+          profileType: formName===ProfileFormsEnum.NormalProfile? 'normal':formName===ProfileFormsEnum.BeneficiaryProfile? 'beneficiary':'creator',
+          paymentAmount: '',
+          deploySender: CLPublicKey.fromHex(entityInfo.publicKey),
+          mode: isProfileExist?'UPDATE':'ADD'
+        });
+      } catch (err) {
+        if (err.message.includes('User Cancelled')) {
+          VIToast.error('User Cancelled Signing');
+        } else {
+          VIToast.error(err.message);
+        }
+        setIsSaveButtonClicked(false);
+        return;
+      }
+
+      try {
+        const deployResult = await getDeployDetails(saveDeployHash);
+        console.log('...... Profile Saved successfully', deployResult);
+
+        VIToast.success('Profile Saved successfully');
+        //NOTE: every channel has a special keys and tokens sorted on .env file
+
+        window.location.reload();
+        setIsSaveButtonClicked(false);
+      } catch (err) {
+        console.log(err);
+        //   setErrStage(MintingStages.TX_PENDING);
+        VIToast.error(err);
+        setIsSaveButtonClicked(false);
+      }
+      refreshAuth();
+    }
+  }
 
   return (
     <div className="shop-account ">
@@ -255,31 +389,30 @@ const ProfileForm = ({ formName }) => {
             <Col>
               <Form.Check
                 type={'checkbox'}
-                id={'isImageURL'}
-                label={`Already hosted image, enter direct url ?`}
+                id={'isProfileImageURL'}
+                label={`Already hosted profile image, enter direct url ?`}
                 onChange={(e) => handleChange(e)}
-                value={state.inputs.isImageURL}
-                name="isImageURL"
+                value={state.inputs.isProfileImageURL}
+                name="isProfileImageURL"
               />
             </Col>
           </Row>
           <Row className="form-group">
             <Col>
-              {state.inputs.isImageURL ? (
+              {state.inputs.isProfileImageURL ? (
                 <>
-                  {' '}
                   <input
                     type="text"
-                    placeholder="Image URl"
-                    name="imageUrl"
+                    placeholder="Profile image URL"
+                    name="profileImageUrl"
                     className="form-control"
                     onChange={(e) => {
-                      setUploadedImage(e.target.value);
-                      checkURLValidation(e.target.value);
+                      setUploadedProfileImage(e.target.value);
+                      checkURLValidation(e.target.value, true);
                     }}
-                    value={uploadedImageURL || ''}
+                    value={uploadedProfileImageURL || ''}
                   />
-                  {showURLErrorMsg && (
+                  {showProfileURLErrorMsg && (
                     <span className="text-danger">Please enter Valid URL </span>
                   )}
                 </>
@@ -288,7 +421,9 @@ const ProfileForm = ({ formName }) => {
                   singleImage
                   withIcon={true}
                   buttonText="Choose image"
-                  onChange={onDrop}
+                  onChange={(e) => {
+                    onDrop(e, true);
+                  }}
                   imgExtension={['.jpg', '.gif', '.png']}
                   maxFileSize={20209230}
                   withPreview={true}
@@ -301,31 +436,31 @@ const ProfileForm = ({ formName }) => {
             <Col>
               <Form.Check
                 type={'checkbox'}
-                id={'isImageURL'}
-                label={`Already hosted image, enter direct url ?`}
+                id={'isNFTImageURL'}
+                label={`Already hosted NFT image, enter direct url ?`}
                 onChange={(e) => handleChange(e)}
-                value={state.inputs.isImageURL}
-                name="isImageURL"
+                value={state.inputs.isNFTImageURL}
+                name="isNFTImageURL"
               />
             </Col>
           </Row>
           <Row className="form-group">
             <Col>
-              {state.inputs.isImageURL ? (
+              {state.inputs.isNFTImageURL ? (
                 <>
                   {' '}
                   <input
                     type="text"
-                    placeholder="Image URl"
-                    name="imageUrl"
+                    placeholder="NFT Image URL"
+                    name="nftImageUrl"
                     className="form-control"
                     onChange={(e) => {
-                      setUploadedImage(e.target.value);
-                      checkURLValidation(e.target.value);
+                      setUploadedNFTImage(e.target.value);
+                      setUploadedNFTFile(e.target.value);
                     }}
-                    value={uploadedImageURL || ''}
+                    value={uploadedNFTImageURL || ''}
                   />
-                  {showURLErrorMsg && (
+                  {showNFTURLErrorMsg && (
                     <span className="text-danger">Please enter Valid URL </span>
                   )}
                 </>
@@ -334,7 +469,9 @@ const ProfileForm = ({ formName }) => {
                   singleImage
                   withIcon={true}
                   buttonText="Choose image"
-                  onChange={onDrop}
+                  onChange={(e) => {
+                    onDrop(e, false);
+                  }}
                   imgExtension={['.jpg', '.gif', '.png']}
                   maxFileSize={20209230}
                   withPreview={true}
@@ -383,9 +520,16 @@ const ProfileForm = ({ formName }) => {
         <Col>
           <button
             className="btn btn-success"
-            disabled={state.inputs.userName == ''}
+            disabled={state.inputs.userName == ''||isSaveButtonClicked}
+            onClick={(e) => {
+              handleSave(e);
+            }}
           >
-            Save
+            {isSaveButtonClicked ? (
+              <Spinner animation="border" variant="light" />
+            ) : (
+              'Save'
+            )}
           </button>
         </Col>
       </Row>
