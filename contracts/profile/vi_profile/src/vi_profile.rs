@@ -7,6 +7,7 @@ use alloc::{
     boxed::Box,
     collections::{BTreeMap, BTreeSet},
     string::{String, ToString},
+    vec::Vec,
 };
 
 use casper_contract::{
@@ -19,7 +20,7 @@ use casper_contract::{
 
 use casper_types::{
     runtime_args, ApiError, CLType, CLTyped, CLValue, ContractPackageHash, EntryPoint,
-    EntryPointAccess, EntryPointType, EntryPoints, Key, Parameter, RuntimeArgs, URef, U256,
+    EntryPointAccess, EntryPointType, EntryPoints, Group, Key, Parameter, RuntimeArgs, URef, U256,
 };
 
 use contract_utils::{AdminControl, ContractContext, OnChainContractStorage};
@@ -55,9 +56,10 @@ impl AdminControl<OnChainContractStorage> for ViProfile {}
 
 impl ViProfile {
     fn constructor(&mut self) {
-        ProfileControl::init(self);
         AdminControl::init(self);
+        ProfileControl::init(self);
         profiles_control::set_total_profiles(U256::zero());
+        profiles_control::set_all_profiles(vec![]);
     }
 
     fn is_existent_profile(&self) -> bool {
@@ -66,6 +68,10 @@ impl ViProfile {
 
     fn get_profile(&self, address: Key) -> Option<Profile> {
         ProfileControl::get_profile(self, address)
+    }
+
+    fn get_all_profiles(&self) -> Vec<Key> {
+        profiles_control::get_all_profiles()
     }
 
     fn total_profiles(&self) -> U256 {
@@ -128,6 +134,9 @@ impl ViProfile {
                 ProfileControl::add_profile(self, address, profile);
 
                 if cloned_mode == "ADD" {
+                    let mut profiles: Vec<Key> = profiles_control::get_all_profiles();
+                    profiles.push(address);
+                    profiles_control::set_all_profiles(profiles);
                     profiles_control::set_total_profiles(new_profile_count);
                 }
             }
@@ -208,13 +217,19 @@ impl ViProfile {
 #[no_mangle]
 fn constructor() {
     let admin = runtime::get_named_arg::<Key>("admin");
-    ViProfile::default().add_admin_without_checked(admin);
     ViProfile::default().constructor();
+    ViProfile::default().add_admin_without_checked(admin);
 }
 
 #[no_mangle]
 fn total_profiles() {
     let ret = ViProfile::default().total_profiles();
+    runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
+}
+
+#[no_mangle]
+fn get_all_profiles() {
+    let ret = ViProfile::default().get_all_profiles();
     runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
 }
 
@@ -324,6 +339,7 @@ fn call() {
     // Remove all URefs from the constructor group, so no one can call it for the second time.
     let mut urefs = BTreeSet::new();
     urefs.insert(constructor_access);
+
     storage::remove_contract_user_group_urefs(package_hash, "constructor", urefs)
         .unwrap_or_revert();
 
@@ -349,11 +365,24 @@ fn call() {
 
 fn get_entry_points() -> EntryPoints {
     let mut entry_points = EntryPoints::new();
-
+    entry_points.add_entry_point(EntryPoint::new(
+        "constructor",
+        vec![Parameter::new("admin", Key::cl_type())],
+        <()>::cl_type(),
+        EntryPointAccess::Groups(vec![Group::new("constructor")]),
+        EntryPointType::Contract,
+    ));
     entry_points.add_entry_point(EntryPoint::new(
         "total_profiles",
         vec![],
         U256::cl_type(),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "get_all_profiles",
+        vec![],
+        CLType::List(Box::new(Key::cl_type())),
         EntryPointAccess::Public,
         EntryPointType::Contract,
     ));
@@ -391,7 +420,7 @@ fn get_entry_points() -> EntryPoints {
         EntryPointType::Contract,
     ));
     entry_points.add_entry_point(EntryPoint::new(
-        "delete_profile",
+        "remove_profile",
         vec![Parameter::new("address", Key::cl_type())],
         <()>::cl_type(),
         EntryPointAccess::Public,
