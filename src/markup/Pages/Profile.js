@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
+
 import Layout from '../Layout';
-import bnr1 from './../../images/banner/bnr1.jpg';
 import PromptLogin from './PromptLogin';
 import { useAuth } from '../../contexts/AuthContext';
 import ProfileForm from '../Element/profileForm';
-import {ProfileFormsEnum} from "../../Enums/index"
+import { ProfileFormsEnum } from '../../Enums/index';
+import { getProfile } from '../../api/profileInfo';
+
+import bnr1 from './../../images/banner/bnr1.jpg';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('1');
@@ -16,6 +19,17 @@ const Profile = () => {
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
   };
+
+  const getUserProfiles = React.useCallback(async () => {
+
+    const userProfiles = await getProfile(entityInfo.publicKey);
+debugger;
+    userProfiles && setProfileList(userProfiles);
+  }, [entityInfo.publicKey]);
+
+  React.useEffect(() => {
+    entityInfo.publicKey && getUserProfiles();
+  }, [entityInfo.publicKey, getUserProfiles]);
 
   return (
     <Layout>
@@ -94,13 +108,15 @@ const Profile = () => {
                 <div id="cost" className="tab-pane active py-5">
                   <TabContent activeTab={activeTab}>
                     <TabPane tabId="1">
-                      <ProfileForm formName={ProfileFormsEnum.UserProfile}/>
+                      <ProfileForm formName={ProfileFormsEnum.NormalProfile} />
                     </TabPane>
                     <TabPane tabId="2">
                       <ProfileForm formName={ProfileFormsEnum.CreatorProfile} />
                     </TabPane>
                     <TabPane tabId="3">
-                      <ProfileForm  formName={ProfileFormsEnum.BeneficiaryProfile} />
+                      <ProfileForm
+                        formName={ProfileFormsEnum.BeneficiaryProfile}
+                      />
                     </TabPane>
                   </TabContent>
                 </div>
