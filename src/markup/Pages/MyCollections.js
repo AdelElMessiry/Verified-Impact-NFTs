@@ -7,31 +7,43 @@ import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Lightbox from 'react-image-lightbox';
 import { Link } from 'react-router-dom';
 import QRCode from 'react-qr-code';
+import Carousel from 'react-elastic-carousel';
 
-import { useAuth } from '../../../contexts/AuthContext';
-import { useNFTState } from '../../../contexts/NFTContext';
-import { getCreatorNftList } from '../../../api/nftInfo';
-import { getMappedNftsByList } from '../../../api/nftInfo';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNFTState } from '../../contexts/NFTContext';
+import { getCreatorNftList } from '../../api/nftInfo';
+import { getMappedNftsByList } from '../../api/nftInfo';
+import { CaptionCampaign } from '../Element/CaptionCampaign';
 
-import Layout from '../../Layout';
-import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
-import NFTCard from '../../Element/NFTCard';
-import VINftsTooltip from '../../Element/Tooltip';
+import Layout from '../Layout';
+import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
+import CampaignOrCollectionTwitterShare from '../Element/TwitterShare/CampaignOrCollectionTwitterShare';
+import NFTCard from '../Element/NFTCard';
+import VINftsTooltip from '../Element/Tooltip';
 
-import BuyNFTModal from '../../Element/BuyNFT';
-import PromptLogin from '../PromptLogin';
-import ListForSaleNFTModal from '../../Element/ListForSaleNFT';
+import BuyNFTModal from '../Element/BuyNFT';
+import PromptLogin from './PromptLogin';
+import ListForSaleNFTModal from '../Element/ListForSaleNFT';
 
 //images
-import bnr1 from './../../../images/banner/bnr1.jpg';
-import plusIcon from './../../../images/icon/plus.png';
+import bnr1 from './../../images/banner/bnr1.jpg';
+import plusIcon from './../../images/icon/plus.png';
+import editIcon from './../../images/icon/edit.png';
 // Masonry section
-const masonryOptions = {
-  transitionDuration: 0,
-};
+const breakPoints = [
+  { width: 1, itemsToShow: 1 },
+  { width: 550, itemsToShow: 2, itemsToScroll: 2 },
+  { width: 768, itemsToShow: 3 },
+  { width: 992, itemsToShow: 4 },
+  { width: 1200, itemsToShow: 4 },
+];
 
 const options = {
   buttons: { showDownloadButton: false },
+};
+// Masonry section
+const masonryOptions = {
+  transitionDuration: 0,
 };
 
 const imagesLoadedOptions = { background: '.my-bg-image-el' };
@@ -70,7 +82,7 @@ const TagLi = ({ name, handleSetTag, tagActive, type }) => {
   );
 };
 
-const MyCreations = () => {
+const MyCollections = () => {
   const { isLoggedIn, entityInfo } = useAuth();
   const { beneficiaries, campaigns, collections, creators } = useNFTState();
 
@@ -95,7 +107,9 @@ const MyCreations = () => {
   const [soldNFTsFilter, setSoldNFTsFilter] = React.useState();
 
   const [allNFTs, setAllNFTs] = React.useState();
-  const [filteredNFTs, setFilteredNFTs] = React.useState();
+  const [displayedCollections, setDisplayedCollections] = React.useState();
+
+  const [selectedCollection, setSelectedCollection] = React.useState();
 
   //function returns button of buying NFT
   const IconImage = ({ nft }) => {
@@ -112,7 +126,7 @@ const MyCreations = () => {
         </VINftsTooltip>
         <VINftsTooltip
           title={
-            nft.isForSale == 'true'
+            nft.isForSale === 'true'
               ? 'Unlist NFT for Sale'
               : 'List NFT for sale'
           }
@@ -123,7 +137,7 @@ const MyCreations = () => {
               setShowListForSaleModal(true);
             }}
           >
-            {nft.isForSale == 'true' ? (
+            {nft.isForSale === 'true' ? (
               <div>
                 {' '}
                 <i className='ti-close sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen position-absolute'></i>
@@ -230,17 +244,36 @@ const MyCreations = () => {
         )}
         &nbsp;&nbsp;{' '}
         <Link
-        to={`./nft-detail?id=${nft.tokenId}`}
-        className="mr-1 text-success text-underline"
-      >
-        <QRCode
-          value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
-          size={80}
-        />
+          to={`./nft-detail?id=${nft.tokenId}`}
+          className='mr-1 text-success text-underline'
+        >
+          <QRCode
+            value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
+            size={80}
+          />
         </Link>
       </p>
     </div>
   );
+
+  const setNFTsBasedOnCollection = (nftsArr) => {
+    const pluckedCollections =
+      nftsArr &&
+      nftsArr
+        .map(({ collection }) => collection)
+        .filter((id, index, ids) => ids.indexOf(id) === index);
+    const nftBasedCollection = [];
+    nftsArr &&
+      nftsArr.forEach((nft) =>
+        pluckedCollections.includes(nft.collection) &&
+        !!nftBasedCollection[pluckedCollections.indexOf(nft.collection)]
+          ? nftBasedCollection[pluckedCollections.indexOf(nft.collection)][
+              nft.collection
+            ].push(nft)
+          : nftBasedCollection.push({ [nft.collection]: [nft] })
+      );
+    return nftBasedCollection;
+  };
 
   const filterCollectionByTag = React.useCallback(
     (tag, filteredNFTs) => {
@@ -292,7 +325,8 @@ const MyCreations = () => {
       );
 
     const filteredNFTs = mappedNFTsList && mappedNFTsList;
-    filteredNFTs && setFilteredNFTs(filteredNFTs);
+    filteredNFTs &&
+      setDisplayedCollections(setNFTsBasedOnCollection(filteredNFTs));
     filteredNFTs && filterCollectionByTag('All', filteredNFTs);
     filteredNFTs && filterCampaignByTag('All', filteredNFTs);
     filteredNFTs && filterCreatorByTag('All', filteredNFTs);
@@ -325,7 +359,10 @@ const MyCreations = () => {
       const filteredCollectionsNFTs = allNFTs.filter(({ collectionName }) =>
         tag === 'All' ? collectionName : collectionName === tag
       );
-      filteredCollectionsNFTs && setFilteredNFTs(filteredCollectionsNFTs);
+      filteredCollectionsNFTs &&
+        setDisplayedCollections(
+          setNFTsBasedOnCollection(filteredCollectionsNFTs)
+        );
 
       const campaignsTagsName =
         filteredCollectionsNFTs &&
@@ -354,8 +391,10 @@ const MyCreations = () => {
           tag === 'All' ? campaignName : campaignName === tag
         );
 
-      filteredCampaignsNFTs && setFilteredNFTs(filteredCampaignsNFTs);
-
+      filteredCampaignsNFTs &&
+        setDisplayedCollections(
+          setNFTsBasedOnCollection(filteredCampaignsNFTs)
+        );
       const collectionsTagsName =
         filteredCampaignsNFTs &&
         filterCollectionByTag('All', filteredCampaignsNFTs);
@@ -383,8 +422,8 @@ const MyCreations = () => {
           tag === 'All' ? creatorName : creatorName === tag
         );
 
-      filteredCreatorsNFTs && setFilteredNFTs(filteredCreatorsNFTs);
-
+      filteredCreatorsNFTs &&
+        setDisplayedCollections(setNFTsBasedOnCollection(filteredCreatorsNFTs));
       const collectionsTagsName =
         filteredCreatorsNFTs &&
         filterCollectionByTag('All', filteredCreatorsNFTs);
@@ -397,7 +436,12 @@ const MyCreations = () => {
 
       setSoldNFTsFilter('All');
     },
-    [allNFTs, setFilteredNFTs, filterCollectionByTag, filterCampaignByTag]
+    [
+      allNFTs,
+      setDisplayedCollections,
+      filterCollectionByTag,
+      filterCampaignByTag,
+    ]
   );
 
   const handleNFTStatus = (value) => {
@@ -405,7 +449,11 @@ const MyCreations = () => {
     const newFilteredNFTs = allNFTs.filter(
       ({ isOwner }) => isOwner === (value === 'sold' ? false : true)
     );
-    setFilteredNFTs(value !== 'All' ? newFilteredNFTs : allNFTs);
+    setDisplayedCollections(
+      value !== 'All'
+        ? setNFTsBasedOnCollection(newFilteredNFTs)
+        : setNFTsBasedOnCollection(allNFTs)
+    );
 
     const collectionsTagsName = filterCollectionByTag('All', newFilteredNFTs);
     collectionsTagsName && setCollectionTags(['All', ...collectionsTagsName]);
@@ -415,6 +463,13 @@ const MyCreations = () => {
 
     const campaignsTagsName = filterCampaignByTag('All', newFilteredNFTs);
     campaignsTagsName && setCampaignTags(['All', ...campaignsTagsName]);
+  };
+
+  const setCaptions = (data) => {
+    const captionsCamp = [];
+    data &&
+      data.forEach((nft) => captionsCamp.push(CaptionCampaign(nft, IconImage)));
+    captionsCamp && setSliderCaptions(captionsCamp);
   };
 
   return (
@@ -429,9 +484,9 @@ const MyCreations = () => {
             <div className='dlab-bnr-inr-entry'>
               <h1 className='text-white d-flex align-items-center'>
                 <span className='mr-1'>
-                  My Creations{' '}
-                  <VINftsTooltip title={`Add New Creation`}>
-                    <Link to={'./mint-nft'}>
+                  My Collections{' '}
+                  <VINftsTooltip title={`Add New Collection`}>
+                    <Link to={'./add-collection?id=0'}>
                       <img
                         src={plusIcon}
                         className='img img-fluid'
@@ -448,7 +503,7 @@ const MyCreations = () => {
                   <li>
                     <Link to={'#'}>Home</Link>
                   </li>
-                  <li className='ml-1'>My Creations</li>
+                  <li className='ml-1'>My Collections</li>
                 </ul>
               </div>
             </div>
@@ -537,67 +592,173 @@ const MyCreations = () => {
                 </Row>
               </Col>
             </Row>
-            {openSlider && (
-              <Lightbox
-                mainSrc={filteredNFTs[photoIndex].image}
-                nextSrc={
-                  filteredNFTs[(photoIndex + 1) % filteredNFTs.length].image
-                }
-                prevSrc={
-                  filteredNFTs[
-                    (photoIndex + filteredNFTs.length - 1) % filteredNFTs.length
-                  ].image
-                }
-                onCloseRequest={() => setOpenSlider(false)}
-                onMovePrevRequest={() =>
-                  setPhotoIndex(
-                    (photoIndex + filteredNFTs.length - 1) % filteredNFTs.length
-                  )
-                }
-                onMoveNextRequest={() =>
-                  setPhotoIndex((photoIndex + 1) % filteredNFTs.length)
-                }
-                imageCaption={sliderCaptions[photoIndex]}
-              />
-            )}
-            {filteredNFTs ? (
-              filteredNFTs?.length > 0 ? (
-                <SimpleReactLightbox>
-                  <SRLWrapper options={options}>
-                    <div className='clearfix'>
-                      <ul
-                        id='masonry'
-                        className='dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1'
-                      >
-                        <Masonry
-                          className={'my-gallery-class'} // default ''
-                          options={masonryOptions} // default {}
-                          disableImagesLoaded={false} // default false
-                          updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
-                          imagesLoadedOptions={imagesLoadedOptions} // default {}
-                        >
-                          {filteredNFTs.map((item, index) => (
-                            <li
-                              className='web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0'
-                              key={index}
-                            >
-                              <NFTCard
-                                item={item}
-                                index={index}
-                                openSlider={(newIndex) => {
-                                  setPhotoIndex(newIndex);
-                                  setOpenSlider(true);
-                                }}
-                                isTransfer={true}
-                                isCreation={true}
+
+            {displayedCollections ? (
+              displayedCollections?.length > 0 ? (
+                <>
+                  {displayedCollections.map((n, index) => {
+                    let collectionsName = Object.keys(n);
+                    let NFts = Object.values(n)[0];
+                    return (
+                      <div key={index} className='mb-5'>
+                        <h4 className='text-success text-center  d-flex align-items-center justify-content-center'>
+                          <Link
+                            to={`${
+                              window.location.origin
+                            }/#/CreatorNFTs?creator=${NFts[0]?.beneficiaryName?.replace(
+                              / /g,
+                              '%20'
+                            )}&collection=${NFts[0]?.collectionName?.replace(
+                              / /g,
+                              '%20'
+                            )}`}
+                            className='mr-1 text-success text-underline'
+                          >
+                            <QRCode
+                              value={`${
+                                window.location.origin
+                              }/#/CreatorNFTs?creator=${NFts[0]?.beneficiaryName?.replace(
+                                / /g,
+                                '%20'
+                              )}&collection=${NFts[0]?.collectionName?.replace(
+                                / /g,
+                                '%20'
+                              )}`}
+                              size={70}
+                            />
+                          </Link>
+                          &nbsp;&nbsp;
+                          <Link
+                            to={`./BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName}&campaign=${NFts[0]?.campaignName}`}
+                            className='mr-1 text-success text-underline'
+                          >
+                            {NFts.length} NFTs from the{' '}
+                            {NFts[0]?.collectionName} Collection
+                          </Link>
+                          &nbsp;&nbsp;
+                          <VINftsTooltip title={`Edit Collection`}>
+                            <Link to={`./add-collection?id=${collectionsName}`}>
+                              <img
+                                src={editIcon}
+                                className='img img-fluid'
+                                width='40px'
+                                alt='plusIcon'
                               />
-                            </li>
-                          ))}
-                        </Masonry>
-                      </ul>
-                    </div>
-                  </SRLWrapper>
-                </SimpleReactLightbox>
+                            </Link>
+                          </VINftsTooltip>
+                          {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+                            <CampaignOrCollectionTwitterShare
+                              campaign={''}
+                              beneficiary={NFts[0]?.beneficiaryName}
+                              creator={NFts[0]?.creatorName}
+                              collection={NFts[0]?.collectionName}
+                              url={`${
+                                window.location.origin
+                              }/#/CreatorNFTs?creator=${NFts[0]?.creatorName?.replace(
+                                / /g,
+                                '%20'
+                              )}&collection=${NFts[0]?.collectionName?.replace(
+                                / /g,
+                                '%20'
+                              )}`}
+                              beneficiaryPercentage={
+                                NFts[0]?.beneficiaryPercentage
+                              }
+                            />
+                          )}
+                        </h4>
+                        <SimpleReactLightbox>
+                          <SRLWrapper options={options}>
+                            <div className='clearfix portfolio nfts-slider'>
+                              <ul
+                                id='masonry'
+                                className='dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1'
+                              >
+                                <Masonry
+                                  className={'my-gallery-class'} // default ''
+                                  options={masonryOptions} // default {}
+                                  disableImagesLoaded={false} // default false
+                                  updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
+                                  imagesLoadedOptions={imagesLoadedOptions} // default {}
+                                >
+                                  <Carousel
+                                    itemsToShow={4}
+                                    breakPoints={breakPoints}
+                                  >
+                                    {NFts.map((item, index) => (
+                                      <React.Fragment
+                                        key={`${index}${item.tokenId}`}
+                                      >
+                                        <li className='web design card-container p-a0'>
+                                          <NFTCard
+                                            item={item}
+                                            openSlider={(
+                                              newIndex,
+                                              itemCampaign,
+                                              itemCollection
+                                            ) => {
+                                              setPhotoIndex(newIndex);
+                                              setOpenSlider(true);
+                                              itemCollection &&
+                                                setSelectedCollection(
+                                                  itemCollection
+                                                );
+                                              setCaptions(NFts);
+                                            }}
+                                            index={index}
+                                          />
+                                        </li>
+                                        {openSlider &&
+                                          collectionsName[0] ===
+                                            selectedCollection && (
+                                            <Lightbox
+                                              mainSrc={NFts[photoIndex].image}
+                                              nextSrc={
+                                                NFts[
+                                                  (photoIndex + 1) % NFts.length
+                                                ].image
+                                              }
+                                              prevSrc={
+                                                NFts[
+                                                  (photoIndex +
+                                                    NFts.length -
+                                                    1) %
+                                                    NFts.length
+                                                ].image
+                                              }
+                                              onCloseRequest={() =>
+                                                setOpenSlider(false)
+                                              }
+                                              onMovePrevRequest={() =>
+                                                setPhotoIndex(
+                                                  (photoIndex +
+                                                    NFts.length -
+                                                    1) %
+                                                    NFts.length
+                                                )
+                                              }
+                                              onMoveNextRequest={() =>
+                                                setPhotoIndex(
+                                                  (photoIndex + 1) % NFts.length
+                                                )
+                                              }
+                                              imageCaption={
+                                                sliderCaptions[photoIndex]
+                                              }
+                                            />
+                                          )}
+                                      </React.Fragment>
+                                    ))}
+                                  </Carousel>
+                                </Masonry>
+                              </ul>
+                            </div>
+                          </SRLWrapper>
+                        </SimpleReactLightbox>
+                      </div>
+                    );
+                  })}
+                </>
               ) : (
                 <h4 className='text-muted text-center mb-5'>
                   You Don't have NFTS yet!
@@ -637,4 +798,4 @@ const MyCreations = () => {
   );
 };
 
-export default MyCreations;
+export default MyCollections;

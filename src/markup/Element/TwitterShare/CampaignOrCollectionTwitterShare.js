@@ -12,7 +12,7 @@ const CampaignOrCollectionTwitterShare = ({
 }) => {
   return (
     <TwitterShareButton
-      className='twitter-icon mfp-link portfolio-fullscreen'
+      className='twitter-icon mfp-link'
       url={
         url
           ? url
