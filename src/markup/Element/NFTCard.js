@@ -27,7 +27,7 @@ const NFTCard = ({
           to={'/#'}
           onClick={(e) => {
             e.preventDefault();
-            openSlider(index, item.campaign);
+            openSlider(index, item.campaign,item.collection);
           }}
           className='mfp-link portfolio-fullscreen'
         >

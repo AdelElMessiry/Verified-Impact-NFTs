@@ -95,6 +95,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
       if (transferDeployHash) {
         VIToast.success('NFT transfered successfully');
         handleClose();
+        window.location.reload();
       } else {
         VIToast.error('Error happened please try again later');
       }
