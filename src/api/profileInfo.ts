@@ -6,6 +6,7 @@ import {
   CLValueBuilder,
 } from 'casper-js-sdk';
 
+import { signDeploy } from '../utils/signer';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import {
   CONNECTION,
@@ -140,13 +141,22 @@ class ProfileClient {
       profileType: CLValueBuilder.string(profileType),
     });
 
-    return this.contractClient.callEntrypoint(
+    const profileDeploy = this.contractClient.callEntrypoint(
       'add_profile',
       runtimeArgs,
       deploySender,
       this.networkName,
       PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT
     );
+
+    const signedProfileDeploy = await signDeploy(profileDeploy, deploySender);
+    console.log('Signed Profile deploy:', signedProfileDeploy);
+
+    const profileDeployHash = await signedProfileDeploy.send(
+      CONNECTION.NODE_ADDRESS
+    );
+    console.log('Deploy hash', profileDeployHash);
+    return profileDeployHash;
   }
 
   public async getProfilesList() {
