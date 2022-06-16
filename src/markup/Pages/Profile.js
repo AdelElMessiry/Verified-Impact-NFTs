@@ -8,23 +8,25 @@ import PromptLogin from './PromptLogin';
 import { useAuth } from '../../contexts/AuthContext';
 import ProfileForm from '../Element/profileForm';
 import { ProfileFormsEnum } from '../../Enums/index';
-import { getProfile } from '../../api/profileInfo';
+import { profileClient } from '../../api/profileInfo';
 
 import bnr1 from './../../images/banner/bnr1.jpg';
 
 const Profile = () => {
+  const { isLoggedIn, entityInfo} = useAuth();
   const [activeTab, setActiveTab] = useState('1');
-  const { isLoggedIn } = useAuth();
+  const [profilesList, setProfilesList] = useState();
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
   };
 
   const getUserProfiles = React.useCallback(async () => {
+    debugger;
 
-    const userProfiles = await getProfile(entityInfo.publicKey);
+    const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
 debugger;
-    userProfiles && setProfileList(userProfiles);
+    userProfiles && setProfilesList(userProfiles);
   }, [entityInfo.publicKey]);
 
   React.useEffect(() => {
