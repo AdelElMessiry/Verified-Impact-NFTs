@@ -90,7 +90,7 @@ class ProfileClient {
     };
   }
 
-  public async addProfile(
+  public async addUpdateProfile(
     address: CLPublicKey,
     username: string,
     tagline: string,
