@@ -625,6 +625,7 @@ class CEP47Client {
   }
 
   public async addCollection(
+    collection_id: string,
     mode: string,
     name: string,
     description: string,
@@ -634,6 +635,7 @@ class CEP47Client {
     deploySender: CLPublicKey
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
+      collection_id: CLValueBuilder.u256(collection_id),
       token_ids: CLValueBuilder.list([CLValueBuilder.u256(0)]),
       mode: CLValueBuilder.string(mode),
       name: CLValueBuilder.string(name),
