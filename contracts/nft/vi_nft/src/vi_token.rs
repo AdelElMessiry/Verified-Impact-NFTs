@@ -294,9 +294,8 @@ impl ViToken {
                     new_collection_count = collection_control::total_collections()
                         .checked_add(U256::one())
                         .unwrap();
-                    let mut collection =
-                        CollectionControl::get_collection(self, new_collection_count)
-                            .unwrap_or_default();
+                    collection = CollectionControl::get_collection(self, new_collection_count)
+                        .unwrap_or_default();
                     collection.insert(format!("id: "), new_collection_count.to_string());
                 }
 
