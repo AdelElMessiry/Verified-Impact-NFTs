@@ -57,11 +57,18 @@ const AddCollection = () => {
   const addNewCollection = async () => {
     setIsSaveClicked(true);
     const savedCollection = await addCollection(
-      collectionInputs.name,
-      collectionInputs.description,
-      collectionInputs.url,
-      entityInfo.publicKey,
-      CLPublicKey.fromHex(entityInfo.publicKey)
+      // collectionInputs.name,
+      // collectionInputs.description,
+      // collectionInputs.url,
+      // entityInfo.publicKey,
+      // CLPublicKey.fromHex(entityInfo.publicKey)
+      '',
+      '',
+      '',
+      '02034d0c6b99a9b79c717cc8d9791fef7dae817e354c56d59bbf3c4781de88df6401',
+      CLPublicKey.fromHex(
+        '02034d0c6b99a9b79c717cc8d9791fef7dae817e354c56d59bbf3c4781de88df6401'
+      )
     );
 
     const deployResult = await getDeployDetails(savedCollection);
@@ -78,9 +85,13 @@ const AddCollection = () => {
 
   const editCollection = async () => {
     const savedCollection = await updateCollection(
-      collectionInputs.name,
-      collectionInputs.description,
-      collectionInputs.url,
+      // collectionInputs.name,
+      // collectionInputs.description,
+      // collectionInputs.url,
+      '1',
+      '',
+      '',
+      '',
       entityInfo.publicKey,
       CLPublicKey.fromHex(entityInfo.publicKey)
     );
@@ -113,91 +124,91 @@ const AddCollection = () => {
               <div className='container'>
                 <div>
                   <div className=' m-auto m-b30'>
-                    {collectionId == '0' ||
-                    (collectionId != '0' && selectedCollection) ? (
-                      <Container>
-                        <Row>
-                          <Col>
-                            <input
-                              type='text'
-                              name='name'
-                              placeholder='Name'
-                              className='form-control'
-                              value={collectionInputs.name}
-                              onChange={(e) =>
-                                setCollectionInputs({
-                                  ...collectionInputs,
-                                  name: e.target.value,
-                                })
+                    {/* {collectionId == '0' ||
+                    (collectionId != '0' && selectedCollection) ? ( */}
+                    <Container>
+                      <Row>
+                        <Col>
+                          <input
+                            type='text'
+                            name='name'
+                            placeholder='Name'
+                            className='form-control'
+                            value={collectionInputs.name}
+                            onChange={(e) =>
+                              setCollectionInputs({
+                                ...collectionInputs,
+                                name: e.target.value,
+                              })
+                            }
+                          />
+                        </Col>
+                        <Col>
+                          <input
+                            type='text'
+                            placeholder='URL'
+                            name='url'
+                            className='form-control'
+                            value={collectionInputs.url}
+                            onChange={(e) =>
+                              setCollectionInputs({
+                                ...collectionInputs,
+                                url: e.target.value,
+                              })
+                            }
+                          />
+                        </Col>
+                      </Row>
+                      <Row className='mt-4'>
+                        <Col>
+                          <textarea
+                            rows={4}
+                            name='description'
+                            placeholder='Description'
+                            className='form-control'
+                            value={collectionInputs.description}
+                            onChange={(e) =>
+                              setCollectionInputs({
+                                ...collectionInputs,
+                                description: e.target.value,
+                              })
+                            }
+                          ></textarea>
+                        </Col>
+                      </Row>
+                      <Row className='mt-4'>
+                        <Col>
+                          {' '}
+                          <p className='form-submit'>
+                            <button
+                              className='btn btn-success'
+                              name='submit'
+                              onClick={
+                                collectionId == '0'
+                                  ? addNewCollection
+                                  : editCollection
                               }
-                            />
-                          </Col>
-                          <Col>
-                            <input
-                              type='text'
-                              placeholder='URL'
-                              name='url'
-                              className='form-control'
-                              value={collectionInputs.url}
-                              onChange={(e) =>
-                                setCollectionInputs({
-                                  ...collectionInputs,
-                                  url: e.target.value,
-                                })
-                              }
-                            />
-                          </Col>
-                        </Row>
-                        <Row className='mt-4'>
-                          <Col>
-                            <textarea
-                              rows={4}
-                              name='description'
-                              placeholder='Description'
-                              className='form-control'
-                              value={collectionInputs.description}
-                              onChange={(e) =>
-                                setCollectionInputs({
-                                  ...collectionInputs,
-                                  description: e.target.value,
-                                })
-                              }
-                            ></textarea>
-                          </Col>
-                        </Row>
-                        <Row className='mt-4'>
-                          <Col>
-                            {' '}
-                            <p className='form-submit'>
-                              <button
-                                className='btn btn-success'
-                                name='submit'
-                                onClick={
-                                  collectionId == '0'
-                                    ? addNewCollection
-                                    : editCollection
-                                }
-                              >
-                                {isSaveClicked ? (
-                                  <Spinner animation='border' variant='light' />
-                                ) : collectionId == '0' ? (
-                                  'Add'
-                                ) : (
-                                  'Edit'
-                                )}
-                              </button>
-                            </p>
-                          </Col>
-                        </Row>
-                      </Container>
-                    ) : (
+                            >
+                              {isSaveClicked ? (
+                                <Spinner animation='border' variant='light' />
+                              ) : collectionId == '0' ? (
+                                'Add'
+                              ) : (
+                                'Edit'
+                              )}
+                            </button>
+                          </p>
+                        </Col>
+                      </Row>
+                    </Container>
+                    {/* ) : (
                       <div className='vinft-section-loader'>
                         <div className='vinft-spinner-body'>
                           <Spinner animation='border' variant='success' />
                           <p>Fetching Collection Detail Please wait...</p>
                         </div>
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>
