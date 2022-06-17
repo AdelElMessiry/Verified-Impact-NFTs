@@ -172,7 +172,7 @@ const ProfileForm = ({ formName, isProfileExist }) => {
 
     if (entityInfo.publicKey) {
       let saveDeployHash;
-      debugger;
+      // debugger;
       try {
         saveDeployHash = await profileClient.addUpdateProfile(
           CLPublicKey.fromHex(entityInfo.publicKey),

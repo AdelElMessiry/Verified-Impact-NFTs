@@ -60,26 +60,26 @@ class ProfileClient {
       const jsMap: any = new Map();
 
       for (const [innerKey, value] of maybeValue) {
-        jsMap.set(innerKey, value);
+        jsMap.set(innerKey.data, value.data);
       }
       let mapObj = Object.fromEntries(jsMap);
 
-      const isNormalProfile = Object.keys(mapObj).join('-').includes('normal');
-      const isBeneficiaryProfile = Object.keys(mapObj).includes('beneficiary');
-      const isCreatorProfile = Object.keys(mapObj).includes('creator');
+      // const isNormalProfile = Object.keys(mapObj).join('-').includes('normal');
+      // const isBeneficiaryProfile = Object.keys(mapObj).includes('beneficiary');
+      // const isCreatorProfile = Object.keys(mapObj).includes('creator');
 
       const filteredNormalAccount: any =
-        isNormalProfile &&
+        // isNormalProfile &&
         Object.fromEntries(
-          Object.entries(mapObj).filter(([key]) => key.includes('normal'))
+          Object.entries(mapObj).filter(([key]) => key.includes('n'))
         );
       const filteredBeneficiaryAccount: any =
-        isBeneficiaryProfile &&
+        // isBeneficiaryProfile &&
         Object.fromEntries(
           Object.entries(mapObj).filter(([key]) => key.includes('beneficiary'))
         );
       const filteredCreatorAccount: any =
-        isCreatorProfile &&
+        // isCreatorProfile &&
         Object.fromEntries(
           Object.entries(mapObj).filter(([key]) => key.includes('creator'))
         );
