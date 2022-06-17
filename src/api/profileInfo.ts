@@ -79,22 +79,31 @@ class ProfileClient {
         // isNormalProfile &&
         Object.fromEntries(
           Object.entries(mapObj)
-            .filter(([key]) => key.includes('n'))
-            .map((profileKey: any) => profileKey.split('_').pop())
+            .filter(([key]) => key.includes('normal'))
+            ?.map((profileKey: any) => [
+              profileKey[0].split('_').pop(),
+              profileKey[1],
+            ])
         );
       const filteredBeneficiaryAccount: any =
         // isBeneficiaryProfile &&
         Object.fromEntries(
           Object.entries(mapObj)
             .filter(([key]) => key.includes('beneficiary'))
-            .map((profileKey: any) => profileKey.split('_').pop())
+            ?.map((profileKey: any) => [
+              profileKey[0].split('_').pop(),
+              profileKey[1],
+            ])
         );
       const filteredCreatorAccount: any =
         // isCreatorProfile &&
         Object.fromEntries(
           Object.entries(mapObj)
             .filter(([key]) => key.includes('creator'))
-            .map((profileKey: any) => profileKey.split('_').pop())
+            ?.map((profileKey: any) => [
+              profileKey[0].split('_').pop(),
+              profileKey[1],
+            ])
         );
 
       return {
