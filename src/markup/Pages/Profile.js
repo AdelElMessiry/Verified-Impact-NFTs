@@ -15,8 +15,13 @@ import bnr1 from './../../images/banner/bnr1.jpg';
 const Profile = () => {
   const { isLoggedIn, entityInfo } = useAuth();
   const [activeTab, setActiveTab] = useState('1');
-  const [profilesList, setProfilesList] = useState();
+  const [normalProfile, setNormalProfile] = useState();
+  const [beneficiaryProfile, setBeneficiaryProfile] = useState();
+  const [creatorProfile, setCreatorProfile] = useState();
   const [noProfilesForThisUser, setNoProfilesForThisUser] = useState(false);
+  const [addProfile, setAddProfile] = useState(false);
+  const [addBeneficiaryProfile, setAddBeneficiaryProfile] = useState(false);
+  const [addCreatorProfile, setAddCreatorProfile] = useState(false);
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -30,14 +35,16 @@ const Profile = () => {
       // debugger;
       console.log(userProfiles);
       if (userProfiles) {
-        // debugger;
         if (userProfiles.err == 'Address Not Found') {
           setNoProfilesForThisUser(true);
         } else {
-          setProfilesList(userProfiles);
+          let list = Object.values(userProfiles)[0];
+
+          userProfiles && setNormalProfile(list.normal);
+          userProfiles && setBeneficiaryProfile(list.beneficiary);
+          userProfiles && setCreatorProfile(list.creator);
         }
       }
-      userProfiles && setProfilesList(userProfiles);
     } catch (e) {
       console.log(e);
     }
@@ -49,24 +56,24 @@ const Profile = () => {
 
   return (
     <Layout>
-      <div className='page-content bg-white'>
+      <div className="page-content bg-white">
         {/*  banner  */}
         <div
-          className='dlab-bnr-inr dlab-bnr-inr-sm overlay-primary bg-pt'
+          className="dlab-bnr-inr dlab-bnr-inr-sm overlay-primary bg-pt"
           style={{ backgroundImage: 'url(' + bnr1 + ')' }}
         >
-          <div className='container'>
-            <div className='dlab-bnr-inr-entry'>
-              <h1 className='text-white d-flex align-items-center'>
-                <span className='mr-1'>Profile</span>
+          <div className="container">
+            <div className="dlab-bnr-inr-entry">
+              <h1 className="text-white d-flex align-items-center">
+                <span className="mr-1">Profile</span>
               </h1>
 
-              <div className='breadcrumb-row'>
-                <ul className='list-inline'>
+              <div className="breadcrumb-row">
+                <ul className="list-inline">
                   <li>
                     <Link to={'#'}>Home</Link>
                   </li>
-                  <li className='ml-1'>Profile</li>
+                  <li className="ml-1">Profile</li>
                 </ul>
               </div>
             </div>
@@ -76,12 +83,12 @@ const Profile = () => {
           <PromptLogin />
         ) : (
           <>
-            <div className='container-fluid mt-5'>
-              <div className='dlab-tabs choseus-tabs'>
+            <div className="container-fluid mt-5">
+              <div className="dlab-tabs choseus-tabs">
                 <ul
-                  className='nav row justify-content-center'
-                  id='myTab'
-                  role='tablist'
+                  className="nav row justify-content-center"
+                  id="myTab"
+                  role="tablist"
                 >
                   <li>
                     <Link
@@ -91,7 +98,7 @@ const Profile = () => {
                         toggle('1');
                       }}
                     >
-                      <span className='title-head'>User Profile</span>
+                      <span className="title-head">User Profile</span>
                     </Link>
                   </li>
                   <li>
@@ -102,7 +109,7 @@ const Profile = () => {
                         toggle('2');
                       }}
                     >
-                      <span className='title-head'>Creator Profile</span>
+                      <span className="title-head">Creator Profile</span>
                     </Link>
                   </li>
                   <li>
@@ -113,34 +120,70 @@ const Profile = () => {
                         toggle('3');
                       }}
                     >
-                      <span className='title-head'>Beneficiary Profile</span>
+                      <span className="title-head">Beneficiary Profile</span>
                     </Link>
                   </li>
                 </ul>
               </div>
             </div>
-            <div className='container'>
-              <div className='tab-content chosesus-content'>
-                <div id='cost' className='tab-pane active py-5'>
+            <div className="container">
+              <div className="tab-content chosesus-content">
+                <div id="cost" className="tab-pane active py-5">
                   <TabContent activeTab={activeTab}>
-                    <TabPane tabId='1'>
-                      <ProfileForm
-                        formName={ProfileFormsEnum.NormalProfile}
-                        isProfileExist={noProfilesForThisUser ? false : true}
-                      />
+                    <TabPane tabId="1">
+                      {(noProfilesForThisUser || normalProfile == {}) && (
+                        <button onClick={() => setAddProfile(true)} className="btn btn-success">
+                          Add Profile
+                        </button>
+                      )}
+                      {addProfile || normalProfile && (
+                        <ProfileForm
+                          formName={ProfileFormsEnum.NormalProfile}
+                          isProfileExist={
+                            noProfilesForThisUser || normalProfile == {}
+                              ? false
+                              : true
+                          }
+                          formData={normalProfile && normalProfile}
+                        />
+                      )}
                     </TabPane>
-                    <TabPane tabId='2'>
-                      <ProfileForm
-                        formName={ProfileFormsEnum.CreatorProfile}
-                        isProfileExist={noProfilesForThisUser ? false : true}
-                      />
+                    {/* <TabPane tabId="2">
+                      {(noProfilesForThisUser || creatorProfile == {}) && (
+                        <button onClick={() => setAddCreatorProfile(true)} className="btn btn-success">
+                          Add Profile
+                        </button>
+                      )}
+                      {(addCreatorProfile || creatorProfile) && (
+                        <ProfileForm
+                          formName={ProfileFormsEnum.CreatorProfile}
+                          isProfileExist={
+                            noProfilesForThisUser || creatorProfile == {}
+                              ? false
+                              : true
+                          }
+                          formData={creatorProfile && creatorProfile}
+                        />
+                      )}
                     </TabPane>
-                    <TabPane tabId='3'>
-                      <ProfileForm
-                        formName={ProfileFormsEnum.BeneficiaryProfile}
-                        isProfileExist={noProfilesForThisUser ? false : true}
-                      />
-                    </TabPane>
+                    <TabPane tabId="3">
+                      {(noProfilesForThisUser || beneficiaryProfile == {}) && (
+                        <button onClick={() => setAddBeneficiaryProfile(true)} className="btn btn-success">
+                          Add Profile
+                        </button>
+                      )}
+                      {(addBeneficiaryProfile || beneficiaryProfile) && (
+                        <ProfileForm
+                          formName={ProfileFormsEnum.BeneficiaryProfile}
+                          isProfileExist={
+                            noProfilesForThisUser || beneficiaryProfile == {}
+                              ? false
+                              : true
+                          }
+                          formData={beneficiaryProfile && beneficiaryProfile}
+                        />
+                      )}
+                    </TabPane> */}
                   </TabContent>
                 </div>
               </div>
