@@ -1,5 +1,5 @@
 use crate::Profile;
-use alloc::{string::ToString, vec::Vec};
+use alloc::vec::Vec;
 use casper_contract::{contract_api::storage, unwrap_or_revert::UnwrapOrRevert};
 use casper_types::{Key, U256};
 use contract_utils::{get_key, set_key, ContractContext, ContractStorage, Dict};
@@ -54,17 +54,16 @@ impl Profiles {
 
     pub fn add_profile(&self, address: Key, value: Profile) {
         self.dict.set_by_key(&address, ());
-        self.profiles_list_dict.set(&address.to_string(), value);
+        self.profiles_list_dict.set_by_key(&address, value);
     }
 
     pub fn revoke_profile(&self, address: Key) {
         self.dict.remove_by_key::<()>(&address);
-        self.profiles_list_dict
-            .remove::<Profile>(&address.to_string());
+        self.profiles_list_dict.remove_by_key::<Profile>(&address);
     }
 
     pub fn get_profile(&self, address: Key) -> Option<Profile> {
-        self.profiles_list_dict.get(&address.to_string())
+        self.profiles_list_dict.get_by_key(&address)
     }
 }
 
