@@ -45,7 +45,14 @@ class ProfileClient {
   }
 
   public async profilesList() {
-    return this.contractClient.queryContractData(['profiles_addresses']);
+    const addresses: any = await this.contractClient.queryContractData([
+      'profiles_addresses',
+    ]);
+
+    const mappedAddresses = addresses.map((address: any) =>
+      Buffer.from(addresses[0].data.value()).toString('hex')
+    );
+    return mappedAddresses;
   }
 
   public async getProfile(address: string) {
