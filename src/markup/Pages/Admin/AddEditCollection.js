@@ -36,7 +36,6 @@ const AddCollection = () => {
     const collectionData =
       collections && collections.find(({ id }) => id === collectionId);
     collections && setSelectedCollection(collectionData);
-
     setCollectionInputs({
       name: collectionData ? collectionData.name : '',
       description: collectionData ? collectionData.description : '',

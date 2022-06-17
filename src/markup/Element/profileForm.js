@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Row, Col, Form, Spinner } from 'react-bootstrap';
 import ImageUploader from 'react-images-upload';
-import CreatableSelect from 'react-select/creatable';
 import validator from 'validator';
 import { toast as VIToast } from 'react-toastify';
 import { CLPublicKey } from 'casper-js-sdk';
@@ -12,43 +11,40 @@ import { useAuth } from '../../contexts/AuthContext';
 import { getDeployDetails } from '../../api/universal';
 import { uploadImg } from '../../api/imageCDN';
 
-const ProfileForm = ({ formName, isProfileExist }) => {
+const ProfileForm = ({ formName, isProfileExist, formData}) => {
   const { entityInfo, refreshAuth } = useAuth();
-
   //setting initial values of controls
+  debugger;
   const [state, setState] = useState({
     inputs: {
-      userName: '',
-      shortTagLine: '',
-      firstName: '',
-      lastName: '',
-      fullBio: '',
-      externalSiteLink: '',
-      phone: '',
-      twitter: '',
-      instagram: '',
-      facebook: '',
-      medium: '',
-      email: '',
-      telegram: '',
+      userName: formData!={}?formData.normal_username:'',
+      shortTagLine: formData!={}?formData.normal_tagline:'',
+      firstName: formData!={}?formData.normal_firstName:'',
+      lastName: formData!={}?formData.normal_lastName:'',
+      fullBio: formData!={}?formData.normal_bio:'',
+      externalSiteLink: formData!={}?formData.normal_externalLink:'',
+      phone: formData!={}?formData.normal_phone:'',
+      twitter: formData!={}?formData.normal_twitter:'',
+      instagram: formData!={}?formData.normal_instagram:'',
+      facebook: formData!={}?formData.normal_facebook:'',
+      medium: formData!={}?formData.normal_medium:'',
+      email: formData!={}?formData.normal_mail:'',
+      telegram: formData!={}?formData.normal_telegram:'',
       isProfileImageURL: '',
       isNFTImageURL: '',
+      address:formData!={}?formData.normal_address:''
     },
   });
 
-  const [collectionList, setCollectionList] = useState([
-    { id: 1, label: 'Stand With Ukraine' },
-  ]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [options, setOptions] = useState([
-    { id: 1, label: 'Stand With Ukraine' },
-  ]);
+
   const [uploadedProfileImageURL, setUploadedProfileImage] =
-    React.useState(null);
+    React.useState(formData!={}?formData.normal_imgUrl:null);
   const [uploadedProfileFile, setUploadedProfileFile] = React.useState(null);
-  const [uploadedNFTImageURL, setUploadedNFTImage] = React.useState(null);
+  const [uploadedNFTImageURL, setUploadedNFTImage] = React.useState(formData!={}?formData.normal_nftUrl:null);
   const [uploadedNFTFile, setUploadedNFTFile] = React.useState(null);
   const [isSaveButtonClicked, setIsSaveButtonClicked] = React.useState(false);
+  const [isOndropProfileClicked, setIsOndropProfileClicked] = useState(false);
+  const [isOndropNFTClicked, setIsOndropNFTClicked] = useState(false);
 
   const [showProfileURLErrorMsg, setShowProfileURLErrorMsg] =
     React.useState(false);
@@ -65,27 +61,6 @@ const ProfileForm = ({ formName, isProfileExist }) => {
     });
   };
 
-  //handling of creating new option in creatable select control
-  const createOption = (label) => ({
-    label,
-    value: label.toLowerCase().replace(/\W/g, ''),
-  });
-
-  //handling of adding new option to the existing options in creatable select
-  const handleCreateCollection = (inputValue) => {
-    setIsLoading(true);
-    console.group('Option created');
-    console.log('Wait a moment...');
-    setTimeout(() => {
-      const newOption = createOption(inputValue);
-      console.log(newOption);
-      console.groupEnd();
-      setIsLoading(false);
-      setOptions([...options, newOption]);
-      setCollectionList([...options, newOption]);
-    }, 1000);
-  };
-
   //handling of selecting image in image control
   const onDrop = (picture, isProfile) => {
     if (picture.length > 0) {
@@ -96,6 +71,9 @@ const ProfileForm = ({ formName, isProfileExist }) => {
       isProfile
         ? setUploadedProfileFile(picture[0])
         : setUploadedNFTFile(picture[0]);
+        isProfile
+        ? setIsOndropProfileClicked(true)
+        : setIsOndropNFTClicked(true)
     } else {
       isProfile ? setUploadedProfileImage(null) : setUploadedNFTImage(null);
       isProfile ? setUploadedProfileFile(null) : setUploadedNFTFile(null);
@@ -172,7 +150,8 @@ const ProfileForm = ({ formName, isProfileExist }) => {
 
     if (entityInfo.publicKey) {
       let saveDeployHash;
-      // debugger;
+       debugger;
+       console.log(formData);
       try {
         saveDeployHash = await profileClient.addUpdateProfile(
           CLPublicKey.fromHex(entityInfo.publicKey),
@@ -215,9 +194,10 @@ const ProfileForm = ({ formName, isProfileExist }) => {
 
         VIToast.success('Profile Saved successfully');
         //NOTE: every channel has a special keys and tokens sorted on .env file
-
+        setTimeout(() => {
+         setIsSaveButtonClicked(false);
         window.location.reload();
-        setIsSaveButtonClicked(false);
+       }, 50); 
       } catch (err) {
         console.log(err);
         //   setErrStage(MintingStages.TX_PENDING);
@@ -409,6 +389,13 @@ const ProfileForm = ({ formName, isProfileExist }) => {
                   maxFileSize={20209230}
                   withPreview={true}
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
+                  defaultImages={[
+                    !isOndropProfileClicked
+                      ? formData!=={}&&formData.normal_imgUrl
+                      : uploadedProfileImageURL
+                      ? uploadedProfileImageURL
+                      : "",
+                  ]}
                 />
               )}
             </Col>
@@ -457,6 +444,13 @@ const ProfileForm = ({ formName, isProfileExist }) => {
                   maxFileSize={20209230}
                   withPreview={true}
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
+                  defaultImages={[
+                    !isOndropNFTClicked
+                      ? formData!=={}&&formData.normal_nftUrl
+                      : uploadedNFTImageURL
+                      ? uploadedNFTImageURL
+                      : "",
+                  ]}
                 />
               )}
             </Col>
@@ -474,28 +468,6 @@ const ProfileForm = ({ formName, isProfileExist }) => {
           />
         </Col>
       </Row>
-      {ProfileFormsEnum.CreatorProfile === formName && (
-        <Row className='form-group'>
-          <Col>
-            <span>Collection List</span>
-            <CreatableSelect
-              isClearable
-              isLoading={isLoading}
-              isMulti={true}
-              onChange={(v) => setCollectionList(v)}
-              onCreateOption={(v) => handleCreateCollection(v)}
-              options={options}
-              value={collectionList}
-              menuPortalTarget={document.body}
-              placeholder='Select...'
-              className='creatable-select'
-              formatCreateLabel={(v) =>
-                'Click here to create "' + v + '" Collection'
-              }
-            />
-          </Col>
-        </Row>
-      )}
 
       <Row className='form-group'>
         <Col>
