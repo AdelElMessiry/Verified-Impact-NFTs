@@ -25,7 +25,6 @@ const Profile = () => {
   };
 
   const getUserProfiles = React.useCallback(async () => {
-
     try {
       const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
       console.log(userProfiles);
@@ -126,41 +125,49 @@ const Profile = () => {
                 <div id="cost" className="tab-pane active py-5">
                   <TabContent activeTab={activeTab}>
                     <TabPane tabId="1">
-                      { normalProfile && (
+                      {(normalProfile || noProfilesForThisUser) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.NormalProfile}
                           isProfileExist={
-                            noProfilesForThisUser || (normalProfile&&Object.keys(normalProfile).length === 0)
+                            noProfilesForThisUser ||
+                            (normalProfile &&
+                              Object.keys(normalProfile).length === 0)
                               ? false
                               : true
                           }
-                          formData={normalProfile && normalProfile}
+                          formData={noProfilesForThisUser ? {} : normalProfile}
                         />
                       )}
                     </TabPane>
                     <TabPane tabId="2">
-                      {(creatorProfile) && (
+                      {(creatorProfile || noProfilesForThisUser) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.CreatorProfile}
                           isProfileExist={
-                            (noProfilesForThisUser || (creatorProfile&&Object.keys(creatorProfile).length === 0))
+                            noProfilesForThisUser ||
+                            (creatorProfile &&
+                              Object.keys(creatorProfile).length === 0)
                               ? false
                               : true
                           }
-                          formData={creatorProfile && creatorProfile}
+                          formData={noProfilesForThisUser ? {} : creatorProfile}
                         />
                       )}
                     </TabPane>
                     <TabPane tabId="3">
-                      {( beneficiaryProfile) && (
+                      {(beneficiaryProfile || noProfilesForThisUser) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.BeneficiaryProfile}
                           isProfileExist={
-                            (noProfilesForThisUser || (beneficiaryProfile&&Object.keys(beneficiaryProfile).length === 0)) 
+                            noProfilesForThisUser ||
+                            (beneficiaryProfile &&
+                              Object.keys(beneficiaryProfile).length === 0)
                               ? false
                               : true
                           }
-                          formData={beneficiaryProfile && beneficiaryProfile}
+                          formData={
+                            noProfilesForThisUser ? {} : beneficiaryProfile
+                          }
                         />
                       )}
                     </TabPane>
