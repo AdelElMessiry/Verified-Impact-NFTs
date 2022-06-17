@@ -14,33 +14,32 @@ import { uploadImg } from '../../api/imageCDN';
 const ProfileForm = ({ formName, isProfileExist, formData}) => {
   const { entityInfo, refreshAuth } = useAuth();
   //setting initial values of controls
-  debugger;
   const [state, setState] = useState({
     inputs: {
-      userName: formData!={}?formData.normal_username:'',
-      shortTagLine: formData!={}?formData.normal_tagline:'',
-      firstName: formData!={}?formData.normal_firstName:'',
-      lastName: formData!={}?formData.normal_lastName:'',
-      fullBio: formData!={}?formData.normal_bio:'',
-      externalSiteLink: formData!={}?formData.normal_externalLink:'',
-      phone: formData!={}?formData.normal_phone:'',
-      twitter: formData!={}?formData.normal_twitter:'',
-      instagram: formData!={}?formData.normal_instagram:'',
-      facebook: formData!={}?formData.normal_facebook:'',
-      medium: formData!={}?formData.normal_medium:'',
-      email: formData!={}?formData.normal_mail:'',
-      telegram: formData!={}?formData.normal_telegram:'',
+      userName: formData!={}?formData.username:'',
+      shortTagLine: formData!={}?formData.tagline:'',
+      firstName: formData!={}?formData.firstName:'',
+      lastName: formData!={}?formData.lastName:'',
+      fullBio: formData!={}?formData.bio:'',
+      externalSiteLink: formData!={}?formData.externalLink:'',
+      phone: formData!={}?formData.phone:'',
+      twitter: formData!={}?formData.twitter:'',
+      instagram: formData!={}?formData.instagram:'',
+      facebook: formData!={}?formData.facebook:'',
+      medium: formData!={}?formData.medium:'',
+      email: formData!={}?formData.mail:'',
+      telegram: formData!={}?formData.telegram:'',
       isProfileImageURL: '',
       isNFTImageURL: '',
-      address:formData!={}?formData.normal_address:''
+      address:formData!={}?formData.address:''
     },
   });
 
 
   const [uploadedProfileImageURL, setUploadedProfileImage] =
-    React.useState(formData!={}?formData.normal_imgUrl:null);
+    React.useState(formData!={}?formData.imgUrl:null);
   const [uploadedProfileFile, setUploadedProfileFile] = React.useState(null);
-  const [uploadedNFTImageURL, setUploadedNFTImage] = React.useState(formData!={}?formData.normal_nftUrl:null);
+  const [uploadedNFTImageURL, setUploadedNFTImage] = React.useState(formData!={}?formData.nftUrl:null);
   const [uploadedNFTFile, setUploadedNFTFile] = React.useState(null);
   const [isSaveButtonClicked, setIsSaveButtonClicked] = React.useState(false);
   const [isOndropProfileClicked, setIsOndropProfileClicked] = useState(false);
@@ -150,7 +149,6 @@ const ProfileForm = ({ formName, isProfileExist, formData}) => {
 
     if (entityInfo.publicKey) {
       let saveDeployHash;
-       debugger;
        console.log(formData);
       try {
         saveDeployHash = await profileClient.addUpdateProfile(
@@ -391,7 +389,7 @@ const ProfileForm = ({ formName, isProfileExist, formData}) => {
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
                   defaultImages={[
                     !isOndropProfileClicked
-                      ? formData!=={}&&formData.normal_imgUrl
+                      ? formData!=={}&&formData.imgUrl
                       : uploadedProfileImageURL
                       ? uploadedProfileImageURL
                       : "",
@@ -446,7 +444,7 @@ const ProfileForm = ({ formName, isProfileExist, formData}) => {
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
                   defaultImages={[
                     !isOndropNFTClicked
-                      ? formData!=={}&&formData.normal_nftUrl
+                      ? formData!=={}&&formData.nftUrl
                       : uploadedNFTImageURL
                       ? uploadedNFTImageURL
                       : "",

@@ -19,20 +19,15 @@ const Profile = () => {
   const [beneficiaryProfile, setBeneficiaryProfile] = useState();
   const [creatorProfile, setCreatorProfile] = useState();
   const [noProfilesForThisUser, setNoProfilesForThisUser] = useState(false);
-  const [addProfile, setAddProfile] = useState(false);
-  const [addBeneficiaryProfile, setAddBeneficiaryProfile] = useState(false);
-  const [addCreatorProfile, setAddCreatorProfile] = useState(false);
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
   };
 
   const getUserProfiles = React.useCallback(async () => {
-    // debugger;
 
     try {
       const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
-      // debugger;
       console.log(userProfiles);
       if (userProfiles) {
         if (userProfiles.err == 'Address Not Found') {
@@ -131,16 +126,11 @@ const Profile = () => {
                 <div id="cost" className="tab-pane active py-5">
                   <TabContent activeTab={activeTab}>
                     <TabPane tabId="1">
-                      {(noProfilesForThisUser || normalProfile == {}) && (
-                        <button onClick={() => setAddProfile(true)} className="btn btn-success">
-                          Add Profile
-                        </button>
-                      )}
-                      {addProfile || normalProfile && (
+                      { normalProfile && (
                         <ProfileForm
                           formName={ProfileFormsEnum.NormalProfile}
                           isProfileExist={
-                            noProfilesForThisUser || normalProfile == {}
+                            noProfilesForThisUser || (normalProfile&&Object.keys(normalProfile).length === 0)
                               ? false
                               : true
                           }
@@ -148,17 +138,12 @@ const Profile = () => {
                         />
                       )}
                     </TabPane>
-                    {/* <TabPane tabId="2">
-                      {(noProfilesForThisUser || creatorProfile == {}) && (
-                        <button onClick={() => setAddCreatorProfile(true)} className="btn btn-success">
-                          Add Profile
-                        </button>
-                      )}
-                      {(addCreatorProfile || creatorProfile) && (
+                    <TabPane tabId="2">
+                      {(creatorProfile) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.CreatorProfile}
                           isProfileExist={
-                            noProfilesForThisUser || creatorProfile == {}
+                            (noProfilesForThisUser || (creatorProfile&&Object.keys(creatorProfile).length === 0))
                               ? false
                               : true
                           }
@@ -167,23 +152,18 @@ const Profile = () => {
                       )}
                     </TabPane>
                     <TabPane tabId="3">
-                      {(noProfilesForThisUser || beneficiaryProfile == {}) && (
-                        <button onClick={() => setAddBeneficiaryProfile(true)} className="btn btn-success">
-                          Add Profile
-                        </button>
-                      )}
-                      {(addBeneficiaryProfile || beneficiaryProfile) && (
+                      {( beneficiaryProfile) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.BeneficiaryProfile}
                           isProfileExist={
-                            noProfilesForThisUser || beneficiaryProfile == {}
+                            (noProfilesForThisUser || (beneficiaryProfile&&Object.keys(beneficiaryProfile).length === 0)) 
                               ? false
                               : true
                           }
                           formData={beneficiaryProfile && beneficiaryProfile}
                         />
                       )}
-                    </TabPane> */}
+                    </TabPane>
                   </TabContent>
                 </div>
               </div>

@@ -495,6 +495,17 @@ const MyCollections = () => {
                       />
                     </Link>
                   </VINftsTooltip>
+                  {' '}
+                  <VINftsTooltip title={`Mint NFT`}>
+                    <Link to={'./mint-nft'}>
+                      <img
+                        src={plusIcon}
+                        className='img img-fluid'
+                        width='40px'
+                        alt='plusIcon'
+                      />
+                    </Link>
+                  </VINftsTooltip>
                 </span>
               </h1>
 
