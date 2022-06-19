@@ -17,6 +17,7 @@ import BuyNFTModal from '../Element/BuyNFT';
 import Layout from '../Layout';
 import CampaignOrCollectionTwitterShare from '../Element/TwitterShare/CampaignOrCollectionTwitterShare';
 import bgImg from './../../images/main-slider/slide6.jpg';
+import CopyText from '../Element/copyText';
 
 //Light Gallery on icon click
 
@@ -314,6 +315,18 @@ const Dashboard = () => {
                           beneficiaryPercentage={NFts[0]?.beneficiaryPercentage}
                         />
                       )}
+                      &nbsp;&nbsp;{' '}
+                      <CopyText
+                        link={`${
+                          window.location.origin
+                        }/#/BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName?.replace(
+                          / /g,
+                          '%20'
+                        )}&campaign=${NFts[0]?.campaignName?.replace(
+                          / /g,
+                          '%20'
+                        )}`}
+                      />
                     </h4>
                     <SimpleReactLightbox>
                       <SRLWrapper options={options}>

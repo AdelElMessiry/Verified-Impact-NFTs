@@ -21,10 +21,13 @@ import VINftsTooltip from '../../Element/Tooltip';
 import BuyNFTModal from '../../Element/BuyNFT';
 import PromptLogin from '../PromptLogin';
 import ListForSaleNFTModal from '../../Element/ListForSaleNFT';
+import CopyText from '../../Element/copyText';
 
 //images
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import plusIcon from './../../../images/icon/plus.png';
+import soldIcon from '../../../images/icon/sold.png';
+
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -140,7 +143,12 @@ const MyCreations = () => {
 
   const CaptionItem = (nft) => (
     <div className='text-white text-left port-box'>
-      <h5>{nft.title}</h5>
+      <h5>
+        {nft.title}&nbsp;&nbsp;{' '}
+        {nft.isCreatorOwner === false && nft.isForSale === 'false' && (
+          <img src={soldIcon} width='40px' />
+        )}
+      </h5>
       <p>
         <b>Description: </b>
         {nft.description}
@@ -220,9 +228,13 @@ const MyCreations = () => {
         </Link>
       </p>
       <p className='d-flex align-content-center align-items-center'>
-        <b>Price: </b>
-        {nft.price} {nft.currency}
-        &nbsp;&nbsp;
+        {nft.isCreatorOwner !== false && nft.isForSale !== 'false' && (
+          <>
+            <b>Price: </b>
+            {nft.price} {nft.currency}
+            &nbsp;&nbsp;
+          </>
+        )}
         <IconImage nft={nft} />
         &nbsp;&nbsp; &nbsp;&nbsp;{' '}
         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
@@ -230,14 +242,18 @@ const MyCreations = () => {
         )}
         &nbsp;&nbsp;{' '}
         <Link
-        to={`./nft-detail?id=${nft.tokenId}`}
-        className="mr-1 text-success text-underline"
-      >
-        <QRCode
-          value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
-          size={80}
+          to={`./nft-detail?id=${nft.tokenId}`}
+          className='mr-1 text-success text-underline'
+        >
+          <QRCode
+            value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
+            size={80}
+          />
+        </Link>{' '}
+        &nbsp;&nbsp;{' '}
+        <CopyText
+          link={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
         />
-        </Link>
       </p>
     </div>
   );

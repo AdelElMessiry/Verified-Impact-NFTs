@@ -3,10 +3,18 @@ import QRCode from 'react-qr-code';
 
 import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
 import VINftsTooltip from '../Element/Tooltip';
+import CopyText from './copyText';
+
+import soldIcon from '../../images/icon/sold.png';
 
 export const CaptionCampaign = (data, IconImage) => (
-  <div className='text-white text-left port-box'>
-    <h5>{data.title}</h5>
+  <div className="text-white text-left port-box">
+    <h5>
+      {data.title} &nbsp;&nbsp;{' '}
+      {data.isCreatorOwner === false && data.isForSale === 'false' && (
+        <img src={soldIcon} width="40px" />
+      )}
+    </h5>
     <p>
       <b>Description: </b>
       {data.description}
@@ -73,8 +81,12 @@ export const CaptionCampaign = (data, IconImage) => (
     </p>
 
     <p className='d-flex align-content-center align-items-center'>
-      <b>Price: </b>
-      {data.price} {data.currency}
+      {data.isCreatorOwner !== false && data.isForSale !== 'false' && (
+        <>
+          <b>Price: </b>
+          {data.price} {data.currency}
+        </>
+      )}
       &nbsp;&nbsp; {data.isForSale === 'true' && <IconImage nft={data} />}
       {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
         <NFTTwitterShare item={data} />
@@ -89,6 +101,10 @@ export const CaptionCampaign = (data, IconImage) => (
           size={80}
         />
       </Link>
+      &nbsp;&nbsp;{' '}
+      <CopyText
+        link={`${window.location.origin}/#/nft-detail?id=${data.tokenId}`}
+      />
     </p>
   </div>
 );
