@@ -8,6 +8,7 @@ import ListForSaleNFTModal from './ListForSaleNFT';
 import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
 
 import soldIcon from '../../images/icon/sold.png';
+
 //NFT Card component
 const NFTCard = ({
   index,
@@ -189,10 +190,10 @@ const NFTCard = ({
                   {item.collectionName}
                 </Link>
               </p>
-              <p>
+              {item.isCreatorOwner !== false && item.isForSale !== 'false' && ( <p>
                 <b>Price: </b>
                 {item.price} {item.currency}
-              </p>
+              </p>)}
               <p>
                 {' '}
                 <IconImage />

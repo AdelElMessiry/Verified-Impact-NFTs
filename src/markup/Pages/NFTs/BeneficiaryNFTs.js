@@ -14,9 +14,12 @@ import VINftsTooltip from '../../Element/Tooltip';
 import NFTCard from '../../Element/NFTCard';
 import BuyNFTModal from '../../Element/BuyNFT';
 import Layout from '../../Layout';
-import bnr1 from './../../../images/banner/bnr1.jpg';
 import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
 import CampaignOrCollectionTwitterShare from '../../Element/TwitterShare/CampaignOrCollectionTwitterShare';
+import CopyText from '../../Element/copyText';
+
+import bnr1 from './../../../images/banner/bnr1.jpg';
+import soldIcon from '../../../images/icon/sold.png';
 
 // Masonry section
 const masonryOptions = {
@@ -61,25 +64,51 @@ const TagLi = ({ name, handleSetTag, tagActive, type, beneficiary }) => {
         </button>
         &nbsp;&nbsp;
         {(type === 'collection' ? name.name : name) !== 'All' && (
-          <Link
-            to={
-              type === 'creator'
-                ? `./CreatorNFTs?creator=${name.replace(/ /g, '%20')}`
-                : type === 'campaign'
-                ? `./BeneficiaryNFTs?beneficiary=${beneficiary.replace(
-                    / /g,
-                    '%20'
-                  )}&campaign=${name.replace(/ /g, '%20')}`
-                : `./CreatorNFTs?creator=${name?.creator?.replace(
-                    / /g,
-                    '%20'
-                  )}&collection=${name?.name?.replace(/ /g, '%20')}`
-            }
-            className='mr-1 text-success text-underline'
-          >
-            <QRCode
-              className='mr-1'
-              value={
+          <>
+            {' '}
+            <Link
+              to={
+                type === 'creator'
+                  ? `./CreatorNFTs?creator=${name.replace(/ /g, '%20')}`
+                  : type === 'campaign'
+                  ? `./BeneficiaryNFTs?beneficiary=${beneficiary.replace(
+                      / /g,
+                      '%20'
+                    )}&campaign=${name.replace(/ /g, '%20')}`
+                  : `./CreatorNFTs?creator=${name?.creator?.replace(
+                      / /g,
+                      '%20'
+                    )}&collection=${name?.name?.replace(/ /g, '%20')}`
+              }
+              className='mr-1 text-success text-underline'
+            >
+              <QRCode
+                className='mr-1'
+                value={
+                  type === 'creator'
+                    ? `${
+                        window.location.origin
+                      }/#/CreatorNFTs?creator=${name.replace(/ /g, '%20')}`
+                    : type === 'campaign'
+                    ? `${
+                        window.location.origin
+                      }/#/BeneficiaryNFTs?beneficiary=${beneficiary.replace(
+                        / /g,
+                        '%20'
+                      )}&campaign=${name.replace(/ /g, '%20')}`
+                    : `${
+                        window.location.origin
+                      }/#/CreatorNFTs?creator=${name?.creator?.replace(
+                        / /g,
+                        '%20'
+                      )}&collection=${name?.name?.replace(/ /g, '%20')}`
+                }
+                size={70}
+              />
+            </Link>
+            &nbsp;&nbsp;{' '}
+            <CopyText
+              link={
                 type === 'creator'
                   ? `${
                       window.location.origin
@@ -98,9 +127,8 @@ const TagLi = ({ name, handleSetTag, tagActive, type, beneficiary }) => {
                       '%20'
                     )}&collection=${name?.name?.replace(/ /g, '%20')}`
               }
-              size={70}
             />
-          </Link>
+          </>
         )}
       </li>
     </VINftsTooltip>
@@ -372,7 +400,12 @@ const BeneficiaryNFTs = () => {
 
   const CaptionItem = (nft) => (
     <div className='text-white text-left port-box'>
-      <h5>{nft.title}</h5>
+      <h5>
+        {nft.title} &nbsp;&nbsp;{' '}
+        {nft.isCreatorOwner === false && nft.isForSale === 'false' && (
+          <img src={soldIcon} width='40px' />
+        )}
+      </h5>
       <p>
         <b>Description: </b>
         {nft.description}
@@ -380,7 +413,7 @@ const BeneficiaryNFTs = () => {
       <p>
         <b>Beneficiary: </b>
         <VINftsTooltip
-          title={`Click to see all NFTs for "${nft.beneficiaryName}" beneficiary`}
+          title={`Click to see all NFTs for '${nft.beneficiaryName}' beneficiary`}
         >
           <Link
             to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiaryName}`}
@@ -452,9 +485,13 @@ const BeneficiaryNFTs = () => {
         </Link>
       </p>
       <p className='d-flex align-content-center align-items-center'>
-        <b>Price: </b>
-        {nft.price} {nft.currency}
-        &nbsp;&nbsp;
+        {nft.isCreatorOwner !== false && nft.isForSale !== 'false' && (
+          <>
+            <b>Price: </b>
+            {nft.price} {nft.currency}
+            &nbsp;&nbsp;
+          </>
+        )}
         {nft.isForSale === 'true' && <IconImage nft={nft} />}
         &nbsp;&nbsp;{' '}
         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
@@ -470,6 +507,10 @@ const BeneficiaryNFTs = () => {
             size={80}
           />
         </Link>
+        &nbsp;&nbsp;{' '}
+        <CopyText
+          link={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
+        />
       </p>
     </div>
   );
@@ -513,6 +554,8 @@ const BeneficiaryNFTs = () => {
                     }
                   />
                 )}
+                &nbsp;&nbsp;
+                <CopyText link={window.location.href} />
               </h1>
               <p className='text-white ben-desc'>
                 {!campaign && beneficiaryDescription

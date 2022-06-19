@@ -7,6 +7,7 @@ import BuyNFTModal from '../Element/BuyNFT';
 import Layout from '../Layout';
 import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
 import VINftsTooltip from '../Element/Tooltip';
+import soldIcon from '../../images/icon/sold.png';
 
 //nft details component
 const NFTDetail = () => {
@@ -21,14 +22,13 @@ const NFTDetail = () => {
 
   React.useEffect(() => {
     (async () => {
-      if(!allNFTs){
-      nfts && setAllNFTs(nfts);
-      let nft = nfts && nfts.find(({ tokenId }) => tokenId == id);
-      nft && setItem(nft);
+      if (!allNFTs) {
+        nfts && setAllNFTs(nfts);
+        let nft = nfts && nfts.find(({ tokenId }) => tokenId == id);
+        nft && setItem(nft);
       }
     })();
   }, [allNFTs, nfts, id]);
-
 
   const IconImage = ({ nft }) => {
     return (
@@ -66,7 +66,13 @@ const NFTDetail = () => {
             <div className='detail-page-caption p-3'>
               <div className='align-b text-white text-left'>
                 <div className='text-white text-left port-box'>
-                  <h5>{item?.title}</h5>
+                  <h5>
+                    {item?.title} &nbsp;&nbsp;{' '}
+                    {item?.isCreatorOwner === false &&
+                      item?.isForSale === 'false' && (
+                        <img src={soldIcon} width='40px' />
+                      )}
+                  </h5>
                   <p>Description: {item?.description}</p>
                   <p>
                     {/* <b>Category: </b>
@@ -74,7 +80,7 @@ const NFTDetail = () => {
                     &nbsp;&nbsp;*/}
                     <b>Beneficiary: </b>
                     <VINftsTooltip
-                      title={`Click to see all NFTs for "${item?.beneficiaryName}" beneficiary`}
+                      title={`Click to see all NFTs for '${item?.beneficiaryName}' beneficiary`}
                     >
                       <Link
                         to={`./BeneficiaryNFTs?beneficiary=${item?.beneficiaryName}`}
@@ -127,8 +133,13 @@ const NFTDetail = () => {
                     {item?.collectionName}
                   </p>
                   <p className='d-flex align-content-center align-items-center'>
-                    <b>Price: </b>
-                    {item?.price} {item?.currency} &nbsp;&nbsp;
+                    {item?.isCreatorOwner !== false &&
+                      item?.isForSale !== 'false' && (
+                        <>
+                          <b>Price: </b>
+                          {item?.price} {item?.currency} &nbsp;&nbsp;
+                        </>
+                      )}
                     <IconImage nft={item} /> &nbsp;&nbsp;{' '}
                     {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
                       <NFTTwitterShare item={item} />
