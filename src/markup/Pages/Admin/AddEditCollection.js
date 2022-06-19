@@ -97,15 +97,15 @@ const AddCollection = () => {
   return (
     <>
       <Layout>
-        <div className="page-content bg-white">
+        <div className='page-content bg-white'>
           {/* <!-- inner page banner --> */}
           <div
-            className="dlab-bnr-inr overlay-primary bg-pt"
+            className='dlab-bnr-inr overlay-primary bg-pt'
             style={{ backgroundImage: 'url(' + bnr1 + ')' }}
           >
             <PageTitle
-              motherMenu={`${collectionId != '0' ? 'Edit' : 'Add'} Collection`}
-              activeMenu={`${collectionId != '0' ? 'Edit' : 'Add'} Collection`}
+              motherMenu={`${collectionId !== '0' ? 'Edit' : 'Add'} Collection`}
+              activeMenu={`${collectionId !== '0' ? 'Edit' : 'Add'} Collection`}
             />
           </div>
           {/* <!-- inner page banner END --> */}
@@ -113,21 +113,21 @@ const AddCollection = () => {
           {!isLoggedIn ? (
             <PromptLogin />
           ) : (
-            <div className="section-full content-inner shop-account">
+            <div className='section-full content-inner shop-account'>
               {/* <!-- Product --> */}
-              <div className="container">
+              <div className='container'>
                 <div>
-                  <div className=" m-auto m-b30">
+                  <div className=' m-auto m-b30'>
                     {/* {collectionId == '0' ||
                     (collectionId != '0' && selectedCollection) ? ( */}
                     <Container>
                       <Row>
                         <Col>
                           <input
-                            type="text"
-                            name="name"
-                            placeholder="Name"
-                            className="form-control"
+                            type='text'
+                            name='name'
+                            placeholder='Name'
+                            className='form-control'
                             value={collectionInputs.name}
                             onChange={(e) =>
                               setCollectionInputs({
@@ -139,10 +139,10 @@ const AddCollection = () => {
                         </Col>
                         <Col>
                           <input
-                            type="text"
-                            placeholder="URL"
-                            name="url"
-                            className="form-control"
+                            type='text'
+                            placeholder='URL'
+                            name='url'
+                            className='form-control'
                             value={collectionInputs.url}
                             onChange={(e) =>
                               setCollectionInputs({
@@ -153,13 +153,13 @@ const AddCollection = () => {
                           />
                         </Col>
                       </Row>
-                      <Row className="mt-4">
+                      <Row className='mt-4'>
                         <Col>
                           <textarea
                             rows={4}
-                            name="description"
-                            placeholder="Description"
-                            className="form-control"
+                            name='description'
+                            placeholder='Description'
+                            className='form-control'
                             value={collectionInputs.description}
                             onChange={(e) =>
                               setCollectionInputs({
@@ -170,22 +170,22 @@ const AddCollection = () => {
                           ></textarea>
                         </Col>
                       </Row>
-                      <Row className="mt-4">
+                      <Row className='mt-4'>
                         <Col>
                           {' '}
-                          <p className="form-submit">
+                          <p className='form-submit'>
                             <button
-                              className="btn btn-success"
-                              name="submit"
+                              className='btn btn-success'
+                              name='submit'
                               onClick={
-                                collectionId == '0'
+                                collectionId === '0'
                                   ? addNewCollection
                                   : editCollection
                               }
                             >
                               {isSaveClicked ? (
-                                <Spinner animation="border" variant="light" />
-                              ) : collectionId == '0' ? (
+                                <Spinner animation='border' variant='light' />
+                              ) : collectionId === '0' ? (
                                 'Add'
                               ) : (
                                 'Edit'
