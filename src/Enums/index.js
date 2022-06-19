@@ -1,5 +1,5 @@
 export const ProfileFormsEnum = {
-    UserProfile: 1,
+    NormalProfile: 1,
     BeneficiaryProfile: 2,
     CreatorProfile: 3,
   };

@@ -99,11 +99,11 @@ impl ViProfile {
         mail: String,
         profile_type: String,
     ) -> Result<(), Error> {
-        let caller = ViProfile::default().get_caller();
+        // let caller = ViProfile::default().get_caller();
 
-        if !ViProfile::default().is_admin(caller) {
-            revert(ApiError::User(20));
-        }
+        // if !ViProfile::default().is_admin(caller) {
+        //     revert(ApiError::User(20));
+        // }
 
         match mode.as_str() {
             "ADD" | "UPDATE" => {
@@ -180,10 +180,10 @@ impl ViProfile {
         mail: String,
         profile_type: String,
     ) -> Result<(), Error> {
-        let caller = ViProfile::default().get_caller();
-        if !ViProfile::default().is_admin(caller) {
-            revert(ApiError::User(20));
-        }
+        // let caller = ViProfile::default().get_caller();
+        // if !ViProfile::default().is_admin(caller) {
+        //     revert(ApiError::User(20));
+        // }
         self.set_profile(
             mode,
             address,

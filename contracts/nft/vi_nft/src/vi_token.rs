@@ -272,6 +272,7 @@ impl ViToken {
 
     fn set_collection(
         &mut self,
+        collection_id: U256,
         token_ids: Vec<TokenId>,
         mode: String,
         name: String,
@@ -281,24 +282,38 @@ impl ViToken {
     ) -> Result<(), Error> {
         match mode.as_str() {
             "ADD" | "UPDATE" => {
-                let new_collection_count = collection_control::total_collections()
-                    .checked_add(U256::one())
-                    .unwrap();
-                let mut collection = CollectionControl::get_collection(self, new_collection_count)
-                    .unwrap_or_default();
+                let cloned_mode = mode.clone();
+                let mut collection: BTreeMap<String, String> = BTreeMap::new();
+                let mut new_collection_count = U256::zero();
+
+                if cloned_mode == "UPDATE" {
+                    collection =
+                        CollectionControl::get_collection(self, collection_id).unwrap_or_default();
+                    collection.insert(format!("id: "), collection_id.to_string());
+                } else if cloned_mode == "ADD" {
+                    new_collection_count = collection_control::total_collections()
+                        .checked_add(U256::one())
+                        .unwrap();
+                    collection = CollectionControl::get_collection(self, new_collection_count)
+                        .unwrap_or_default();
+                    collection.insert(format!("id: "), new_collection_count.to_string());
+                }
 
                 collection.insert(
                     format!("token_ids: "),
                     token_ids.iter().map(ToString::to_string).collect(),
                 );
-                collection.insert(format!("id: "), new_collection_count.to_string());
                 collection.insert(format!("name: "), name);
                 collection.insert(format!("description: "), description);
                 collection.insert(format!("url: "), url);
                 collection.insert(format!("creator: "), creator);
 
-                CollectionControl::add_collection(self, new_collection_count, collection);
-                collection_control::set_total_collections(new_collection_count);
+                if cloned_mode == "ADD" {
+                    CollectionControl::add_collection(self, new_collection_count, collection);
+                    collection_control::set_total_collections(new_collection_count);
+                } else if cloned_mode == "UPDATE" {
+                    CollectionControl::add_collection(self, collection_id, collection);
+                }
             }
             _ => {
                 return Err(Error::WrongArguments);
@@ -344,6 +359,7 @@ impl ViToken {
 
             mapped_meta.insert(format!("collection"), collection_id.to_string());
             self.set_collection(
+                U256::zero(),
                 vec![U256::zero()],
                 "ADD".to_string(),
                 collection_name,
@@ -520,6 +536,7 @@ impl ViToken {
 
     fn create_collection(
         &mut self,
+        collection_id: U256,
         token_ids: Vec<TokenId>,
         mode: String,
         name: String,
@@ -527,8 +544,16 @@ impl ViToken {
         creator: String,
         url: String,
     ) -> Result<(), Error> {
-        self.set_collection(token_ids, mode, name, description, creator, url)
-            .unwrap_or_revert();
+        self.set_collection(
+            collection_id,
+            token_ids,
+            mode,
+            name,
+            description,
+            creator,
+            url,
+        )
+        .unwrap_or_revert();
         Ok(())
     }
 }
@@ -697,6 +722,7 @@ fn create_campaign() {
 
 #[no_mangle]
 fn add_collection() {
+    let collection_id = runtime::get_named_arg::<U256>("collection_id");
     let token_ids = runtime::get_named_arg::<Vec<TokenId>>("token_ids");
     let mode = runtime::get_named_arg::<String>("mode");
     let name = runtime::get_named_arg::<String>("name");
@@ -705,7 +731,15 @@ fn add_collection() {
     let url = runtime::get_named_arg::<String>("url");
 
     ViToken::default()
-        .create_collection(token_ids, mode, name, description, creator, url)
+        .create_collection(
+            collection_id,
+            token_ids,
+            mode,
+            name,
+            description,
+            creator,
+            url,
+        )
         .unwrap_or_revert();
 }
 
@@ -1095,6 +1129,7 @@ fn get_entry_points() -> EntryPoints {
     entry_points.add_entry_point(EntryPoint::new(
         "add_collection",
         vec![
+            Parameter::new("collection_id", U256::cl_type()),
             Parameter::new("token_ids", CLType::List(Box::new(TokenId::cl_type()))),
             Parameter::new("mode", String::cl_type()),
             Parameter::new("name", String::cl_type()),
