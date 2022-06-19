@@ -29,7 +29,7 @@ const Profile = () => {
       const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
       console.log(userProfiles);
       if (userProfiles) {
-        if (userProfiles.err == 'Address Not Found') {
+        if (userProfiles.err === 'Address Not Found') {
           setNoProfilesForThisUser(true);
         } else {
           let list = Object.values(userProfiles)[0];
@@ -50,24 +50,24 @@ const Profile = () => {
 
   return (
     <Layout>
-      <div className="page-content bg-white">
+      <div className='page-content bg-white'>
         {/*  banner  */}
         <div
-          className="dlab-bnr-inr dlab-bnr-inr-sm overlay-primary bg-pt"
+          className='dlab-bnr-inr dlab-bnr-inr-sm overlay-primary bg-pt'
           style={{ backgroundImage: 'url(' + bnr1 + ')' }}
         >
-          <div className="container">
-            <div className="dlab-bnr-inr-entry">
-              <h1 className="text-white d-flex align-items-center">
-                <span className="mr-1">Profile</span>
+          <div className='container'>
+            <div className='dlab-bnr-inr-entry'>
+              <h1 className='text-white d-flex align-items-center'>
+                <span className='mr-1'>Profile</span>
               </h1>
 
-              <div className="breadcrumb-row">
-                <ul className="list-inline">
+              <div className='breadcrumb-row'>
+                <ul className='list-inline'>
                   <li>
                     <Link to={'#'}>Home</Link>
                   </li>
-                  <li className="ml-1">Profile</li>
+                  <li className='ml-1'>Profile</li>
                 </ul>
               </div>
             </div>
@@ -77,12 +77,12 @@ const Profile = () => {
           <PromptLogin />
         ) : (
           <>
-            <div className="container-fluid mt-5">
-              <div className="dlab-tabs choseus-tabs">
+            <div className='container-fluid mt-5'>
+              <div className='dlab-tabs choseus-tabs'>
                 <ul
-                  className="nav row justify-content-center"
-                  id="myTab"
-                  role="tablist"
+                  className='nav row justify-content-center'
+                  id='myTab'
+                  role='tablist'
                 >
                   <li>
                     <Link
@@ -92,7 +92,7 @@ const Profile = () => {
                         toggle('1');
                       }}
                     >
-                      <span className="title-head">User Profile</span>
+                      <span className='title-head'>User Profile</span>
                     </Link>
                   </li>
                   <li>
@@ -103,7 +103,7 @@ const Profile = () => {
                         toggle('2');
                       }}
                     >
-                      <span className="title-head">Creator Profile</span>
+                      <span className='title-head'>Creator Profile</span>
                     </Link>
                   </li>
                   <li>
@@ -114,17 +114,17 @@ const Profile = () => {
                         toggle('3');
                       }}
                     >
-                      <span className="title-head">Beneficiary Profile</span>
+                      <span className='title-head'>Beneficiary Profile</span>
                     </Link>
                   </li>
                 </ul>
               </div>
             </div>
-            <div className="container">
-              <div className="tab-content chosesus-content">
-                <div id="cost" className="tab-pane active py-5">
+            <div className='container'>
+              <div className='tab-content chosesus-content'>
+                <div id='cost' className='tab-pane active py-5'>
                   <TabContent activeTab={activeTab}>
-                    <TabPane tabId="1">
+                    <TabPane tabId='1'>
                       {(normalProfile || noProfilesForThisUser) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.NormalProfile}
@@ -139,7 +139,7 @@ const Profile = () => {
                         />
                       )}
                     </TabPane>
-                    <TabPane tabId="2">
+                    <TabPane tabId='2'>
                       {(creatorProfile || noProfilesForThisUser) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.CreatorProfile}
@@ -154,7 +154,7 @@ const Profile = () => {
                         />
                       )}
                     </TabPane>
-                    <TabPane tabId="3">
+                    <TabPane tabId='3'>
                       {(beneficiaryProfile || noProfilesForThisUser) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.BeneficiaryProfile}

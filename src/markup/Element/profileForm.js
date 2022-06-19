@@ -11,35 +11,37 @@ import { useAuth } from '../../contexts/AuthContext';
 import { getDeployDetails } from '../../api/universal';
 import { uploadImg } from '../../api/imageCDN';
 
-const ProfileForm = ({ formName, isProfileExist, formData}) => {
+const ProfileForm = ({ formName, isProfileExist, formData }) => {
   const { entityInfo, refreshAuth } = useAuth();
   //setting initial values of controls
   const [state, setState] = useState({
     inputs: {
-      userName: formData!={}?formData.username:'',
-      shortTagLine: formData!={}?formData.tagline:'',
-      firstName: formData!={}?formData.firstName:'',
-      lastName: formData!={}?formData.lastName:'',
-      fullBio: formData!={}?formData.bio:'',
-      externalSiteLink: formData!={}?formData.externalLink:'',
-      phone: formData!={}?formData.phone:'',
-      twitter: formData!={}?formData.twitter:'',
-      instagram: formData!={}?formData.instagram:'',
-      facebook: formData!={}?formData.facebook:'',
-      medium: formData!={}?formData.medium:'',
-      email: formData!={}?formData.mail:'',
-      telegram: formData!={}?formData.telegram:'',
+      userName: formData !== {} ? formData.username : '',
+      shortTagLine: formData !== {} ? formData.tagline : '',
+      firstName: formData !== {} ? formData.firstName : '',
+      lastName: formData !== {} ? formData.lastName : '',
+      fullBio: formData !== {} ? formData.bio : '',
+      externalSiteLink: formData !== {} ? formData.externalLink : '',
+      phone: formData !== {} ? formData.phone : '',
+      twitter: formData !== {} ? formData.twitter : '',
+      instagram: formData !== {} ? formData.instagram : '',
+      facebook: formData !== {} ? formData.facebook : '',
+      medium: formData !== {} ? formData.medium : '',
+      email: formData !== {} ? formData.mail : '',
+      telegram: formData !== {} ? formData.telegram : '',
       isProfileImageURL: '',
       isNFTImageURL: '',
-      address:formData!={}?formData.address:''
+      address: formData !== {} ? formData.address : '',
     },
   });
 
-
-  const [uploadedProfileImageURL, setUploadedProfileImage] =
-    React.useState(formData!={}?formData.imgUrl:null);
+  const [uploadedProfileImageURL, setUploadedProfileImage] = React.useState(
+    formData !== {} ? formData.imgUrl : null
+  );
   const [uploadedProfileFile, setUploadedProfileFile] = React.useState(null);
-  const [uploadedNFTImageURL, setUploadedNFTImage] = React.useState(formData!={}?formData.nftUrl:null);
+  const [uploadedNFTImageURL, setUploadedNFTImage] = React.useState(
+    formData !== {} ? formData.nftUrl : null
+  );
   const [uploadedNFTFile, setUploadedNFTFile] = React.useState(null);
   const [isSaveButtonClicked, setIsSaveButtonClicked] = React.useState(false);
   const [isOndropProfileClicked, setIsOndropProfileClicked] = useState(false);
@@ -70,9 +72,7 @@ const ProfileForm = ({ formName, isProfileExist, formData}) => {
       isProfile
         ? setUploadedProfileFile(picture[0])
         : setUploadedNFTFile(picture[0]);
-        isProfile
-        ? setIsOndropProfileClicked(true)
-        : setIsOndropNFTClicked(true)
+      isProfile ? setIsOndropProfileClicked(true) : setIsOndropNFTClicked(true);
     } else {
       isProfile ? setUploadedProfileImage(null) : setUploadedNFTImage(null);
       isProfile ? setUploadedProfileFile(null) : setUploadedNFTFile(null);
@@ -149,7 +149,7 @@ const ProfileForm = ({ formName, isProfileExist, formData}) => {
 
     if (entityInfo.publicKey) {
       let saveDeployHash;
-       console.log(formData);
+      console.log(formData);
       try {
         saveDeployHash = await profileClient.addUpdateProfile(
           CLPublicKey.fromHex(entityInfo.publicKey),
@@ -193,9 +193,9 @@ const ProfileForm = ({ formName, isProfileExist, formData}) => {
         VIToast.success('Profile Saved successfully');
         //NOTE: every channel has a special keys and tokens sorted on .env file
         setTimeout(() => {
-         setIsSaveButtonClicked(false);
-        window.location.reload();
-       }, 50); 
+          setIsSaveButtonClicked(false);
+          window.location.reload();
+        }, 50);
       } catch (err) {
         console.log(err);
         //   setErrStage(MintingStages.TX_PENDING);
@@ -389,10 +389,10 @@ const ProfileForm = ({ formName, isProfileExist, formData}) => {
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
                   defaultImages={[
                     !isOndropProfileClicked
-                      ? formData!=={}&&formData.imgUrl
+                      ? formData !== {} && formData.imgUrl
                       : uploadedProfileImageURL
                       ? uploadedProfileImageURL
-                      : "",
+                      : '',
                   ]}
                 />
               )}
@@ -444,10 +444,10 @@ const ProfileForm = ({ formName, isProfileExist, formData}) => {
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
                   defaultImages={[
                     !isOndropNFTClicked
-                      ? formData!=={}&&formData.nftUrl
+                      ? formData !== {} && formData.nftUrl
                       : uploadedNFTImageURL
                       ? uploadedNFTImageURL
-                      : "",
+                      : '',
                   ]}
                 />
               )}
