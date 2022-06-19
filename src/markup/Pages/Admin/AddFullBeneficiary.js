@@ -81,6 +81,8 @@ const AddFullBeneficiary = () => {
                     <Container>
                       <ProfileForm
                         formName={ProfileFormsEnum.BeneficiaryProfile}
+                        isProfileExist={false}
+                        formData={ {} }
                       />
                     </Container>
                   </div>
