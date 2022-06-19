@@ -6,6 +6,8 @@ import {
   CLValueBuilder,
 } from 'casper-js-sdk';
 
+import { signDeploy } from '../utils/signer';
+import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import {
   CONNECTION,
   PROFILE_CONTRACT_HASH,
@@ -43,7 +45,14 @@ class ProfileClient {
   }
 
   public async profilesList() {
-    return this.contractClient.queryContractData(['profiles_addresses']);
+    const addresses: any = await this.contractClient.queryContractData([
+      'profiles_addresses',
+    ]);
+
+    const mappedAddresses = addresses.map((address: any) =>
+      Buffer.from(addresses[0].data.value()).toString('hex')
+    );
+    return mappedAddresses;
   }
 
   public async getProfile(address: string) {
@@ -58,28 +67,43 @@ class ProfileClient {
       const jsMap: any = new Map();
 
       for (const [innerKey, value] of maybeValue) {
-        jsMap.set(innerKey, value);
+        jsMap.set(innerKey.data, value.data);
       }
       let mapObj = Object.fromEntries(jsMap);
 
-      const isNormalProfile = Object.keys(mapObj).join('-').includes('normal');
-      const isBeneficiaryProfile = Object.keys(mapObj).includes('beneficiary');
-      const isCreatorProfile = Object.keys(mapObj).includes('creator');
+      // const isNormalProfile = Object.keys(mapObj).join('-').includes('normal');
+      // const isBeneficiaryProfile = Object.keys(mapObj).includes('beneficiary');
+      // const isCreatorProfile = Object.keys(mapObj).includes('creator');
 
       const filteredNormalAccount: any =
-        isNormalProfile &&
+        // isNormalProfile &&
         Object.fromEntries(
-          Object.entries(mapObj).filter(([key]) => key.includes('normal'))
+          Object.entries(mapObj)
+            .filter(([key]) => key.includes('normal'))
+            ?.map((profileKey: any) => [
+              profileKey[0].split('_').pop(),
+              profileKey[1],
+            ])
         );
       const filteredBeneficiaryAccount: any =
-        isBeneficiaryProfile &&
+        // isBeneficiaryProfile &&
         Object.fromEntries(
-          Object.entries(mapObj).filter(([key]) => key.includes('beneficiary'))
+          Object.entries(mapObj)
+            .filter(([key]) => key.includes('beneficiary'))
+            ?.map((profileKey: any) => [
+              profileKey[0].split('_').pop(),
+              profileKey[1],
+            ])
         );
       const filteredCreatorAccount: any =
-        isCreatorProfile &&
+        // isCreatorProfile &&
         Object.fromEntries(
-          Object.entries(mapObj).filter(([key]) => key.includes('creator'))
+          Object.entries(mapObj)
+            .filter(([key]) => key.includes('creator'))
+            ?.map((profileKey: any) => [
+              profileKey[0].split('_').pop(),
+              profileKey[1],
+            ])
         );
 
       return {
@@ -115,7 +139,6 @@ class ProfileClient {
     telegram: string,
     mail: string,
     profileType: string,
-    paymentAmount: string,
     deploySender: CLPublicKey,
     mode?: string
   ) {
@@ -140,13 +163,22 @@ class ProfileClient {
       profileType: CLValueBuilder.string(profileType),
     });
 
-    return this.contractClient.callEntrypoint(
+    const profileDeploy = this.contractClient.callEntrypoint(
       'add_profile',
       runtimeArgs,
       deploySender,
       this.networkName,
-      paymentAmount
+      PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT
     );
+
+    const signedProfileDeploy = await signDeploy(profileDeploy, deploySender);
+    console.log('Signed Profile deploy:', signedProfileDeploy);
+
+    const profileDeployHash = await signedProfileDeploy.send(
+      CONNECTION.NODE_ADDRESS
+    );
+    console.log('Deploy hash', profileDeployHash);
+    return profileDeployHash;
   }
 
   public async getProfilesList() {
