@@ -3,33 +3,24 @@ import { config } from 'dotenv';
 import { Keys, CLPublicKey } from 'casper-js-sdk';
 import { resolve } from 'path';
 
-import { cep47 } from './cep47';
+import { cep47 } from '../src/lib/cep47';
 
-import {
-  parseTokenMeta,
-  getDeploy,
-  getAccountInfo,
-  getAccountNamedKeyValue,
-} from './utils';
-
+import { getDeploy, getAccountInfo, getAccountNamedKeyValue } from './utils';
 config({ path: '.env' });
 
 const {
   NODE_ADDRESS,
   ADMIN,
-  WASM_PATH,
+  WASM_PROFILE_PATH,
   CASPER_PRIVATE_KEY,
-  TOKEN_NAME,
-  CONTRACT_NAME,
-  TOKEN_SYMBOL,
+  CONTRACT_PROFILE_NAME,
   INSTALL_PAYMENT_AMOUNT,
 } = process.env;
+console.log(ADMIN);
 
 export const getBinary = (pathToBinary: string) => {
   return new Uint8Array(fs.readFileSync(pathToBinary, null).buffer);
 };
-
-const TOKEN_META = new Map(parseTokenMeta(process.env.TOKEN_META!));
 
 const privateKey = Keys.Ed25519.parsePrivateKey(
   Keys.Ed25519.readBase64WithPEM(CASPER_PRIVATE_KEY as string)
@@ -38,14 +29,11 @@ const privateKey = Keys.Ed25519.parsePrivateKey(
 const publicKey: any = Keys.Ed25519.privateToPublicKey(privateKey);
 const KEYS = Keys.Ed25519.parseKeyPair(publicKey, privateKey);
 
-const installContract = async () => {
-  const installDeployHash = await cep47.install(
-    getBinary(resolve(WASM_PATH as string)!),
+const installProfileContract = async () => {
+  const installDeployHash = await cep47.installProfile(
+    getBinary(resolve(WASM_PROFILE_PATH as string)!),
     {
-      name: TOKEN_NAME!,
-      contractName: CONTRACT_NAME!,
-      symbol: TOKEN_SYMBOL!,
-      meta: TOKEN_META,
+      contractName: CONTRACT_PROFILE_NAME!,
       admin: CLPublicKey.fromHex(ADMIN!),
     },
     INSTALL_PAYMENT_AMOUNT!,
@@ -68,10 +56,10 @@ const installContract = async () => {
 
   const contractHash = await getAccountNamedKeyValue(
     accountInfo,
-    `${CONTRACT_NAME!}_contract_hash`
+    `${CONTRACT_PROFILE_NAME!}_contract_hash`
   );
 
   console.log(`... Contract Hash: ${contractHash}`);
 };
 
-installContract();
+installProfileContract();

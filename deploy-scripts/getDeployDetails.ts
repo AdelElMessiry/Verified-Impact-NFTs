@@ -5,33 +5,20 @@ import { getAccountInfo, getAccountNamedKeyValue } from './utils';
 
 config({ path: '.env' });
 
-const {
-  NODE_ADDRESS,
-  RPC_API,
-  CONTRACT_NAME,
-  MASTER_KEY_PAIR_PATH,
-  USER_KEY_PAIR_PATH,
-} = process.env;
+const { RPC_API, CONTRACT_NAME, CASPER_PRIVATE_KEY } = process.env;
 
-const KEYS = Keys.Ed25519.parseKeyFiles(
-  `${MASTER_KEY_PAIR_PATH}/public_key.pem`,
-  `${MASTER_KEY_PAIR_PATH}/secret_key.pem`
+const privateKey = Keys.Ed25519.parsePrivateKey(
+  Keys.Ed25519.readBase64WithPEM(CASPER_PRIVATE_KEY as string)
 );
 
-const USER_KEYS = Keys.Ed25519.parseKeyFiles(
-  `${USER_KEY_PAIR_PATH}/public_key.pem`,
-  `${USER_KEY_PAIR_PATH}/secret_key.pem`
-);
+const publicKey: any = Keys.Ed25519.privateToPublicKey(privateKey);
 
 console.log('User key:');
-console.log('Pub key to hex: ', USER_KEYS.publicKey.toHex());
-console.log(
-  'Pub key to acc hash string: ',
-  USER_KEYS.publicKey.toAccountHashStr()
-);
+console.log('Pub key to hex: ', publicKey.toHex());
+console.log('Pub key to acc hash string: ', publicKey.toAccountHashStr());
 
 const fetchDetails = async () => {
-  let accountInfo = await getAccountInfo(RPC_API!, KEYS.publicKey);
+  let accountInfo = await getAccountInfo(RPC_API!, publicKey);
 
   console.log(`... Account Info: `);
   console.log(JSON.stringify(accountInfo, null, 2));

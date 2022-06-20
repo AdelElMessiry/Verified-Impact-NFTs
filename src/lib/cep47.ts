@@ -38,6 +38,10 @@ export interface CEP47InstallArgs {
   meta: Map<string, string>;
   admin: CLKeyParameters;
 }
+export interface ProfileInstallArgs {
+  contractName: string;
+  admin: CLKeyParameters;
+}
 
 export enum CEP47Events {
   MintOne = 'cep47_mint_one',
@@ -133,6 +137,28 @@ class CEP47Client {
       symbol: CLValueBuilder.string(args.symbol),
       admin: CLValueBuilder.key(args.admin),
       meta: toCLMap(args.meta),
+    });
+
+    return this.contractClient.install(
+      wasm,
+      runtimeArgs,
+      paymentAmount,
+      deploySender,
+      this.networkName,
+      keys || []
+    );
+  }
+
+  public installProfile(
+    wasm: Uint8Array,
+    args: ProfileInstallArgs,
+    paymentAmount: string,
+    deploySender: CLPublicKey,
+    keys?: Keys.AsymmetricKey[]
+  ) {
+    const runtimeArgs = RuntimeArgs.fromMap({
+      contract_name: CLValueBuilder.string(args.contractName),
+      admin: CLValueBuilder.key(args.admin),
     });
 
     return this.contractClient.install(
