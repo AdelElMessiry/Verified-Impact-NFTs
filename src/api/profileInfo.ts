@@ -55,11 +55,13 @@ class ProfileClient {
     return mappedAddresses;
   }
 
-  public async getProfile(address: string) {
+  public async getProfile(address: string, isAccountHash?: Boolean) {
     try {
       const result = await this.contractClient.queryContractDictionary(
         'profiles_list',
-        CLPublicKey.fromHex(address).toAccountHashStr().slice(13)
+        isAccountHash
+          ? address
+          : CLPublicKey.fromHex(address).toAccountHashStr().slice(13)
       );
 
       const maybeValue = result.value().unwrap().value();
@@ -186,8 +188,10 @@ class ProfileClient {
 
     const mappedProfiles: any = [];
     for (const address of addresses) {
-      console.log(address);
-      const profile = await this.getProfile(address);
+      const profile: any = await this.getProfile(address, true);
+      profile[address].normal.address = profile[address].normal.address
+        .slice(13)
+        .replace(')', '');
       mappedProfiles.push(profile);
     }
 
