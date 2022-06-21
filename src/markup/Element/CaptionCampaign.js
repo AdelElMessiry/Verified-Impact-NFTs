@@ -25,7 +25,7 @@ export const CaptionCampaign = (data, IconImage) => (
         title={`Click to see all NFTs for "${data.beneficiaryName}" beneficiary`}
       >
         <Link
-          to={`./BeneficiaryNFTs?beneficiary=${data.beneficiaryName}`}
+          to={`./BeneficiaryNFTs?beneficiary=${data.beneficiary}`}
           className='dez-page text-white'
         >
           {data.beneficiaryName}
@@ -41,14 +41,14 @@ export const CaptionCampaign = (data, IconImage) => (
       >
         {data.beneficiary ? (
           <Link
-            to={`./BeneficiaryNFTs?beneficiary=${data.beneficiaryName}&campaign=${data.campaignName}`}
+            to={`./BeneficiaryNFTs?beneficiary=${data.beneficiary}&campaign=${data.campaign}`}
             className='dez-page text-white'
           >
             {data.campaignName}
           </Link>
         ) : (
           <Link
-            to={`./CreatorNFTs?creator=${data.creatorName}&collection=${data.collectionName}`}
+            to={`./CreatorNFTs?creator=${data.creator}&collection=${data.collection}`}
             className='dez-page text-white'
           >
             {data.campaignName}
@@ -60,7 +60,7 @@ export const CaptionCampaign = (data, IconImage) => (
         title={`Click to see all NFTs created by "${data.creatorName}"`}
       >
         <Link
-          to={`./CreatorNFTs?creator=${data.creatorName}`}
+          to={`./CreatorNFTs?creator=${data.creator}`}
           className='dez-page text-white'
         >
           {data.creatorName}
@@ -72,7 +72,7 @@ export const CaptionCampaign = (data, IconImage) => (
 
       <b className='ml-4'>Collection: </b>
       <Link
-        to={`./CreatorNFTs?creator=${data.creatorName}&collection=${data.collectionName}`}
+        to={`./CreatorNFTs?creator=${data.creator}&collection=${data.collection}`}
         className='dez-page text-white'
       >
         {' '}

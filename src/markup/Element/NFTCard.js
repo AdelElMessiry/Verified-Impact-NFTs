@@ -136,7 +136,7 @@ const NFTCard = ({
                     title={`Click to see all NFTs for "${item.beneficiaryName}" beneficiary`}
                   >
                     <Link
-                      to={`./BeneficiaryNFTs?beneficiary=${item.beneficiaryName}`}
+                      to={`./BeneficiaryNFTs?beneficiary=${item.beneficiary}`}
                       className='dez-page text-white'
                     >
                       {item.beneficiaryName}
@@ -156,7 +156,7 @@ const NFTCard = ({
                   >
                     {item.beneficiary && (
                       <Link
-                        to={`./BeneficiaryNFTs?beneficiary=${item.beneficiaryName}&campaign=${item.campaignName}`}
+                        to={`./BeneficiaryNFTs?beneficiary=${item.beneficiary}&campaign=${item.campaign}`}
                         className='dez-page text-white'
                       >
                         {item.campaignName}
@@ -171,7 +171,7 @@ const NFTCard = ({
                   title={`Click to see all NFTs created by "${item.creatorName}"`}
                 >
                   <Link
-                    to={`./CreatorNFTs?creator=${item.creatorName}`}
+                    to={`./CreatorNFTs?creator=${item.creator}`}
                     className='dez-page text-white'
                   >
                     {item.creatorName}
@@ -184,7 +184,7 @@ const NFTCard = ({
               <p>
                 <b>Collection: </b>
                 <Link
-                  to={`./CreatorNFTs?creator=${item.creatorName}&collection=${item.collectionName}`}
+                  to={`./CreatorNFTs?creator=${item.creator}&collection=${item.collection}`}
                   className='dez-page text-white'
                 >
                   {item.collectionName}

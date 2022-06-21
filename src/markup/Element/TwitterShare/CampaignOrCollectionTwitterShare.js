@@ -16,10 +16,7 @@ const CampaignOrCollectionTwitterShare = ({
       url={
         url
           ? url
-          : `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary.replace(
-              / /g,
-              '%20'
-            )}&campaign=${campaign.replace(/ /g, '%20')}`
+          : `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${campaign}`
       }
       title={
         creator === ''
