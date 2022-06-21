@@ -284,25 +284,19 @@ const Dashboard = () => {
                   <div key={index} className='mb-5'>
                     <h4 className='text-success text-center  d-flex align-items-center justify-content-center'>
                       <Link
-                        to={`./BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName}&campaign=${NFts[0]?.campaignName}`}
+                        to={`./BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiary}&campaign=${NFts[0]?.campaign}`}
                         className='mr-1 text-success text-underline'
                       >
                         <QRCode
                           value={`${
                             window.location.origin
-                          }/#/BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName?.replace(
-                            / /g,
-                            '%20'
-                          )}&campaign=${NFts[0]?.campaignName?.replace(
-                            / /g,
-                            '%20'
-                          )}`}
+                          }/#/BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiary}&campaign=${NFts[0]?.campaign}`}
                           size={70}
                         />
                       </Link>
                       &nbsp;&nbsp;
                       <Link
-                        to={`./BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName}&campaign=${NFts[0]?.campaignName}`}
+                        to={`./BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiary}&campaign=${NFts[0]?.campaign}`}
                         className='mr-1 text-success text-underline'
                       >
                         Top NFTs from the {NFts[0]?.campaignName} Campaign,
@@ -319,13 +313,7 @@ const Dashboard = () => {
                       <CopyText
                         link={`${
                           window.location.origin
-                        }/#/BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName?.replace(
-                          / /g,
-                          '%20'
-                        )}&campaign=${NFts[0]?.campaignName?.replace(
-                          / /g,
-                          '%20'
-                        )}`}
+                        }/#/BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiary}&campaign=${NFts[0]?.campaign}`}
                       />
                     </h4>
                     <SimpleReactLightbox>
