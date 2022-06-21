@@ -22,6 +22,7 @@ export interface CEP47InstallArgs {
   symbol: string;
   meta: Map<string, string>;
   admin: CLKeyParameters;
+  profileContractHash: string;
 }
 export interface ProfileInstallArgs {
   contractName: string;
@@ -113,6 +114,7 @@ class CEP47Client {
       contract_name: CLValueBuilder.string(args.contractName),
       symbol: CLValueBuilder.string(args.symbol),
       admin: CLValueBuilder.key(args.admin),
+      profile_contract_hash: CLValueBuilder.string(args.profileContractHash),
       meta: toCLMap(args.meta),
     });
 

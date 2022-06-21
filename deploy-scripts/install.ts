@@ -23,6 +23,7 @@ const {
   CONTRACT_NAME,
   TOKEN_SYMBOL,
   INSTALL_PAYMENT_AMOUNT,
+  PROFILE_CONTRACT_HASH,
 } = process.env;
 
 export const getBinary = (pathToBinary: string) => {
@@ -47,6 +48,7 @@ const installContract = async () => {
       symbol: TOKEN_SYMBOL!,
       meta: TOKEN_META,
       admin: CLPublicKey.fromHex(ADMIN!),
+      profileContractHash: PROFILE_CONTRACT_HASH!,
     },
     INSTALL_PAYMENT_AMOUNT!,
     KEYS.publicKey,

@@ -19,7 +19,7 @@ use casper_contract::{
 };
 
 use cep47::{
-    contract_utils::{AdminControl, ContractContext, OnChainContractStorage},
+    contract_utils::{get_key, set_key, AdminControl, ContractContext, OnChainContractStorage},
     // data::Allowances,
     Error,
     Meta,
@@ -28,8 +28,9 @@ use cep47::{
 };
 
 use casper_types::{
-    runtime_args, ApiError, CLType, CLTyped, CLValue, ContractPackageHash, EntryPoint,
-    EntryPointAccess, EntryPointType, EntryPoints, Group, Key, Parameter, RuntimeArgs, URef, U256,
+    runtime_args, ApiError, CLType, CLTyped, CLValue, ContractHash, ContractPackageHash,
+    EntryPoint, EntryPointAccess, EntryPointType, EntryPoints, Group, Key, Parameter, RuntimeArgs,
+    URef, U256,
 };
 
 mod minters_control;
@@ -56,6 +57,7 @@ mod creator_control;
 use creator_control::CreatorControl;
 
 pub type Creator = BTreeMap<String, String>;
+const PROFILE_CONTRACT_HASH: &str = "profile_contract_hash";
 
 #[derive(Default)]
 struct ViToken(OnChainContractStorage);
@@ -187,6 +189,7 @@ impl ViToken {
         name: String,
         description: String,
         address: String,
+        is_approved: bool,
     ) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
 
@@ -208,7 +211,7 @@ impl ViToken {
                 beneficiary.insert(format!("name: "), name);
                 beneficiary.insert(format!("description: "), description);
                 beneficiary.insert(format!("address: "), address);
-                beneficiary.insert(format!("isApproved: "), "false".to_string());
+                beneficiary.insert(format!("isApproved: "), is_approved.to_string());
 
                 BeneficiaryControl::add_beneficiary(self, new_beneficiary_count, beneficiary);
                 beneficiaries_control::set_total_beneficiaries(new_beneficiary_count);
@@ -499,13 +502,14 @@ impl ViToken {
         name: String,
         description: String,
         address: String,
+        is_approved: bool,
     ) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
 
         if !ViToken::default().is_admin(caller) {
             revert(ApiError::User(20));
         }
-        self.set_beneficiary(mode, name, description, address)
+        self.set_beneficiary(mode, name, description, address, is_approved)
             .unwrap_or_revert();
         Ok(())
     }
@@ -556,6 +560,18 @@ impl ViToken {
         .unwrap_or_revert();
         Ok(())
     }
+
+    fn set_profile_hash(&mut self, hash: String) -> Result<(), Error> {
+        let caller = ViToken::default().get_caller();
+        let profile_contract_hash: ContractHash = ContractHash::from_formatted_str(&hash).unwrap();
+
+        if ViToken::default().is_admin(caller) {
+            set_key(PROFILE_CONTRACT_HASH, profile_contract_hash);
+        } else {
+            revert(ApiError::User(20));
+        }
+        Ok(())
+    }
 }
 
 #[no_mangle]
@@ -564,8 +580,12 @@ fn constructor() {
     let symbol = runtime::get_named_arg::<String>("symbol");
     let meta = runtime::get_named_arg::<Meta>("meta");
     let admin = runtime::get_named_arg::<Key>("admin");
+    let profile_contract_hash = runtime::get_named_arg::<String>("profile_contract_hash");
     ViToken::default().constructor(name, symbol, meta);
     ViToken::default().add_admin_without_checked(admin);
+    ViToken::default()
+        .set_profile_hash(profile_contract_hash)
+        .unwrap_or_revert();
 }
 
 #[no_mangle]
@@ -860,10 +880,55 @@ fn add_beneficiary() {
     let name = runtime::get_named_arg::<String>("name");
     let description = runtime::get_named_arg::<String>("description");
     let address = runtime::get_named_arg::<String>("address");
+    let address_hash: Key = Key::from_formatted_str(&address).unwrap();
+    let caller = ViToken::default().get_caller();
+    let profile_contract_hash = get_key(PROFILE_CONTRACT_HASH).unwrap_or_default();
+    let is_approved;
+
+    if ViToken::default().is_admin(caller) {
+        is_approved = true;
+    } else {
+        if caller == address_hash {
+            is_approved = false;
+        } else {
+            revert(ApiError::User(20));
+        }
+    }
 
     ViToken::default()
-        .create_beneficiary(mode, name, description, address)
+        .create_beneficiary(
+            mode.clone(),
+            name.clone(),
+            description.clone(),
+            address.clone(),
+            is_approved,
+        )
         .unwrap_or_revert();
+
+    runtime::call_contract::<()>(
+        profile_contract_hash,
+        "add_profile",
+        runtime_args! {
+            "mode" => mode.clone(),
+            "address" => Key::from_formatted_str(&address.clone()).unwrap(),
+            "username" => name.clone(),
+            "tagline" => "",
+            "img_url" => "",
+            "nft_url" => "",
+            "first_name" => "",
+            "last_name" => "",
+            "bio" => description.clone(),
+            "external_link" => "",
+            "phone" => "",
+            "twitter" => "",
+            "instagram" => "",
+            "facebook" => "",
+            "medium" => "",
+            "telegram" => "",
+            "mail" => "",
+            "profile_type" => "",
+        },
+    );
 }
 
 #[no_mangle]
@@ -902,12 +967,27 @@ fn revoke_admin() {
 }
 
 #[no_mangle]
+fn set_profile_hash() {
+    let profile_contract_string: String = runtime::get_named_arg(PROFILE_CONTRACT_HASH);
+    ViToken::default()
+        .set_profile_hash(profile_contract_string)
+        .unwrap_or_revert();
+}
+
+#[no_mangle]
+fn get_profile_hash() {
+    let ret: ContractHash = get_key(PROFILE_CONTRACT_HASH).unwrap_or_default();
+    runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
+}
+
+#[no_mangle]
 fn call() {
     // Read arguments for the constructor call.
     let name: String = runtime::get_named_arg("name");
     let symbol: String = runtime::get_named_arg("symbol");
     let meta: Meta = runtime::get_named_arg("meta");
     let admin: Key = runtime::get_named_arg("admin");
+    let profile_contract_hash: String = runtime::get_named_arg("profile_contract_hash");
     let contract_name: String = runtime::get_named_arg("contract_name");
 
     let (contract_hash, contract_version) = storage::new_contract(
@@ -926,7 +1006,8 @@ fn call() {
         "name" => name,
         "symbol" => symbol,
         "meta" => meta,
-        "admin" => admin
+        "admin" => admin,
+        "profile_contract_hash" => profile_contract_hash
     };
 
     let package_hash = ContractPackageHash::new(
@@ -981,6 +1062,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("symbol", String::cl_type()),
             Parameter::new("meta", Meta::cl_type()),
             Parameter::new("admin", Key::cl_type()),
+            Parameter::new("profile_contract_hash", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Groups(vec![Group::new("constructor")]),
@@ -990,6 +1072,13 @@ fn get_entry_points() -> EntryPoints {
         "name",
         vec![],
         String::cl_type(),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "get_profile_hash",
+        vec![],
+        ContractHash::cl_type(),
         EntryPointAccess::Public,
         EntryPointType::Contract,
     ));
@@ -1178,7 +1267,6 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("campaign", String::cl_type()),
             Parameter::new("creator", String::cl_type()),
             Parameter::new("creatorPercentage", String::cl_type()),
-            // Parameter::new("isCollectionExist", U256::cl_type()),
             Parameter::new("collection", U256::cl_type()),
             Parameter::new("collectionName", String::cl_type()),
             Parameter::new("beneficiary", String::cl_type()),
@@ -1281,16 +1369,13 @@ fn get_entry_points() -> EntryPoints {
         EntryPointAccess::Public,
         EntryPointType::Contract,
     ));
-    // entry_points.add_entry_point(EntryPoint::new(
-    //     "remove_beneficiary",
-    //     vec![
-    //         Parameter::new("index", U256::cl_type()),
-    //         Parameter::new("beneficiary", Key::cl_type()),
-    //     ],
-    //     <()>::cl_type(),
-    //     EntryPointAccess::Public,
-    //     EntryPointType::Contract,
-    // ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "set_profile_hash",
+        vec![Parameter::new(PROFILE_CONTRACT_HASH, String::cl_type())],
+        <()>::cl_type(),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
     entry_points.add_entry_point(EntryPoint::new(
         "grant_admin",
         vec![Parameter::new("admin", Key::cl_type())],
