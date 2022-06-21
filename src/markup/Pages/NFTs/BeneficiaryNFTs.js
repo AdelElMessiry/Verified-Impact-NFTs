@@ -33,46 +33,46 @@ const options = {
 const imagesLoadedOptions = { background: '.my-bg-image-el' };
 
 //handling filtration markup
-const TagLi = ({ name, handleSetTag, tagActive, type, beneficiary }) => {
+const TagLi = ({ item, handleSetTag, tagActive, type, beneficiary }) => {
   return (
     <VINftsTooltip
       title={`Click to see all NFTs under the "${
-        name.name 
+        item.name 
       }" ${
         type === 'creator'
-          ? name.name === 'All'
+          ? item.name === 'All'
             ? 'creators'
             : 'creator'
           : type === 'campaign'
-          ? name.name === 'All'
+          ? item.name === 'All'
             ? 'campaigns'
             : 'campaign'
-          : name.name === 'All'
+          : item.name === 'All'
           ? 'collections'
           : 'collection'
       } `}
     >
       <li
         className={` tag ${tagActive ? 'btn active' : 'btn'}`}
-        onClick={() => handleSetTag(name)}
+        onClick={() => handleSetTag(item)}
       >
         <input type="radio" />
         <button className="site-button-secondry radius-sm">
           <span>
-            {name.name } {''}
+            {item.name } {''}
           </span>{' '}
         </button>
         &nbsp;&nbsp;
-        {( name.name) !== 'All' && (
+        {( item.name) !== 'All' && (
           <>
             {' '}
             <Link
               to={
                 type === 'creator'
-                  ? `./CreatorNFTs?creator=${name.id}`
+                  ? `./CreatorNFTs?creator=${item.id}`
                   : type === 'campaign'
-                  ? `./BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${name?.id}`
-                  : `./CreatorNFTs?creator=${name?.creator}&collection=${name?.id}`
+                  ? `./BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${item?.id}`
+                  : `./CreatorNFTs?creator=${item?.creator}&collection=${item?.id}`
               }
               className="mr-1 text-success text-underline"
             >
@@ -80,10 +80,10 @@ const TagLi = ({ name, handleSetTag, tagActive, type, beneficiary }) => {
                 className="mr-1"
                 value={
                   type === 'creator'
-                    ? `${window.location.origin}/#/CreatorNFTs?creator=${name.id}`
+                    ? `${window.location.origin}/#/CreatorNFTs?creator=${item.id}`
                     : type === 'campaign'
-                    ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${name.id}`
-                    : `${window.location.origin}/#/CreatorNFTs?creator=${name?.creator}&collection=${name?.id}`
+                    ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${item.id}`
+                    : `${window.location.origin}/#/CreatorNFTs?creator=${item?.creator}&collection=${item?.id}`
                 }
                 size={70}
               />
@@ -92,10 +92,10 @@ const TagLi = ({ name, handleSetTag, tagActive, type, beneficiary }) => {
             <CopyText
               link={
                 type === 'creator'
-                  ? `${window.location.origin}/#/CreatorNFTs?creator=${name?.id}`
+                  ? `${window.location.origin}/#/CreatorNFTs?creator=${item?.id}`
                   : type === 'campaign'
-                  ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${name.id}`
-                  : `${window.location.origin}/#/CreatorNFTs?creator=${name?.creator}&collection=${name?.id}`
+                  ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${item.id}`
+                  : `${window.location.origin}/#/CreatorNFTs?creator=${item?.creator}&collection=${item?.id}`
               }
             />
           </>
