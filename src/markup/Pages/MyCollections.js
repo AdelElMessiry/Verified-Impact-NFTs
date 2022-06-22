@@ -635,7 +635,7 @@ const MyCollections = () => {
                               value={`${
                                 window.location.origin
                               }/#/CreatorNFTs?creator=${NFts[0]?.creator}&collection=${NFts[0]?.collection}`}
-                              size={70}
+                              size={90}
                             />
                           </Link>
                           &nbsp;&nbsp;
