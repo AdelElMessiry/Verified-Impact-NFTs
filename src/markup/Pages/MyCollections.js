@@ -173,7 +173,7 @@ const MyCollections = () => {
           title={`Click to see all NFTs for "${nft.beneficiaryName}" beneficiary`}
         >
           <Link
-            to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiaryName}`}
+            to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary}`}
             className='dez-page text-white'
             onClick={() => {
               setOpenSlider(false);
@@ -192,7 +192,7 @@ const MyCollections = () => {
         >
           {nft.beneficiary ? (
             <Link
-              to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiaryName}&campaign=${nft.campaignName}`}
+              to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary}&campaign=${nft.campaign}`}
               className='dez-page text-white'
               onClick={() => {
                 setOpenSlider(false);
@@ -202,7 +202,7 @@ const MyCollections = () => {
             </Link>
           ) : (
             <Link
-              to={`./CreatorNFTs?creator=${nft.creatorName}&collection=${nft.collectionName}`}
+              to={`./CreatorNFTs?creator=${nft.creator}&collection=${nft.collection}`}
               className='dez-page text-white'
               onClick={() => {
                 setOpenSlider(false);
@@ -217,7 +217,7 @@ const MyCollections = () => {
           title={`Click to see all NFTs created by "${nft.creatorName}"`}
         >
           <Link
-            to={`./CreatorNFTs?creator=${nft.creatorName}`}
+            to={`./CreatorNFTs?creator=${nft.creator}`}
             className='dez-page text-white'
             onClick={() => {
               setOpenSlider(false);
@@ -232,7 +232,7 @@ const MyCollections = () => {
 
         <b className='ml-4'>Collection: </b>
         <Link
-          to={`./CreatorNFTs?creator=${nft.creatorName}&collection=${nft.collectionName}`}
+          to={`./CreatorNFTs?creator=${nft.creator}&collection=${nft.collection}`}
           className='dez-page text-white'
           onClick={() => {
             setOpenSlider(false);
@@ -628,31 +628,19 @@ const MyCollections = () => {
                           <Link
                             to={`${
                               window.location.origin
-                            }/#/CreatorNFTs?creator=${NFts[0]?.beneficiaryName?.replace(
-                              / /g,
-                              '%20'
-                            )}&collection=${NFts[0]?.collectionName?.replace(
-                              / /g,
-                              '%20'
-                            )}`}
+                            }/#/CreatorNFTs?creator=${NFts[0]?.creator}&collection=${NFts[0]?.collection}`}
                             className='mr-1 text-success text-underline'
                           >
                             <QRCode
                               value={`${
                                 window.location.origin
-                              }/#/CreatorNFTs?creator=${NFts[0]?.beneficiaryName?.replace(
-                                / /g,
-                                '%20'
-                              )}&collection=${NFts[0]?.collectionName?.replace(
-                                / /g,
-                                '%20'
-                              )}`}
+                              }/#/CreatorNFTs?creator=${NFts[0]?.creator}&collection=${NFts[0]?.collection}`}
                               size={70}
                             />
                           </Link>
                           &nbsp;&nbsp;
                           <Link
-                            to={`./BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiaryName}&campaign=${NFts[0]?.campaignName}`}
+                            to={`./CreatorNFTs?creator=${NFts[0]?.creator}&collection=${NFts[0]?.collection}`}
                             className='mr-1 text-success text-underline'
                           >
                             {NFts.length} NFTs from the{' '}
@@ -660,7 +648,7 @@ const MyCollections = () => {
                           </Link>
                           &nbsp;&nbsp;
                           <VINftsTooltip title={`Edit Collection`}>
-                            <Link to={`./add-collection?id=${collectionsName}`}>
+                            <Link to={`./add-collection?id=${NFts[0]?.collection}`}>
                               <img
                                 src={editIcon}
                                 className='img img-fluid'
@@ -677,13 +665,7 @@ const MyCollections = () => {
                               collection={NFts[0]?.collectionName}
                               url={`${
                                 window.location.origin
-                              }/#/CreatorNFTs?creator=${NFts[0]?.creatorName?.replace(
-                                / /g,
-                                '%20'
-                              )}&collection=${NFts[0]?.collectionName?.replace(
-                                / /g,
-                                '%20'
-                              )}`}
+                              }/#/CreatorNFTs?creator=${NFts[0]?.creator}&collection=${NFts[0]?.collection}`}
                               beneficiaryPercentage={
                                 NFts[0]?.beneficiaryPercentage
                               }
@@ -693,13 +675,7 @@ const MyCollections = () => {
                           <CopyText
                             link={`${
                               window.location.origin
-                            }/#/CreatorNFTs?creator=${NFts[0]?.beneficiaryName?.replace(
-                              / /g,
-                              '%20'
-                            )}&collection=${NFts[0]?.collectionName?.replace(
-                              / /g,
-                              '%20'
-                            )}`}
+                            }/#/CreatorNFTs?creator=${NFts[0]?.creator}&collection=${NFts[0]?.collection}`}
                           />
                         </h4>
                         <SimpleReactLightbox>

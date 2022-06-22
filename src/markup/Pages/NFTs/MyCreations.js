@@ -159,7 +159,7 @@ const MyCreations = () => {
           title={`Click to see all NFTs for "${nft.beneficiaryName}" beneficiary`}
         >
           <Link
-            to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiaryName}`}
+            to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary}`}
             className='dez-page text-white'
             onClick={() => {
               setOpenSlider(false);
@@ -178,7 +178,7 @@ const MyCreations = () => {
         >
           {nft.beneficiary ? (
             <Link
-              to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiaryName}&campaign=${nft.campaignName}`}
+              to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary}&campaign=${nft.campaign}`}
               className='dez-page text-white'
               onClick={() => {
                 setOpenSlider(false);
@@ -188,7 +188,7 @@ const MyCreations = () => {
             </Link>
           ) : (
             <Link
-              to={`./CreatorNFTs?creator=${nft.creatorName}&collection=${nft.collectionName}`}
+              to={`./CreatorNFTs?creator=${nft.creator}&collection=${nft.collection}`}
               className='dez-page text-white'
               onClick={() => {
                 setOpenSlider(false);
@@ -203,7 +203,7 @@ const MyCreations = () => {
           title={`Click to see all NFTs created by "${nft.creatorName}"`}
         >
           <Link
-            to={`./CreatorNFTs?creator=${nft.creatorName}`}
+            to={`./CreatorNFTs?creator=${nft.creator}`}
             className='dez-page text-white'
             onClick={() => {
               setOpenSlider(false);
@@ -218,7 +218,7 @@ const MyCreations = () => {
 
         <b className='ml-4'>Collection: </b>
         <Link
-          to={`./CreatorNFTs?creator=${nft.creatorName}&collection=${nft.collectionName}`}
+          to={`./CreatorNFTs?creator=${nft.creator}&collection=${nft.collection}`}
           className='dez-page text-white'
           onClick={() => {
             setOpenSlider(false);
