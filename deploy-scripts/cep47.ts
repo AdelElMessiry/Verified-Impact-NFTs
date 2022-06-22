@@ -13,7 +13,7 @@ import { config } from 'dotenv';
 
 config({ path: '.env' });
 
-const { NODE_ADDRESS, CHAIN_NAME } = process.env;
+const { NODE_ADDRESS, CHAIN_NAME, PROFILE_CONTRACT_HASH } = process.env;
 const { Contract, toCLMap } = Contracts;
 
 export interface CEP47InstallArgs {
@@ -103,12 +103,6 @@ class CEP47Client {
     deploySender: CLPublicKey,
     keys?: Keys.AsymmetricKey[]
   ) {
-    console.log(wasm);
-    console.log(args);
-    console.log(paymentAmount);
-    console.log(deploySender);
-    console.log(keys);
-
     const runtimeArgs = RuntimeArgs.fromMap({
       name: CLValueBuilder.string(args.name),
       contract_name: CLValueBuilder.string(args.contractName),
@@ -147,6 +141,39 @@ class CEP47Client {
       deploySender,
       this.networkName,
       keys || []
+    );
+  }
+
+  public setContractHash(contractHash: string, contractPackageHash?: string) {
+    this.contractClient.setContractHash(contractHash, contractPackageHash);
+    this.isContractIHashSetup = true;
+  }
+
+  public async addBeneficiary(
+    name: string,
+    description: string,
+    address: string,
+    paymentAmount: string,
+    deploySender: CLPublicKey,
+    keys?: Keys.AsymmetricKey[]
+  ) {
+    console.log(PROFILE_CONTRACT_HASH);
+
+    const runtimeArgs = RuntimeArgs.fromMap({
+      mode: CLValueBuilder.string('ADD'),
+      name: CLValueBuilder.string(name),
+      description: CLValueBuilder.string(description),
+      address: CLValueBuilder.string(address),
+      profile_contract_hash: CLValueBuilder.string(PROFILE_CONTRACT_HASH!),
+    });
+
+    return this.contractClient.callEntrypoint(
+      'add_beneficiary',
+      runtimeArgs,
+      deploySender,
+      this.networkName,
+      paymentAmount,
+      keys
     );
   }
 }

@@ -107,6 +107,13 @@ pub fn get_key<T: FromBytes + CLTyped>(name: &str) -> Option<T> {
     }
 }
 
+// pub fn get_dictionary_uref(key: &str) -> ContractHash {
+//     match runtime::get_key(key) {
+//         Some(uref_key) => uref_key.into_.unwrap_or_revert(),
+//         None => storage::new_dictionary(key).unwrap_or_revert(),
+//     }
+// }
+
 pub fn set_key<T: ToBytes + CLTyped>(name: &str, value: T) {
     match runtime::get_key(name) {
         Some(key) => {

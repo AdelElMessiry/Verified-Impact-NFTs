@@ -11,7 +11,7 @@
   "scripts": {
     "install-contract": "sh -ac 'cp ./.env.$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) .env; ts-node ./install.ts'",
     "install-profile": "sh -ac 'cp ./.env.$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) .env; ts-node ./install_profile.ts'",
-    "mint-nft1": "ts-node ./deployInitNFTs.ts",
+    "add-beneficiary": "sh -ac 'cp ./.env.$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) .env; ts-node ./deployAddBeneficiary.ts'",
     "view-contract": "ts-node ./getDeployDetails.ts"
   },
   "keywords": [],
