@@ -20,11 +20,7 @@ use casper_contract::{
 
 use cep47::{
     contract_utils::{get_key, set_key, AdminControl, ContractContext, OnChainContractStorage},
-    // data::Allowances,
-    Error,
-    Meta,
-    TokenId,
-    CEP47,
+    Error, Meta, TokenId, CEP47,
 };
 
 use casper_types::{
@@ -504,11 +500,11 @@ impl ViToken {
         address: String,
         is_approved: bool,
     ) -> Result<(), Error> {
-        let caller = ViToken::default().get_caller();
+        // let caller = ViToken::default().get_caller();
 
-        if !ViToken::default().is_admin(caller) {
-            revert(ApiError::User(20));
-        }
+        // if !ViToken::default().is_admin(caller) {
+        //     revert(ApiError::User(20));
+        // }
         self.set_beneficiary(mode, name, description, address, is_approved)
             .unwrap_or_revert();
         Ok(())
@@ -880,9 +876,13 @@ fn add_beneficiary() {
     let name = runtime::get_named_arg::<String>("name");
     let description = runtime::get_named_arg::<String>("description");
     let address = runtime::get_named_arg::<String>("address");
+    let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
+
     let address_hash: Key = Key::from_formatted_str(&address).unwrap();
     let caller = ViToken::default().get_caller();
-    let profile_contract_hash = get_key(PROFILE_CONTRACT_HASH).unwrap_or_default();
+    let profile_contract_hash: ContractHash =
+        ContractHash::from_formatted_str(&profile_contract_string).unwrap();
+
     let is_approved;
 
     if ViToken::default().is_admin(caller) {
@@ -910,7 +910,7 @@ fn add_beneficiary() {
         "add_profile",
         runtime_args! {
             "mode" => mode.clone(),
-            "address" => Key::from_formatted_str(&address.clone()).unwrap(),
+            "address" => address_hash.clone(),
             "username" => name.clone(),
             "tagline" => "",
             "img_url" => "",
@@ -988,6 +988,7 @@ fn call() {
     let meta: Meta = runtime::get_named_arg("meta");
     let admin: Key = runtime::get_named_arg("admin");
     let profile_contract_hash: String = runtime::get_named_arg("profile_contract_hash");
+
     let contract_name: String = runtime::get_named_arg("contract_name");
 
     let (contract_hash, contract_version) = storage::new_contract(
@@ -1354,6 +1355,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
             Parameter::new("address", String::cl_type()),
+            Parameter::new("profile_contract_hash", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
