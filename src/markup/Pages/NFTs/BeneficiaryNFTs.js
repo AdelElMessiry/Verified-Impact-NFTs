@@ -36,18 +36,16 @@ const imagesLoadedOptions = { background: '.my-bg-image-el' };
 const TagLi = ({ item, handleSetTag, tagActive, type, beneficiary }) => {
   return (
     <VINftsTooltip
-      title={`Click to see all NFTs under the "${
-        item.name 
-      }" ${
+      title={`Click to see all NFTs under the "${item?.name}" ${
         type === 'creator'
-          ? item.name === 'All'
+          ? item?.name === 'All'
             ? 'creators'
             : 'creator'
           : type === 'campaign'
-          ? item.name === 'All'
+          ? item?.name === 'All'
             ? 'campaigns'
             : 'campaign'
-          : item.name === 'All'
+          : item?.name === 'All'
           ? 'collections'
           : 'collection'
       } `}
@@ -59,17 +57,17 @@ const TagLi = ({ item, handleSetTag, tagActive, type, beneficiary }) => {
         <input type="radio" />
         <button className="site-button-secondry radius-sm">
           <span>
-            {item.name } {''}
+            {item?.name} {''}
           </span>{' '}
         </button>
         &nbsp;&nbsp;
-        {( item.name) !== 'All' && (
+        {item?.name !== 'All' && (
           <>
             {' '}
             <Link
               to={
                 type === 'creator'
-                  ? `./CreatorNFTs?creator=${item.id}`
+                  ? `./CreatorNFTs?creator=${item?.id}`
                   : type === 'campaign'
                   ? `./BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${item?.id}`
                   : `./CreatorNFTs?creator=${item?.creator}&collection=${item?.id}`
@@ -80,12 +78,12 @@ const TagLi = ({ item, handleSetTag, tagActive, type, beneficiary }) => {
                 className="mr-1"
                 value={
                   type === 'creator'
-                    ? `${window.location.origin}/#/CreatorNFTs?creator=${item.id}`
+                    ? `${window.location.origin}/#/CreatorNFTs?creator=${item?.id}`
                     : type === 'campaign'
-                    ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${item.id}`
+                    ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${item?.id}`
                     : `${window.location.origin}/#/CreatorNFTs?creator=${item?.creator}&collection=${item?.id}`
                 }
-                size={70}
+                size={90}
               />
             </Link>
             &nbsp;
@@ -94,7 +92,7 @@ const TagLi = ({ item, handleSetTag, tagActive, type, beneficiary }) => {
                 type === 'creator'
                   ? `${window.location.origin}/#/CreatorNFTs?creator=${item?.id}`
                   : type === 'campaign'
-                  ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${item.id}`
+                  ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${item?.id}`
                   : `${window.location.origin}/#/CreatorNFTs?creator=${item?.creator}&collection=${item?.id}`
               }
             />
@@ -112,7 +110,7 @@ const BeneficiaryNFTs = () => {
   const creator = queryParams.get('creator');
   const campaign = queryParams.get('campaign');
 
-  const { beneficiaries, nfts } = useNFTState();
+  const { beneficiaries, nfts, campaigns } = useNFTState();
   const [tagCollection, setTagCollection] = React.useState({
     name: 'All',
     id: '',
@@ -137,6 +135,7 @@ const BeneficiaryNFTs = () => {
   const [selectedNFT, setSelectedNFT] = React.useState();
   const [beneficiaryDescription, setBeneficiaryDescription] = React.useState();
   const [beneficiaryName, setBeneficiaryName] = React.useState();
+  const [campaignName, setCampaignName] = React.useState();
 
   const [allNFTs, setAllNFTs] = React.useState();
   const [filteredNFTs, setFilteredNFTs] = React.useState();
@@ -153,8 +152,19 @@ const BeneficiaryNFTs = () => {
   }, [beneficiary, beneficiaries]);
 
   React.useEffect(() => {
-    !beneficiaryDescription && getBeneficiaries();
-  }, [beneficiaryDescription, getBeneficiaries]);
+    (!beneficiaryDescription || beneficiary) && getBeneficiaries();
+  }, [beneficiaryDescription, getBeneficiaries, beneficiary]);
+
+  //getting Campaigns details
+  const getCampaigns = React.useCallback(async () => {
+    const setSelectedCampaign =
+      campaigns && campaign && campaigns.find(({ id }) => campaign === id);
+    setSelectedCampaign && setCampaignName(setSelectedCampaign.name);
+  }, [campaign, campaigns]);
+
+  React.useEffect(() => {
+    (!campaignName || campaign) && getCampaigns();
+  }, [campaignName, getCampaigns, campaign]);
 
   const filterCollectionByTag = React.useCallback(
     (tag, filteredNFTs) => {
@@ -347,7 +357,6 @@ const BeneficiaryNFTs = () => {
         name: 'All',
         id: '',
       });
-      debugger;
       setTagCollection({ name: 'All', id: '', creator: '' });
 
       const filteredCampaignsNFTs =
@@ -556,7 +565,7 @@ const BeneficiaryNFTs = () => {
         >
           <QRCode
             value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
-            size={80}
+            size={90}
           />
         </Link>
         &nbsp;
@@ -580,22 +589,22 @@ const BeneficiaryNFTs = () => {
               <h1 className='text-white d-flex align-items-center'>
                 <span className='mr-1'>
                   {' '}
-                  {campaign
-                    ? allNFTs&&allNFTs[0]?.campaignName
-                    : beneficiary
-                    ? beneficiaryName
-                    : allNFTs&&allNFTs[0]?.creatorName}
+                  {campaign ? campaignName : beneficiaryName}
                 </span>
                 {campaign && process.env.REACT_APP_SHOW_TWITTER != 'false' && (
                   <CampaignOrCollectionTwitterShare
-                    campaign={allNFTs&&allNFTs[0]?.campaignName}
-                    beneficiary={beneficiary ? beneficiaryName : allNFTs&&allNFTs[0]?.creatorName}
+                    campaign={campaignName}
+                    beneficiary={
+                      beneficiary
+                        ? beneficiaryName
+                        : allNFTs && allNFTs[0]?.creatorName
+                    }
                     beneficiaryPercentage={
                       allNFTs && allNFTs[0]?.beneficiaryPercentage
                     }
                     url={
                       beneficiary
-                        ? `${window.location.origin}/#/BenefeiciaryNFTs?beneficiary=${beneficiary}&campaign=${campaign}`
+                        ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${campaign}`
                         : `${window.location.origin}/#/CreatorNFTs?creator=${creator}&collection=${campaign}`
                     }
                   />
@@ -617,7 +626,7 @@ const BeneficiaryNFTs = () => {
                   <li className='ml-1'>
                     {beneficiary ? beneficiaryName : creator}
                   </li>
-                  {campaign && <li className='ml-1'>{allNFTs&&allNFTs[0]?.campaignName}</li>}
+                  {campaign && <li className='ml-1'>{campaignName}</li>}
                 </ul>
               </div>
             </div>
@@ -634,7 +643,7 @@ const BeneficiaryNFTs = () => {
                   creatorTags.map((singleTag, index) => (
                     <TagLi
                       key={index}
-                      name={singleTag}
+                      item={singleTag}
                       handleSetTag={getCreatorsBasedOnTag}
                       tagActive={
                         tagCreator.name === singleTag.name ? true : false
@@ -655,7 +664,7 @@ const BeneficiaryNFTs = () => {
                   campaignTags.map((singleTag, index) => (
                     <TagLi
                       key={index}
-                      name={singleTag}
+                      item={singleTag}
                       handleSetTag={getCampaignsBasedOnTag}
                       tagActive={
                         tagCampaign.name === singleTag.name ? true : false
@@ -675,7 +684,7 @@ const BeneficiaryNFTs = () => {
                 collectionTags.map((singleTag, index) => (
                   <TagLi
                     key={index}
-                    name={singleTag}
+                    item={singleTag}
                     handleSetTag={getCollectionsBasedOnTag}
                     tagActive={
                       tagCollection.name === singleTag.name ? true : false
