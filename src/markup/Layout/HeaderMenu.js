@@ -47,7 +47,7 @@ const HeaderMenu = () => {
             {beneficiariesList?.map((b, index) => (
               <li key={`#${index}`}>
                 <Link
-                  to={`./BeneficiaryNFTs?beneficiary=${b.name}`}
+                  to={`./BeneficiaryNFTs?beneficiary=${b.address}`}
                   className='dez-page'
                 >
                   {b.name} <i className='fa fa-angle-right'></i>
@@ -56,7 +56,7 @@ const HeaderMenu = () => {
                   {b.campaigns?.map((c, index) => (
                     <li key={index}>
                       <Link
-                        to={`./BeneficiaryNFTs?beneficiary=${b.name}&campaign=${c.name}`}
+                        to={`./BeneficiaryNFTs?beneficiary=${b.address}&campaign=${c.id}`}
                         className='dez-page'
                       >
                         {c.name}{' '}
@@ -76,7 +76,7 @@ const HeaderMenu = () => {
             {creatorsList?.map((c, index) => (
               <li key={`#${index}`}>
                 <Link
-                  to={`./CreatorNFTs?creator=${c.name}`}
+                  to={`./CreatorNFTs?creator=${c.address}`}
                   className='dez-page'
                 >
                   {c.name} <i className='fa fa-angle-right'></i>
@@ -85,7 +85,7 @@ const HeaderMenu = () => {
                   {c.collections?.map((col, index) => (
                     <li key={index}>
                       <Link
-                        to={`./CreatorNFTs?creator=${c.name}&collection=${col.name}`}
+                        to={`./CreatorNFTs?creator=${c.address}&collection=${col.id}`}
                         className='dez-page'
                       >
                         {col.name}{' '}
