@@ -3,13 +3,7 @@ import { config } from 'dotenv';
 import { Keys } from 'casper-js-sdk';
 import { CEP47Client } from 'casper-cep47-js-client';
 
-import {
-  parseTokenMeta,
-  sleep,
-  getDeploy,
-  getAccountInfo,
-  getAccountNamedKeyValue,
-} from './utils';
+import { getDeploy, getAccountInfo, getAccountNamedKeyValue } from './utils';
 
 config({ path: '.env' });
 
@@ -17,7 +11,7 @@ const {
   NODE_ADDRESS,
   CHAIN_NAME,
   CONTRACT_NAME,
-  USER_KEY_PAIR_PATH,
+  CASPER_PRIVATE_KEY,
   MINT_ONE_PAYMENT_AMOUNT,
 } = process.env;
 
@@ -25,10 +19,12 @@ export const getBinary = (pathToBinary: string) => {
   return new Uint8Array(fs.readFileSync(pathToBinary, null).buffer);
 };
 
-const KEYS = Keys.Ed25519.parseKeyFiles(
-  `${USER_KEY_PAIR_PATH}/public_key.pem`,
-  `${USER_KEY_PAIR_PATH}/secret_key.pem`
+const privateKey = Keys.Ed25519.parsePrivateKey(
+  Keys.Ed25519.readBase64WithPEM(CASPER_PRIVATE_KEY as string)
 );
+
+const publicKey: any = Keys.Ed25519.privateToPublicKey(privateKey);
+const KEYS = Keys.Ed25519.parseKeyPair(publicKey, privateKey);
 
 export class NFTReference {
   key: string;
@@ -60,7 +56,7 @@ async function deployFirstNFT() {
 
   console.log('... Minting 1st NFT \n');
   const metas = [new Map()];
-  nft1Info.references.forEach((ref) => metas[0].set(ref.key, ref.value));
+  nft1Info.references.forEach((ref: any) => metas[0].set(ref.key, ref.value));
   metas[0].set('title', nft1Info.title);
   metas[0].set('about', nft1Info.about);
   metas[0].set('url', nft1Info.url);
