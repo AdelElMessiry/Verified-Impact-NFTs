@@ -1,12 +1,17 @@
 #![no_main]
 #![no_std]
 #[macro_use]
+#[cfg(not(target_arch = "wasm32"))]
+compile_error!("target arch should be wasm32: compile with '--target wasm32-unknown-unknown'");
+
 extern crate alloc;
 
 use alloc::{
     boxed::Box,
     collections::{BTreeMap, BTreeSet},
+    format,
     string::{String, ToString},
+    vec,
     vec::Vec,
 };
 
@@ -25,8 +30,8 @@ use cep47::{
 
 use casper_types::{
     runtime_args, ApiError, CLType, CLTyped, CLValue, ContractHash, ContractPackageHash,
-    EntryPoint, EntryPointAccess, EntryPointType, EntryPoints, Group, Key, Parameter, RuntimeArgs,
-    URef, U256,
+    EntryPoint, EntryPointAccess, EntryPointType, EntryPoints, Group, HashAddr, Key, Parameter,
+    RuntimeArgs, URef, U256,
 };
 
 mod minters_control;
@@ -876,12 +881,17 @@ fn add_beneficiary() {
     let name = runtime::get_named_arg::<String>("name");
     let description = runtime::get_named_arg::<String>("description");
     let address = runtime::get_named_arg::<String>("address");
-    let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
+    // let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
+    // let profile_contract_hash: ContractHash =
+    //     ContractHash::from_formatted_str(&profile_contract_string).unwrap();
 
     let address_hash: Key = Key::from_formatted_str(&address).unwrap();
     let caller = ViToken::default().get_caller();
-    let profile_contract_hash: ContractHash =
-        ContractHash::from_formatted_str(&profile_contract_string).unwrap();
+
+    // WCSPR contract hash address passed as an argument to this contract
+    let profile_contract_key: Key = runtime::get_named_arg("profile_contract_hash_key");
+    let profile_contract_hash_add: HashAddr = profile_contract_key.into_hash().unwrap_or_revert();
+    let profile_contract_hash: ContractHash = ContractHash::new(profile_contract_hash_add);
 
     let is_approved;
 
@@ -905,30 +915,30 @@ fn add_beneficiary() {
         )
         .unwrap_or_revert();
 
-    runtime::call_contract::<()>(
+    runtime::call_contract(
         profile_contract_hash,
         "add_profile",
         runtime_args! {
             "mode" => mode.clone(),
             "address" => address_hash.clone(),
             "username" => name.clone(),
-            "tagline" => "",
-            "img_url" => "",
-            "nft_url" => "",
-            "first_name" => "",
-            "last_name" => "",
+            "tagline" => "".to_string(),
+            "img_url" => "".to_string(),
+            "nft_url" => "".to_string(),
+            "first_name" => "".to_string(),
+            "last_name" => "".to_string(),
             "bio" => description.clone(),
-            "external_link" => "",
-            "phone" => "",
-            "twitter" => "",
-            "instagram" => "",
-            "facebook" => "",
-            "medium" => "",
-            "telegram" => "",
-            "mail" => "",
-            "profile_type" => "",
+            "external_link" => "".to_string(),
+            "phone" => "".to_string(),
+            "twitter" => "".to_string(),
+            "instagram" => "".to_string(),
+            "facebook" => "".to_string(),
+            "medium" => "".to_string(),
+            "telegram" => "".to_string(),
+            "mail" => "".to_string(),
+            "profile_type" => "beneficiary".to_string(),
         },
-    );
+    )
 }
 
 #[no_mangle]
@@ -1355,7 +1365,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
             Parameter::new("address", String::cl_type()),
-            Parameter::new("profile_contract_hash", String::cl_type()),
+            Parameter::new("profile_contract_hash_key", Key::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,

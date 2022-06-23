@@ -8,6 +8,7 @@ import {
   CLKeyParameters,
   CLValueBuilder,
   CLValueParsers,
+  decodeBase16,
 } from 'casper-js-sdk';
 import { config } from 'dotenv';
 
@@ -157,14 +158,29 @@ class CEP47Client {
     deploySender: CLPublicKey,
     keys?: Keys.AsymmetricKey[]
   ) {
-    console.log(PROFILE_CONTRACT_HASH);
+    console.log(
+      CLValueBuilder.key(
+        CLValueBuilder.byteArray(
+          decodeBase16(
+            '4f57294e4db6bdf0c27ea8a70a8bf2d102871bd9565adaf5fdb7d6703cff7608'
+          )
+        )
+      )
+    );
 
     const runtimeArgs = RuntimeArgs.fromMap({
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       address: CLValueBuilder.string(address),
-      profile_contract_hash: CLValueBuilder.string(PROFILE_CONTRACT_HASH!),
+      profile_contract_hash_key: CLValueBuilder.key(
+        CLValueBuilder.byteArray(
+          decodeBase16(
+            '4f57294e4db6bdf0c27ea8a70a8bf2d102871bd9565adaf5fdb7d6703cff7608'
+          )
+        )
+      ),
+      // profile_contract_hash: CLValueBuilder.string(PROFILE_CONTRACT_HASH!),
     });
 
     return this.contractClient.callEntrypoint(

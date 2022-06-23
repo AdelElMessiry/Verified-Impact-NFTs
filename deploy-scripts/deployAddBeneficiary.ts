@@ -7,8 +7,13 @@ import { getDeploy } from './utils';
 
 config({ path: '.env' });
 
-const { NODE_ADDRESS, CASPER_PRIVATE_KEY, MINT_ONE_PAYMENT_AMOUNT } =
-  process.env;
+const {
+  NODE_ADDRESS,
+  CASPER_PRIVATE_KEY,
+  MINT_ONE_PAYMENT_AMOUNT,
+  NFT_CONTRACT_HASH,
+  NFT_CONTRACT_PACKAGE_HASH,
+} = process.env;
 
 export const getBinary = (pathToBinary: string) => {
   return new Uint8Array(fs.readFileSync(pathToBinary, null).buffer);
@@ -22,10 +27,7 @@ const publicKey: any = Keys.Ed25519.privateToPublicKey(privateKey);
 const KEYS: any = Keys.Ed25519.parseKeyPair(publicKey, privateKey);
 
 (async function deployBeneficiary() {
-  cep47.setContractHash(
-    'hash-44d618a49dd4e47b9a57edebac223c36d300a63747559c856529c02fd58fc8ca',
-    'hash-89c03c2a8c9be743769ff0f67cd3c3d10af8331c458e1c5d9c8481a1db428527'
-  );
+  cep47.setContractHash(NFT_CONTRACT_HASH!, NFT_CONTRACT_PACKAGE_HASH);
 
   const beneficiaryDeploy = await cep47.addBeneficiary(
     'Ebra',
