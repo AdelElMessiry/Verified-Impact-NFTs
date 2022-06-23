@@ -378,7 +378,7 @@ const MyNFTs = () => {
         >
           <QRCode
             value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
-            size={80}
+            size={90}
           />
         </Link>
         &nbsp;&nbsp;{' '}

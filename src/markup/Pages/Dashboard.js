@@ -291,7 +291,7 @@ const Dashboard = () => {
                           value={`${
                             window.location.origin
                           }/#/BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiary}&campaign=${NFts[0]?.campaign}`}
-                          size={70}
+                          size={90}
                         />
                       </Link>
                       &nbsp;&nbsp;
@@ -307,6 +307,7 @@ const Dashboard = () => {
                           campaign={NFts[0]?.campaignName}
                           beneficiary={NFts[0]?.beneficiaryName}
                           beneficiaryPercentage={NFts[0]?.beneficiaryPercentage}
+                          url={`${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${NFts[0]?.beneficiary}&campaign=${NFts[0]?.campaign}`}
                         />
                       )}
                       &nbsp;&nbsp;{' '}
