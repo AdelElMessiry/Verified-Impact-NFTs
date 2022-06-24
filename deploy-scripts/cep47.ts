@@ -26,7 +26,7 @@ export interface CEP47InstallArgs {
   profileContractHash: string;
 }
 export interface ProfileInstallArgs {
-  contractName: string;
+  // contractName: string;
   admin: CLKeyParameters;
 }
 
@@ -131,7 +131,7 @@ class CEP47Client {
     keys?: Keys.AsymmetricKey[]
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
-      contract_name: CLValueBuilder.string(args.contractName),
+      // contract_name: CLValueBuilder.string(args.contractName),
       admin: CLValueBuilder.key(args.admin),
     });
 
@@ -158,25 +158,15 @@ class CEP47Client {
     deploySender: CLPublicKey,
     keys?: Keys.AsymmetricKey[]
   ) {
-    console.log(
-      CLValueBuilder.key(
-        CLValueBuilder.byteArray(
-          decodeBase16(
-            '4f57294e4db6bdf0c27ea8a70a8bf2d102871bd9565adaf5fdb7d6703cff7608'
-          )
-        )
-      )
-    );
-
     const runtimeArgs = RuntimeArgs.fromMap({
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       address: CLValueBuilder.string(address),
-      profile_contract_hash_key: CLValueBuilder.key(
+      profile_contract_hash: CLValueBuilder.key(
         CLValueBuilder.byteArray(
           decodeBase16(
-            '4f57294e4db6bdf0c27ea8a70a8bf2d102871bd9565adaf5fdb7d6703cff7608'
+            '4100c91e9e30b2307b5a097c7ee8c0a96d7f06eeddd5ee943934b563646c268b'
           )
         )
       ),

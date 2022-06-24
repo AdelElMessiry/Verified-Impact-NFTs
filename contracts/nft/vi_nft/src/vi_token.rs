@@ -888,9 +888,9 @@ fn add_beneficiary() {
     let address_hash: Key = Key::from_formatted_str(&address).unwrap();
     let caller = ViToken::default().get_caller();
 
-    // WCSPR contract hash address passed as an argument to this contract
-    let profile_contract_key: Key = runtime::get_named_arg("profile_contract_hash_key");
-    let profile_contract_hash_add: HashAddr = profile_contract_key.into_hash().unwrap_or_revert();
+    let profile_contract_key: Key = runtime::get_named_arg("profile_contract_hash");
+    let profile_contract_hash_add: HashAddr =
+        profile_contract_key.into_hash().unwrap_or_revert().into();
     let profile_contract_hash: ContractHash = ContractHash::new(profile_contract_hash_add);
 
     let is_approved;
@@ -915,7 +915,7 @@ fn add_beneficiary() {
         )
         .unwrap_or_revert();
 
-    runtime::call_contract(
+    runtime::call_contract::<()>(
         profile_contract_hash,
         "add_profile",
         runtime_args! {
@@ -938,7 +938,7 @@ fn add_beneficiary() {
             "mail" => "".to_string(),
             "profile_type" => "beneficiary".to_string(),
         },
-    )
+    );
 }
 
 #[no_mangle]
@@ -1365,7 +1365,8 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
             Parameter::new("address", String::cl_type()),
-            Parameter::new("profile_contract_hash_key", Key::cl_type()),
+            Parameter::new("profile_contract_hash", Key::cl_type()),
+            // Parameter::new("profile_contract_hash", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
