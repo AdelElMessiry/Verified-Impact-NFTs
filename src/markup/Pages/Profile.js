@@ -3,16 +3,19 @@ import { Link } from 'react-router-dom';
 import { TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
 
+import { profileClient } from '../../api/profileInfo';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNFTState } from '../../contexts/NFTContext';
+
 import Layout from '../Layout';
 import PromptLogin from './PromptLogin';
-import { useAuth } from '../../contexts/AuthContext';
 import ProfileForm from '../Element/profileForm';
 import { ProfileFormsEnum } from '../../Enums/index';
-import { profileClient } from '../../api/profileInfo';
 
 import bnr1 from './../../images/banner/bnr1.jpg';
 
 const Profile = () => {
+  const { beneficiaries } = useNFTState();
   const { isLoggedIn, entityInfo } = useAuth();
   const [activeTab, setActiveTab] = useState('1');
   const [normalProfile, setNormalProfile] = useState();
@@ -26,6 +29,9 @@ const Profile = () => {
 
   const getUserProfiles = React.useCallback(async () => {
     try {
+      const beneficiaryProfile = beneficiaries?.find(
+        ({ address }) => address === entityInfo.publicKey
+      );
       const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
       console.log(userProfiles);
       if (userProfiles) {
@@ -33,6 +39,11 @@ const Profile = () => {
           setNoProfilesForThisUser(true);
         } else {
           let list = Object.values(userProfiles)[0];
+          list.beneficiary = {
+            ...list.beneficiary,
+            username: beneficiaryProfile.name,
+            bio: beneficiaryProfile.description,
+          };
 
           userProfiles && setNormalProfile(list.normal);
           userProfiles && setBeneficiaryProfile(list.beneficiary);
@@ -42,7 +53,7 @@ const Profile = () => {
     } catch (e) {
       console.log(e);
     }
-  }, [entityInfo.publicKey]);
+  }, [entityInfo.publicKey, beneficiaries]);
 
   React.useEffect(() => {
     entityInfo.publicKey && getUserProfiles();
