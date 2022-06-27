@@ -1,32 +1,33 @@
 import React from 'react';
 import { Container } from 'react-bootstrap';
-import { useAuth } from '../../../contexts/AuthContext';
 
-import PromptLogin from '../PromptLogin';
-import PageTitle from '../../Layout/PageTitle';
+import { useAuth } from '../../contexts/AuthContext';
 
-import Layout from '../../Layout';
-import ProfileForm from '../../Element/profileForm';
-import { ProfileFormsEnum } from '../../../Enums/index';
+import PromptLogin from './PromptLogin';
+import PageTitle from '../Layout/PageTitle';
 
-import bnr1 from './../../../images/banner/bnr1.jpg';
+import Layout from '../Layout';
+import ProfileForm from '../Element/profileForm';
+import { ProfileFormsEnum } from '../../Enums/index';
+
+import bnr1 from '../../images/banner/bnr1.jpg';
 
 //add new beneficiary page
-const AddFullBeneficiary = () => {
+const SignUpAsBeneficiary = () => {
   const { isLoggedIn } = useAuth();
 
   return (
     <>
       <Layout>
-        <div className="page-content bg-white">
+        <div className='page-content bg-white'>
           {/* <!-- inner page banner --> */}
           <div
-            className="dlab-bnr-inr overlay-primary bg-pt"
+            className='dlab-bnr-inr overlay-primary bg-pt'
             style={{ backgroundImage: 'url(' + bnr1 + ')' }}
           >
             <PageTitle
-              motherMenu="Add Beneficiary"
-              activeMenu="Add Beneficiary"
+              motherMenu='SignUp As Beneficiary'
+              activeMenu='SignUp As Beneficiary'
             />
           </div>
           {/* <!-- inner page banner END --> */}
@@ -34,17 +35,16 @@ const AddFullBeneficiary = () => {
           {!isLoggedIn ? (
             <PromptLogin />
           ) : (
-            <div className="section-full content-inner shop-account">
+            <div className='section-full content-inner shop-account'>
               {/* <!-- Product --> */}
-              <div className="container">
+              <div className='container'>
                 <div>
-                  <div className=" m-auto m-b30">
+                  <div className=' m-auto m-b30'>
                     <Container>
                       <ProfileForm
                         formName={ProfileFormsEnum.BeneficiaryProfile}
                         isProfileExist={false}
-                        formData={null}
-                        isAdmin={true}
+                        formData={ null }
                       />
                     </Container>
                   </div>
@@ -60,4 +60,4 @@ const AddFullBeneficiary = () => {
   );
 };
 
-export default AddFullBeneficiary;
+export default SignUpAsBeneficiary;

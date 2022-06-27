@@ -146,7 +146,9 @@ const Profile = () => {
                               ? false
                               : true
                           }
-                          formData={noProfilesForThisUser ? {} : normalProfile}
+                          formData={
+                            noProfilesForThisUser ? null : normalProfile
+                          }
                         />
                       )}
                     </TabPane>
@@ -161,7 +163,9 @@ const Profile = () => {
                               ? false
                               : true
                           }
-                          formData={noProfilesForThisUser ? {} : creatorProfile}
+                          formData={
+                            noProfilesForThisUser ? null : creatorProfile
+                          }
                         />
                       )}
                     </TabPane>
@@ -177,7 +181,7 @@ const Profile = () => {
                               : true
                           }
                           formData={
-                            noProfilesForThisUser ? {} : beneficiaryProfile
+                            noProfilesForThisUser ? null : beneficiaryProfile
                           }
                         />
                       )}
