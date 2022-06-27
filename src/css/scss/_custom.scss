@@ -173,11 +173,31 @@
     height: auto !important;
   }
 }
-  .stats-spinner{
-    float: left;
-    margin-right: -3rem;
-  }
-  
-.cursor-pointer{
+
+.stats-spinner {
+  float: left;
+  margin-right: -3rem;
+}
+
+.cursor-pointer {
   cursor: pointer;
+}
+
+.modal-full-screen {
+  .modal-dialog {
+    width: 100vw;
+    max-width: none;
+    height: 100%;
+    margin: 0;
+  }
+
+  .modal-content {
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .modal-body {
+    overflow-y: auto;
+  }
 }

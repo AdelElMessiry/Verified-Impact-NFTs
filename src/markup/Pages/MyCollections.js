@@ -31,6 +31,7 @@ import bnr1 from './../../images/banner/bnr1.jpg';
 import plusIcon from './../../images/icon/plus.png';
 import editIcon from './../../images/icon/edit.png';
 import soldIcon from '../../images/icon/sold.png';
+import mintIcon from '../../images/icon/Mint.png';
 
 // Masonry section
 const breakPoints = [
@@ -511,10 +512,10 @@ const MyCollections = () => {
                   <VINftsTooltip title={`Mint NFT`}>
                     <Link to={'./mint-nft'}>
                       <img
-                        src={plusIcon}
+                        src={mintIcon}
                         className='img img-fluid'
                         width='40px'
-                        alt='plusIcon'
+                        alt='mintIcon'
                       />
                     </Link>
                   </VINftsTooltip>

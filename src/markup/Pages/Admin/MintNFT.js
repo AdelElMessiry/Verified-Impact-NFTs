@@ -31,11 +31,13 @@ const createOption = (label) => ({
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
   const { campaigns, beneficiaries, creators, collections } = useNFTState();
+  let storageData= localStorage.getItem('selectedData');
+  let savedData=storageData?JSON.parse(storageData):null
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
   const [isMintClicked, setIsMintClicked] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [beneficiary, setBeneficiary] = React.useState();
-  const [campaign, setCampaign] = React.useState();
+  const [beneficiary, setBeneficiary] = React.useState(savedData?savedData.beneficiary:undefined);
+  const [campaign, setCampaign] = React.useState(savedData?savedData.campaign:undefined);
   const [collectionsList, setCollectionsList] = React.useState();
   const [campaignsList, setCampaignsList] = React.useState();
   const [allCampaignsList, setAllCampaignsList] = React.useState();
@@ -45,7 +47,7 @@ const MintNFT = () => {
   const [uploadedImageURL, setUploadedImage] = React.useState(null);
   const [uploadedFile, setUploadedFile] = React.useState(null);
   const [selectedCollectionValue, setSelectedCollectionValue] = React.useState(
-    {}
+ savedData?savedData.collection: {}
   );
   const [isCreateNewCollection, setIsCreateNewCollection] = React.useState();
   const [beneficiaryPercentage, setBeneficiaryPercentage] = React.useState();
@@ -80,11 +82,11 @@ const MintNFT = () => {
         _collections &&
         _collections?.map((col) => ({
           value: col.id,
-          label: <div>&nbsp;{col.name} </div>,
+          label: col.name,
         }));
 
       selectedCollections && setCollectionsList(selectedCollections);
-      selectedCollections && setSelectedCollectionValue(selectedCollections[0]);
+      selectedCollections && setSelectedCollectionValue(savedData?savedData.collection:selectedCollections[0]);
     }
   }, [
     entityInfo.publicKey,
@@ -100,15 +102,19 @@ const MintNFT = () => {
     beneficiaries?.length &&
       !beneficiary &&
       setBeneficiary(beneficiaries[0].address);
-    campaigns?.length && !campaign && setCampaign(campaigns[0].id);
-    !campaignsList && campaigns?.length && setCampaignsList(campaigns.filter(
-      ({ wallet_address }) => beneficiaries[0].address === wallet_address
-    ));
+    campaigns?.length && !campaign && setCampaign(savedData?savedData.campaign:campaigns[0]?.id);
+    !campaignsList &&
+      campaigns?.length &&
+      setCampaignsList(
+        campaigns.filter(
+          ({ wallet_address }) => (savedData?savedData.beneficiary:beneficiaries[0].address) === wallet_address
+        )
+      );
     !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
     !collectionsList && collections?.length && loadCollections();
     !campaignsList &&
       campaigns?.length &&
-      setCampaignSelectedData(campaigns, campaigns[0].id);
+      setCampaignSelectedData(campaigns, savedData?savedData.campaign:campaigns[0]?.id);
   }, [
     collectionsList,
     collections,
@@ -175,7 +181,7 @@ const MintNFT = () => {
   };
 
   //handling minting new NFT
-  async function mintNFT() {
+  async function mintNFT(isAnotherMint) {
     if (!uploadedImageURL) {
       return VIToast.error('Please upload image or enter direct URL');
     }
@@ -201,10 +207,10 @@ const MintNFT = () => {
       }
       VIToast.success('Image uploaded to cloud CDN successfully !');
     }
-    mintNewNFT(cloudURL);
+    mintNewNFT(cloudURL, isAnotherMint);
   }
 
-  async function mintNewNFT(imgURL) {
+  async function mintNewNFT(imgURL, isAnotherMint) {
     if (!uploadedImageURL) {
       return VIToast.error('Please upload image or enter direct URL');
     }
@@ -248,12 +254,24 @@ const MintNFT = () => {
 
       try {
         const deployResult = await getDeployDetails(mintDeployHash);
-        if (campaign !== '' && campaign !== null) {
-          localStorage.setItem('selectedCampaign', campaign);
+        if (
+          campaign !== '' &&
+          campaign !== null &&
+          beneficiary !== '' &&
+          beneficiary !== null &&
+          selectedCollectionValue !== '' &&
+          selectedCollectionValue !== null &&
+          isAnotherMint
+        ) {
+          localStorage.setItem('selectedData', JSON.stringify({
+            campaign: campaign,
+            beneficiary: beneficiary,
+            collection:  {value:selectedCollectionValue.value,label:selectedCollectionValue.label},
+          }));
         } else {
-          localStorage.setItem('selectedCampaign', null);
+          localStorage.setItem('selectedData', null);
         }
-        console.log('...... Token minted successfully', deployResult);
+       console.log('...... Token minted successfully', deployResult);
 
         VIToast.success('NFT minted successfully');
         //NOTE: every channel has a special keys and tokens sorted on .env file
@@ -567,9 +585,9 @@ const MintNFT = () => {
                         <p className='form-submit'>
                           <button
                             type='button'
-                            className='btn btn-success'
+                            className='btn btn-success mr-2'
                             name='submit'
-                            onClick={mintNFT}
+                            onClick={() => mintNFT(false)}
                             disabled={
                               beneficiary === '' ||
                               campaign === '' ||
@@ -588,6 +606,31 @@ const MintNFT = () => {
                               <Spinner animation='border' variant='light' />
                             ) : (
                               'Mint'
+                            )}
+                          </button>
+                          <button
+                            type='button'
+                            className='btn btn-success'
+                            name='submit'
+                            onClick={() => mintNFT(true)}
+                            disabled={
+                              beneficiary === '' ||
+                              campaign === '' ||
+                              selectedCollectionValue === {} ||
+                              selectedCollectionValue === undefined ||
+                              selectedCollectionValue === null ||
+                              selectedCollectionValue?.value === '' ||
+                              creator === '' ||
+                              state.inputs.name === '' ||
+                              (state.inputs.isForSale &&
+                                state.inputs.price === '') ||
+                              isMintClicked
+                            }
+                          >
+                            {isMintClicked ? (
+                              <Spinner animation='border' variant='light' />
+                            ) : (
+                              'Mint another NFT'
                             )}
                           </button>
                         </p>
