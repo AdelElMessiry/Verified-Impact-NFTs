@@ -886,12 +886,12 @@ fn add_beneficiary() {
     //     ContractHash::from_formatted_str(&profile_contract_string).unwrap();
 
     let address_hash: Key = Key::from_formatted_str(&address).unwrap();
-    let caller = ViToken::default().get_caller();
+    let caller = Key::Account(runtime::get_caller());
 
     // WCSPR contract hash address passed as an argument to this contract
-    let profile_contract_key: Key = runtime::get_named_arg("profile_contract_hash_key");
-    let profile_contract_hash_add: HashAddr = profile_contract_key.into_hash().unwrap_or_revert();
-    let profile_contract_hash: ContractHash = ContractHash::new(profile_contract_hash_add);
+    // let profile_contract_key: Key = runtime::get_named_arg("profile_contract_hash_key");
+    // let profile_contract_hash_add: HashAddr = profile_contract_key.into_hash().unwrap_or_revert();
+    // let profile_contract_hash: ContractHash = ContractHash::new(profile_contract_hash_add);
 
     let is_approved;
 
@@ -915,30 +915,30 @@ fn add_beneficiary() {
         )
         .unwrap_or_revert();
 
-    runtime::call_contract(
-        profile_contract_hash,
-        "add_profile",
-        runtime_args! {
-            "mode" => mode.clone(),
-            "address" => address_hash.clone(),
-            "username" => name.clone(),
-            "tagline" => "".to_string(),
-            "img_url" => "".to_string(),
-            "nft_url" => "".to_string(),
-            "first_name" => "".to_string(),
-            "last_name" => "".to_string(),
-            "bio" => description.clone(),
-            "external_link" => "".to_string(),
-            "phone" => "".to_string(),
-            "twitter" => "".to_string(),
-            "instagram" => "".to_string(),
-            "facebook" => "".to_string(),
-            "medium" => "".to_string(),
-            "telegram" => "".to_string(),
-            "mail" => "".to_string(),
-            "profile_type" => "beneficiary".to_string(),
-        },
-    )
+    // runtime::call_contract(
+    //     profile_contract_hash,
+    //     "add_profile",
+    //     runtime_args! {
+    //         "mode" => mode.clone(),
+    //         "address" => address_hash.clone(),
+    //         "username" => name.clone(),
+    //         "tagline" => "".to_string(),
+    //         "img_url" => "".to_string(),
+    //         "nft_url" => "".to_string(),
+    //         "first_name" => "".to_string(),
+    //         "last_name" => "".to_string(),
+    //         "bio" => description.clone(),
+    //         "external_link" => "".to_string(),
+    //         "phone" => "".to_string(),
+    //         "twitter" => "".to_string(),
+    //         "instagram" => "".to_string(),
+    //         "facebook" => "".to_string(),
+    //         "medium" => "".to_string(),
+    //         "telegram" => "".to_string(),
+    //         "mail" => "".to_string(),
+    //         "profile_type" => "beneficiary".to_string(),
+    //     },
+    // )
 }
 
 #[no_mangle]
