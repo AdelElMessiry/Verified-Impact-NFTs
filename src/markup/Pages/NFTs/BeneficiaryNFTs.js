@@ -17,9 +17,12 @@ import Layout from '../../Layout';
 import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
 import CampaignOrCollectionTwitterShare from '../../Element/TwitterShare/CampaignOrCollectionTwitterShare';
 import CopyText from '../../Element/copyText';
+import ViewProfile from '../ViewProfile';
+import { ProfileFormsEnum } from '../../../Enums/index';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import soldIcon from '../../../images/icon/sold.png';
+import viewIcon from '../../../images/icon/view.png';
 
 // Masonry section
 const masonryOptions = {
@@ -139,6 +142,8 @@ const BeneficiaryNFTs = () => {
 
   const [allNFTs, setAllNFTs] = React.useState();
   const [filteredNFTs, setFilteredNFTs] = React.useState();
+  const [showViewModal, setShowViewModal] = React.useState(false);
+  const [selectedViewProfile, setSelectedViewProfile] = React.useState();
 
   //getting beneficiary details
   const getBeneficiaries = React.useCallback(async () => {
@@ -611,6 +616,16 @@ const BeneficiaryNFTs = () => {
                 )}
                 &nbsp;
                 <CopyText link={window.location.href} />
+                &nbsp;&nbsp;
+                <img
+                  src={viewIcon}
+                  width='40px'
+                  onClick={() => {
+                    setSelectedViewProfile(beneficiary);
+                    setShowViewModal(true);
+                  }}
+                  className='cursor-pointer d-none'
+                />
               </h1>
               <p className='text-white ben-desc'>
                 {!campaign && beneficiaryDescription
@@ -777,6 +792,16 @@ const BeneficiaryNFTs = () => {
           }}
           data={selectedNFT}
           isTransfer={false}
+        />
+      )}
+      {showViewModal && (
+        <ViewProfile
+          show={showViewModal}
+          handleCloseParent={() => {
+            setShowViewModal(false);
+          }}
+          data={selectedViewProfile}
+          formName={ProfileFormsEnum.BeneficiaryProfile}
         />
       )}
     </Layout>
