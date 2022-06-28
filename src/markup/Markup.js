@@ -15,7 +15,6 @@ import AddCampaign from './Pages/Admin/AddCampaign';
 import MintNFT from './Pages/Admin/MintNFT';
 import Profile from './Pages/Profile';
 import ManageBeneficiaries from './Pages/Admin/ManageBeneficiaries';
-import AddFullBeneficiary from './Pages/Admin/AddFullBeneficiary';
 
 import Header from './Layout/Header';
 import ScrollToTop from './Element/ScrollToTop';
@@ -54,11 +53,6 @@ const Markup = () => {
                 path='/manage-beneficiaries'
                 exact
                 component={ManageBeneficiaries}
-              />
-              <Route
-                path='/add-beneficiary'
-                exact
-                component={AddFullBeneficiary}
               />
               <Route
                 path='/signup-as-beneficiary'

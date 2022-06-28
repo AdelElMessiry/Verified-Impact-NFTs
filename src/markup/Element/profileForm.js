@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Row, Col, Form, Spinner } from 'react-bootstrap';
 import ImageUploader from 'react-images-upload';
 import validator from 'validator';
@@ -10,37 +10,60 @@ import { ProfileFormsEnum } from '../../Enums/index';
 import { useAuth } from '../../contexts/AuthContext';
 import { getDeployDetails } from '../../api/universal';
 import { uploadImg } from '../../api/imageCDN';
+import { addBeneficiary } from '../../api/addBeneficiary';
 
-const ProfileForm = ({
-  formName,
-  isProfileExist,
-  formData,
-  isAdmin = false,
-}) => {
+const ProfileForm = ({ formName, isProfileExist, formData, isVINftExist=false }) => {
   const { entityInfo, refreshAuth } = useAuth();
   //setting initial values of controls
+  debugger;
   const [state, setState] = useState({
     inputs: {
-      userName: formData !== {} && formData !== null ? formData.username : '',
-      shortTagLine:
-        formData !== {} && formData !== null ? formData.tagline : '',
-      firstName: formData !== {} && formData !== null ? formData.firstName : '',
-      lastName: formData !== {} && formData !== null ? formData.lastName : '',
-      fullBio: formData !== {} && formData !== null ? formData.bio : '',
-      externalSiteLink:
-        formData !== {} && formData !== null ? formData.externalLink : '',
-      phone: formData !== {} && formData !== null ? formData.phone : '',
-      twitter: formData !== {} && formData !== null ? formData.twitter : '',
-      instagram: formData !== {} && formData !== null ? formData.instagram : '',
-      facebook: formData !== {} && formData !== null ? formData.facebook : '',
-      medium: formData !== {} && formData !== null ? formData.medium : '',
-      email: formData !== {} && formData !== null ? formData.mail : '',
-      telegram: formData !== {} && formData !== null ? formData.telegram : '',
+      userName: '',
+      shortTagLine: '',
+      firstName: '',
+      lastName: '',
+      fullBio: '',
+      externalSiteLink: '',
+      phone: '',
+      twitter: '',
+      instagram: '',
+      facebook: '',
+      medium: '',
+      email: '',
+      telegram: '',
       isProfileImageURL: '',
       isNFTImageURL: '',
-      address: formData !== {} && formData !== null ? formData.address : '',
+      address: '',
     },
   });
+
+  React.useEffect(() => {
+    setState({
+      inputs: {
+        userName: formData !== {} && formData !== null ? formData.username : '',
+        shortTagLine:
+          formData !== {} && formData !== null ? formData.tagline : '',
+        firstName:
+          formData !== {} && formData !== null ? formData.firstName : '',
+        lastName: formData !== {} && formData !== null ? formData.lastName : '',
+        fullBio: formData !== {} && formData !== null ? formData.bio : '',
+        externalSiteLink:
+          formData !== {} && formData !== null ? formData.externalLink : '',
+        phone: formData !== {} && formData !== null ? formData.phone : '',
+        twitter: formData !== {} && formData !== null ? formData.twitter : '',
+        instagram:
+          formData !== {} && formData !== null ? formData.instagram : '',
+        facebook: formData !== {} && formData !== null ? formData.facebook : '',
+        medium: formData !== {} && formData !== null ? formData.medium : '',
+        email: formData !== {} && formData !== null ? formData.mail : '',
+        telegram: formData !== {} && formData !== null ? formData.telegram : '',
+        isProfileImageURL: '',
+        isNFTImageURL: '',
+        address: formData !== {} && formData !== null ? formData.address : '',
+      },
+    });
+
+  }, [formData]);
 
   const [uploadedProfileImageURL, setUploadedProfileImage] = React.useState(
     formData !== {} && formData !== null ? formData.imgUrl : null
@@ -158,9 +181,7 @@ const ProfileForm = ({
       console.log(formData);
       try {
         saveDeployHash = await profileClient.addUpdateProfile(
-          isAdmin
-            ? CLPublicKey.fromHex(state.inputs.address)
-            : CLPublicKey.fromHex(entityInfo.publicKey),
+          CLPublicKey.fromHex(entityInfo.publicKey),
           state.inputs.userName,
           state.inputs.shortTagLine,
           ProfileImgURL,
@@ -184,6 +205,20 @@ const ProfileForm = ({
           CLPublicKey.fromHex(entityInfo.publicKey),
           isProfileExist ? 'UPDATE' : 'ADD'
         );
+        if (
+          formName === ProfileFormsEnum.BeneficiaryProfile
+        ) {
+          debugger;
+          const savedBeneficiary = await addBeneficiary(
+            state.inputs.userName,
+            state.inputs.fullBio,
+            entityInfo.publicKey,
+            CLPublicKey.fromHex(entityInfo.publicKey),
+            isVINftExist?'UPDATE':'ADD'
+          );
+          const deployResult = await getDeployDetails(savedBeneficiary);
+          console.log('...... Beneficiary saved successfully', deployResult);
+        }
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
@@ -218,20 +253,6 @@ const ProfileForm = ({
     <div className='shop-account '>
       <Row>
         <Col>
-          {isAdmin && (
-            <Row className='form-group'>
-              <Col>
-                <span>Address</span>
-                <input
-                  type='text'
-                  name='address'
-                  className='form-control'
-                  value={state.inputs.address}
-                  onChange={(e) => handleChange(e)}
-                />
-              </Col>
-            </Row>
-          )}
           <Row className='form-group'>
             <Col>
               <span>User Name</span>
@@ -411,7 +432,7 @@ const ProfileForm = ({
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
                   defaultImages={[
                     !isOndropProfileClicked
-                      ? (formData !== {} && formData !== null) && formData.imgUrl
+                      ? formData !== {} && formData !== null && formData.imgUrl
                       : uploadedProfileImageURL
                       ? uploadedProfileImageURL
                       : '',
@@ -466,7 +487,7 @@ const ProfileForm = ({
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
                   defaultImages={[
                     !isOndropNFTClicked
-                      ? (formData !== {} && formData !== null) && formData.nftUrl
+                      ? formData !== {} && formData !== null && formData.nftUrl
                       : uploadedNFTImageURL
                       ? uploadedNFTImageURL
                       : '',
