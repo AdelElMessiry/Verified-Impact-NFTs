@@ -11,36 +11,43 @@ import { useAuth } from '../../contexts/AuthContext';
 import { getDeployDetails } from '../../api/universal';
 import { uploadImg } from '../../api/imageCDN';
 
-const ProfileForm = ({ formName, isProfileExist, formData }) => {
+const ProfileForm = ({
+  formName,
+  isProfileExist,
+  formData,
+  isAdmin = false,
+}) => {
   const { entityInfo, refreshAuth } = useAuth();
   //setting initial values of controls
   const [state, setState] = useState({
     inputs: {
-      userName: formData !== {} ? formData.username : '',
-      shortTagLine: formData !== {} ? formData.tagline : '',
-      firstName: formData !== {} ? formData.firstName : '',
-      lastName: formData !== {} ? formData.lastName : '',
-      fullBio: formData !== {} ? formData.bio : '',
-      externalSiteLink: formData !== {} ? formData.externalLink : '',
-      phone: formData !== {} ? formData.phone : '',
-      twitter: formData !== {} ? formData.twitter : '',
-      instagram: formData !== {} ? formData.instagram : '',
-      facebook: formData !== {} ? formData.facebook : '',
-      medium: formData !== {} ? formData.medium : '',
-      email: formData !== {} ? formData.mail : '',
-      telegram: formData !== {} ? formData.telegram : '',
+      userName: formData !== {} && formData !== null ? formData.username : '',
+      shortTagLine:
+        formData !== {} && formData !== null ? formData.tagline : '',
+      firstName: formData !== {} && formData !== null ? formData.firstName : '',
+      lastName: formData !== {} && formData !== null ? formData.lastName : '',
+      fullBio: formData !== {} && formData !== null ? formData.bio : '',
+      externalSiteLink:
+        formData !== {} && formData !== null ? formData.externalLink : '',
+      phone: formData !== {} && formData !== null ? formData.phone : '',
+      twitter: formData !== {} && formData !== null ? formData.twitter : '',
+      instagram: formData !== {} && formData !== null ? formData.instagram : '',
+      facebook: formData !== {} && formData !== null ? formData.facebook : '',
+      medium: formData !== {} && formData !== null ? formData.medium : '',
+      email: formData !== {} && formData !== null ? formData.mail : '',
+      telegram: formData !== {} && formData !== null ? formData.telegram : '',
       isProfileImageURL: '',
       isNFTImageURL: '',
-      address: formData !== {} ? formData.address : '',
+      address: formData !== {} && formData !== null ? formData.address : '',
     },
   });
 
   const [uploadedProfileImageURL, setUploadedProfileImage] = React.useState(
-    formData !== {} ? formData.imgUrl : null
+    formData !== {} && formData !== null ? formData.imgUrl : null
   );
   const [uploadedProfileFile, setUploadedProfileFile] = React.useState(null);
   const [uploadedNFTImageURL, setUploadedNFTImage] = React.useState(
-    formData !== {} ? formData.nftUrl : null
+    formData !== {} && formData !== null ? formData.nftUrl : null
   );
   const [uploadedNFTFile, setUploadedNFTFile] = React.useState(null);
   const [isSaveButtonClicked, setIsSaveButtonClicked] = React.useState(false);
@@ -146,13 +153,14 @@ const ProfileForm = ({ formName, isProfileExist, formData }) => {
     if (!uploadedProfileImageURL || !uploadedNFTImageURL) {
       return VIToast.error('Please upload image or enter direct URL');
     }
-
     if (entityInfo.publicKey) {
       let saveDeployHash;
       console.log(formData);
       try {
         saveDeployHash = await profileClient.addUpdateProfile(
-          CLPublicKey.fromHex(entityInfo.publicKey),
+          isAdmin
+            ? CLPublicKey.fromHex(state.inputs.address)
+            : CLPublicKey.fromHex(entityInfo.publicKey),
           state.inputs.userName,
           state.inputs.shortTagLine,
           ProfileImgURL,
@@ -210,6 +218,20 @@ const ProfileForm = ({ formName, isProfileExist, formData }) => {
     <div className='shop-account '>
       <Row>
         <Col>
+          {isAdmin && (
+            <Row className='form-group'>
+              <Col>
+                <span>Address</span>
+                <input
+                  type='text'
+                  name='address'
+                  className='form-control'
+                  value={state.inputs.address}
+                  onChange={(e) => handleChange(e)}
+                />
+              </Col>
+            </Row>
+          )}
           <Row className='form-group'>
             <Col>
               <span>User Name</span>
@@ -348,7 +370,7 @@ const ProfileForm = ({ formName, isProfileExist, formData }) => {
             <Col>
               <Form.Check
                 type={'checkbox'}
-                id={'isProfileImageURL'}
+                id={`isProfileImageURL${formName}`}
                 label={`Already hosted profile image, enter direct url ?`}
                 onChange={(e) => handleChange(e)}
                 value={state.inputs.isProfileImageURL}
@@ -389,7 +411,7 @@ const ProfileForm = ({ formName, isProfileExist, formData }) => {
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
                   defaultImages={[
                     !isOndropProfileClicked
-                      ? formData !== {} && formData.imgUrl
+                      ? (formData !== {} && formData !== null) && formData.imgUrl
                       : uploadedProfileImageURL
                       ? uploadedProfileImageURL
                       : '',
@@ -402,7 +424,7 @@ const ProfileForm = ({ formName, isProfileExist, formData }) => {
             <Col>
               <Form.Check
                 type={'checkbox'}
-                id={'isNFTImageURL'}
+                id={`isNFTImageURL${formName}`}
                 label={`Already hosted NFT image, enter direct url ?`}
                 onChange={(e) => handleChange(e)}
                 value={state.inputs.isNFTImageURL}
@@ -444,7 +466,7 @@ const ProfileForm = ({ formName, isProfileExist, formData }) => {
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
                   defaultImages={[
                     !isOndropNFTClicked
-                      ? formData !== {} && formData.nftUrl
+                      ? (formData !== {} && formData !== null) && formData.nftUrl
                       : uploadedNFTImageURL
                       ? uploadedNFTImageURL
                       : '',
