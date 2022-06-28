@@ -611,11 +611,12 @@ class CEP47Client {
     name: string,
     description: string,
     address: string,
+    mode: string,
     paymentAmount: string,
     deploySender: CLPublicKey
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
-      mode: CLValueBuilder.string('ADD'),
+      mode: CLValueBuilder.string(mode),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       address: CLValueBuilder.string(address),
