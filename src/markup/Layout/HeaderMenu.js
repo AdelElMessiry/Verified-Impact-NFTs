@@ -66,6 +66,11 @@ const HeaderMenu = () => {
                 </ul>
               </li>
             ))}
+            <li>
+              <Link to={`./signup-as-beneficiary`} className='dez-page'>
+                Sign up as a beneficiary
+              </Link>
+            </li>
           </ul>
         </li>
         <li>
