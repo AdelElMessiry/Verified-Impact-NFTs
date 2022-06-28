@@ -45,20 +45,6 @@ const Profile = () => {
       console.log(userProfiles);
       if (userProfiles) {
         debugger;
-        if (beneficiaries) {
-          if (_beneficiaryProfile) {
-            setNoBeneficiaryProfilesForThisUser(false);
-          } else {
-            setNoBeneficiaryProfilesForThisUser(true);
-          }
-        }
-        if (creators) {
-          if (_creatorProfile) {
-            setNoCreatorProfilesForThisUser(false);
-          } else {
-            setNoCreatorProfilesForThisUser(true);
-          }
-        }
         if (userProfiles.err === 'Address Not Found') {
           if (beneficiaries) {
             if (_beneficiaryProfile) {
@@ -81,8 +67,10 @@ const Profile = () => {
                 mail:''
               };
               setBeneficiaryProfile(beneficiary);
+              setNoBeneficiaryProfilesForThisUser(false);
             } else {
               setBeneficiaryProfile(null);
+              setNoBeneficiaryProfilesForThisUser(true);
             }
           }
           if (creators) {
@@ -106,13 +94,29 @@ const Profile = () => {
                 mail:''
               };
               setCreatorProfile(creator);
+              setNoCreatorProfilesForThisUser(false);
             } else {
               setCreatorProfile(null);
+              setNoCreatorProfilesForThisUser(true);
             }
           }
           setNoProfilesForThisUser(true);
           setNormalProfile(null);
         } else {
+          if (beneficiaries) {
+            if (_beneficiaryProfile) {
+              setNoBeneficiaryProfilesForThisUser(false);
+            } else {
+              setNoBeneficiaryProfilesForThisUser(true);
+            }
+          }
+          if (creators) {
+            if (_creatorProfile) {
+              setNoCreatorProfilesForThisUser(false);
+            } else {
+              setNoCreatorProfilesForThisUser(true);
+            }
+          }
           let list = Object.values(userProfiles)[0];
 
           userProfiles && setNormalProfile(list.normal);
@@ -206,7 +210,7 @@ const Profile = () => {
                 <div id='cost' className='tab-pane active py-5'>
                   <TabContent activeTab={activeTab}>
                     <TabPane tabId='1'>
-                      {/* {(normalProfile || noProfilesForThisUser) && (
+                       {/* {(normalProfile || noProfilesForThisUser) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.NormalProfile}
                           isProfileExist={
@@ -220,10 +224,10 @@ const Profile = () => {
                             noProfilesForThisUser ? null : normalProfile
                           }
                         />
-                      )} */}
+                      )}  */}
                     </TabPane>
                     <TabPane tabId='2'>
-                      {/* {(creatorProfile || noCreatorProfilesForThisUser) && (
+                       {/* {(creatorProfile || noCreatorProfilesForThisUser) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.CreatorProfile}
                           isProfileExist={
@@ -235,7 +239,7 @@ const Profile = () => {
                           }
                           formData={creatorProfile}
                         />
-                      )} */}
+                      )}  */}
                     </TabPane>
                     <TabPane tabId='3'>
                       {(beneficiaryProfile ||
