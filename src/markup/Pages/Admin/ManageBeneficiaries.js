@@ -60,7 +60,7 @@ const ManageBeneficiaries = () => {
                 <span className='mr-1'>
                   Manage Beneficiaries{' '}
                   <VINFTsTooltip title={`Add New Beneficiary`}>
-                    <Link to={'./add-beneficiary'}>
+                    <Link to={'./admin_beneficiary'}>
                       <img
                         alt='plusIcon'
                         src={plusIcon}
