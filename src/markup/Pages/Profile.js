@@ -45,6 +45,20 @@ const Profile = () => {
       console.log(userProfiles);
       if (userProfiles) {
         debugger;
+        if (beneficiaries) {
+          if (_beneficiaryProfile) {
+            setNoBeneficiaryProfilesForThisUser(false);
+          } else {
+            setNoBeneficiaryProfilesForThisUser(true);
+          }
+        }
+        if (creators) {
+          if (_creatorProfile) {
+            setNoCreatorProfilesForThisUser(false);
+          } else {
+            setNoCreatorProfilesForThisUser(true);
+          }
+        }
         if (userProfiles.err === 'Address Not Found') {
           if (beneficiaries) {
             if (_beneficiaryProfile) {
@@ -67,10 +81,8 @@ const Profile = () => {
                 mail:''
               };
               setBeneficiaryProfile(beneficiary);
-              setNoBeneficiaryProfilesForThisUser(false);
             } else {
               setBeneficiaryProfile(null);
-              setNoBeneficiaryProfilesForThisUser(true);
             }
           }
           if (creators) {
@@ -94,10 +106,8 @@ const Profile = () => {
                 mail:''
               };
               setCreatorProfile(creator);
-              setNoCreatorProfilesForThisUser(false);
             } else {
               setCreatorProfile(null);
-              setNoCreatorProfilesForThisUser(true);
             }
           }
           setNoProfilesForThisUser(true);
