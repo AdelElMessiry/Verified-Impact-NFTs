@@ -12,7 +12,6 @@ import CreatorNFTs from './Pages/NFTs/CreatorNFTs';
 import MyNFTs from './Pages/NFTs/MyNFTs';
 import AddBeneficiary from './Pages/Admin/AddBeneficiary';
 import AddCampaign from './Pages/Admin/AddCampaign';
-import MyCreations from './Pages/NFTs/MyCreations';
 import MintNFT from './Pages/Admin/MintNFT';
 import Profile from './Pages/Profile';
 import ManageBeneficiaries from './Pages/Admin/ManageBeneficiaries';
@@ -22,6 +21,7 @@ import Header from './Layout/Header';
 import ScrollToTop from './Element/ScrollToTop';
 import MyCollections from './Pages/MyCollections';
 import AddCollection from './Pages/Admin/AddEditCollection';
+import SignUpAsBeneficiary from './Pages/SignUpAsBeneficiary';
 
 const Markup = () => {
   return (
@@ -46,7 +46,6 @@ const Markup = () => {
                 component={AddBeneficiary}
               />
               <Route path='/admin_campaign' exact component={AddCampaign} />
-              <Route path='/my-creations' exact component={MyCreations} />
               <Route path='/mint-nft' exact component={MintNFT} />
               <Route path='/profile' exact component={Profile} />
               <Route path='/my-collections' exact component={MyCollections} />
@@ -60,6 +59,11 @@ const Markup = () => {
                 path='/add-beneficiary'
                 exact
                 component={AddFullBeneficiary}
+              />
+              <Route
+                path='/signup-as-beneficiary'
+                exact
+                component={SignUpAsBeneficiary}
               />
             </Switch>
           </div>

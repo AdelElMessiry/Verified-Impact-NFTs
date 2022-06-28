@@ -9,12 +9,14 @@ export async function addBeneficiary(
   name: string,
   description: string,
   address: string,
-  deploySender: CLPublicKey
+  deploySender: CLPublicKey,
+  mode?: string
 ) {
   const beneficiaryDeploy = await cep47.addBeneficiary(
     name,
     description,
     address,
+    mode ? mode : 'ADD',
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     deploySender
   );
