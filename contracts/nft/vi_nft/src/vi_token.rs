@@ -87,6 +87,7 @@ impl ViToken {
         Campaigns::init();
         campaign_data::set_total_campaigns(U256::zero());
         beneficiaries_control::set_total_beneficiaries(U256::zero());
+        beneficiaries_control::set_all_beneficiaries(vec![]);
         // Collections::init();
         // collection_data::set_total_collections(U256::zero());
         creator_control::set_total_creators(U256::zero());
@@ -102,9 +103,25 @@ impl ViToken {
         CollectionControl::is_collection(self, index)
     }
 
-    fn get_beneficiary(&self, index: U256) -> Option<Beneficiary> {
-        BeneficiaryControl::get_beneficiary(self, index)
+    fn is_existent_beneficiary(&self) -> bool {
+        BeneficiaryControl::is_beneficiary(self)
     }
+
+    fn get_beneficiary(&self, address: Key) -> Option<Beneficiary> {
+        BeneficiaryControl::get_beneficiary(self, address)
+    }
+
+    fn get_all_beneficiaries(&self) -> Vec<Key> {
+        beneficiaries_control::get_all_beneficiaries()
+    }
+
+    fn total_beneficiaries(&self) -> U256 {
+        beneficiaries_control::total_beneficiaries()
+    }
+
+    // fn get_beneficiary(&self, index: U256) -> Option<Beneficiary> {
+    //     BeneficiaryControl::get_beneficiary(self, index)
+    // }
 
     fn get_creator(&self, index: U256) -> Option<Creator> {
         CreatorControl::get_creator(self, index)
@@ -186,11 +203,11 @@ impl ViToken {
 
     fn set_beneficiary(
         &mut self,
-        beneficiary_id: U256,
+        // beneficiary_id: U256,
         mode: String,
         name: String,
         description: String,
-        address: String,
+        address: Key,
         is_approved: bool,
     ) -> Result<(), Error> {
         // let caller = ViToken::default().get_caller();
@@ -202,32 +219,26 @@ impl ViToken {
         match mode.as_str() {
             "ADD" | "UPDATE" => {
                 let cloned_mode = mode.clone();
-                let mut beneficiary: BTreeMap<String, String> = BTreeMap::new();
-                let mut new_beneficiary_count = U256::zero();
+                let new_beneficiary_count = profiles_control::total_profiles()
+                    .checked_add(U256::one())
+                    .unwrap();
 
-                if cloned_mode == "UPDATE" {
-                    beneficiary = BeneficiaryControl::get_beneficiary(self, beneficiary_id)
-                        .unwrap_or_default();
-                    beneficiary.insert(format!("id: "), beneficiary_id.to_string());
-                } else if cloned_mode == "ADD" {
-                    new_beneficiary_count = beneficiaries_control::total_beneficiaries()
-                        .checked_add(U256::one())
-                        .unwrap();
-                    beneficiary = BeneficiaryControl::get_beneficiary(self, new_beneficiary_count)
-                        .unwrap_or_default();
-                    beneficiary.insert(format!("id: "), new_beneficiary_count.to_string());
-                }
+                let mut beneficiary =
+                    BeneficiaryControl::get_beneficiary(self, address).unwrap_or_default();
 
                 beneficiary.insert(format!("name: "), name);
                 beneficiary.insert(format!("description: "), description);
-                beneficiary.insert(format!("address: "), address);
+                beneficiary.insert(format!("address: "), address.to_string());
                 beneficiary.insert(format!("isApproved: "), is_approved.to_string());
 
+                BeneficiaryControl::add_beneficiary(self, address, profile);
+
                 if cloned_mode == "ADD" {
-                    BeneficiaryControl::add_beneficiary(self, new_beneficiary_count, beneficiary);
+                    let mut beneficiaries: Vec<Key> =
+                        beneficiaries_control::get_all_beneficiaries();
+                    beneficiaries.push(address);
+                    beneficiaries_control::set_all_beneficiaries(beneficiaries);
                     beneficiaries_control::set_total_beneficiaries(new_beneficiary_count);
-                } else if cloned_mode == "UPDATE" {
-                    BeneficiaryControl::add_beneficiary(self, beneficiary_id, beneficiary);
                 }
             }
             _ => {
@@ -512,11 +523,11 @@ impl ViToken {
 
     fn create_beneficiary(
         &mut self,
-        beneficiary_id: U256,
+        // beneficiary_id: U256,
         mode: String,
         name: String,
         description: String,
-        address: String,
+        address: Key,
         is_approved: bool,
     ) -> Result<(), Error> {
         // let caller = ViToken::default().get_caller();
@@ -525,7 +536,7 @@ impl ViToken {
         //     revert(ApiError::User(20));
         // }
         self.set_beneficiary(
-            beneficiary_id,
+            // beneficiary_id,
             mode,
             name,
             description,
@@ -654,14 +665,26 @@ fn total_creators() {
 
 #[no_mangle]
 fn total_beneficiaries() {
-    let ret = ViToken::default().total_beneficiaries();
+    let ret = ViProfile::default().total_beneficiaries();
+    runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
+}
+
+#[no_mangle]
+fn get_all_beneficiaries() {
+    let ret = ViProfile::default().get_all_beneficiaries();
     runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
 }
 
 #[no_mangle]
 fn get_beneficiary() {
-    let index = runtime::get_named_arg::<U256>("index");
-    let ret = ViToken::default().get_beneficiary(index);
+    let address = runtime::get_named_arg::<Key>("address");
+    let ret = ViProfile::default().get_beneficiary(address);
+    runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
+}
+
+#[no_mangle]
+fn is_beneficiary_exist() {
+    let ret = ViProfile::default().is_existent_beneficiary();
     runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
 }
 
@@ -898,16 +921,16 @@ fn revoke_minter() {
 
 #[no_mangle]
 fn add_beneficiary() {
-    let beneficiary_id = runtime::get_named_arg::<U256>("beneficiary_id");
+    // let beneficiary_id = runtime::get_named_arg::<U256>("beneficiary_id");
     let mode = runtime::get_named_arg::<String>("mode");
     let name = runtime::get_named_arg::<String>("name");
     let description = runtime::get_named_arg::<String>("description");
-    let address = runtime::get_named_arg::<String>("address");
+    let address = runtime::get_named_arg::<Key>("address");
     let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
     let profile_contract_hash: ContractHash =
         ContractHash::from_formatted_str(&profile_contract_string).unwrap_or_default();
 
-    let address_hash: Key = Key::from_formatted_str(&address).unwrap();
+    // let address_hash: Key = Key::from_formatted_str(&address).unwrap();
     let caller = Key::Account(runtime::get_caller());
 
     let is_approved;
@@ -915,7 +938,7 @@ fn add_beneficiary() {
     if ViToken::default().is_admin(caller) {
         is_approved = true;
     } else {
-        if caller == address_hash {
+        if caller == address {
             is_approved = false;
         } else {
             revert(ApiError::User(20));
@@ -935,7 +958,7 @@ fn add_beneficiary() {
 
     let method: &str = "add_profile";
     let args: RuntimeArgs = runtime_args! {"mode" => mode.clone(),
-    "address" => address_hash.clone(),
+    "address" => address.clone(),
     "username" => name.clone(),
     "tagline" => "".to_string(),
     "imgUrl" => "".to_string(),
@@ -1158,6 +1181,27 @@ fn get_entry_points() -> EntryPoints {
         EntryPointType::Contract,
     ));
     entry_points.add_entry_point(EntryPoint::new(
+        "get_all_beneficiaries",
+        vec![],
+        CLType::List(Box::new(Key::cl_type())),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "is_beneficiary_exist",
+        vec![],
+        CLType::Option(Box::new(CLType::Bool)),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "get_beneficiary",
+        vec![Parameter::new("address", Key::cl_type())],
+        Beneficiary::cl_type(),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
         "balance_of",
         vec![Parameter::new("owner", Key::cl_type())],
         U256::cl_type(),
@@ -1376,7 +1420,7 @@ fn get_entry_points() -> EntryPoints {
     entry_points.add_entry_point(EntryPoint::new(
         "add_beneficiary",
         vec![
-            Parameter::new("beneficiary_id", U256::cl_type()),
+            // Parameter::new("beneficiary_id", U256::cl_type()),
             Parameter::new("mode", String::cl_type()),
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
