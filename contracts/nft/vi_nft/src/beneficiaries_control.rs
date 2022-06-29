@@ -2,7 +2,7 @@ use crate::Beneficiary;
 use alloc::vec::Vec;
 use casper_contract::{contract_api::storage, unwrap_or_revert::UnwrapOrRevert};
 use casper_types::{Key, U256};
-use contract_utils::{get_key, set_key, ContractContext, ContractStorage, Dict};
+use cep47::contract_utils::{get_key, set_key, ContractContext, ContractStorage, Dict};
 
 const BENEFICIARIES_DICT: &str = "beneficiaries";
 const BENEFICIARIES_ADDRESSES_DICT: &str = "beneficiaries_addresses";
