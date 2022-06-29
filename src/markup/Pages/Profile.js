@@ -44,7 +44,7 @@ const Profile = () => {
       const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
       console.log(userProfiles);
       if (userProfiles) {
-        debugger;
+        // debugger;
         if (userProfiles.err === 'Address Not Found') {
           if (beneficiaries) {
             if (_beneficiaryProfile) {
@@ -64,7 +64,7 @@ const Profile = () => {
                 facebook: '',
                 medium: '',
                 telegram: '',
-                mail:''
+                mail: '',
               };
               setBeneficiaryProfile(beneficiary);
               setNoBeneficiaryProfilesForThisUser(false);
@@ -91,7 +91,7 @@ const Profile = () => {
                 facebook: '',
                 medium: '',
                 telegram: '',
-                mail:''
+                mail: '',
               };
               setCreatorProfile(creator);
               setNoCreatorProfilesForThisUser(false);
@@ -210,7 +210,7 @@ const Profile = () => {
                 <div id='cost' className='tab-pane active py-5'>
                   <TabContent activeTab={activeTab}>
                     <TabPane tabId='1'>
-                       {/* {(normalProfile || noProfilesForThisUser) && (
+                      {/* {(normalProfile || noProfilesForThisUser) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.NormalProfile}
                           isProfileExist={
@@ -227,7 +227,7 @@ const Profile = () => {
                       )}  */}
                     </TabPane>
                     <TabPane tabId='2'>
-                       {/* {(creatorProfile || noCreatorProfilesForThisUser) && (
+                      {/* {(creatorProfile || noCreatorProfilesForThisUser) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.CreatorProfile}
                           isProfileExist={

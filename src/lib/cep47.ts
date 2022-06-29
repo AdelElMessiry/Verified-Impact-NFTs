@@ -17,6 +17,7 @@ import BufferImported from 'buffer/';
 import {
   CONNECTION,
   KEYS,
+  PROFILE_CONTRACT_HASH,
   NFT_CONTRACT_HASH,
   NFT_PACKAGE_HASH,
 } from '../constants/blockchain';
@@ -608,6 +609,7 @@ class CEP47Client {
   }
 
   public async addBeneficiary(
+    beneficiaryId: string,
     name: string,
     description: string,
     address: string,
@@ -616,10 +618,14 @@ class CEP47Client {
     deploySender: CLPublicKey
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
+      beneficiary_id: CLValueBuilder.u256(beneficiaryId),
       mode: CLValueBuilder.string(mode),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       address: CLValueBuilder.string(address),
+      profile_contract_hash: CLValueBuilder.string(
+        `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
     });
 
     return this.contractClient.callEntrypoint(

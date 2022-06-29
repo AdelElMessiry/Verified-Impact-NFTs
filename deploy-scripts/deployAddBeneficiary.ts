@@ -30,9 +30,13 @@ const KEYS: any = Keys.Ed25519.parseKeyPair(publicKey, privateKey);
   cep47.setContractHash(NFT_CONTRACT_HASH!, NFT_CONTRACT_PACKAGE_HASH);
 
   const beneficiaryDeploy = await cep47.addBeneficiary(
-    'Ebra',
-    "Ebra's Beneficiary Test",
-    '01e23d200eb0f3c8a3dacc8453644e6fcf4462585a68234ebb1c3d6cc8971148c2',
+    'New Ebra',
+    "New Ebra's Beneficiary Test",
+    `account-hash-${CLPublicKey.fromHex(
+      '01e23d200eb0f3c8a3dacc8453644e6fcf4462585a68234ebb1c3d6cc8971148c2'
+    )
+      .toAccountHashStr()
+      .slice(13)}`,
     MINT_ONE_PAYMENT_AMOUNT!,
     CLPublicKey.fromHex(
       '01e23d200eb0f3c8a3dacc8453644e6fcf4462585a68234ebb1c3d6cc8971148c2'
