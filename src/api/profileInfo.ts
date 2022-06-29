@@ -4,6 +4,7 @@ import {
   CasperClient,
   Contracts,
   CLValueBuilder,
+  CLAccountHash,
 } from 'casper-js-sdk';
 
 import { signDeploy } from '../utils/signer';
@@ -146,7 +147,7 @@ class ProfileClient {
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       mode: CLValueBuilder.string(mode ? mode : 'ADD'),
-      address: CLValueBuilder.key(address),
+      address: CLValueBuilder.key(new CLAccountHash(address.toAccountHash())),
       username: CLValueBuilder.string(username),
       tagline: CLValueBuilder.string(tagline),
       imgUrl: CLValueBuilder.string(imgUrl),

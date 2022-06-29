@@ -1,5 +1,5 @@
 import { cep47 } from '../lib/cep47';
-import { CLPublicKey } from 'casper-js-sdk';
+import { CLPublicKey, CLValueBuilder } from 'casper-js-sdk';
 
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import { signDeploy } from '../utils/signer';
@@ -10,12 +10,14 @@ export async function addBeneficiary(
   description: string,
   address: string,
   deploySender: CLPublicKey,
-  mode?: string
+  mode?: string,
+  beneficiaryId?: string
 ) {
   const beneficiaryDeploy = await cep47.addBeneficiary(
+    beneficiaryId ? beneficiaryId : '0',
     name,
     description,
-    address,
+    `account-hash-${CLPublicKey.fromHex(address).toAccountHashStr().slice(13)}`,
     mode ? mode : 'ADD',
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     deploySender

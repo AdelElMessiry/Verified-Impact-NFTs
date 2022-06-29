@@ -12,10 +12,15 @@ import { getDeployDetails } from '../../api/universal';
 import { uploadImg } from '../../api/imageCDN';
 import { addBeneficiary } from '../../api/addBeneficiary';
 
-const ProfileForm = ({ formName, isProfileExist, formData, isVINftExist=false }) => {
+const ProfileForm = ({
+  formName,
+  isProfileExist,
+  formData,
+  isVINftExist = false,
+}) => {
   const { entityInfo, refreshAuth } = useAuth();
   //setting initial values of controls
-  debugger;
+  // debugger;
   const [state, setState] = useState({
     inputs: {
       userName: '',
@@ -62,7 +67,6 @@ const ProfileForm = ({ formName, isProfileExist, formData, isVINftExist=false })
         address: formData !== {} && formData !== null ? formData.address : '',
       },
     });
-
   }, [formData]);
 
   const [uploadedProfileImageURL, setUploadedProfileImage] = React.useState(
@@ -205,16 +209,14 @@ const ProfileForm = ({ formName, isProfileExist, formData, isVINftExist=false })
           CLPublicKey.fromHex(entityInfo.publicKey),
           isProfileExist ? 'UPDATE' : 'ADD'
         );
-        if (
-          formName === ProfileFormsEnum.BeneficiaryProfile
-        ) {
+        if (formName === ProfileFormsEnum.BeneficiaryProfile) {
           debugger;
           const savedBeneficiary = await addBeneficiary(
             state.inputs.userName,
             state.inputs.fullBio,
             entityInfo.publicKey,
             CLPublicKey.fromHex(entityInfo.publicKey),
-            isVINftExist?'UPDATE':'ADD'
+            isVINftExist ? 'UPDATE' : 'ADD'
           );
           const deployResult = await getDeployDetails(savedBeneficiary);
           console.log('...... Beneficiary saved successfully', deployResult);
