@@ -543,6 +543,15 @@ impl ViToken {
 
     fn approve_beneficiary(&mut self, address: Key, status: bool) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
+        let beneficiary = ViToken::default()
+            .get_beneficiary(address)
+            .unwrap_or_default();
+
+        let mut profile = get_profile(address);
+
+        if !ViToken::default().is_existent_beneficiary(address) {
+            //save profile
+        }
 
         if !ViToken::default().is_admin(caller) {
             revert(ApiError::User(20));
