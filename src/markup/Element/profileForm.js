@@ -18,6 +18,7 @@ const ProfileForm = ({
   formData,
   isVINftExist = false,
 }) => {
+  debugger;
   const { entityInfo, refreshAuth } = useAuth();
   //setting initial values of controls
   // debugger;
@@ -43,6 +44,7 @@ const ProfileForm = ({
   });
 
   React.useEffect(() => {
+    debugger;
     setState({
       inputs: {
         userName: formData !== {} && formData !== null ? formData.username : '',
@@ -183,6 +185,7 @@ const ProfileForm = ({
     if (entityInfo.publicKey) {
       let saveDeployHash;
       console.log(formData);
+      debugger;
       try {
         saveDeployHash = await profileClient.addUpdateProfile(
           CLPublicKey.fromHex(entityInfo.publicKey),

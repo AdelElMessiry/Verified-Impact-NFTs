@@ -4,6 +4,7 @@ import ImageUploader from 'react-images-upload';
 import { toast as VIToast } from 'react-toastify';
 import { Form } from 'react-bootstrap';
 import CreatableSelect from 'react-select/creatable';
+import validator from 'validator';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNFTState } from '../../../contexts/NFTContext';
@@ -11,7 +12,7 @@ import { useNFTState } from '../../../contexts/NFTContext';
 import { uploadImg } from '../../../api/imageCDN';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
-import validator from 'validator';
+import { profileClient } from '../../../api/profileInfo';
 
 import PageTitle from '../../Layout/PageTitle';
 import PromptLogin from '../PromptLogin';
@@ -30,7 +31,7 @@ const createOption = (label) => ({
 //minting new nft page
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
-  const { campaigns, beneficiaries, creators, collections } = useNFTState();
+  const { campaigns, beneficiaries, collections } = useNFTState();
   let storageData= localStorage.getItem('selectedData');
   let savedData=storageData?JSON.parse(storageData):null
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
@@ -67,16 +68,23 @@ const MintNFT = () => {
   });
 
   const loadCollections = React.useCallback(async () => {
-    if (entityInfo.publicKey && creators && collections) {
-      const existingCreator = creators.find(
-        ({ address }) => address === entityInfo.publicKey
-      );
-      existingCreator && setIsCreatorExist(true);
-      existingCreator && setCreator(existingCreator.name);
+    let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
+    if (entityInfo.publicKey && userProfiles) {
+      debugger;
+      if (userProfiles.err === 'Address Not Found') {
+        setCreator(null);
+        setIsCreatorExist(false)
+     setCollectionsList(null);
+      } else {
+        let list = Object.values(userProfiles)[0];
+
+        userProfiles && setCreator(list.creator.username);
+        userProfiles && setIsCreatorExist(true);
+      if(list?.creator?.address!==""){
 
       const _collections =
         // existingCreator &&
-        collections.filter(({ creator }) => creator === entityInfo.publicKey);
+        collections&&collections.filter(({ creator }) => creator === entityInfo.publicKey);
 
       const selectedCollections =
         _collections &&
@@ -87,10 +95,14 @@ const MintNFT = () => {
 
       selectedCollections && setCollectionsList(selectedCollections);
       selectedCollections && setSelectedCollectionValue(savedData?savedData.collection:selectedCollections[0]);
+      }
+      else{
+      setCollectionsList(null);
+      }
+    }
     }
   }, [
     entityInfo.publicKey,
-    creators,
     collections,
     setCollectionsList,
     setCreator,
@@ -111,23 +123,28 @@ const MintNFT = () => {
         )
       );
     !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
-    !collectionsList && collections?.length && loadCollections();
     !campaignsList &&
       campaigns?.length &&
       setCampaignSelectedData(campaigns, savedData?savedData.campaign:campaigns[0]?.id);
   }, [
-    collectionsList,
-    collections,
     campaignsList,
     campaigns,
     beneficiaries,
     beneficiary,
     campaign,
-    loadCollections,
     setBeneficiary,
     setCampaign,
     setCampaignsList,
   ]);
+
+  React.useEffect(() => {
+    !collectionsList && loadCollections();
+  }, [
+    collectionsList,
+    collections,
+    loadCollections,
+  ]);
+
 
   //handling of adding new option to the existing collections in creatable select
   const handleCreate = (inputValue) => {

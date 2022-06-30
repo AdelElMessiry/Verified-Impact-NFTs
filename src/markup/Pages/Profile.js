@@ -118,10 +118,10 @@ const Profile = () => {
             }
           }
           let list = Object.values(userProfiles)[0];
-
-          userProfiles && setNormalProfile(list.normal);
-          userProfiles && setBeneficiaryProfile(list.beneficiary);
-          userProfiles && setCreatorProfile(list.creator);
+debugger;
+          userProfiles && setNormalProfile(Object.keys(list.normal).length === 0?null:list.normal);
+          userProfiles && setBeneficiaryProfile(Object.keys(list.beneficiary).length === 0?null:list.beneficiary);
+          userProfiles && setCreatorProfile(Object.keys(list.creator).length === 0?null:list.creator);
         }
       }
     } catch (e) {
@@ -210,7 +210,7 @@ const Profile = () => {
                 <div id='cost' className='tab-pane active py-5'>
                   <TabContent activeTab={activeTab}>
                     <TabPane tabId='1'>
-                      {/* {(normalProfile || noProfilesForThisUser) && (
+                      {(normalProfile || noProfilesForThisUser) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.NormalProfile}
                           isProfileExist={
@@ -224,10 +224,10 @@ const Profile = () => {
                             noProfilesForThisUser ? null : normalProfile
                           }
                         />
-                      )}  */}
+                      )} 
                     </TabPane>
                     <TabPane tabId='2'>
-                      {/* {(creatorProfile || noCreatorProfilesForThisUser) && (
+                       {(creatorProfile || noCreatorProfilesForThisUser) && creators&& (
                         <ProfileForm
                           formName={ProfileFormsEnum.CreatorProfile}
                           isProfileExist={
@@ -239,7 +239,7 @@ const Profile = () => {
                           }
                           formData={creatorProfile}
                         />
-                      )}  */}
+                      )}  
                     </TabPane>
                     <TabPane tabId='3'>
                       {(beneficiaryProfile ||
