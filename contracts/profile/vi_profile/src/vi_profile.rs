@@ -98,6 +98,7 @@ impl ViProfile {
         telegram: String,
         mail: String,
         profile_type: String,
+        // is_approved: bool,
     ) -> Result<(), Error> {
         // let caller = ViProfile::default().get_caller();
 
@@ -130,6 +131,12 @@ impl ViProfile {
                 profile.insert(format!("{}_medium", profile_type), medium);
                 profile.insert(format!("{}_telegram", profile_type), telegram);
                 profile.insert(format!("{}_mail", profile_type), mail);
+
+                // if ViProfile::default().is_admin(caller) {
+                //     profile.insert(format!("{}_is_approved", profile_type), "true".to_string());
+                // } else {
+                //     profile.insert(format!("{}_is_approved", profile_type), "false".to_string());
+                // }
 
                 ProfileControl::add_profile(self, address, profile);
 
@@ -212,6 +219,24 @@ impl ViProfile {
         self.remove_profile(address).unwrap_or_revert();
         Ok(())
     }
+
+    fn set_is_approved_beneficiary(&mut self, address: Key, status: bool) -> Result<(), Error> {
+        let caller = ViProfile::default().get_caller();
+
+        if !ViProfile::default().is_admin(caller) {
+            revert(ApiError::User(20));
+        }
+
+        let mut profile = ProfileControl::get_profile(self, address).unwrap_or_default();
+        profile.insert(
+            format!("{}_is_approved", "beneficiary".to_string()),
+            status.to_string(),
+        );
+
+        ProfileControl::add_profile(self, address, profile);
+
+        Ok(())
+    }
 }
 
 #[no_mangle]
@@ -247,7 +272,7 @@ fn is_profile_exist() {
 }
 
 #[no_mangle]
-fn add_profile() {
+pub extern "C" fn add_profile() {
     let mode = runtime::get_named_arg::<String>("mode");
     let address = runtime::get_named_arg::<Key>("address");
     let username = runtime::get_named_arg::<String>("username");
@@ -288,6 +313,16 @@ fn add_profile() {
             mail,
             profile_type,
         )
+        .unwrap_or_revert();
+}
+
+#[no_mangle]
+pub extern "C" fn approve_beneficiary() {
+    let address = runtime::get_named_arg::<Key>("address");
+    let status = runtime::get_named_arg::<bool>("status");
+
+    ViProfile::default()
+        .set_is_approved_beneficiary(address, status)
         .unwrap_or_revert();
 }
 
@@ -422,6 +457,16 @@ fn get_entry_points() -> EntryPoints {
     entry_points.add_entry_point(EntryPoint::new(
         "remove_profile",
         vec![Parameter::new("address", Key::cl_type())],
+        <()>::cl_type(),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "approve_beneficiary",
+        vec![
+            Parameter::new("address", Key::cl_type()),
+            Parameter::new("status", bool::cl_type()),
+        ],
         <()>::cl_type(),
         EntryPointAccess::Public,
         EntryPointType::Contract,
