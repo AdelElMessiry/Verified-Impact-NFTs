@@ -20,15 +20,15 @@ const ViewProfile = ({ show, handleCloseParent, data, formName }) => {
 
   //getting beneficiary details
   const getProfile = React.useCallback(async () => {
-    let selectedList = [];
-    let profiles = await profileClient.getProfilesList();
-    profiles &&
-      profiles.map((data) => {
-        let lists = Object.values(data)[0];
-        selectedList.push(formName===ProfileFormsEnum.BeneficiaryProfile? lists.beneficiary:lists.creator);
-      });
-    profiles && setProfileDetails(selectedList);
-  }, [profileDetails]);
+    let userProfiles = await profileClient.getProfile(data.address);
+    if (userProfiles) {
+      if (userProfiles.err === 'Address Not Found') {
+        setProfileDetails(null);
+      } else {
+        let list = Object.values(userProfiles)[0];
+        userProfiles && setProfileDetails(formName===ProfileFormsEnum.BeneficiaryProfile? list.beneficiary:list.creator);
+    }
+  }}, [profileDetails]);
 
   React.useEffect(() => {
     !profileDetails && getProfile();

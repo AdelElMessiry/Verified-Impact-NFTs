@@ -5,12 +5,12 @@ import { CLPublicKey } from 'casper-js-sdk';
 import { toast as VIToast } from 'react-toastify';
 
 import { useAuth } from '../../../contexts/AuthContext';
-import { getBeneficiariesList } from '../../../api/beneficiaryInfo';
 import { approveBeneficiary } from '../../../api/addBeneficiary';
 import PromptLogin from '../PromptLogin';
 import Layout from '../../Layout';
 import VINFTsTooltip from '../../Element/Tooltip';
 import { getDeployDetails } from '../../../api/universal';
+import { profileClient } from '../../../api/profileInfo';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import plusIcon from './../../../images/icon/plus.png';
@@ -20,13 +20,26 @@ const ManageBeneficiaries = () => {
   const { isLoggedIn, entityInfo } = useAuth();
   const [beneficiaries, setBeneficiaries] = useState();
 
+  const loadBeneficiaries = React.useCallback(async () => {
+    let selectedList = [];
+    debugger;
+    let profiles = await profileClient.getProfilesList();
+
+    profiles &&
+      profiles.map((data) => {
+        let lists = Object.values(data)[0];
+        selectedList.push(lists.creator);
+      });
+    profiles && setBeneficiaries(selectedList);
+  }, []);
+
   //getting beneficiary list
-  useEffect(() => {
-    (async () => {
-      let beneficiaryList = !beneficiaries && (await getBeneficiariesList());
-      !beneficiaries && setBeneficiaries(beneficiaryList);
-    })();
-  }, [beneficiaries]);
+  React.useEffect(() => {
+    !beneficiaries && loadBeneficiaries();
+  }, [
+    beneficiaries,
+    loadBeneficiaries
+  ]);
 
   //saving new collection function
   const handleApproveBeneficiary = async (beneficiary) => {
