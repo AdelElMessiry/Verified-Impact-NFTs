@@ -118,8 +118,8 @@ const Profile = () => {
             }
           }
           let list = Object.values(userProfiles)[0];
-debugger;
-          userProfiles && setNormalProfile(Object.keys(list.normal).length === 0?null:list.normal);
+          debugger;
+          userProfiles && setNormalProfile(list.normal);
           userProfiles && setBeneficiaryProfile(Object.keys(list.beneficiary).length === 0?null:list.beneficiary);
           userProfiles && setCreatorProfile(Object.keys(list.creator).length === 0?null:list.creator);
         }
@@ -227,7 +227,7 @@ debugger;
                       )} 
                     </TabPane>
                     <TabPane tabId='2'>
-                       {(creatorProfile || noCreatorProfilesForThisUser) && creators&& (
+                        {(creatorProfile || noCreatorProfilesForThisUser) && creators&& (
                         <ProfileForm
                           formName={ProfileFormsEnum.CreatorProfile}
                           isProfileExist={
@@ -242,7 +242,7 @@ debugger;
                       )}  
                     </TabPane>
                     <TabPane tabId='3'>
-                      {(beneficiaryProfile ||
+                       {(beneficiaryProfile ||
                         noBeneficiaryProfilesForThisUser) &&
                         beneficiaries && (
                           <ProfileForm
@@ -257,7 +257,7 @@ debugger;
                             formData={beneficiaryProfile}
                             isVINftExist={!noBeneficiaryProfilesForThisUser}
                           />
-                        )}
+                        )} 
                     </TabPane>
                   </TabContent>
                 </div>
