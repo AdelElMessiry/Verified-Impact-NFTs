@@ -24,7 +24,7 @@ const Header1 = ({ isNFTDetails = false }) => {
       sidebarmenu.classList.toggle('show');
       //   Navicon.classList.toggle('open');
     }
-    Navicon.addEventListener('click', toggleFunc);
+    Navicon?.addEventListener('click', toggleFunc);
 
     // Sidenav li open close
     var navUl = [].slice.call(
