@@ -14,6 +14,13 @@ import bnr1 from './../../../images/banner/bnr1.jpg';
 import { toast as VIToast } from 'react-toastify';
 import Layout from '../../Layout';
 
+
+/**
+ * Add beneficiary to verified-impact-nft's contract from admin side.
+ *
+ * @type {React.FC<Props>}
+ * @returns {React.ReactElement} UI page
+ */
 //add new beneficiary page
 const AddBeneficiary = () => {
   const { isLoggedIn, entityInfo } = useAuth();
