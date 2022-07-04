@@ -118,10 +118,21 @@ const Profile = () => {
             }
           }
           let list = Object.values(userProfiles)[0];
-debugger;
-          userProfiles && setNormalProfile(Object.keys(list.normal).length === 0?null:list.normal);
-          userProfiles && setBeneficiaryProfile(Object.keys(list.beneficiary).length === 0?null:list.beneficiary);
-          userProfiles && setCreatorProfile(Object.keys(list.creator).length === 0?null:list.creator);
+          // debugger;
+          userProfiles &&
+            setNormalProfile(
+              Object.keys(list.normal).length === 0 ? null : list.normal
+            );
+          userProfiles &&
+            setBeneficiaryProfile(
+              Object.keys(list.beneficiary).length === 0
+                ? null
+                : list.beneficiary
+            );
+          userProfiles &&
+            setCreatorProfile(
+              Object.keys(list.creator).length === 0 ? null : list.creator
+            );
         }
       }
     } catch (e) {
@@ -224,22 +235,23 @@ debugger;
                             noProfilesForThisUser ? null : normalProfile
                           }
                         />
-                      )} 
+                      )}
                     </TabPane>
                     <TabPane tabId='2'>
-                       {(creatorProfile || noCreatorProfilesForThisUser) && creators&& (
-                        <ProfileForm
-                          formName={ProfileFormsEnum.CreatorProfile}
-                          isProfileExist={
-                            noProfilesForThisUser ||
-                            (creatorProfile &&
-                              Object.keys(creatorProfile).length === 0)
-                              ? false
-                              : true
-                          }
-                          formData={creatorProfile}
-                        />
-                      )}  
+                      {(creatorProfile || noCreatorProfilesForThisUser) &&
+                        creators && (
+                          <ProfileForm
+                            formName={ProfileFormsEnum.CreatorProfile}
+                            isProfileExist={
+                              noProfilesForThisUser ||
+                              (creatorProfile &&
+                                Object.keys(creatorProfile).length === 0)
+                                ? false
+                                : true
+                            }
+                            formData={creatorProfile}
+                          />
+                        )}
                     </TabPane>
                     <TabPane tabId='3'>
                       {(beneficiaryProfile ||
