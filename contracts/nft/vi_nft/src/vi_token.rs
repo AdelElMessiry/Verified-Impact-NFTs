@@ -541,23 +541,52 @@ impl ViToken {
         Ok(())
     }
 
-    fn approve_beneficiary(&mut self, address: Key, status: bool) -> Result<(), Error> {
+    fn approve_beneficiary(
+        &mut self,
+        address: Key,
+        status: bool,
+        profile_contract: String,
+    ) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
-        let beneficiary = ViToken::default()
-            .get_beneficiary(address)
-            .unwrap_or_default();
-
-        let mut profile = get_profile(address);
-
-        if !ViToken::default().is_existent_beneficiary(address) {
-            //save profile
-        }
 
         if !ViToken::default().is_admin(caller) {
             revert(ApiError::User(20));
         }
+
+        if !ViToken::default().is_existent_beneficiary() {
+            //save profile
+            let mut beneficiary =
+                BeneficiaryControl::get_beneficiary(self, address).unwrap_or_default();
+            let new_beneficiary_count = beneficiaries_control::total_beneficiaries()
+                .checked_add(U256::one())
+                .unwrap();
+
+            beneficiary.insert(format!("name: "), "".to_string());
+            beneficiary.insert(format!("description: "), "".to_string());
+            beneficiary.insert(format!("address: "), address.to_string());
+            beneficiary.insert(format!("isApproved: "), status.to_string());
+
+            BeneficiaryControl::add_beneficiary(self, address, beneficiary);
+
+            let mut beneficiaries: Vec<Key> = beneficiaries_control::get_all_beneficiaries();
+            beneficiaries.push(address);
+            beneficiaries_control::set_all_beneficiaries(beneficiaries);
+            beneficiaries_control::set_total_beneficiaries(new_beneficiary_count);
+        }
+        let profile_contract_hash: ContractHash =
+            ContractHash::from_formatted_str(&profile_contract).unwrap_or_default();
+
+        let method: &str = "approve_beneficiary";
+        let args: RuntimeArgs = runtime_args! {
+                "address" => address.clone(),
+                "status" => status.clone(),
+        };
+
+        runtime::call_contract::<()>(profile_contract_hash, method, args);
+
         self.set_is_approved_beneficiary(address, status)
             .unwrap_or_revert();
+
         Ok(())
     }
 
@@ -924,7 +953,7 @@ fn revoke_minter() {
 
 #[no_mangle]
 fn add_beneficiary() {
-    // let beneficiary_id = runtime::get_named_arg::<U256>("beneficiary_id");
+    let caller = Key::Account(runtime::get_caller());
     let mode = runtime::get_named_arg::<String>("mode");
     let name = runtime::get_named_arg::<String>("name");
     let description = runtime::get_named_arg::<String>("description");
@@ -932,9 +961,6 @@ fn add_beneficiary() {
     let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
     let profile_contract_hash: ContractHash =
         ContractHash::from_formatted_str(&profile_contract_string).unwrap_or_default();
-
-    // let address_hash: Key = Key::from_formatted_str(&address).unwrap();
-    let caller = Key::Account(runtime::get_caller());
 
     let is_approved;
 
@@ -986,9 +1012,10 @@ fn add_beneficiary() {
 fn approve_beneficiary() {
     let address = runtime::get_named_arg::<Key>("address");
     let status = runtime::get_named_arg::<bool>("status");
+    let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_string");
 
     ViToken::default()
-        .approve_beneficiary(address, status)
+        .approve_beneficiary(address, status, profile_contract_string)
         .unwrap_or_revert();
 }
 
@@ -1008,12 +1035,23 @@ fn add_creator() {
 #[no_mangle]
 fn grant_admin() {
     let admin = runtime::get_named_arg::<Key>("admin");
+    let caller = Key::Account(runtime::get_caller());
+
+    if ViToken::default().is_admin(caller) {
+        revert(ApiError::User(20));
+    }
+
     ViToken::default().add_admin(admin);
 }
 
 #[no_mangle]
 fn revoke_admin() {
     let admin = runtime::get_named_arg::<Key>("admin");
+    let caller = Key::Account(runtime::get_caller());
+
+    if ViToken::default().is_admin(caller) {
+        revert(ApiError::User(20));
+    }
     ViToken::default().disable_admin(admin);
 }
 
@@ -1439,6 +1477,7 @@ fn get_entry_points() -> EntryPoints {
         vec![
             Parameter::new("address", Key::cl_type()),
             Parameter::new("status", bool::cl_type()),
+            Parameter::new("profile_contract_string", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
