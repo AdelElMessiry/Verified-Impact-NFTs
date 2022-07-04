@@ -1,6 +1,12 @@
 import { useAuth } from '../../contexts/AuthContext'
 
-//returned when the page that user requested require login with casper and user not signin 
+// display in case the user makes a request required the user to login
+/**
+ * display in case the user makes a request required the user to login
+ *
+ * @type {React.FC<Props>}
+ * @returns {React.ReactElement} UI page
+ */
 const PromptLogin = () => {
   const { login } = useAuth();
   return (

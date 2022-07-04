@@ -20,6 +20,13 @@ import bnr1 from './../../../images/banner/bnr1.jpg';
 import PromptLogin from '../PromptLogin';
 import Layout from '../../Layout';
 
+/**
+ * Add NFT to verified-impact-nft's contract user and admin could access this screen
+ *
+ * @type {React.FC<Props>}
+ * @returns {React.ReactElement} UI page
+ */
+
 //minting new nft page
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
