@@ -118,6 +118,7 @@ const Profile = () => {
             }
           }
           let list = Object.values(userProfiles)[0];
+<<<<<<< HEAD
           // debugger;
           userProfiles &&
             setNormalProfile(
@@ -133,6 +134,12 @@ const Profile = () => {
             setCreatorProfile(
               Object.keys(list.creator).length === 0 ? null : list.creator
             );
+=======
+          debugger;
+          userProfiles && setNormalProfile(list.normal);
+          userProfiles && setBeneficiaryProfile(Object.keys(list.beneficiary).length === 0?null:list.beneficiary);
+          userProfiles && setCreatorProfile(Object.keys(list.creator).length === 0?null:list.creator);
+>>>>>>> aa9be4064174d805a0ab19fb1297d0ecbbae8278
         }
       }
     } catch (e) {
@@ -238,6 +245,7 @@ const Profile = () => {
                       )}
                     </TabPane>
                     <TabPane tabId='2'>
+<<<<<<< HEAD
                       {(creatorProfile || noCreatorProfilesForThisUser) &&
                         creators && (
                           <ProfileForm
@@ -252,9 +260,24 @@ const Profile = () => {
                             formData={creatorProfile}
                           />
                         )}
+=======
+                        {(creatorProfile || noCreatorProfilesForThisUser) && creators&& (
+                        <ProfileForm
+                          formName={ProfileFormsEnum.CreatorProfile}
+                          isProfileExist={
+                            noProfilesForThisUser ||
+                            (creatorProfile &&
+                              Object.keys(creatorProfile).length === 0)
+                              ? false
+                              : true
+                          }
+                          formData={creatorProfile}
+                        />
+                      )}  
+>>>>>>> aa9be4064174d805a0ab19fb1297d0ecbbae8278
                     </TabPane>
                     <TabPane tabId='3'>
-                      {(beneficiaryProfile ||
+                       {(beneficiaryProfile ||
                         noBeneficiaryProfilesForThisUser) &&
                         beneficiaries && (
                           <ProfileForm
@@ -269,7 +292,7 @@ const Profile = () => {
                             formData={beneficiaryProfile}
                             isVINftExist={!noBeneficiaryProfilesForThisUser}
                           />
-                        )}
+                        )} 
                     </TabPane>
                   </TabContent>
                 </div>

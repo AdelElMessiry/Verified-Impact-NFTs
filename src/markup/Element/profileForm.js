@@ -43,8 +43,23 @@ const ProfileForm = ({
     },
   });
 
+  const [uploadedProfileImageURL, setUploadedProfileImage] = React.useState(null);
+  const [uploadedProfileFile, setUploadedProfileFile] = React.useState(null);
+  const [uploadedNFTImageURL, setUploadedNFTImage] = React.useState(null);
+  const [uploadedNFTFile, setUploadedNFTFile] = React.useState(null);
+  const [isSaveButtonClicked, setIsSaveButtonClicked] = React.useState(false);
+  const [isOndropProfileClicked, setIsOndropProfileClicked] = useState(false);
+  const [isOndropNFTClicked, setIsOndropNFTClicked] = useState(false);
+
+  const [showProfileURLErrorMsg, setShowProfileURLErrorMsg] =
+    React.useState(false);
+  const [showNFTURLErrorMsg, setShowNFTURLErrorMsg] = React.useState(false);
+
   React.useEffect(() => {
+<<<<<<< HEAD
     // debugger;
+=======
+>>>>>>> aa9be4064174d805a0ab19fb1297d0ecbbae8278
     setState({
       inputs: {
         userName: formData !== {} && formData !== null ? formData.username : '',
@@ -69,23 +84,10 @@ const ProfileForm = ({
         address: formData !== {} && formData !== null ? formData.address : '',
       },
     });
+    setUploadedProfileImage(formData !== {} && formData !== null ? formData?.imgUrl :null);
+    setUploadedNFTImage(formData !== {} && formData !== null ? formData?.nftUrl : null)
   }, [formData]);
 
-  const [uploadedProfileImageURL, setUploadedProfileImage] = React.useState(
-    formData !== {} && formData !== null ? formData.imgUrl : null
-  );
-  const [uploadedProfileFile, setUploadedProfileFile] = React.useState(null);
-  const [uploadedNFTImageURL, setUploadedNFTImage] = React.useState(
-    formData !== {} && formData !== null ? formData.nftUrl : null
-  );
-  const [uploadedNFTFile, setUploadedNFTFile] = React.useState(null);
-  const [isSaveButtonClicked, setIsSaveButtonClicked] = React.useState(false);
-  const [isOndropProfileClicked, setIsOndropProfileClicked] = useState(false);
-  const [isOndropNFTClicked, setIsOndropNFTClicked] = useState(false);
-
-  const [showProfileURLErrorMsg, setShowProfileURLErrorMsg] =
-    React.useState(false);
-  const [showNFTURLErrorMsg, setShowNFTURLErrorMsg] = React.useState(false);
 
   const handleChange = (e) => {
     const { value, name, checked, type } = e.target;
@@ -185,7 +187,10 @@ const ProfileForm = ({
     if (entityInfo.publicKey) {
       let saveDeployHash;
       console.log(formData);
+<<<<<<< HEAD
       // debugger;
+=======
+>>>>>>> aa9be4064174d805a0ab19fb1297d0ecbbae8278
       try {
         saveDeployHash = await profileClient.addUpdateProfile(
           CLPublicKey.fromHex(entityInfo.publicKey),
@@ -212,6 +217,7 @@ const ProfileForm = ({
           CLPublicKey.fromHex(entityInfo.publicKey),
           isProfileExist ? 'UPDATE' : 'ADD'
         );
+<<<<<<< HEAD
         if (formName === ProfileFormsEnum.BeneficiaryProfile) {
           // debugger;
           const savedBeneficiary = await addBeneficiary(
@@ -224,6 +230,8 @@ const ProfileForm = ({
           const deployResult = await getDeployDetails(savedBeneficiary);
           console.log('...... Beneficiary saved successfully', deployResult);
         }
+=======
+>>>>>>> aa9be4064174d805a0ab19fb1297d0ecbbae8278
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
@@ -437,7 +445,7 @@ const ProfileForm = ({
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
                   defaultImages={[
                     !isOndropProfileClicked
-                      ? formData !== {} && formData !== null && formData.imgUrl
+                      ? formData !== {} && formData !== null && formData?.imgUrl
                       : uploadedProfileImageURL
                       ? uploadedProfileImageURL
                       : '',
@@ -492,7 +500,7 @@ const ProfileForm = ({
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
                   defaultImages={[
                     !isOndropNFTClicked
-                      ? formData !== {} && formData !== null && formData.nftUrl
+                      ? formData !== {} && formData !== null && formData?.nftUrl
                       : uploadedNFTImageURL
                       ? uploadedNFTImageURL
                       : '',
