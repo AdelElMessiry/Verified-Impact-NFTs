@@ -125,7 +125,7 @@ class ProfileClient {
   }
 
   public async addUpdateProfile(
-    address: CLPublicKey,
+    address: string,
     username: string,
     tagline: string,
     imgUrl: string,
@@ -147,7 +147,10 @@ class ProfileClient {
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       mode: CLValueBuilder.string(mode ? mode : 'ADD'),
-      address: CLValueBuilder.key(new CLAccountHash(address.toAccountHash())),
+      address: CLValueBuilder.string(
+        CLPublicKey.fromHex(address).toAccountHashStr()
+      ),
+      // address: CLValueBuilder.key(new CLAccountHash(address.toAccountHash())),
       username: CLValueBuilder.string(username),
       tagline: CLValueBuilder.string(tagline),
       imgUrl: CLValueBuilder.string(imgUrl),
