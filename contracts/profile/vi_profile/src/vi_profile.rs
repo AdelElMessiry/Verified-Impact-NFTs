@@ -85,7 +85,7 @@ impl ViProfile {
     fn set_profile(
         &mut self,
         mode: String,
-        address: Key,
+        address: String,
         username: String,
         tagline: String,
         img_url: String,
@@ -110,8 +110,9 @@ impl ViProfile {
                 let new_profile_count = profiles_control::total_profiles()
                     .checked_add(U256::one())
                     .unwrap();
-
-                let mut profile = ProfileControl::get_profile(self, address).unwrap_or_default();
+                let mapped_address = Key::from_formatted_str(&address).unwrap();
+                let mut profile =
+                    ProfileControl::get_profile(self, mapped_address).unwrap_or_default();
 
                 profile.insert(format!("{}_address", profile_type), address.to_string());
                 profile.insert(format!("{}_username", profile_type), username);
@@ -134,15 +135,13 @@ impl ViProfile {
                     is_approved.to_string(),
                 );
 
-                ProfileControl::add_profile(self, address, profile);
+                ProfileControl::add_profile(self, mapped_address.clone(), profile);
 
                 if cloned_mode == "ADD" {
-                    let profiles: Vec<Key> = self.get_all_profiles();
-                    let mut temp_profiles = profiles.clone();
-                    // temp_profiles = profiles.clone();
-                    // let profile = profiles.last();
-                    temp_profiles.push(address);
-                    self.set_all_profiles(temp_profiles);
+                    let mut profiles: Vec<Key> = self.get_all_profiles();
+                    let mut mapped_profiles = vec![profiles.clone()];
+                    mapped_profiles.push(mapped_address.clone());
+                    self.set_all_profiles(mapped_profiles);
                     profiles_control::set_total_profiles(new_profile_count);
                 }
             }
@@ -168,7 +167,7 @@ impl ViProfile {
     fn create_profile(
         &mut self,
         mode: String,
-        address: Key,
+        address: String,
         username: String,
         tagline: String,
         img_url: String,
@@ -271,7 +270,7 @@ fn is_profile_exist() {
 #[no_mangle]
 pub extern "C" fn add_profile() {
     let mode = runtime::get_named_arg::<String>("mode");
-    let address = runtime::get_named_arg::<Key>("address");
+    let address = runtime::get_named_arg::<String>("address");
     let username = runtime::get_named_arg::<String>("username");
     let tagline = runtime::get_named_arg::<String>("tagline");
     let img_url = runtime::get_named_arg::<String>("imgUrl");
@@ -461,7 +460,7 @@ fn get_entry_points() -> EntryPoints {
         "add_profile",
         vec![
             Parameter::new("mode", String::cl_type()),
-            Parameter::new("address", Key::cl_type()),
+            Parameter::new("address", String::cl_type()),
             Parameter::new("username", String::cl_type()),
             Parameter::new("tagline", String::cl_type()),
             Parameter::new("imgUrl", String::cl_type()),

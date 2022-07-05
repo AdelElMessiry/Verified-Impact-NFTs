@@ -43,7 +43,8 @@ const ProfileForm = ({
     },
   });
 
-  const [uploadedProfileImageURL, setUploadedProfileImage] = React.useState(null);
+  const [uploadedProfileImageURL, setUploadedProfileImage] =
+    React.useState(null);
   const [uploadedProfileFile, setUploadedProfileFile] = React.useState(null);
   const [uploadedNFTImageURL, setUploadedNFTImage] = React.useState(null);
   const [uploadedNFTFile, setUploadedNFTFile] = React.useState(null);
@@ -56,10 +57,6 @@ const ProfileForm = ({
   const [showNFTURLErrorMsg, setShowNFTURLErrorMsg] = React.useState(false);
 
   React.useEffect(() => {
-<<<<<<< HEAD
-    // debugger;
-=======
->>>>>>> aa9be4064174d805a0ab19fb1297d0ecbbae8278
     setState({
       inputs: {
         userName: formData !== {} && formData !== null ? formData.username : '',
@@ -84,10 +81,13 @@ const ProfileForm = ({
         address: formData !== {} && formData !== null ? formData.address : '',
       },
     });
-    setUploadedProfileImage(formData !== {} && formData !== null ? formData?.imgUrl :null);
-    setUploadedNFTImage(formData !== {} && formData !== null ? formData?.nftUrl : null)
+    setUploadedProfileImage(
+      formData !== {} && formData !== null ? formData?.imgUrl : null
+    );
+    setUploadedNFTImage(
+      formData !== {} && formData !== null ? formData?.nftUrl : null
+    );
   }, [formData]);
-
 
   const handleChange = (e) => {
     const { value, name, checked, type } = e.target;
@@ -187,13 +187,11 @@ const ProfileForm = ({
     if (entityInfo.publicKey) {
       let saveDeployHash;
       console.log(formData);
-<<<<<<< HEAD
       // debugger;
-=======
->>>>>>> aa9be4064174d805a0ab19fb1297d0ecbbae8278
       try {
         saveDeployHash = await profileClient.addUpdateProfile(
-          CLPublicKey.fromHex(entityInfo.publicKey),
+          // CLPublicKey.fromHex(entityInfo.publicKey),
+          entityInfo.publicKey,
           state.inputs.userName,
           state.inputs.shortTagLine,
           ProfileImgURL,
@@ -217,7 +215,6 @@ const ProfileForm = ({
           CLPublicKey.fromHex(entityInfo.publicKey),
           isProfileExist ? 'UPDATE' : 'ADD'
         );
-<<<<<<< HEAD
         if (formName === ProfileFormsEnum.BeneficiaryProfile) {
           // debugger;
           const savedBeneficiary = await addBeneficiary(
@@ -230,8 +227,6 @@ const ProfileForm = ({
           const deployResult = await getDeployDetails(savedBeneficiary);
           console.log('...... Beneficiary saved successfully', deployResult);
         }
-=======
->>>>>>> aa9be4064174d805a0ab19fb1297d0ecbbae8278
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
