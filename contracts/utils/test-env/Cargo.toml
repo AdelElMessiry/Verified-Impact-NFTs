@@ -9,6 +9,7 @@ casper-contract = { version = "1.4.3", default-features = false, features = ["te
 casper-engine-test-support = { version = "2.0.3", features = ["test-support"] }
 casper-execution-engine = "1.4.2"
 casper-types = "1.4.4"
+sysconf= "0.3.4"
 rand = "*"
 
 [features]
