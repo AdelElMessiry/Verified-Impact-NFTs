@@ -1,4 +1,3 @@
-#![allow(non_camel_case_types)]
 use std::collections::BTreeMap;
 
 use blake2::{
@@ -10,13 +9,12 @@ use casper_types::{
 };
 use test_env::{TestContract, TestEnv};
 
-pub type TokenId = String;
+pub type TokenId = U256;
 pub type Meta = BTreeMap<String, String>;
 
-pub struct ViInstance(TestContract);
-pub struct ViInstance(TestContract);
+pub struct VIInstance(TestContract);
 
-impl ViInstance {
+impl VIInstance {
     pub fn new(
         env: &TestEnv,
         contract_name: &str,
@@ -25,37 +23,19 @@ impl ViInstance {
         symbol: &str,
         meta: Meta,
         admin: Key,
-    ) -> (ViInstance, ViInstance) {
-        let owner = sender;
-        let vi_instance = ViInstance(TestContract::new(
+    ) -> VIInstance {
+        VIInstance(TestContract::new(
             env,
             "vi-token.wasm",
-            "kyc",
-            owner,
+            contract_name,
+            sender,
             runtime_args! {
-                "name" => "kyc",
-                "symbol" => "symbol",
-                "meta" => meta.clone(),
+                "name" => name,
+                "symbol" => symbol,
+                "meta" => meta,
                 "admin" => admin
             },
-        ));
-        let vi_package_hash = vi_instance.0.package_hash();
-        (
-            vi_instance,
-            ViInstance(TestContract::new(
-                env,
-                "vi-token.wasm",
-                contract_name,
-                owner,
-                runtime_args! {
-                    "name" => name,
-                    "symbol" => symbol,
-                    "meta" => meta,
-                    "admin" => admin,
-                    "kyc_package_hash" => Key::Hash(vi_package_hash)
-                },
-            )),
-        )
+        ))
     }
 
     pub fn constructor(&self, sender: AccountHash, name: &str, symbol: &str, meta: Meta) {
@@ -69,47 +49,29 @@ impl ViInstance {
         );
     }
 
-    pub fn grant_admin<T: Into<Key>>(&self, sender: AccountHash, admin: T) {
+    pub fn mint_one<T: Into<Key>>(
+        &self,
+        sender: AccountHash,
+        recipient: T,
+        token_id: TokenId,
+        token_meta: Meta,
+    ) {
         self.0.call_contract(
             sender,
-            "grant_admin",
+            "mint",
             runtime_args! {
-            "admin" => admin.into()},
-        );
-    }
-
-    pub fn revoke_admin<T: Into<Key>>(&self, sender: AccountHash, admin: T) {
-        self.0.call_contract(
-            sender,
-            "revoke_admin",
-            runtime_args! {
-            "admin" => admin.into()},
-        );
-    }
-
-    pub fn grant_minter<T: Into<Key>>(&self, sender: AccountHash, minter: T) {
-        self.0.call_contract(
-            sender,
-            "grant_minter",
-            runtime_args! {
-            "minter" => minter.into()},
-        );
-    }
-
-    pub fn revoke_minter<T: Into<Key>>(&self, sender: AccountHash, minter: T) {
-        self.0.call_contract(
-            sender,
-            "revoke_minter",
-            runtime_args! {
-            "minter" => minter.into()},
-        );
+                "recipient" => recipient.into(),
+                "token_ids" => vec![token_id],
+                "token_metas" => vec![token_meta]
+            },
+        )
     }
 
     pub fn mint_copies<T: Into<Key>>(
         &self,
         sender: AccountHash,
         recipient: T,
-        token_ids: Option<Vec<TokenId>>,
+        token_ids: Vec<TokenId>,
         token_meta: Meta,
         count: u32,
     ) {
@@ -121,6 +83,46 @@ impl ViInstance {
                 "token_ids" => token_ids,
                 "token_meta" => token_meta,
                 "count" => count
+            },
+        )
+    }
+
+    pub fn mint_many<T: Into<Key>>(
+        &self,
+        sender: AccountHash,
+        recipient: T,
+        token_ids: Vec<TokenId>,
+        token_metas: Vec<Meta>,
+    ) {
+        self.0.call_contract(
+            sender,
+            "mint",
+            runtime_args! {
+                "recipient" => recipient.into(),
+                "token_ids" => token_ids,
+                "token_metas" => token_metas
+            },
+        )
+    }
+
+    pub fn burn_one<T: Into<Key>>(&self, sender: AccountHash, owner: T, token_id: TokenId) {
+        self.0.call_contract(
+            sender,
+            "burn",
+            runtime_args! {
+                "owner" => owner.into(),
+                "token_ids" => vec![token_id]
+            },
+        )
+    }
+
+    pub fn burn_many<T: Into<Key>>(&self, sender: AccountHash, owner: T, token_ids: Vec<TokenId>) {
+        self.0.call_contract(
+            sender,
+            "burn",
+            runtime_args! {
+                "owner" => owner.into(),
+                "token_ids" => token_ids
             },
         )
     }
@@ -159,60 +161,30 @@ impl ViInstance {
         )
     }
 
-    pub fn set_token_meta(&self, sender: AccountHash, token_id: TokenId, token_meta: Meta) {
+    pub fn approve<T: Into<Key>>(&self, sender: AccountHash, spender: T, token_ids: Vec<TokenId>) {
         self.0.call_contract(
             sender,
-            "set_token_meta",
-            runtime_args! {
-                "token_id" => token_id,
-                "token_meta" => token_meta
-            },
+            "approve",
+            runtime_args! {"spender" => spender.into(), "token_ids" => token_ids},
         )
     }
 
-    pub fn update_token_meta(
-        &self,
-        sender: AccountHash,
-        token_id: TokenId,
-        token_meta_key: String,
-        token_meta_value: String,
-    ) {
+    pub fn get_approved<T: Into<Key>>(&self, owner: T, token_id: TokenId) -> Option<Key> {
+        self.0.query_dictionary(
+            "allowances",
+            key_and_value_to_str::<String>(&owner.into(), &token_id.to_string()),
+        )
+    }
+
+    pub fn update_token_meta(&self, sender: AccountHash, token_id: TokenId, token_meta: Meta) {
         self.0.call_contract(
             sender,
             "update_token_meta",
             runtime_args! {
                 "token_id" => token_id,
-                "token_meta_key" => token_meta_key,
-                "token_meta_value" => token_meta_value
+                "token_meta" => token_meta
             },
         )
-    }
-
-    pub fn burn<T: Into<Key>>(&self, sender: AccountHash, owner: T, token_ids: Vec<TokenId>) {
-        self.0.call_contract(
-            sender,
-            "burn",
-            runtime_args! {
-                "owner" => owner.into(),
-                "token_ids" => token_ids
-            },
-        )
-    }
-
-    pub fn is_admin<T: Into<Key>>(&self, account: T) -> bool {
-        self.0
-            .query_dictionary::<()>("admins", key_to_str(&account.into()))
-            .is_some()
-    }
-
-    pub fn is_minter<T: Into<Key>>(&self, account: T) -> bool {
-        self.0
-            .query_dictionary::<()>("minters", key_to_str(&account.into()))
-            .is_some()
-    }
-
-    pub fn token_meta(&self, token_id: TokenId) -> Option<Meta> {
-        self.0.query_dictionary("metadata", token_id)
     }
 
     pub fn get_token_by_index<T: Into<Key>>(&self, account: T, index: U256) -> Option<TokenId> {
@@ -229,7 +201,11 @@ impl ViInstance {
     }
 
     pub fn owner_of(&self, token_id: TokenId) -> Option<Key> {
-        self.0.query_dictionary("owners", token_id)
+        self.0.query_dictionary("owners", token_id.to_string())
+    }
+
+    pub fn token_meta(&self, token_id: TokenId) -> Option<Meta> {
+        self.0.query_dictionary("metadata", token_id.to_string())
     }
 
     pub fn name(&self) -> String {
@@ -244,32 +220,8 @@ impl ViInstance {
         self.0.query_named_key(String::from("total_supply"))
     }
 
-    pub fn kyc_hash(&self) -> Key {
-        self.0.query_named_key(String::from("kyc_package_hash"))
-    }
-
     pub fn meta(&self) -> Meta {
         self.0.query_named_key(String::from("meta"))
-    }
-}
-
-impl ViInstance {
-    pub fn mint<T: Into<Key>>(
-        &self,
-        sender: AccountHash,
-        recipient: T,
-        token_id: Option<TokenId>,
-        token_meta: Meta,
-    ) {
-        self.0.call_contract(
-            sender,
-            "mint",
-            runtime_args! {
-                "recipient" => recipient.into(),
-                "token_id" => token_id,
-                "token_meta" => token_meta
-            },
-        )
     }
 }
 

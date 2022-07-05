@@ -7,9 +7,8 @@ use casper_engine_test_support::{
 use casper_execution_engine::core::engine_state::ExecuteRequest;
 use casper_types::{
     account::AccountHash, bytesrepr::FromBytes, runtime_args, system::mint, CLTyped, ContractHash,
-    ContractPackageHash, Key, RuntimeArgs, StoredValue, U512,
+    Key, RuntimeArgs, StoredValue, U512,
 };
-use rand::Rng;
 
 pub fn query<T: FromBytes + CLTyped>(
     builder: &InMemoryWasmTestBuilder,
@@ -44,14 +43,7 @@ pub fn fund_account(account: &AccountHash) -> ExecuteRequest {
 
 pub enum DeploySource {
     Code(PathBuf),
-    ByContractHash {
-        hash: ContractHash,
-        method: String,
-    },
-    ByPackageHash {
-        package_hash: ContractPackageHash,
-        method: String,
-    },
+    ByHash { hash: ContractHash, method: String },
 }
 
 pub fn deploy(
@@ -62,28 +54,16 @@ pub fn deploy(
     success: bool,
     block_time: Option<u64>,
 ) {
-    let mut rng = rand::thread_rng();
-    // let deploy_hash = rng.gen();
     let mut deploy_builder = DeployItemBuilder::new()
         .with_empty_payment_bytes(runtime_args! {ARG_AMOUNT => *DEFAULT_PAYMENT})
         .with_address(*deployer)
-        .with_authorization_keys(&[*deployer])
-        .with_deploy_hash(rng.gen());
-
+        .with_authorization_keys(&[*deployer]);
     deploy_builder = match source {
         DeploySource::Code(path) => deploy_builder.with_session_code(path, args),
-        DeploySource::ByContractHash { hash, method } => {
+        DeploySource::ByHash { hash, method } => {
+            // let contract_hash = ContractHash::from(*hash);
             deploy_builder.with_stored_session_hash(*hash, method, args)
         }
-        DeploySource::ByPackageHash {
-            package_hash,
-            method,
-        } => deploy_builder.with_stored_versioned_contract_by_hash(
-            package_hash.value(),
-            None,
-            method,
-            args,
-        ),
     };
 
     let mut execute_request_builder =
