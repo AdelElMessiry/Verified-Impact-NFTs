@@ -1,36 +1,38 @@
+use std::collections::BTreeMap;
+
 use casper_types::{account::AccountHash, Key, U256};
 use test_env::TestEnv;
 
-use crate::vi_instance::{CivicInstance, Meta, TokenId, ViInstance};
+use crate::vi_instance::{Meta, TokenId, VIInstance};
 
-const NAME: &str = "ViNFT";
-const SYMBOL: &str = "VNFT";
+const NAME: &str = "VerifiedImpactNFT";
+const SYMBOL: &str = "VINFT";
 
 mod meta {
-    use super::Meta;
+    use super::{BTreeMap, Meta};
     pub fn contract_meta() -> Meta {
-        let mut meta = Meta::new();
-        meta.insert("origin".to_string(), "small".to_string());
+        let mut meta = BTreeMap::new();
+        meta.insert("origin".to_string(), "fire".to_string());
         meta
     }
 
-    pub fn big_vi() -> Meta {
-        let mut meta = Meta::new();
-        meta.insert("size".to_string(), "big".to_string());
+    pub fn red_dragon() -> Meta {
+        let mut meta = BTreeMap::new();
+        meta.insert("color".to_string(), "red".to_string());
         meta
     }
 
-    pub fn medium_vi() -> Meta {
-        let mut meta = Meta::new();
-        meta.insert("size".to_string(), "medium".to_string());
+    pub fn gold_dragon() -> Meta {
+        let mut meta = BTreeMap::new();
+        meta.insert("color".to_string(), "gold".to_string());
         meta
     }
 }
 
-fn deploy() -> (TestEnv, CivicInstance, ViInstance, AccountHash) {
+fn deploy() -> (TestEnv, VIInstance, AccountHash) {
     let env = TestEnv::new();
     let owner = env.next_user();
-    let (kyc_token, vi_token) = ViInstance::new(
+    let token = VIInstance::new(
         &env,
         NAME,
         owner,
@@ -39,180 +41,82 @@ fn deploy() -> (TestEnv, CivicInstance, ViInstance, AccountHash) {
         meta::contract_meta(),
         Key::Account(owner),
     );
-    (env, kyc_token, vi_token, owner)
+    (env, token, owner)
 }
 
 #[test]
 fn test_deploy() {
-    let (_, _, token, owner) = deploy();
+    let (_, token, _) = deploy();
     assert_eq!(token.name(), NAME);
     assert_eq!(token.symbol(), SYMBOL);
     assert_eq!(token.meta(), meta::contract_meta());
     assert_eq!(token.total_supply(), U256::zero());
-    assert!(token.is_admin(owner));
 }
 
 #[test]
-fn test_grant_admin() {
-    let (env, _, token, owner) = deploy();
+fn test_mint_copies() {
+    let (env, token, owner) = deploy();
     let user = env.next_user();
+    let token_meta = meta::red_dragon();
+    let token_ids = vec![TokenId::zero(), TokenId::one()];
+    token.mint_copies(owner, user, token_ids.clone(), token_meta, 2);
+    let first_user_token = token.get_token_by_index(Key::Account(user), U256::zero());
+    let second_user_token = token.get_token_by_index(Key::Account(user), U256::one());
 
-    token.grant_admin(owner, user);
-    assert!(token.is_admin(user));
+    assert_eq!(
+        token.owner_of(first_user_token.unwrap()).unwrap(),
+        Key::Account(user)
+    );
+    assert_eq!(
+        token.owner_of(second_user_token.unwrap()).unwrap(),
+        Key::Account(user)
+    );
+
+    assert_eq!(first_user_token, Some(token_ids[0]));
+    assert_eq!(second_user_token, Some(token_ids[1]));
 }
 
 #[test]
-fn test_revoke_admin() {
-    let (env, _, token, owner) = deploy();
+fn test_burn_one() {
+    let (env, token, owner) = deploy();
     let user = env.next_user();
+    // let token_metas = vec![meta::red_dragon(), meta::gold_dragon()];
+    let token_meta = meta::red_dragon();
+    let token_ids = vec![TokenId::zero(), TokenId::one()];
+    token.mint_copies(owner, user, token_ids.clone(), token_meta, 2);
 
-    token.grant_admin(owner, user);
-    assert!(token.is_admin(user));
-
-    token.revoke_admin(owner, user);
-    assert!(!token.is_admin(user));
+    token.burn_one(owner, user, token_ids[0]);
+    assert_eq!(token.total_supply(), U256::one());
+    assert_eq!(token.balance_of(Key::Account(user)), U256::one());
 }
 
 #[test]
-fn test_grant_minter() {
-    let (env, _, token, owner) = deploy();
-    let alice = env.next_user();
-    let bob = env.next_user();
-
-    token.grant_admin(owner, alice);
-    token.grant_minter(alice, bob);
-    assert!(token.is_minter(bob));
-}
-
-#[test]
-fn test_revoke_minter() {
-    let (env, _, token, owner) = deploy();
-    let alice = env.next_user();
-    let bob = env.next_user();
-
-    token.grant_minter(owner, bob);
-    assert!(token.is_minter(bob));
-
-    token.grant_admin(owner, alice);
-    token.revoke_minter(alice, bob);
-    assert!(!token.is_minter(bob));
-}
-
-#[test]
-fn test_burn_from_minter() {
-    let (env, _, token, owner) = deploy();
+fn test_transfer_token() {
+    let (env, token, owner) = deploy();
     let ali = env.next_user();
     let bob = env.next_user();
-    let token_meta = meta::big_vi();
-    let token_commission = commission::commission(
-        vec!["artist".to_string(), "broker".to_string()],
-        vec![ali.into(), bob.into()],
-        vec!["10".to_string(), "12".to_string()],
-    );
+    let token_metas = meta::gold_dragon();
+    let token_ids = vec![TokenId::zero(), TokenId::one()];
 
-    token.mint_copies(owner, bob, None, token_meta, token_commission, 2);
+    token.mint_copies(owner, ali, token_ids.clone(), token_metas, 2);
 
-    token.grant_minter(owner, ali);
+    // assert_eq!(token.total_supply(), U256::from(2));
+    // assert_eq!(token.balance_of(Key::Account(ali)), U256::from(2));
+    assert_eq!(token.owner_of(token_ids[0]).unwrap(), Key::Account(ali));
+    assert_eq!(token.owner_of(token_ids[1]).unwrap(), Key::Account(ali));
 
-    let first_user_token = token.get_token_by_index(Key::Account(bob), U256::from(0));
-    let second_user_token = token.get_token_by_index(Key::Account(bob), U256::from(1));
-    token.burn(ali, bob, vec![first_user_token.unwrap()]);
-    assert_eq!(token.total_supply(), U256::from(1));
-    assert_eq!(token.balance_of(Key::Account(bob)), U256::from(1));
-
-    let new_first_user_token = token.get_token_by_index(Key::Account(bob), U256::from(0));
-    let new_second_user_token = token.get_token_by_index(Key::Account(bob), U256::from(1));
-    assert_eq!(new_first_user_token, second_user_token);
-    assert_eq!(new_second_user_token, None);
-}
-
-#[test]
-#[should_panic = "User(20)"]
-fn test_burn_from_non_minter() {
-    let (env, _, token, owner) = deploy();
-    let ali = env.next_user();
-    let bob = env.next_user();
-    let token_meta = meta::big_vi();
-    let token_commission = commission::commission(
-        vec!["artist".to_string(), "broker".to_string()],
-        vec![ali.into(), bob.into()],
-        vec!["10".to_string(), "12".to_string()],
-    );
-
-    token.mint_copies(owner, bob, None, token_meta, token_commission, 2);
-
-    let first_user_token = token.get_token_by_index(Key::Account(bob), U256::from(0));
-    token.burn(ali, bob, vec![first_user_token.unwrap()]);
-}
-
-#[test]
-#[should_panic]
-fn test_transfer_from_owner() {
-    let (env, _, token, owner) = deploy();
-    let ali = env.next_user();
-    let bob = env.next_user();
-    let token_meta = meta::big_vi();
-    let token_commission = commission::commission(
-        vec!["artist".to_string(), "broker".to_string()],
-        vec![ali.into(), bob.into()],
-        vec!["10".to_string(), "12".to_string()],
-    );
-
-    token.mint_copies(owner, ali, None, token_meta, token_commission, 2);
-    let first_ali_token = token.get_token_by_index(Key::Account(ali), U256::from(0));
-    let second_ali_token = token.get_token_by_index(Key::Account(ali), U256::from(1));
-
-    assert_eq!(token.total_supply(), U256::from(2));
-    assert_eq!(token.balance_of(Key::Account(ali)), U256::from(2));
-    assert_eq!(
-        token.owner_of(first_ali_token.clone().unwrap()).unwrap(),
-        Key::Account(ali)
-    );
-    assert_eq!(
-        token.owner_of(second_ali_token.unwrap()).unwrap(),
-        Key::Account(ali)
-    );
-    token.transfer_from(ali, ali, bob, vec![first_ali_token.unwrap()]);
-}
-
-#[test]
-fn test_transfer_from_admin() {
-    let (env, _, token, owner) = deploy();
-    let ali = env.next_user();
-    let bob = env.next_user();
-    let token_meta = meta::big_vi();
-    let token_commission = commission::commission(
-        vec!["artist".to_string(), "broker".to_string()],
-        vec![ali.into(), bob.into()],
-        vec!["10".to_string(), "12".to_string()],
-    );
-
-    token.mint_copies(owner, ali, None, token_meta, token_commission, 2);
-    let first_ali_token = token.get_token_by_index(Key::Account(ali), U256::from(0));
-    let second_ali_token = token.get_token_by_index(Key::Account(ali), U256::from(1));
-
-    assert_eq!(token.total_supply(), U256::from(2));
-    assert_eq!(token.balance_of(Key::Account(ali)), U256::from(2));
-    assert_eq!(
-        token.owner_of(first_ali_token.clone().unwrap()).unwrap(),
-        Key::Account(ali)
-    );
-    assert_eq!(
-        token.owner_of(second_ali_token.unwrap()).unwrap(),
-        Key::Account(ali)
-    );
-    token.transfer_from(owner, ali, bob, vec![first_ali_token.unwrap()]);
-    let new_first_ali_token = token.get_token_by_index(Key::Account(ali), U256::from(0));
-    let new_second_ali_token = token.get_token_by_index(Key::Account(ali), U256::from(1));
-    let new_first_bob_token = token.get_token_by_index(Key::Account(bob), U256::from(0));
-    let new_second_bob_token = token.get_token_by_index(Key::Account(bob), U256::from(1));
+    token.transfer(ali, bob, vec![token_ids[0]]);
+    let new_first_ali_token = token.get_token_by_index(Key::Account(ali), U256::zero());
+    let new_second_ali_token = token.get_token_by_index(Key::Account(ali), U256::one());
+    let new_first_bob_token = token.get_token_by_index(Key::Account(bob), U256::zero());
+    let new_second_bob_token = token.get_token_by_index(Key::Account(bob), U256::one());
     println!("{:?}", new_first_ali_token);
     println!("{:?}", new_second_ali_token);
     println!("{:?}", new_first_bob_token);
     println!("{:?}", new_second_bob_token);
-    assert_eq!(token.total_supply(), U256::from(2));
-    assert_eq!(token.balance_of(Key::Account(ali)), U256::from(1));
-    assert_eq!(token.balance_of(Key::Account(bob)), U256::from(1));
+    // assert_eq!(token.total_supply(), U256::from(2));
+    assert_eq!(token.balance_of(Key::Account(ali)), U256::one());
+    assert_eq!(token.balance_of(Key::Account(bob)), U256::one());
     assert_eq!(
         token.owner_of(new_first_ali_token.unwrap()).unwrap(),
         Key::Account(ali)
@@ -223,172 +127,4 @@ fn test_transfer_from_admin() {
     );
     assert_eq!(new_second_ali_token, None);
     assert_eq!(new_second_bob_token, None);
-}
-
-#[test]
-#[should_panic]
-fn test_transfer_from_minter() {
-    let (env, _, token, owner) = deploy();
-    let ali = env.next_user();
-    let bob = env.next_user();
-    let token_meta = meta::big_vi();
-    let token_commission = commission::commission(
-        vec!["artist".to_string(), "broker".to_string()],
-        vec![ali.into(), bob.into()],
-        vec!["10".to_string(), "12".to_string()],
-    );
-
-    token.mint_copies(owner, ali, None, token_meta, token_commission, 2);
-    let first_ali_token = token.get_token_by_index(Key::Account(ali), U256::from(0));
-    let second_ali_token = token.get_token_by_index(Key::Account(ali), U256::from(1));
-
-    assert_eq!(token.total_supply(), U256::from(2));
-    assert_eq!(token.balance_of(Key::Account(ali)), U256::from(2));
-    assert_eq!(
-        token.owner_of(first_ali_token.clone().unwrap()).unwrap(),
-        Key::Account(ali)
-    );
-    assert_eq!(
-        token.owner_of(second_ali_token.unwrap()).unwrap(),
-        Key::Account(ali)
-    );
-    token.grant_minter(owner, bob);
-    token.transfer_from(bob, ali, bob, vec![first_ali_token.unwrap()]);
-}
-
-#[test]
-fn test_transfer() {
-    let (env, kyc, token, owner) = deploy();
-    let ali = env.next_user();
-    let bob = env.next_user();
-    let token_meta = meta::big_vi();
-    let mut kyc_token_meta = Meta::new();
-    kyc_token_meta.insert("status".to_string(), "active".to_string());
-    let token_commission = commission::commission(
-        vec!["artist".to_string(), "broker".to_string()],
-        vec![ali.into(), bob.into()],
-        vec!["10".to_string(), "12".to_string()],
-    );
-
-    token.mint_copies(owner, ali, None, token_meta, token_commission, 2);
-    let first_ali_token = token.get_token_by_index(Key::Account(ali), U256::from(0));
-    let second_ali_token = token.get_token_by_index(Key::Account(ali), U256::from(1));
-
-    assert_eq!(token.total_supply(), U256::from(2));
-    assert_eq!(token.balance_of(Key::Account(ali)), U256::from(2));
-    assert_eq!(
-        token.owner_of(first_ali_token.clone().unwrap()).unwrap(),
-        Key::Account(ali)
-    );
-    assert_eq!(
-        token.owner_of(second_ali_token.unwrap()).unwrap(),
-        Key::Account(ali)
-    );
-    kyc.mint(owner, bob, None, kyc_token_meta);
-    token.transfer(ali, bob, vec![first_ali_token.unwrap()]);
-    let new_first_ali_token = token.get_token_by_index(Key::Account(ali), U256::from(0));
-    let new_second_ali_token = token.get_token_by_index(Key::Account(ali), U256::from(1));
-    let new_first_bob_token = token.get_token_by_index(Key::Account(bob), U256::from(0));
-    let new_second_bob_token = token.get_token_by_index(Key::Account(bob), U256::from(1));
-    println!("{:?}", new_first_ali_token);
-    println!("{:?}", new_second_ali_token);
-    println!("{:?}", new_first_bob_token);
-    println!("{:?}", new_second_bob_token);
-    assert_eq!(token.total_supply(), U256::from(2));
-    assert_eq!(token.balance_of(Key::Account(ali)), U256::from(1));
-    assert_eq!(token.balance_of(Key::Account(bob)), U256::from(1));
-    assert_eq!(
-        token.owner_of(new_first_ali_token.unwrap()).unwrap(),
-        Key::Account(ali)
-    );
-    assert_eq!(
-        token.owner_of(new_first_bob_token.unwrap()).unwrap(),
-        Key::Account(bob)
-    );
-    assert_eq!(new_second_ali_token, None);
-    assert_eq!(new_second_bob_token, None);
-}
-
-#[test]
-fn test_token_meta() {
-    let (env, _, token, owner) = deploy();
-    let ali = env.next_user();
-    let bob = env.next_user();
-    let token_id = TokenId::from("123456");
-    let token_meta = meta::big_vi();
-    let token_commission = commission::commission(
-        vec!["artist".to_string(), "broker".to_string()],
-        vec![ali.into(), bob.into()],
-        vec!["10".to_string(), "12".to_string()],
-    );
-
-    token.mint_copies(
-        owner,
-        ali,
-        Some(vec![token_id.clone()]),
-        token_meta.clone(),
-        token_commission.clone(),
-        1,
-    );
-
-    let user_token_meta = token.token_meta(token_id.clone());
-    assert_eq!(user_token_meta.unwrap(), token_meta);
-
-    let user_token_commission = token.token_commission(token_id.clone());
-    assert_eq!(user_token_commission.unwrap(), token_commission);
-
-    let first_user_token = token.get_token_by_index(Key::Account(ali), U256::zero());
-    assert_eq!(first_user_token, Some(token_id));
-}
-
-#[test]
-fn test_token_metadata_set_from_minter() {
-    let (env, _, token, owner) = deploy();
-    let ali = env.next_user();
-    let bob = env.next_user();
-    let token_id = TokenId::from("123456");
-    let token_meta = meta::big_vi();
-    let token_commission = commission::commission(
-        vec!["artist".to_string(), "broker".to_string()],
-        vec![ali.into(), bob.into()],
-        vec!["10".to_string(), "12".to_string()],
-    );
-
-    token.mint_copies(
-        owner,
-        ali,
-        Some(vec![token_id.clone()]),
-        token_meta,
-        token_commission,
-        1,
-    );
-    token.grant_minter(owner, ali);
-    token.set_token_meta(ali, token_id.clone(), meta::medium_vi());
-    token.update_token_meta(ali, token_id.clone(), "size".to_string(), "big".to_string());
-    assert_eq!(token.token_meta(token_id).unwrap(), meta::big_vi());
-}
-
-#[test]
-#[should_panic]
-fn test_token_metadata_set_from_owner() {
-    let (env, _, token, owner) = deploy();
-    let ali = env.next_user();
-    let bob = env.next_user();
-    let token_id = TokenId::from("123456");
-    let token_meta = meta::big_vi();
-    let token_commission = commission::commission(
-        vec!["artist".to_string(), "broker".to_string()],
-        vec![ali.into(), bob.into()],
-        vec!["10".to_string(), "12".to_string()],
-    );
-
-    token.mint_copies(
-        owner,
-        ali,
-        Some(vec![token_id.clone()]),
-        token_meta,
-        token_commission,
-        1,
-    );
-    token.set_token_meta(ali, token_id, meta::medium_vi());
 }
