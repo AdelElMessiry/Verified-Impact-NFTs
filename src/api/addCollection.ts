@@ -5,6 +5,7 @@ import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import { signDeploy } from '../utils/signer';
 import { CONNECTION } from '../constants/blockchain';
 
+//test commit
 export async function addCollection(
   name: string,
   description: string,
