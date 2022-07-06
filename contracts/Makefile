@@ -2,7 +2,9 @@ prepare:
 	rustup target add wasm32-unknown-unknown
 
 build-contract:
+build-contract:
 	cargo build --release -p vi_nft --target wasm32-unknown-unknown
+	wasm-strip target/wasm32-unknown-unknown/release/vi_nft.wasm 2>/dev/null | true
 
 test-only:
 	cargo test --workspace

@@ -18,6 +18,7 @@ import BuyNFTModal from '../../Element/BuyNFT';
 import { Spinner } from 'react-bootstrap';
 import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
 import Layout from '../../Layout';
+
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -58,7 +59,12 @@ const TagLi = ({ name, handlesettag, tagActive, type }) => {
     </VINFTsTooltip>
   );
 };
-
+/**
+ * display nfts list filtered  by selected creator or collection
+ *
+ * @type {React.FC<Props>}
+ * @returns {React.ReactElement} UI page
+ */
 const CreatorNFTs = () => {
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
