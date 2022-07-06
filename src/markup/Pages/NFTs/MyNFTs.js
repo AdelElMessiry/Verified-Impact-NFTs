@@ -61,7 +61,12 @@ const TagLi = ({ name, handlesettag, tagActive, type }) => {
     </VINFTsTooltip>
   );
 };
-
+/**
+ * display current user's nfts
+ *
+ * @type {React.FC<Props>}
+ * @returns {React.ReactElement} UI page
+ */
 const MyNFTs = () => {
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
