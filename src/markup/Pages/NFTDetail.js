@@ -10,6 +10,12 @@ import BuyNFTModal from '../Element/BuyNFT';
 import Layout from '../Layout';
 
 //nft details component
+/**
+ * display specific nft details
+ *
+ * @type {React.FC<Props>}
+ * @returns {React.ReactElement} UI page
+ */
 const NFTDetail = () => {
   const Iconimage = ({ nft }) => {
     return (
