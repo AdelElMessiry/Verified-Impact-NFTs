@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Pages/Admin/MintNFT.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Pages/Admin/MintNFT.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
+import ImageUploader from 'react-images-upload';
+import { toast as VIToast } from 'react-toastify';
+import { Form } from 'react-bootstrap';
+import CreatableSelect from 'react-select/creatable';
+
+import { useAuth } from '../../../contexts/AuthContext';
+import { getBeneficiariesCampaignsList } from '../../../api/beneficiaryInfo';
+import { getCreatorsCollectionsList } from '../../../api/creatorInfo';
+import { uploadImg } from '../../../api/imageCDN';
+import { mint } from '../../../api/mint';
+import { getDeployDetails } from '../../../api/universal';
+import { numberOfNFTsOwned } from '../../../api/userInfo';
+
+
+import PageTitle from '../../Layout/PageTitle';
+
+import bnr1 from './../../../images/banner/bnr1.jpg';
+import PromptLogin from '../PromptLogin';
+import Layout from '../../Layout';
+
+/**
+ * Add NFT to verified-impact-nft's contract user and admin could access this screen
+ *
+ * @type {React.FC&lt;Props>}
+ * @returns {React.ReactElement} UI page
+ */
+
+//minting new nft page
+const MintNFT = () => {
+  const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
+  const [uploadedImageURL, setUploadedImage] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [uploadingToCloud, setUploadingToCloud] = useState(false);
+  const [selectedCollectionValue, setSelectedCollectionValue] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [beneficiary, setBeneficiary] = useState();
+  const [campaign, setCampaign] = useState();
+
+  const [options, setOptions] = useState([]);
+  const [isCreateNewCollection, setIsCreateNewCollection] = useState();
+
+  //handling of creating new option in creatable select control
+  const createOption = (label) => ({
+    label,
+    value: label.toLowerCase().replace(/\W/g, ''),
+  });
+
+  //handling of adding new option to the existing options in creatable select
+  const handleCreate = (inputValue) => {
+    setIsLoading(true);
+    console.group('Option created');
+    console.log('Wait a moment...');
+    setTimeout(() => {
+      const newOption = createOption(inputValue);
+      console.log(newOption);
+      console.groupEnd();
+      setIsLoading(false);
+      setOptions([...options, newOption]);
+      setSelectedCollectionValue(newOption);
+      setIsCreateNewCollection(true);
+    }, 1000);
+  };
+
+  const handleChange = (e, isBeneficiary = false) => {
+    const { value, name, checked, type } = e.target;
+    const { inputs } = state;
+    if (isBeneficiary) {
+      let selectedBeneficiary = beneficiaries.filter(
+        (b) => b.address === value
+      );
+      setCampaigns(selectedBeneficiary[0].campaigns);
+    }
+    inputs[name] = type === 'checkbox' ? checked : value;
+    setState({
+      ...state,
+      inputs,
+    });
+  };
+
+  //intialize of controls values
+  const [state, setState] = useState({
+    inputs: {
+      imageUrl: '',
+      name: '',
+      description: '',
+      price: '',
+      isForSale: false,
+      category: '',
+      currency: 'CSPR',
+      beneficiaryPercentage: '',
+      collection: '',
+      isImageURL: false,
+    },
+  });
+  const [beneficiaries, setBeneficiaries] = useState();
+  const [campaigns, setCampaigns] = useState();
+  const [creators, setCreators] = useState();
+  const [creator, setCreator] = useState('');
+  const [isCreatorExist, setIsCreatorExist] = useState(false);
+  const [creatorPercentage, setCreatorPercentage] = useState();
+  const [beneficiaryPercentage, setBeneficiaryPercentage] = useState();
+
+  //getting beneficiaries and campaigns lists
+  useEffect(() => {
+    (async () => {
+      let beneficiaryList =
+        !beneficiaries &amp;&amp; (await getBeneficiariesCampaignsList());
+      !beneficiaries &amp;&amp; setBeneficiaries(beneficiaryList);
+      !beneficiaries &amp;&amp; setCampaigns(beneficiaryList[0]?.campaigns);
+      !beneficiaries &amp;&amp; setBeneficiary(beneficiaryList[0]?.address);
+      !beneficiaries &amp;&amp; setCampaign(beneficiaryList[0]?.campaigns[0]?.id);
+      !beneficiaries &amp;&amp;
+        setCampaignSelectedData(
+          beneficiaryList[0]?.campaigns,
+          beneficiaryList[0]?.campaigns[0]?.id
+        );
+    })();
+  }, [beneficiaries]);
+
+  useEffect(() => {
+    (async () => {
+      let creatorList = !creators &amp;&amp; (await getCreatorsCollectionsList());
+      !creators &amp;&amp; setCreators(creatorList);
+      if (creatorList.length > 0) {
+        let selectedCreator = creatorList.filter(
+          (c) => c.address === entityInfo.publicKey
+        );
+        if (selectedCreator.length > 0) {
+          setCreator(selectedCreator[0].name);
+          if (selectedCreator[0].collections) {
+            let selectedOptions = [];
+            selectedCreator[0].collections.forEach((col) => {
+              let singleoption = {
+                value: col.id,
+                label: &lt;div>&amp;nbsp;{col.name} &lt;/div>,
+              };
+              selectedOptions.push(singleoption);
+            });
+            setOptions(selectedOptions);
+            setSelectedCollectionValue(selectedOptions[0]);
+          } else {
+            setOptions([]);
+          }
+          setIsCreatorExist(true);
+        }
+      }
+    })();
+  }, [creators, entityInfo]);
+
+  //handling of selecting image in image control
+  const onDrop = (picture) => {
+    const newImageUrl = URL.createObjectURL(picture[0]);
+    setUploadedImage(newImageUrl);
+    setUploadedFile(picture[0]);
+  };
+
+  //handling minting new NFT
+  async function mintNFT() {
+    if (!uploadedImageURL) {
+      return VIToast.error('Please upload image or enter direct URL');
+    }
+    if (!entityInfo.publicKey) {
+      return VIToast.error('Please enter sign in First');
+    }
+
+    let cloudURL = uploadedImageURL;
+    if (!state.inputs.isImageURL &amp;&amp; uploadedFile) {
+      console.log('Img', uploadedFile);
+      console.log('Img url', uploadedImageURL);
+      setUploadingToCloud(true);
+      try {
+        cloudURL = await uploadImg(uploadedFile);
+      } catch (err) {
+        console.log(err);
+        VIToast.error("Image couldn't be uploaded to cloud CDN !");
+        setUploadingToCloud(false);
+        return;
+      }
+      VIToast.success('Image uploaded to cloud CDN successfully !');
+      setUploadingToCloud(false);
+    }
+    mintNewNFT(cloudURL);
+  }
+
+  async function mintNewNFT(imgURL) {
+    if (!uploadedImageURL) {
+      return VIToast.error('Please upload image or enter direct URL');
+    }
+
+    if (entityInfo.publicKey) {
+      console.log('Your pub key: ', entityInfo.publicKey);
+
+      // setMintStage(MintingStages.STARTED);
+
+      let mintDeployHash;
+
+      try {
+        mintDeployHash = await mint(entityInfo.publicKey, creator, {
+          title: state.inputs.name,
+          description: state.inputs.description,
+          image: imgURL,
+          price: state.inputs.price,
+          isForSale: state.inputs.isForSale,
+          campaign: campaign || '',
+          // category: state.inputs.category,
+          currency: state.inputs.currency,
+          collection: isCreateNewCollection ? 0 : selectedCollectionValue.value,
+          collectionName: isCreateNewCollection
+            ? selectedCollectionValue.label
+            : '',
+          creator: entityInfo.publicKey,
+          creatorPercentage: creatorPercentage
+            ? creatorPercentage.toString()
+            : '',
+          beneficiary: beneficiary || '',
+          beneficiaryPercentage: beneficiaryPercentage
+            ? beneficiaryPercentage
+            : '',
+        });
+      } catch (err) {
+        if (err.message.includes('User Cancelled')) {
+          // setErrStage(MintingStages.STARTED);
+        }
+        return;
+      }
+
+      //setMintStage(MintingStages.TX_PENDING);
+
+      try {
+        const deployResult = await getDeployDetails(mintDeployHash);
+        console.log('...... Token minted successfully', deployResult);
+        window.location.reload();
+      } catch (err) {
+        //   setErrStage(MintingStages.TX_PENDING);
+      }
+      //  setMintStage(MintingStages.TX_SUCCESS);
+      setState({
+        inputs: {
+          title: '',
+          description: '',
+          price: '',
+          isForSale: false,
+          category: '',
+          currency: '',
+          beneficiaryPercentage: '',
+          isImageURL: false,
+        },
+      });
+      refreshAuth();
+
+      const newBalance = await numberOfNFTsOwned(entityInfo.publicKey);
+      console.log('...... No. of NFTs in your account: ', newBalance);
+    }
+  }
+
+  const setCampaignSelectedData = (allcampains, value) => {
+    setCampaign(value);
+    let campaignPercentage = allcampains.filter((c) => c.id == value)[0]
+      .requested_royalty;
+    setCreatorPercentage(100 - campaignPercentage);
+    setBeneficiaryPercentage(campaignPercentage);
+  };
+
+  return (
+    &lt;Layout>
+
+      &lt;div className='page-content bg-white'>
+        {/* &lt;!-- inner page banner --> */}
+        &lt;div
+          className='dlab-bnr-inr overlay-primary bg-pt'
+          style={{ backgroundImage: 'url(' + bnr1 + ')' }}
+        >
+          &lt;PageTitle motherMenu='Mint NFT' activeMenu='Mint NFT' />
+        &lt;/div>
+        {/* &lt;!-- inner page banner END --> */}
+        {/* &lt;!-- contact area --> */}
+        {!isLoggedIn ? (
+          &lt;PromptLogin />
+        ) : (
+          &lt;div className='section-full content-inner shop-account'>
+            {/* &lt;!-- Product --> */}
+            &lt;div className='container'>
+              &lt;div>
+                &lt;div className=' m-auto m-b30'>
+                  &lt;Container>
+                    &lt;Row>
+                      &lt;Col>
+                        &lt;Row className='form-group'>
+                          &lt;Col>
+                            &lt;label>Select Beneficiary&lt;/label>
+                            &lt;select
+                              name='beneficiary'
+                              placeholder='Beneficiary'
+                              className='form-control'
+                              onChange={(e) => {
+                                handleChange(e, true);
+                                setBeneficiary(e.target.value);
+                              }}
+                              value={beneficiary}
+                            >
+                              {beneficiaries?.map(({ name, address }) => (
+                                &lt;option key={address} value={address}>
+                                  {name}
+                                &lt;/option>
+                              ))}
+                            &lt;/select>
+                          &lt;/Col>
+                        &lt;/Row>
+                        &lt;Row className='form-group'>
+                          &lt;Col>
+                            &lt;label>Select Campaign&lt;/label>
+                            &lt;select
+                              name='campaign'
+                              placeholder='Campaign'
+                              className='form-control'
+                              onChange={(e) =>
+                                setCampaignSelectedData(
+                                  campaigns,
+                                  e.target.value
+                                )
+                              }
+                              value={campaign}
+                            >
+                              {campaigns?.map(
+                                ({ name, id, requested_royalty }) => (
+                                  &lt;option key={id} value={id}>
+                                    {name} (creator Percentage is{' '}
+                                    {100 - requested_royalty})
+                                  &lt;/option>
+                                )
+                              )}
+                            &lt;/select>
+                          &lt;/Col>
+                        &lt;/Row>
+                        &lt;Row className='form-group'>
+                          &lt;Col>
+                            &lt;label>
+                              Select Existing Collection or Create new one
+                            &lt;/label>
+
+                            &lt;CreatableSelect
+                              isClearable
+                              isLoading={isLoading}
+                              onChange={(v) => setSelectedCollectionValue(v)}
+                              onCreateOption={(v) => handleCreate(v)}
+                              options={options}
+                              value={selectedCollectionValue}
+                              menuPortalTarget={document.body}
+                              placeholder='Select...'
+                              className='creatable-select'
+                            />
+                          &lt;/Col>
+                        &lt;/Row>
+                        &lt;Row className='form-group'>
+                          &lt;Col>
+                            &lt;label>
+                              Please enter your creator name the name can not be
+                              changed
+                            &lt;/label>
+                            &lt;input
+                              type='text'
+                              placeholder='Creator'
+                              name='creator'
+                              className='form-control'
+                              onChange={(e) => setCreator(e.target.value)}
+                              value={creator}
+                              disabled={isCreatorExist}
+                            />
+                          &lt;/Col>
+                        &lt;/Row>
+                        &lt;Row className='form-group'>
+                          &lt;Col>
+                            &lt;input
+                              type='text'
+                              placeholder='Name'
+                              name='name'
+                              className='form-control'
+                              onChange={(e) => handleChange(e)}
+                              value={state.inputs.name}
+                            />
+                          &lt;/Col>
+                        &lt;/Row>
+                      &lt;/Col>
+                      &lt;Col>
+                        &lt;Row className='form-group'>
+                          &lt;Col>
+                            &lt;Form.Check
+                              type={'checkbox'}
+                              id={'isImageURL'}
+                              label={`Already hosted image, enter direct url ?`}
+                              onChange={(e) => handleChange(e)}
+                              value={state.inputs.isImageURL}
+                              name='isImageURL'
+                            />
+                          &lt;/Col>
+                        &lt;/Row>
+                        &lt;Row className='form-group'>
+                          &lt;Col>
+                            {state.inputs.isImageURL ? (
+                              &lt;input
+                                type='text'
+                                placeholder='Image URl'
+                                name='imageUrl'
+                                className='form-control'
+                                onChange={(e) =>
+                                  setUploadedImage(e.target.value)
+                                }
+                                value={uploadedImageURL}
+                              />
+                            ) : (
+                              &lt;ImageUploader
+                                singleImage
+                                withIcon={true}
+                                buttonText='Choose images'
+                                onChange={onDrop}
+                                imgExtension={['.jpg', '.gif', '.png']}
+                                maxFileSize={20209230}
+                                withPreview={true}
+                                label={
+                                  'Max file size: 20mb, accepted: jpg|gif|png'
+                                }
+                              />
+                            )}
+                          &lt;/Col>
+                        &lt;/Row>
+                      &lt;/Col>
+                    &lt;/Row>
+                    &lt;Row className='form-group'>
+                      &lt;Col>
+                        &lt;Form.Check
+                          type={'checkbox'}
+                          id={'isForSale'}
+                          label={`Is For Sale`}
+                          onChange={(e) => handleChange(e)}
+                          value={state.inputs.isForSale}
+                          name='isForSale'
+                        />
+                      &lt;/Col>
+                    &lt;/Row>
+                    {state.inputs.isForSale &amp;&amp; (
+                      &lt;>
+                        &lt;Row className='form-group'>
+                          &lt;Col>
+                            &lt;input
+                              type='text'
+                              placeholder='Price'
+                              name='price'
+                              className='form-control'
+                              onChange={(e) => handleChange(e)}
+                              value={state.inputs.price}
+                            />
+                          &lt;/Col>
+                          &lt;Col>
+                            &lt;select
+                              placeholder='Currency'
+                              name='currency'
+                              className='form-control'
+                              onChange={(e) => handleChange(e)}
+                              value={state.inputs.currency}
+                            >
+                              &lt;option value={'CSPR'}>CSPR&lt;/option>
+                            &lt;/select>
+                          &lt;/Col>
+                        &lt;/Row>
+                      &lt;/>
+                    )}
+                    &lt;Row className='form-group'>
+                      &lt;Col>
+                        &lt;textarea
+                          rows={4}
+                          name='description'
+                          placeholder='Description'
+                          className='form-control'
+                          onChange={(e) => handleChange(e)}
+                          value={state.inputs.description}
+                        >&lt;/textarea>
+                      &lt;/Col>
+                    &lt;/Row>
+                    &lt;Row className='form-group'>
+                      &lt;Col>
+                        &lt;p className='form-submit'>
+                          &lt;input
+                            type='button'
+                            value='Mint'
+                            className='btn btn-success'
+                            name='submit'
+                            onClick={mintNFT}
+                            disabled={
+                              beneficiary === '' ||
+                              campaign === '' ||
+                              selectedCollectionValue === {} ||
+                              selectedCollectionValue === undefined ||
+                              selectedCollectionValue === null ||
+                              selectedCollectionValue?.value === '' ||
+                              creator === '' ||
+                              state.inputs.name === ''
+                            }
+                          />
+                        &lt;/p>
+                      &lt;/Col>
+                    &lt;/Row>
+                  &lt;/Container>
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+            {/* &lt;!-- Product END --> */}
+          &lt;/div>
+        )}
+
+        {/* &lt;!-- contact area  END --> */}
+      &lt;/div>
+
+    &lt;/Layout>
+  );
+};
+
+export default MintNFT;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-BuyNFTModal.html">BuyNFTModal</a></li><li><a href="module-ListForSaleNFTModal.html">ListForSaleNFTModal</a></li><li><a href="module-NFTCard.html">NFTCard</a></li><li><a href="module-VINFTsTooltip.html">VINFTsTooltip</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AddBeneficiary">AddBeneficiary</a></li><li><a href="global.html#AddCampaign">AddCampaign</a></li><li><a href="global.html#BenefeiciaryNFTs">BenefeiciaryNFTs</a></li><li><a href="global.html#CreatorNFTs">CreatorNFTs</a></li><li><a href="global.html#MintNFT">MintNFT</a></li><li><a href="global.html#MyCreations">MyCreations</a></li><li><a href="global.html#MyNFTs">MyNFTs</a></li><li><a href="global.html#NFTDetail">NFTDetail</a></li><li><a href="global.html#PromptLogin">PromptLogin</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Wed Jul 06 2022 18:14:32 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
