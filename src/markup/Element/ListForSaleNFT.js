@@ -7,6 +7,16 @@ import { setIsTokenForSale } from '../../api/nftInfo';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast as VIToast } from 'react-toastify';
 
+/**
+ * @module ListForSaleNFTModal
+ */
+/** 
+ * listing nft for sale data
+ * @property {boolean} show - show module render status
+ * @property {function} handleCloseParent - callback function to parent on close modal
+ * @property {object} data - object includes nft information
+ */
+
 //list nft for sale NFT Modal
 const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
   const { entityInfo } = useAuth();

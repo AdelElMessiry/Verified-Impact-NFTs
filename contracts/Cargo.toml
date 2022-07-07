@@ -1,7 +1,8 @@
 [workspace]
 
 members = [
-	"vi_nft"
+	"vi_nft",
+	"tests"
 ]
 
 [profile.release]

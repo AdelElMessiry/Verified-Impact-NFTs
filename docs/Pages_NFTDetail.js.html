@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Pages/NFTDetail.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Pages/NFTDetail.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
+
+import VINFTsTooltip from '../Element/Tooltip';
+import {Spinner} from 'react-bootstrap';
+
+import { getNFTsList } from '../../api/nftInfo';
+import BuyNFTModal from '../Element/BuyNFT';
+import Layout from '../Layout';
+
+//nft details component
+/**
+ * display specific nft details
+ *
+ * @type {React.FC&lt;Props>}
+ * @returns {React.ReactElement} UI page
+ */
+const NFTDetail = () => {
+  const Iconimage = ({ nft }) => {
+    return (
+      &lt;>
+        &lt;i
+          className="ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen"
+          onClick={() => {
+            setSelectedNFT(nft);
+            setShowBuyModal(true);
+          }}
+        >&lt;/i>
+      &lt;/>
+    );
+  };
+  const search = useLocation().search;
+  const queryParams = new URLSearchParams(search);
+  const id = queryParams.get('id');
+  const [item, setItem] = useState();
+  const [showBuyModal, setShowBuyModal] = useState(false);
+  const [selectedNFT, setSelectedNFT] = useState();
+  const [allNFTs, setAllNFTs] = useState();
+
+  useEffect(() => {
+    (async () => {
+      if (!allNFTs) {
+        const newNFTList = await getNFTsList();
+        setAllNFTs(newNFTList);
+        let nft = newNFTList.filter((nft) => nft.tokenId == id);
+        setItem(nft);
+      }
+    })();
+  }, [id, allNFTs]);
+
+  return (
+    &lt;Layout isNFTDetails={true}>
+      &lt;div className="page-content pb-0 bg-black-light pt-5">
+        {item?.length > 0 ? (
+          &lt;div className="content-block position-relative h-100vh">
+            {/* &lt;!-- Project Details --> */}
+            &lt;div className="section-full content-inner-2 h-100vh">
+              &lt;div className="container h-100">
+                &lt;div className="row h-100">
+                  &lt;div className="col text-center align-items-center align-content-center d-flex justify-content-center h-100">
+                    &lt;img
+                      src={item[0]?.image}
+                      alt=""
+                      className="img img-fluid fit-img"
+                    />
+                  &lt;/div>
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+            &lt;div className="detail-page-caption p-3">
+              &lt;div className="align-b text-white text-left">
+                &lt;div className="text-white text-left port-box">
+                  &lt;h5>{item[0]?.title}&lt;/h5>
+                  &lt;p>Description: {item[0]?.description}&lt;/p>
+                  &lt;p>
+                    &lt;b>Category: &lt;/b>
+                    {item[0]?.category}
+                    &amp;nbsp;&amp;nbsp;
+                    &lt;b>Beneficiary: &lt;/b>
+                    &lt;VINFTsTooltip
+                      title={`Click to see all NFTs for "${item[0]?.beneficiaryName}" beneficiary`}
+                    >
+                      &lt;Link
+                        to={`./BenefeiciaryNFTs?beneficiary=${item[0]?.beneficiaryName}`}
+                        className="dez-page text-white"
+                      >
+                        {item[0]?.beneficiaryName}
+                      &lt;/Link>
+                    &lt;/VINFTsTooltip>
+                    &lt;span className="bg-success text-white px-1 ml-1 border-raduis-2">
+                      {item[0]?.beneficiaryPercentage}%
+                    &lt;/span>
+                    &amp;nbsp;&amp;nbsp;
+                    &lt;b>Campaign: &lt;/b>
+                    &lt;VINFTsTooltip
+                      title={`Click to see all NFTs for "${item[0]?.campaignName}" campaign`}
+                    >
+                      {item[0]?.beneficiary ? (
+                        &lt;Link
+                          to={`./BenefeiciaryNFTs?beneficiary=${item[0]?.beneficiaryName}&amp;campaign=${item[0]?.campaignName}`}
+                          className="dez-page text-white"
+                        >
+                          {item[0]?.campaign}
+                        &lt;/Link>
+                      ) : (
+                        &lt;Link
+                          to={`./CreatorNFTs?creator=${item[0]?.creator}&amp;collection=${item[0]?.collectionName}`}
+                          className="dez-page text-white"
+                        >
+                          {item[0]?.campaignName}
+                        &lt;/Link>
+                      )}
+                    &lt;/VINFTsTooltip>
+                    &amp;nbsp;&amp;nbsp;
+                    &lt;b>Creator: &lt;/b>
+                    &lt;VINFTsTooltip
+                      title={`Click to see all NFTs created by "${item[0]?.creator}"`}
+                    >
+                      &lt;Link
+                        to={`./CreatorNFTs?creator=${item[0]?.creator}`}
+                        className="dez-page text-white"
+                      >
+                        {item[0]?.creator}
+                      &lt;/Link>
+                    &lt;/VINFTsTooltip>
+                    &lt;span className="bg-info text-white px-1 ml-1 border-raduis-2">
+                      {item[0]?.creatorPercentage}%
+                    &lt;/span>
+                    &amp;nbsp;&amp;nbsp;
+                    &lt;b>Collection: &lt;/b>
+                    {item[0]?.collectionName}
+                  &lt;/p>
+                  &lt;p className="d-flex align-content-center align-items-center">
+                    &lt;b>Price: &lt;/b>
+                    {item[0]?.price} {item[0]?.currency} &amp;nbsp;&amp;nbsp;
+                    &lt;Iconimage nft={item[0]} />
+                  &lt;/p>
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        ):   (&lt;div className="vinft-page-loader">
+        &lt;div className="vinft-spinner-body">
+          &lt;Spinner animation="border" variant="success" />
+          &lt;p>Fetching NFT Details Please wait...&lt;/p>
+        &lt;/div>
+      &lt;/div>)}
+        {/* &lt;!-- contact area END --> */}
+      &lt;/div>
+      {showBuyModal &amp;&amp; (
+        &lt;BuyNFTModal
+          show={showBuyModal}
+          handleCloseParent={() => {
+            setShowBuyModal(false);
+          }}
+          data={selectedNFT}
+          isTransfer={false}
+        />
+      )}
+    &lt;/Layout>
+  );
+};
+export default NFTDetail;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-BuyNFTModal.html">BuyNFTModal</a></li><li><a href="module-ListForSaleNFTModal.html">ListForSaleNFTModal</a></li><li><a href="module-NFTCard.html">NFTCard</a></li><li><a href="module-VINFTsTooltip.html">VINFTsTooltip</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AddBeneficiary">AddBeneficiary</a></li><li><a href="global.html#AddCampaign">AddCampaign</a></li><li><a href="global.html#BenefeiciaryNFTs">BenefeiciaryNFTs</a></li><li><a href="global.html#CreatorNFTs">CreatorNFTs</a></li><li><a href="global.html#MintNFT">MintNFT</a></li><li><a href="global.html#MyCreations">MyCreations</a></li><li><a href="global.html#MyNFTs">MyNFTs</a></li><li><a href="global.html#NFTDetail">NFTDetail</a></li><li><a href="global.html#PromptLogin">PromptLogin</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Wed Jul 06 2022 18:14:32 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
