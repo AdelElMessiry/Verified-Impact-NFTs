@@ -9,6 +9,17 @@ import { approve } from '../../api/approve';
 import { getDeployDetails } from '../../api/universal';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast as VIToast } from 'react-toastify';
+/**
+ * @module BuyNFTModal
+ */
+/** 
+ * confirmation module for buy and transfer nfts
+ * @property {boolean} show - show module render status
+ * @property {function} handleCloseParent - callback function to parent on close modal
+ * @property {object} data - object includes nft information
+ * @property {boolean} isTransfer - detect nft is transfer or buy status
+ */
+
 
 //buying NFT Modal
 const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {

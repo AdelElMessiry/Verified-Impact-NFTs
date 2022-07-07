@@ -15,6 +15,12 @@ import bnr1 from './../../../images/banner/bnr1.jpg';
 import { toast as VIToast } from 'react-toastify';
 import Layout from '../../Layout';
 
+/**
+ * Add Campaign to verified-impact-nft's contract from admin side.
+ *
+ * @type {React.FC<Props>}
+ * @returns {React.ReactElement} UI page
+ */
 //adding new campaign page
 const AddCampaign = () => {
   const { entityInfo, isLoggedIn } = useAuth();

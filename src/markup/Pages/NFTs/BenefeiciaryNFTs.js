@@ -60,7 +60,12 @@ const TagLi = ({ name, handlesettag, tagActive, type }) => {
     </VINFTsTooltip>
   );
 };
-
+/**
+ * display nfts list filtered  by selected beneficiary or campaign
+ *
+ * @type {React.FC<Props>}
+ * @returns {React.ReactElement} UI page
+ */
 const BenefeiciaryNFTs = () => {
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);

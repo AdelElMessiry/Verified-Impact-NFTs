@@ -51,14 +51,9 @@ impl TestContract {
         self.env
             .query_account_named_key(self.contract_owner, &[key])
     }
-    pub fn package_hash(&self) -> [u8; 32] {
-        let key = format!("{}_package_hash_wrapped", self.name);
-        self.env
-            .query_account_named_key(self.contract_owner, &[key])
-    }
 
     pub fn call_contract(&self, sender: AccountHash, entry_point: &str, session_args: RuntimeArgs) {
-        let session_code = DeploySource::ByContractHash {
+        let session_code = DeploySource::ByHash {
             hash: ContractHash::new(self.contract_hash()),
             method: entry_point.to_string(),
         };

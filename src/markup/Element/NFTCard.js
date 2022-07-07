@@ -4,6 +4,17 @@ import { Link } from 'react-router-dom';
 import VINFTsTooltip from './Tooltip';
 import BuyNFTModal from './BuyNFT';
 import ListForSaleNFTModal from './ListForSaleNFT';
+/**
+ * @module NFTCard
+ */
+/**
+ * @name component
+ * @property {number} index - show selected nft index 
+ * @property {object} item - provide selected nft information
+ * @property {function} openSlider - fire when user click on full screen icon to display nft on all page 
+ * @property {boolean} isTransfer - flag set to true if user want to transfer his nft
+ * @property {boolean} isCreation - flag set to true if user call nft card component from my creations screen
+ */
 
 //NFT Card component
 const NFTCard = ({
