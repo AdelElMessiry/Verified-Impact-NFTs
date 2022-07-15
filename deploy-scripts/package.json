@@ -10,8 +10,10 @@
   },
   "scripts": {
     "install-contract": "sh -ac 'cp ./.env.$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) .env; ts-node ./install.ts'",
-    "install-profile": "sh -ac 'cp ./.env.$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) .env; ts-node ./install_profile.ts'",
+    "install-profile": "sh -ac 'cp ./.env.$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) .env; ts-node ./install-profile.ts'",
+    "install-factory": "sh -ac 'cp ./.env.$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) .env; ts-node ./install-factory.ts'",
     "add-beneficiary": "sh -ac 'cp ./.env.$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) .env; ts-node ./deployAddBeneficiary.ts'",
+    "add-profile": "sh -ac 'cp ./.env.$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) .env; ts-node ./deployAddProfile.ts'",
     "view-contract": "ts-node ./getDeployDetails.ts"
   },
   "keywords": [],
