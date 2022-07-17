@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { config } from 'dotenv';
-import { CLPublicKey, Keys } from 'casper-js-sdk';
+import { CLPublicKey, Keys, CLValueBuilder } from 'casper-js-sdk';
 
 import { cep47 } from './cep47';
 import { getDeploy } from './utils';
@@ -9,10 +9,11 @@ config({ path: '.env' });
 
 const {
   NODE_ADDRESS,
-  CASPER_PRIVATE_KEY,
+  CASPER_FACTORY_PRIVATE_KEY,
   MINT_ONE_PAYMENT_AMOUNT,
   FACTORY_CONTRACT_HASH,
   FACTORY_CONTRACT_PACKAGE_HASH,
+  FACTORY_ADMIN,
 } = process.env;
 
 export const getBinary = (pathToBinary: string) => {
@@ -20,7 +21,7 @@ export const getBinary = (pathToBinary: string) => {
 };
 
 const privateKey = Keys.Ed25519.parsePrivateKey(
-  Keys.Ed25519.readBase64WithPEM(CASPER_PRIVATE_KEY as string)
+  Keys.Ed25519.readBase64WithPEM(CASPER_FACTORY_PRIVATE_KEY as string)
 );
 
 const publicKey: any = Keys.Ed25519.privateToPublicKey(privateKey);
@@ -30,13 +31,13 @@ const KEYS: any = Keys.Ed25519.parseKeyPair(publicKey, privateKey);
   cep47.setContractHash(FACTORY_CONTRACT_HASH!, FACTORY_CONTRACT_PACKAGE_HASH);
 
   const beneficiaryDeploy = await cep47.addProfile(
-    CLPublicKey.fromHex(
-      '02034d0c6b99a9b79c717cc8d9791fef7dae817e354c56d59bbf3c4781de88df6401'
+    CLValueBuilder.byteArray(
+      CLPublicKey.fromHex(
+        '01001e5a4bc0e8b925f5f94fd56efa7991c84dd0c1bf20e23219176ddff0b3c83f'
+      ).toAccountHash()
     ),
     MINT_ONE_PAYMENT_AMOUNT!,
-    CLPublicKey.fromHex(
-      '01e23d200eb0f3c8a3dacc8453644e6fcf4462585a68234ebb1c3d6cc8971148c2'
-    ),
+    CLPublicKey.fromHex(FACTORY_ADMIN!),
     [KEYS]
   );
 

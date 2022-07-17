@@ -17,7 +17,7 @@ const {
   CHAIN_NAME,
   ADMIN,
   WASM_FACTORY_PATH,
-  CASPER_PRIVATE_KEY,
+  CASPER_FACTORY_PRIVATE_KEY,
   CONTRACT_FACTORY_NAME,
   INSTALL_PROFILE_PAYMENT_AMOUNT,
 } = process.env;
@@ -27,7 +27,7 @@ export const getBinary = (pathToBinary: string) => {
 };
 
 const privateKey = Keys.Ed25519.parsePrivateKey(
-  Keys.Ed25519.readBase64WithPEM(CASPER_PRIVATE_KEY as string)
+  Keys.Ed25519.readBase64WithPEM(CASPER_FACTORY_PRIVATE_KEY as string)
 );
 
 const publicKey: any = Keys.Ed25519.privateToPublicKey(privateKey);
