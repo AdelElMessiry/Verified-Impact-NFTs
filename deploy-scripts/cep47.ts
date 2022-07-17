@@ -184,17 +184,37 @@ class CEP47Client {
   }
 
   public async addProfile(
-    address: CLPublicKey,
+    address: any,
     paymentAmount: string,
     deploySender: CLPublicKey,
     keys?: Keys.AsymmetricKey[]
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
-      address,
+      mode: CLValueBuilder.string('ADD'),
+      address: CLValueBuilder.key(address),
+      // address: CLValueBuilder.string(
+      //   CLPublicKey.fromHex(address).toAccountHashStr()
+      // ),
+      username: CLValueBuilder.string(''),
+      tagline: CLValueBuilder.string(''),
+      imgUrl: CLValueBuilder.string(''),
+      nftUrl: CLValueBuilder.string(''),
+      firstName: CLValueBuilder.string(''),
+      lastName: CLValueBuilder.string(''),
+      bio: CLValueBuilder.string(''),
+      externalLink: CLValueBuilder.string(''),
+      phone: CLValueBuilder.string(''),
+      twitter: CLValueBuilder.string(''),
+      instagram: CLValueBuilder.string(''),
+      facebook: CLValueBuilder.string(''),
+      medium: CLValueBuilder.string(''),
+      telegram: CLValueBuilder.string(''),
+      mail: CLValueBuilder.string(''),
+      profileType: CLValueBuilder.string('beneficiary'),
     });
 
     return this.contractClient.callEntrypoint(
-      'create_pair',
+      'create_profile',
       runtimeArgs,
       deploySender,
       this.networkName,
