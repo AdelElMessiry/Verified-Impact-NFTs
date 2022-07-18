@@ -47,11 +47,13 @@ class ProfileClient {
 
   public async profilesList() {
     const addresses: any = await this.contractClient.queryContractData([
-      'profiles_addresses',
+      'all_profiles',
+      // 'profiles_addresses',
     ]);
 
     const mappedAddresses = addresses.map((address: any) =>
-      Buffer.from(addresses[0].data.value()).toString('hex')
+      // Buffer.from(addresses[0].data.value()).toString('hex')
+      Buffer.from(address.data.value()).toString('hex')
     );
     return mappedAddresses;
   }
@@ -59,7 +61,7 @@ class ProfileClient {
   public async getProfile(address: string, isAccountHash?: Boolean) {
     try {
       const result = await this.contractClient.queryContractDictionary(
-        'profiles_list',
+        'all_pairs',
         isAccountHash
           ? address
           : CLPublicKey.fromHex(address).toAccountHashStr().slice(13)
@@ -125,7 +127,7 @@ class ProfileClient {
   }
 
   public async addUpdateProfile(
-    address: string,
+    address: CLPublicKey,
     username: string,
     tagline: string,
     imgUrl: string,
@@ -147,10 +149,10 @@ class ProfileClient {
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       mode: CLValueBuilder.string(mode ? mode : 'ADD'),
-      address: CLValueBuilder.string(
-        CLPublicKey.fromHex(address).toAccountHashStr()
-      ),
-      // address: CLValueBuilder.key(new CLAccountHash(address.toAccountHash())),
+      address: CLValueBuilder.key(address),
+      // address: CLValueBuilder.string(
+      //   CLPublicKey.fromHex(address).toAccountHashStr()
+      // ),
       username: CLValueBuilder.string(username),
       tagline: CLValueBuilder.string(tagline),
       imgUrl: CLValueBuilder.string(imgUrl),
@@ -170,7 +172,8 @@ class ProfileClient {
     });
 
     const profileDeploy = this.contractClient.callEntrypoint(
-      'add_profile',
+      // 'add_profile',
+      'create_profile',
       runtimeArgs,
       deploySender,
       this.networkName,

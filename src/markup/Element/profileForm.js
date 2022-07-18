@@ -59,34 +59,26 @@ const ProfileForm = ({
   React.useEffect(() => {
     setState({
       inputs: {
-        userName: formData !== {} && formData !== null ? formData.username : '',
-        shortTagLine:
-          formData !== {} && formData !== null ? formData.tagline : '',
-        firstName:
-          formData !== {} && formData !== null ? formData.firstName : '',
-        lastName: formData !== {} && formData !== null ? formData.lastName : '',
-        fullBio: formData !== {} && formData !== null ? formData.bio : '',
-        externalSiteLink:
-          formData !== {} && formData !== null ? formData.externalLink : '',
-        phone: formData !== {} && formData !== null ? formData.phone : '',
-        twitter: formData !== {} && formData !== null ? formData.twitter : '',
-        instagram:
-          formData !== {} && formData !== null ? formData.instagram : '',
-        facebook: formData !== {} && formData !== null ? formData.facebook : '',
-        medium: formData !== {} && formData !== null ? formData.medium : '',
-        email: formData !== {} && formData !== null ? formData.mail : '',
-        telegram: formData !== {} && formData !== null ? formData.telegram : '',
+        userName: formData ? formData.username : '',
+        shortTagLine: formData ? formData.tagline : '',
+        firstName: formData ? formData.firstName : '',
+        lastName: formData ? formData.lastName : '',
+        fullBio: formData ? formData.bio : '',
+        externalSiteLink: formData ? formData.externalLink : '',
+        phone: formData ? formData.phone : '',
+        twitter: formData ? formData.twitter : '',
+        instagram: formData ? formData.instagram : '',
+        facebook: formData ? formData.facebook : '',
+        medium: formData ? formData.medium : '',
+        email: formData ? formData.mail : '',
+        telegram: formData ? formData.telegram : '',
         isProfileImageURL: '',
         isNFTImageURL: '',
-        address: formData !== {} && formData !== null ? formData.address : '',
+        address: formData ? formData.address : '',
       },
     });
-    setUploadedProfileImage(
-      formData !== {} && formData !== null ? formData?.imgUrl : null
-    );
-    setUploadedNFTImage(
-      formData !== {} && formData !== null ? formData?.nftUrl : null
-    );
+    setUploadedProfileImage(formData ? formData?.imgUrl : null);
+    setUploadedNFTImage(formData ? formData?.nftUrl : null);
   }, [formData]);
 
   const handleChange = (e) => {
@@ -190,8 +182,8 @@ const ProfileForm = ({
       // debugger;
       try {
         saveDeployHash = await profileClient.addUpdateProfile(
-          // CLPublicKey.fromHex(entityInfo.publicKey),
-          entityInfo.publicKey,
+          CLPublicKey.fromHex(entityInfo.publicKey),
+          // entityInfo.publicKey,
           state.inputs.userName,
           state.inputs.shortTagLine,
           ProfileImgURL,
@@ -433,7 +425,7 @@ const ProfileForm = ({
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
                   defaultImages={[
                     !isOndropProfileClicked
-                      ? formData !== {} && formData !== null && formData?.imgUrl
+                      ? formData && formData?.imgUrl
                       : uploadedProfileImageURL
                       ? uploadedProfileImageURL
                       : '',
@@ -488,7 +480,7 @@ const ProfileForm = ({
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
                   defaultImages={[
                     !isOndropNFTClicked
-                      ? formData !== {} && formData !== null && formData?.nftUrl
+                      ? formData && formData?.nftUrl
                       : uploadedNFTImageURL
                       ? uploadedNFTImageURL
                       : '',

@@ -26,7 +26,7 @@ export interface CEP47InstallArgs {
   profileContractHash: string;
 }
 export interface ProfileInstallArgs {
-  contractName: string;
+  // contractName: string;
   admin: CLKeyParameters;
 }
 
@@ -131,7 +131,7 @@ class CEP47Client {
     keys?: Keys.AsymmetricKey[]
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
-      contract_name: CLValueBuilder.string(args.contractName),
+      // contract_name: CLValueBuilder.string(args.contractName),
       admin: CLValueBuilder.key(args.admin),
     });
 
@@ -159,23 +159,62 @@ class CEP47Client {
     keys?: Keys.AsymmetricKey[]
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
-      beneficiary_id: CLValueBuilder.u256('1'),
-      mode: CLValueBuilder.string('UPDATE'),
+      mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       address: CLValueBuilder.string(address),
-      // profile_contract_hash_key: CLValueBuilder.key(
-      //   CLValueBuilder.byteArray(
-      //     decodeBase16(
-      //       '4f57294e4db6bdf0c27ea8a70a8bf2d102871bd9565adaf5fdb7d6703cff7608'
-      //     )
-      //   )
-      // ),
-      profile_contract_hash: CLValueBuilder.string(PROFILE_CONTRACT_HASH!),
+      profile_contract_hash: CLValueBuilder.key(
+        CLValueBuilder.byteArray(
+          decodeBase16(
+            '4100c91e9e30b2307b5a097c7ee8c0a96d7f06eeddd5ee943934b563646c268b'
+          )
+        )
+      ),
+      // profile_contract_hash: CLValueBuilder.string(PROFILE_CONTRACT_HASH!),
     });
 
     return this.contractClient.callEntrypoint(
       'add_beneficiary',
+      runtimeArgs,
+      deploySender,
+      this.networkName,
+      paymentAmount,
+      keys
+    );
+  }
+
+  public async addProfile(
+    address: any,
+    paymentAmount: string,
+    deploySender: CLPublicKey,
+    keys?: Keys.AsymmetricKey[]
+  ) {
+    const runtimeArgs = RuntimeArgs.fromMap({
+      mode: CLValueBuilder.string('ADD'),
+      address: CLValueBuilder.key(address),
+      // address: CLValueBuilder.string(
+      //   CLPublicKey.fromHex(address).toAccountHashStr()
+      // ),
+      username: CLValueBuilder.string(''),
+      tagline: CLValueBuilder.string(''),
+      imgUrl: CLValueBuilder.string(''),
+      nftUrl: CLValueBuilder.string(''),
+      firstName: CLValueBuilder.string(''),
+      lastName: CLValueBuilder.string(''),
+      bio: CLValueBuilder.string(''),
+      externalLink: CLValueBuilder.string(''),
+      phone: CLValueBuilder.string(''),
+      twitter: CLValueBuilder.string(''),
+      instagram: CLValueBuilder.string(''),
+      facebook: CLValueBuilder.string(''),
+      medium: CLValueBuilder.string(''),
+      telegram: CLValueBuilder.string(''),
+      mail: CLValueBuilder.string(''),
+      profileType: CLValueBuilder.string('beneficiary'),
+    });
+
+    return this.contractClient.callEntrypoint(
+      'create_profile',
       runtimeArgs,
       deploySender,
       this.networkName,
