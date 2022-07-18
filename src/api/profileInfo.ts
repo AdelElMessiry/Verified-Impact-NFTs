@@ -143,7 +143,9 @@ class ProfileClient {
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       mode: CLValueBuilder.string(mode ? mode : 'ADD'),
-      address: CLValueBuilder.byteArray(address.toAccountHash()),
+      address: CLValueBuilder.key(
+        CLValueBuilder.byteArray(address.toAccountHash())
+      ),
       // address: CLValueBuilder.string(
       //   CLPublicKey.fromHex(address).toAccountHashStr()
       // ),
