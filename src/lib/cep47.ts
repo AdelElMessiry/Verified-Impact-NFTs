@@ -294,7 +294,7 @@ class CEP47Client {
 
   public async getBeneficiariesList() {
     const result: any = await this.contractClient.queryContractData([
-      'beneficiaries_list',
+      'beneficiaries_addresses',
     ]);
 
     const mappedAddresses = result.map((address: any) =>
