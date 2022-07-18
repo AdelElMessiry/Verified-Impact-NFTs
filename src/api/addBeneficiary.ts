@@ -17,7 +17,8 @@ export async function addBeneficiary(
     beneficiaryId ? beneficiaryId : '0',
     name,
     description,
-    `account-hash-${CLPublicKey.fromHex(address).toAccountHashStr().slice(13)}`,
+    // `account-hash-${CLPublicKey.fromHex(address).toAccountHashStr().slice(13)}`,
+    CLValueBuilder.byteArray(CLPublicKey.fromHex(address).toAccountHash()),
     mode ? mode : 'ADD',
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     deploySender
@@ -38,12 +39,12 @@ export async function addBeneficiary(
 }
 
 export async function approveBeneficiary(
-  index: string,
+  address: string,
   status: boolean,
   deploySender: CLPublicKey
 ) {
   const beneficiaryDeploy = await cep47.approveBeneficiary(
-    index,
+    address,
     status,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     deploySender

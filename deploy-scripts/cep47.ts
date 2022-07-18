@@ -183,6 +183,28 @@ class CEP47Client {
     );
   }
 
+  public async approveBeneficiary(
+    address: any,
+    status: boolean,
+    paymentAmount: string,
+    deploySender: CLPublicKey,
+    keys?: Keys.AsymmetricKey[]
+  ) {
+    const runtimeArgs = RuntimeArgs.fromMap({
+      address: CLValueBuilder.key(address),
+      status: CLValueBuilder.bool(status),
+    });
+
+    return this.contractClient.callEntrypoint(
+      'approve_beneficiary',
+      runtimeArgs,
+      deploySender,
+      this.networkName,
+      paymentAmount,
+      keys
+    );
+  }
+
   public async addProfile(
     address: any,
     paymentAmount: string,

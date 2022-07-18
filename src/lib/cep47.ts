@@ -9,6 +9,7 @@ import {
   CLKeyParameters,
   CLValueBuilder,
   CLValueParsers,
+  CLByteArray,
 } from 'casper-js-sdk';
 import { concat } from '@ethersproject/bytes';
 import blake from 'blakejs';
@@ -291,10 +292,23 @@ class CEP47Client {
     return fromCLMap(maybeValue);
   }
 
-  public async getBeneficiary(beneficiaryId: string) {
+  public async getBeneficiariesList() {
+    const result: any = await this.contractClient.queryContractData([
+      'beneficiaries_list',
+    ]);
+
+    const mappedAddresses = result.map((address: any) =>
+      Buffer.from(address.data.value()).toString('hex')
+    );
+    return mappedAddresses;
+  }
+
+  public async getBeneficiary(beneficiaryId: string, isHash: boolean) {
     const result = await this.contractClient.queryContractDictionary(
       'beneficiaries_list',
-      beneficiaryId
+      isHash
+        ? beneficiaryId
+        : CLPublicKey.fromHex(beneficiaryId).toAccountHashStr().slice(13)
     );
 
     const maybeValue = result.value().unwrap().value();
@@ -612,7 +626,7 @@ class CEP47Client {
     beneficiaryId: string,
     name: string,
     description: string,
-    address: string,
+    address: CLByteArray,
     mode: string,
     paymentAmount: string,
     deploySender: CLPublicKey
@@ -622,7 +636,7 @@ class CEP47Client {
       mode: CLValueBuilder.string(mode),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
-      address: CLValueBuilder.string(address),
+      address: CLValueBuilder.key(address),
       profile_contract_hash: CLValueBuilder.string(
         `contract-${PROFILE_CONTRACT_HASH!}`
       ),
@@ -638,13 +652,15 @@ class CEP47Client {
   }
 
   public async approveBeneficiary(
-    index: string,
+    address: string,
     status: boolean,
     paymentAmount: string,
     deploySender: CLPublicKey
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
-      index: CLValueBuilder.u256(index),
+      address: CLValueBuilder.byteArray(
+        CLPublicKey.fromHex(address).toAccountHash()
+      ),
       status: CLValueBuilder.bool(status),
     });
 

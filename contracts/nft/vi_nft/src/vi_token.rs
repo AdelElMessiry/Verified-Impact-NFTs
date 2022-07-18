@@ -1080,67 +1080,100 @@ fn call() {
 
     let contract_name: String = runtime::get_named_arg("contract_name");
 
-    let (contract_hash, contract_version) = storage::new_contract(
-        get_entry_points(),
-        None,
-        Some(String::from(&format!(
-            "{}_contract_package_hash",
-            contract_name
-        ))),
-        Some(format!("{}_package_access_token", contract_name)),
-    );
-    let version_uref = storage::new_uref(contract_version);
+    if !runtime::has_key(&format!("{}_package_hash", contract_name)) {
+        // Build new package with initial a first version of the contract.
+        let (package_hash, access_token) = storage::create_contract_package_at_hash();
+        let (contract_hash, _) =
+            storage::add_contract_version(package_hash, get_entry_points(), Default::default());
 
-    // Prepare constructor args
-    let constructor_args = runtime_args! {
-        "name" => name,
-        "symbol" => symbol,
-        "meta" => meta,
-        "admin" => admin,
-        "profile_contract_hash" => profile_contract_hash
-    };
+        // let (contract_hash, contract_version) = storage::new_contract(
+        //     get_entry_points(),
+        //     None,
+        //     Some(String::from(&format!(
+        //         "{}_contract_package_hash",
+        //         contract_name
+        //     ))),
+        //     Some(format!("{}_package_access_token", contract_name)),
+        // );
+        // let version_uref = storage::new_uref(contract_version);
 
-    let package_hash = ContractPackageHash::new(
-        runtime::get_key(&format!("{}_contract_package_hash", contract_name))
-            .unwrap_or_revert()
-            .into_hash()
-            .unwrap_or_revert(),
-    );
+        // Prepare constructor args
+        let constructor_args = runtime_args! {
+            "name" => name,
+            "symbol" => symbol,
+            "meta" => meta,
+            "admin" => admin,
+            "profile_contract_hash" => profile_contract_hash
+        };
 
-    // Add the constructor group to the package hash with a single URef.
-    let constructor_access: URef =
-        storage::create_contract_user_group(package_hash, "constructor", 1, Default::default())
-            .unwrap_or_revert()
-            .pop()
+        // Add the constructor group to the package hash with a single URef.
+        let constructor_access: URef =
+            storage::create_contract_user_group(package_hash, "constructor", 1, Default::default())
+                .unwrap_or_revert()
+                .pop()
+                .unwrap_or_revert();
+
+        // Call the constructor entry point
+        let _: () = runtime::call_contract(contract_hash, "constructor", constructor_args);
+
+        // let package_hash = ContractPackageHash::new(
+        //     runtime::get_key(&format!("{}_contract_package_hash", contract_name))
+        //         .unwrap_or_revert()
+        //         .into_hash()
+        //         .unwrap_or_revert(),
+        // );
+
+        // Remove all URefs from the constructor group, so no one can call it for the second time.
+        let mut urefs = BTreeSet::new();
+        urefs.insert(constructor_access);
+        storage::remove_contract_user_group_urefs(package_hash, "constructor", urefs)
             .unwrap_or_revert();
 
-    // Call the constructor entry point
-    let _: () = runtime::call_contract(contract_hash, "constructor", constructor_args);
+        // Store contract in the account's named keys.
+        // Store contract in the account's named keys.
+        runtime::put_key(
+            &format!("{}_package_hash", contract_name),
+            package_hash.into(),
+        );
+        runtime::put_key(
+            &format!("{}_package_hash_wrapped", contract_name),
+            storage::new_uref(package_hash).into(),
+        );
+        runtime::put_key(
+            &format!("{}_contract_hash", contract_name),
+            contract_hash.into(),
+        );
+        runtime::put_key(
+            &format!("{}_contract_hash_wrapped", contract_name),
+            storage::new_uref(contract_hash).into(),
+        );
+        runtime::put_key(
+            &format!("{}_package_access_token", contract_name),
+            access_token.into(),
+        );
+    } else {
+        // this is a contract upgrade
 
-    // Remove all URefs from the constructor group, so no one can call it for the second time.
-    let mut urefs = BTreeSet::new();
-    urefs.insert(constructor_access);
-    storage::remove_contract_user_group_urefs(package_hash, "constructor", urefs)
-        .unwrap_or_revert();
+        let package_hash: ContractPackageHash =
+            runtime::get_key(&format!("{}_package_hash", contract_name))
+                .unwrap_or_revert()
+                .into_hash()
+                .unwrap()
+                .into();
 
-    // Store contract in the account's named keys.
-    runtime::put_key(
-        &format!("{}_contract_hash", contract_name),
-        contract_hash.into(),
-    );
-    runtime::put_key(
-        &format!("{}_contract_hash_wrapped", contract_name),
-        storage::new_uref(contract_hash).into(),
-    );
-    runtime::put_key(
-        &format!("{}_package_hash_wrapped", contract_name),
-        storage::new_uref(package_hash).into(),
-    );
+        let (contract_hash, _): (ContractHash, _) =
+            storage::add_contract_version(package_hash, get_entry_points(), Default::default());
 
-    runtime::put_key(
-        &format!("{}_version_wrapped", contract_name),
-        version_uref.into(),
-    );
+        // update contract hash
+        runtime::put_key(
+            &format!("{}_contract_hash", contract_name),
+            contract_hash.into(),
+        );
+        runtime::put_key(
+            &format!("{}_contract_hash_wrapped", contract_name),
+            storage::new_uref(contract_hash).into(),
+        );
+    }
 }
 
 fn get_entry_points() -> EntryPoints {
@@ -1465,7 +1498,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("mode", String::cl_type()),
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
-            Parameter::new("address", String::cl_type()),
+            Parameter::new("address", Key::cl_type()),
             Parameter::new("profile_contract_hash_key", String::cl_type()),
         ],
         <()>::cl_type(),

@@ -1,10 +1,23 @@
 import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from './campaignInfo';
 
-export async function getBeneficiaryDetails(beneficiaryId: string) {
-  const beneficiaryDetails = await cep47.getBeneficiary(beneficiaryId);
+export async function getBeneficiaryDetails(
+  beneficiaryId: string,
+  isHash: boolean
+) {
+  const beneficiaryDetails = await cep47.getBeneficiary(beneficiaryId, false);
   // console.log(`NFT ${beneficiaryId} beneficiary: `, beneficiaryDetails);
   return beneficiaryDetails;
+}
+
+export async function getBeneficiary(beneficiaryId: string, isHash: boolean) {
+  const beneficiaryDetails = await cep47.getBeneficiary(beneficiaryId, isHash);
+  return beneficiaryDetails;
+}
+
+export async function beneficiariesList() {
+  const beneficiariesList = await cep47.getBeneficiariesList();
+  return beneficiariesList;
 }
 
 export function parseBeneficiary(maybeValue: any) {
@@ -19,24 +32,25 @@ export function parseBeneficiary(maybeValue: any) {
 }
 
 export async function getBeneficiariesList() {
-  const beneficiaryCount: any = await cep47.totalBeneficiaries();
+  const list: any = await beneficiariesList();
 
-  const beneficiariesList: any = [];
-  for (const id of [...(Array(parseInt(beneficiaryCount)).keys() as any)]) {
+  const _beneficiariesList: any = [];
+  // for (const id of [...(Array(parseInt(beneficiaryCount)).keys() as any)]) {
+  for (const address of list) {
     // console.log((id + 1).toString());
 
-    await getBeneficiaryDetails((id + 1).toString())
+    await getBeneficiary(address.toString(), true)
       .then(async (rawBeneficiary: any) => {
         // console.log(rawBeneficiary);
         const parsedBeneficiary = parseBeneficiary(rawBeneficiary);
-        beneficiariesList.push(parsedBeneficiary);
+        _beneficiariesList.push(parsedBeneficiary);
       })
       .catch((err) => {
         console.log(err);
       });
   }
 
-  return beneficiariesList;
+  return _beneficiariesList;
 }
 
 export async function getBeneficiariesCampaignsList() {
