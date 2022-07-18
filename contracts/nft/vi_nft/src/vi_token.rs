@@ -985,7 +985,7 @@ fn add_beneficiary() {
         )
         .unwrap_or_revert();
 
-    let method: &str = "add_profile";
+    let method: &str = "create_profile";
     let args: RuntimeArgs = runtime_args! {"mode" => mode.clone(),
     "address" => address.clone(),
     "username" => name.clone(),
