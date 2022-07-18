@@ -658,8 +658,8 @@ class CEP47Client {
     deploySender: CLPublicKey
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
-      address: CLValueBuilder.byteArray(
-        CLPublicKey.fromHex(address).toAccountHash()
+      address: CLValueBuilder.key(
+        CLValueBuilder.byteArray(CLPublicKey.fromHex(address).toAccountHash())
       ),
       status: CLValueBuilder.bool(status),
     });
