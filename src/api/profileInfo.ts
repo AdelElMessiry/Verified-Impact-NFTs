@@ -48,11 +48,9 @@ class ProfileClient {
   public async profilesList() {
     const addresses: any = await this.contractClient.queryContractData([
       'all_profiles',
-      // 'profiles_addresses',
     ]);
 
     const mappedAddresses = addresses.map((address: any) =>
-      // Buffer.from(addresses[0].data.value()).toString('hex')
       Buffer.from(address.data.value()).toString('hex')
     );
     return mappedAddresses;
@@ -61,7 +59,7 @@ class ProfileClient {
   public async getProfile(address: string, isAccountHash?: Boolean) {
     try {
       const result = await this.contractClient.queryContractDictionary(
-        'all_pairs',
+        'profiles',
         isAccountHash
           ? address
           : CLPublicKey.fromHex(address).toAccountHashStr().slice(13)
@@ -76,40 +74,36 @@ class ProfileClient {
       }
       let mapObj = Object.fromEntries(jsMap);
 
-      // const isNormalProfile = Object.keys(mapObj).join('-').includes('normal');
-      // const isBeneficiaryProfile = Object.keys(mapObj).includes('beneficiary');
-      // const isCreatorProfile = Object.keys(mapObj).includes('creator');
-
-      const filteredNormalAccount: any =
-        // isNormalProfile &&
-        Object.fromEntries(
-          Object.entries(mapObj)
-            .filter(([key]) => key.includes('normal'))
-            ?.map((profileKey: any) => [
-              profileKey[0].split('_').pop(),
-              profileKey[1],
-            ])
-        );
-      const filteredBeneficiaryAccount: any =
-        // isBeneficiaryProfile &&
-        Object.fromEntries(
-          Object.entries(mapObj)
-            .filter(([key]) => key.includes('beneficiary'))
-            ?.map((profileKey: any) => [
-              profileKey[0].split('_').pop(),
-              profileKey[1],
-            ])
-        );
-      const filteredCreatorAccount: any =
-        // isCreatorProfile &&
-        Object.fromEntries(
-          Object.entries(mapObj)
-            .filter(([key]) => key.includes('creator'))
-            ?.map((profileKey: any) => [
-              profileKey[0].split('_').pop(),
-              profileKey[1],
-            ])
-        );
+      const filteredNormalAccount: any = Object.fromEntries(
+        Object.entries(mapObj)
+          .filter(([key]) => key.includes('normal'))
+          ?.map((profileKey: any) => [
+            profileKey[0].split('_').pop(),
+            profileKey[0].split('_').pop() === 'address'
+              ? profileKey[1].slice(13).replace(')', '')
+              : profileKey[1],
+          ])
+      );
+      const filteredBeneficiaryAccount: any = Object.fromEntries(
+        Object.entries(mapObj)
+          .filter(([key]) => key.includes('beneficiary'))
+          ?.map((profileKey: any) => [
+            profileKey[0].split('_').pop(),
+            profileKey[0].split('_').pop() === 'address'
+              ? profileKey[1].slice(13).replace(')', '')
+              : profileKey[1],
+          ])
+      );
+      const filteredCreatorAccount: any = Object.fromEntries(
+        Object.entries(mapObj)
+          .filter(([key]) => key.includes('creator'))
+          ?.map((profileKey: any) => [
+            profileKey[0].split('_').pop(),
+            profileKey[0].split('_').pop() === 'address'
+              ? profileKey[1].slice(13).replace(')', '')
+              : profileKey[1],
+          ])
+      );
 
       return {
         [address]: {
@@ -149,7 +143,7 @@ class ProfileClient {
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       mode: CLValueBuilder.string(mode ? mode : 'ADD'),
-      address: CLValueBuilder.key(address),
+      address: CLValueBuilder.byteArray(address.toAccountHash()),
       // address: CLValueBuilder.string(
       //   CLPublicKey.fromHex(address).toAccountHashStr()
       // ),
@@ -196,9 +190,6 @@ class ProfileClient {
     const mappedProfiles: any = [];
     for (const address of addresses) {
       const profile: any = await this.getProfile(address, true);
-      profile[address].normal.address = profile[address].normal.address
-        .slice(13)
-        .replace(')', '');
       mappedProfiles.push(profile);
     }
 
