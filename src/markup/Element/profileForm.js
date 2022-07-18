@@ -216,16 +216,9 @@ const ProfileForm = ({
           isProfileExist ? 'UPDATE' : 'ADD'
         );
         if (formName === ProfileFormsEnum.BeneficiaryProfile) {
-          // debugger;
-          const savedBeneficiary = await addBeneficiary(
-            state.inputs.userName,
-            state.inputs.fullBio,
-            entityInfo.publicKey,
-            CLPublicKey.fromHex(entityInfo.publicKey),
-            isVINftExist ? 'UPDATE' : 'ADD'
-          );
-          const deployResult = await getDeployDetails(savedBeneficiary);
-          console.log('...... Beneficiary saved successfully', deployResult);
+          const mailto = `mailto:verifiedimpactnfts@gmail.com?subject=New Beneficiary ${state.inputs.userName}&body=Dear Verified Impact NFTs Team:%0D%0A%0D%0AHello, ${state.inputs.userName} would like to signup .%0D%0A%0D%0APlease approve my beneficiary.%0D%0A%0D%0AAdditional notes:%0D%0A
+          (Please type your notes here)%0D%0A%0D%0AMany thanks.%0D%0AWith kind regards,`;
+          window.location.href = mailto;
         }
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
