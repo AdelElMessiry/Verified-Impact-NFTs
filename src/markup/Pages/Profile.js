@@ -100,6 +100,7 @@ const Profile = () => {
               setNoCreatorProfilesForThisUser(true);
             }
           }
+          debugger
           setNoProfilesForThisUser(true);
           setNormalProfile(null);
         } else {
@@ -118,7 +119,7 @@ const Profile = () => {
             }
           }
           let list = Object.values(userProfiles)[0];
-          // debugger;
+          debugger;
           userProfiles &&
             setNormalProfile(
               Object.keys(list.normal).length === 0 ? null : list.normal
@@ -221,7 +222,7 @@ const Profile = () => {
                 <div id='cost' className='tab-pane active py-5'>
                   <TabContent activeTab={activeTab}>
                     <TabPane tabId='1'>
-                      {(normalProfile || noProfilesForThisUser) && (
+                      {(normalProfile==null||normalProfile || noProfilesForThisUser) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.NormalProfile}
                           isProfileExist={

@@ -28,8 +28,10 @@ const ManageBeneficiaries = () => {
     profiles &&
       profiles.map((data) => {
         let lists = Object.values(data)[0];
-        selectedList.push(lists.creator);
+        
+    Object.keys(lists.beneficiary).length!==0&&selectedList.push(lists.beneficiary);
       });
+      debugger;
     profiles && setBeneficiaries(selectedList);
   }, []);
 
@@ -43,16 +45,17 @@ const ManageBeneficiaries = () => {
 
   //saving new collection function
   const handleApproveBeneficiary = async (beneficiary) => {
+    debugger;
     const approveBeneficiaryOut = await approveBeneficiary(
-      beneficiary.id,
-      beneficiary.isApproved === 'true' ? false : true,
+      beneficiary.address,
+      beneficiary.approved === 'true' ? false : true,
       CLPublicKey.fromHex(entityInfo.publicKey)
     );
     const deployResult = await getDeployDetails(approveBeneficiaryOut);
     console.log('......  saved successfully', deployResult);
     VIToast.success(
       `Beneficiary is ${
-        beneficiary.isApproved === 'true' ? 'unapproved' : 'approved'
+        beneficiary.approved === 'true' ? 'unapproved' : 'approved'
       } successfully`
     );
 
@@ -115,7 +118,6 @@ const ManageBeneficiaries = () => {
                               <th scope='col'></th>
                               <th scope='col'>Name</th>
                               <th scope='col'>Address</th>
-                              <th scope='col'>Description</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -129,14 +131,13 @@ const ManageBeneficiaries = () => {
                                         handleApproveBeneficiary(beneficiary)
                                       }
                                     >
-                                      {beneficiary.isApproved == 'true'
+                                      {beneficiary.approved == 'true'
                                         ? 'Unapprove'
                                         : 'Approve'}
                                     </button>
                                   </th>
-                                  <td>{beneficiary.name}</td>
+                                  <td>{beneficiary.username}</td>
                                   <td>{beneficiary.address}</td>
-                                  <td>{beneficiary.description}</td>
                                 </tr>
                               ))}
                           </tbody>
