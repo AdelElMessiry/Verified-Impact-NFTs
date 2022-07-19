@@ -10,7 +10,6 @@ import { ProfileFormsEnum } from '../../Enums/index';
 import { useAuth } from '../../contexts/AuthContext';
 import { getDeployDetails } from '../../api/universal';
 import { uploadImg } from '../../api/imageCDN';
-import { addBeneficiary } from '../../api/addBeneficiary';
 
 const ProfileForm = ({
   formName,
@@ -173,6 +172,7 @@ const ProfileForm = ({
   }
 
   async function saveProfile(ProfileImgURL, NFTImgURL) {
+    debugger;
     if (!uploadedProfileImageURL || !uploadedNFTImageURL) {
       return VIToast.error('Please upload image or enter direct URL');
     }
@@ -207,11 +207,7 @@ const ProfileForm = ({
           CLPublicKey.fromHex(entityInfo.publicKey),
           isProfileExist ? 'UPDATE' : 'ADD'
         );
-        if (formName === ProfileFormsEnum.BeneficiaryProfile) {
-          const mailto = `mailto:verifiedimpactnfts@gmail.com?subject=New Beneficiary ${state.inputs.userName}&body=Dear Verified Impact NFTs Team:%0D%0A%0D%0AHello, ${state.inputs.userName} would like to signup .%0D%0A%0D%0APlease approve my beneficiary.%0D%0A%0D%0AAdditional notes:%0D%0A
-          (Please type your notes here)%0D%0A%0D%0AMany thanks.%0D%0AWith kind regards,`;
-          window.location.href = mailto;
-        }
+       
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
@@ -225,7 +221,11 @@ const ProfileForm = ({
       try {
         const deployResult = await getDeployDetails(saveDeployHash);
         console.log('...... Profile Saved successfully', deployResult);
-
+        if (formName === ProfileFormsEnum.BeneficiaryProfile) {
+          const mailto = `mailto:verifiedimpactnfts@gmail.com?subject=New Beneficiary ${state.inputs.userName}&body=Dear Verified Impact NFTs Team:%0D%0A%0D%0AHello, ${state.inputs.userName} would like to signup .%0D%0A%0D%0APlease approve my beneficiary.%0D%0A%0D%0AAdditional notes:%0D%0A
+          (Please type your notes here)%0D%0A%0D%0AMany thanks.%0D%0AWith kind regards,`;
+          window.location.href = mailto;
+        }
         VIToast.success('Profile Saved successfully');
         //NOTE: every channel has a special keys and tokens sorted on .env file
         setTimeout(() => {

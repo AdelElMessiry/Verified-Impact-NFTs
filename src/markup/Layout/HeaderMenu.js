@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { _getBeneficiariesCampaignsList } from '../../api/beneficiaryInfo';
 import { _getCreatorsCollectionsList } from '../../api/creatorInfo';
+import { profileClient } from '../../api/profileInfo';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNFTState } from '../../contexts/NFTContext';
 
@@ -13,13 +14,32 @@ const HeaderMenu = () => {
   const [beneficiariesList, setBeneficiariesList] = React.useState();
   const [creatorsList, setCreatorsList] = React.useState();
 
-  const loadSubMenu = React.useCallback(async () => {
-    const beneficiaryList =
-      beneficiaries &&
-      campaigns &&
-      (await _getBeneficiariesCampaignsList(beneficiaries, campaigns));
-    beneficiaryList && setBeneficiariesList(beneficiaryList);
+  const loadBeneficiaries = React.useCallback(async () => {
+    let selectedList = [];
+    debugger;
+    let profiles = await profileClient.getProfilesList();
 
+    profiles &&
+      profiles.map((data) => {
+        let lists = Object.values(data)[0];
+        selectedList.push(lists.creator);
+      });
+      const beneficiaryList =
+      selectedList &&
+      campaigns &&
+      (await _getBeneficiariesCampaignsList(selectedList, campaigns));
+    beneficiaryList && setBeneficiariesList(beneficiaryList);
+  }, []);
+
+  //getting beneficiary list
+  React.useEffect(() => {
+    !beneficiaries && loadBeneficiaries();
+  }, [
+    beneficiaries,
+    loadBeneficiaries
+  ]);
+
+  const loadSubMenu = React.useCallback(async () => {
     const creatorList =
       creators &&
       collections &&

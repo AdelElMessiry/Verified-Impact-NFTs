@@ -153,7 +153,7 @@ const MintNFT = () => {
     profiles &&
       profiles.map((data) => {
         let lists = Object.values(data)[0];
-        selectedList.push(lists.beneficiary?.filter(({isApproved})=>isApproved==='true'));
+        selectedList.push(lists.beneficiary?.filter(({approved})=>approved==='true'));
       });
     profiles && setBeneficiariesList(selectedList);
   }, [beneficiaries]);
@@ -427,7 +427,7 @@ const MintNFT = () => {
                               }}
                               value={beneficiary}
                             >
-                              {beneficiaries?.filter(({isApproved})=>isApproved=="true").map(({ name, address }) => (
+                              {beneficiaries?.filter(({approved})=>approved=="true").map(({ name, address }) => (
                                 <option key={address} value={address}>
                                   {name}
                                 </option>
