@@ -22,7 +22,6 @@ const ManageBeneficiaries = () => {
 
   const loadBeneficiaries = React.useCallback(async () => {
     let selectedList = [];
-    debugger;
     let profiles = await profileClient.getProfilesList();
 
     profiles &&
@@ -36,10 +35,7 @@ const ManageBeneficiaries = () => {
   //getting beneficiary list
   React.useEffect(() => {
     !beneficiaries && loadBeneficiaries();
-  }, [
-    beneficiaries,
-    loadBeneficiaries
-  ]);
+  }, [beneficiaries, loadBeneficiaries]);
 
   //saving new collection function
   const handleApproveBeneficiary = async (beneficiary) => {
