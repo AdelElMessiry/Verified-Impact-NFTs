@@ -1012,7 +1012,7 @@ fn add_beneficiary() {
 fn approve_beneficiary() {
     let address = runtime::get_named_arg::<Key>("address");
     let status = runtime::get_named_arg::<bool>("status");
-    let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_string");
+    let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
 
     ViToken::default()
         .approve_beneficiary(address, status, profile_contract_string)
@@ -1499,7 +1499,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
             Parameter::new("address", Key::cl_type()),
-            Parameter::new("profile_contract_hash_key", String::cl_type()),
+            Parameter::new("profile_contract_hash", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
@@ -1510,7 +1510,7 @@ fn get_entry_points() -> EntryPoints {
         vec![
             Parameter::new("address", Key::cl_type()),
             Parameter::new("status", bool::cl_type()),
-            Parameter::new("profile_contract_string", String::cl_type()),
+            Parameter::new("profile_contract_hash", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
