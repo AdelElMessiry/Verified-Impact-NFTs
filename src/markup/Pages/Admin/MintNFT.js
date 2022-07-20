@@ -124,7 +124,7 @@ const MintNFT = () => {
         campaigns.filter(
           ({ wallet_address }) => (savedData?savedData.beneficiary:beneficiaries?.filter(
             ({ approved }) => approved === 'true'
-          )[0]?.address) === CLPublicKey.fromHex (wallet_address).toAccountHashStr()
+          )[0]?.address) === wallet_address
         )
       );
     !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
@@ -177,7 +177,7 @@ const MintNFT = () => {
         ({ address }) => address === value
       );
       const filteredCampaigns = allCampaignsList?.filter(
-        ({ wallet_address }) => selectedBeneficiary.address === CLPublicKey.fromHex (wallet_address).toAccountHashStr()
+        ({ wallet_address }) => selectedBeneficiary.address === wallet_address
       );
       setCampaignsList(filteredCampaigns);
       filteredCampaigns?.length > 0 &&

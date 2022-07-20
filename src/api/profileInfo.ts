@@ -80,7 +80,7 @@ class ProfileClient {
           ?.map((profileKey: any) => [
             profileKey[0].split('_').pop(),
             profileKey[0].split('_').pop() === 'address'
-              ? profileKey[1].slice(13).replace(')', '')
+              ? profileKey[1].slice(10).replace(')', '')
               : profileKey[1],
           ])
       );
@@ -90,7 +90,7 @@ class ProfileClient {
           ?.map((profileKey: any) => [
             profileKey[0].split('_').pop(),
             profileKey[0].split('_').pop() === 'address'
-              ? profileKey[1].slice(13).replace(')', '')
+              ? profileKey[1].slice(10).replace(')', '')
               : profileKey[1],
           ])
       );
@@ -100,7 +100,7 @@ class ProfileClient {
           ?.map((profileKey: any) => [
             profileKey[0].split('_').pop(),
             profileKey[0].split('_').pop() === 'address'
-              ? profileKey[1].slice(13).replace(')', '')
+              ? profileKey[1].slice(10).replace(')', '')
               : profileKey[1],
           ])
       );
