@@ -44,7 +44,7 @@ const Profile = () => {
       const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
       console.log(userProfiles);
       if (userProfiles) {
-        // debugger;
+        // 
         if (userProfiles.err === 'Address Not Found') {
           if (beneficiaries) {
             if (_beneficiaryProfile) {
@@ -119,7 +119,7 @@ const Profile = () => {
             }
           }
           let list = Object.values(userProfiles)[0];
-          debugger;
+          
           userProfiles &&
             setNormalProfile(
               Object.keys(list.normal).length === 0 ? null : list.normal

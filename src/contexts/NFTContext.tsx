@@ -113,8 +113,8 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
         Object.keys(lists.beneficiary).length !== 0 &&
           selectedList.push(lists.beneficiary);
       });
-    debugger;
-    const beneficiariesList = profiles &&selectedList;
+
+    const beneficiariesList = profiles && selectedList;
     // beneficiariesList && setBeneficiaries(beneficiariesList);
 
     const campaignsList = await getCampaignsList();

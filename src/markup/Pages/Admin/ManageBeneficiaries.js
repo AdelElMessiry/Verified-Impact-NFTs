@@ -23,7 +23,7 @@ const ManageBeneficiaries = () => {
 
   //saving new collection function
   const handleApproveBeneficiary = async (beneficiary) => {
-    debugger;
+    
     const approveBeneficiaryOut = await approveBeneficiary(
       beneficiary.address,
       beneficiary.approved === 'true' ? false : true,
