@@ -648,9 +648,9 @@ fn constructor() {
     let profile_contract_hash = runtime::get_named_arg::<String>("profile_contract_hash");
     ViToken::default().constructor(name, symbol, meta);
     ViToken::default().add_admin_without_checked(admin);
-    ViToken::default()
-        .set_profile_hash(profile_contract_hash)
-        .unwrap_or_revert();
+    // ViToken::default()
+    //     .set_profile_hash(profile_contract_hash)
+    //     .unwrap_or_revert();
 }
 
 #[no_mangle]
@@ -1494,19 +1494,13 @@ fn get_entry_points() -> EntryPoints {
     entry_points.add_entry_point(EntryPoint::new(
         "add_beneficiary",
         vec![
-                    // Parameter::new("beneficiary_id", U256::cl_type()),
-                    Parameter::new("mode", String::cl_type()),
-                    Parameter::new("name", String::cl_type()),
-                    Parameter::new("description", String::cl_type()),
-        <<<<<<< HEAD
-                    Parameter::new("address", String::cl_type()),
-                    Parameter::new("profile_contract_hash", Key::cl_type()),
-                    // Parameter::new("profile_contract_hash", String::cl_type()),
-        =======
-                    Parameter::new("address", Key::cl_type()),
-                    Parameter::new("profile_contract_hash", String::cl_type()),
-        >>>>>>> origin/adjust-profile-feature
-                ],
+            // Parameter::new("beneficiary_id", U256::cl_type()),
+            Parameter::new("mode", String::cl_type()),
+            Parameter::new("name", String::cl_type()),
+            Parameter::new("description", String::cl_type()),
+            Parameter::new("address", Key::cl_type()),
+            Parameter::new("profile_contract_hash", String::cl_type()),
+        ],
         <()>::cl_type(),
         EntryPointAccess::Public,
         EntryPointType::Contract,
