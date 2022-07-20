@@ -21,6 +21,7 @@ import Layout from '../../Layout';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet, SendTweetWithImage } from '../../../utils/VINFTsTweets';
+import { CLPublicKey } from 'casper-js-sdk';
 
 //handling of creating new option in creatable select control
 const createOption = (label) => ({
@@ -113,13 +114,17 @@ const MintNFT = () => {
   React.useEffect(() => {
     beneficiaries?.length &&
       !beneficiary &&
-      setBeneficiary(beneficiaries[0].address);
+      setBeneficiary(beneficiaries?.filter(
+        ({ approved }) => approved === 'true'
+      )[0]?.address);
     campaigns?.length && !campaign && setCampaign(savedData?savedData.campaign:campaigns[0]?.id);
     !campaignsList &&
       campaigns?.length &&
       setCampaignsList(
         campaigns.filter(
-          ({ wallet_address }) => (savedData?savedData.beneficiary:beneficiaries[0].address) === wallet_address
+          ({ wallet_address }) => (savedData?savedData.beneficiary:beneficiaries?.filter(
+            ({ approved }) => approved === 'true'
+          )[0]?.address) === CLPublicKey.fromHex (wallet_address).toAccountHashStr()
         )
       );
     !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
@@ -145,28 +150,6 @@ const MintNFT = () => {
     loadCollections,
   ]);
 
-  const loadBeneficiaries = React.useCallback(async () => {
-    let selectedList = [];
-    debugger;
-    let profiles = await profileClient.getProfilesList();
-
-    profiles &&
-      profiles.map((data) => {
-        let lists = Object.values(data)[0];
-        selectedList.push(lists.beneficiary?.filter(({approved})=>approved==='true'));
-      });
-    profiles && setBeneficiariesList(selectedList);
-  }, [beneficiaries]);
-
-  //getting beneficiary list
-  React.useEffect(() => {
-    !beneficiariesList && loadBeneficiaries();
-  }, [
-    beneficiariesList,
-    loadBeneficiaries
-  ]);
-
-
   //handling of adding new option to the existing collections in creatable select
   const handleCreate = (inputValue) => {
     setIsLoading(true);
@@ -188,11 +171,13 @@ const MintNFT = () => {
     const { inputs } = state;
 
     if (isBeneficiary) {
-      let selectedBeneficiary = beneficiaries.find(
+      let selectedBeneficiary = beneficiaries?.filter(
+        ({ approved }) => approved === 'true'
+      ).find(
         ({ address }) => address === value
       );
       const filteredCampaigns = allCampaignsList?.filter(
-        ({ wallet_address }) => selectedBeneficiary.address === wallet_address
+        ({ wallet_address }) => selectedBeneficiary.address === CLPublicKey.fromHex (wallet_address).toAccountHashStr()
       );
       setCampaignsList(filteredCampaigns);
       filteredCampaigns?.length > 0 &&
@@ -427,9 +412,9 @@ const MintNFT = () => {
                               }}
                               value={beneficiary}
                             >
-                              {beneficiaries?.filter(({approved})=>approved=="true").map(({ name, address }) => (
+                              {beneficiaries?.filter(({approved})=>approved=="true").map(({ username, address }) => (
                                 <option key={address} value={address}>
-                                  {name}
+                                  {username}
                                 </option>
                               ))}
                             </select>
