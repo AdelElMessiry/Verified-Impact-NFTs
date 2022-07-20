@@ -1,11 +1,12 @@
 import React from 'react';
-
+import { CLPublicKey } from 'casper-js-sdk';
 import { getBeneficiariesList } from '../api/beneficiaryInfo';
 import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from '../api/campaignInfo';
 import { getCreatorsList } from '../api/creatorInfo';
 import { getUniqueCollectionsList } from '../api/collectionInfo';
 import { getNFTsList } from '../api/nftInfo';
+import { profileClient } from '../api/profileInfo';
 
 export enum NFTActionTypes {
   LOADING = 'loading',
@@ -20,6 +21,7 @@ interface NFTState {
   collections?: [];
   uniqueCollections?: [];
   creators?: [];
+  vINFTsBeneficiaries?: [];
   isLoading: boolean;
   beneficiaryCount?: Number;
   campaignsCount?: Number;
@@ -34,8 +36,9 @@ type NFTAction =
   | { type: NFTActionTypes.SUCCESS; payload: any };
 
 const NFTStateContext = React.createContext<NFTState | undefined>(undefined);
-const NFTDispatchContext =
-  React.createContext<NFTDispatch | undefined>(undefined);
+const NFTDispatchContext = React.createContext<NFTDispatch | undefined>(
+  undefined
+);
 
 function nftReducer(state: NFTState, action: NFTAction): NFTState {
   switch (action.type) {
@@ -58,6 +61,7 @@ function nftReducer(state: NFTState, action: NFTAction): NFTState {
         campaignsCount: action.payload.campaignsCount,
         creatorsCount: action.payload.creatorsCount,
         collectionsCount: action.payload.collectionsCount,
+        vINFTsBeneficiaries: action.payload.vINFTsBeneficiaries
       };
     }
     default: {
@@ -98,10 +102,24 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
         creators: [],
         campaigns: [],
         beneficiaries: [],
+        vINFTsBeneficiaries:[]
       },
     });
 
-    const beneficiariesList = await getBeneficiariesList();
+    let selectedList: any = [];
+    let profiles = await profileClient.getProfilesList();
+
+    profiles &&
+      profiles.map((data: any) => {
+        let lists: any = Object.values(data)[0];
+
+        Object.keys(lists.beneficiary).length !== 0 &&
+          selectedList.push(lists.beneficiary);
+      });
+    const beneficiariesList = profiles &&selectedList;
+
+    const beneficiariesVINFTsList = await getBeneficiariesList();
+
     // beneficiariesList && setBeneficiaries(beneficiariesList);
 
     const campaignsList = await getCampaignsList();
@@ -130,8 +148,10 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
             ?.name || '',
         beneficiaryName:
           beneficiariesList.find(
-            ({ address }: any) => nft.beneficiary === address
-          )?.name || '',
+            ({ address }: any) =>
+              nft.beneficiary ===
+              address
+          )?.username || '',
         collectionName:
           collectionsList.collectionsList.find(
             ({ id }: any) => nft.collection === id
@@ -160,6 +180,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
           creators: creatorsList,
           campaigns: campaignsList,
           beneficiaries: beneficiariesList,
+          vINFTsBeneficiaries:beneficiariesVINFTsList
         },
       });
   }, []);

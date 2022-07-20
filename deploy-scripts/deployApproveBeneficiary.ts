@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { config } from 'dotenv';
-import { CLPublicKey, Keys } from 'casper-js-sdk';
+import { CLPublicKey, Keys, CLValueBuilder } from 'casper-js-sdk';
 
 import { cep47 } from './cep47';
 import { getDeploy } from './utils';
@@ -9,10 +9,11 @@ config({ path: '.env' });
 
 const {
   NODE_ADDRESS,
-  CASPER_PRIVATE_KEY,
+  CASPER_FACTORY_PRIVATE_KEY,
   MINT_ONE_PAYMENT_AMOUNT,
-  NFT_CONTRACT_HASH,
-  NFT_CONTRACT_PACKAGE_HASH,
+  FACTORY_CONTRACT_HASH,
+  FACTORY_CONTRACT_PACKAGE_HASH,
+  FACTORY_ADMIN,
 } = process.env;
 
 export const getBinary = (pathToBinary: string) => {
@@ -20,27 +21,24 @@ export const getBinary = (pathToBinary: string) => {
 };
 
 const privateKey = Keys.Ed25519.parsePrivateKey(
-  Keys.Ed25519.readBase64WithPEM(CASPER_PRIVATE_KEY as string)
+  Keys.Ed25519.readBase64WithPEM(CASPER_FACTORY_PRIVATE_KEY as string)
 );
 
 const publicKey: any = Keys.Ed25519.privateToPublicKey(privateKey);
 const KEYS: any = Keys.Ed25519.parseKeyPair(publicKey, privateKey);
 
 (async function deployBeneficiary() {
-  cep47.setContractHash(NFT_CONTRACT_HASH!, NFT_CONTRACT_PACKAGE_HASH);
+  cep47.setContractHash(FACTORY_CONTRACT_HASH!, FACTORY_CONTRACT_PACKAGE_HASH);
 
-  const beneficiaryDeploy = await cep47.addBeneficiary(
-    'New Ebra',
-    "New Ebra's Beneficiary Test",
-    `account-hash-${CLPublicKey.fromHex(
-      '01e23d200eb0f3c8a3dacc8453644e6fcf4462585a68234ebb1c3d6cc8971148c2'
-    )
-      .toAccountHashStr()
-      .slice(13)}`,
-    MINT_ONE_PAYMENT_AMOUNT!,
-    CLPublicKey.fromHex(
-      '01e23d200eb0f3c8a3dacc8453644e6fcf4462585a68234ebb1c3d6cc8971148c2'
+  const beneficiaryDeploy = await cep47.approveBeneficiary(
+    CLValueBuilder.byteArray(
+      CLPublicKey.fromHex(
+        '01001e5a4bc0e8b925f5f94fd56efa7991c84dd0c1bf20e23219176ddff0b3c83f'
+      ).toAccountHash()
     ),
+    true,
+    MINT_ONE_PAYMENT_AMOUNT!,
+    CLPublicKey.fromHex(FACTORY_ADMIN!),
     [KEYS]
   );
 

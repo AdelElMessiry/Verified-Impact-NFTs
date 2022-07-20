@@ -30,8 +30,8 @@ use cep47::{
 
 use casper_types::{
     runtime_args, ApiError, CLType, CLTyped, CLValue, ContractHash, ContractPackageHash,
-    EntryPoint, EntryPointAccess, EntryPointType, EntryPoints, Group, HashAddr, Key, Parameter,
-    RuntimeArgs, URef, U256,
+    EntryPoint, EntryPointAccess, EntryPointType, EntryPoints, Group, Key, Parameter, RuntimeArgs,
+    URef, U256,
 };
 
 mod minters_control;
@@ -87,8 +87,7 @@ impl ViToken {
         Campaigns::init();
         campaign_data::set_total_campaigns(U256::zero());
         beneficiaries_control::set_total_beneficiaries(U256::zero());
-        // Collections::init();
-        // collection_data::set_total_collections(U256::zero());
+        beneficiaries_control::set_all_beneficiaries(vec![]);
         creator_control::set_total_creators(U256::zero());
         collection_control::set_total_collections(U256::zero());
     }
@@ -102,9 +101,25 @@ impl ViToken {
         CollectionControl::is_collection(self, index)
     }
 
-    fn get_beneficiary(&self, index: U256) -> Option<Beneficiary> {
-        BeneficiaryControl::get_beneficiary(self, index)
+    fn is_existent_beneficiary(&self) -> bool {
+        BeneficiaryControl::is_beneficiary(self)
     }
+
+    fn get_beneficiary(&self, address: Key) -> Option<Beneficiary> {
+        BeneficiaryControl::get_beneficiary(self, address)
+    }
+
+    fn get_all_beneficiaries(&self) -> Vec<Key> {
+        beneficiaries_control::get_all_beneficiaries()
+    }
+
+    fn total_beneficiaries(&self) -> U256 {
+        beneficiaries_control::total_beneficiaries()
+    }
+
+    // fn get_beneficiary(&self, index: U256) -> Option<Beneficiary> {
+    //     BeneficiaryControl::get_beneficiary(self, index)
+    // }
 
     fn get_creator(&self, index: U256) -> Option<Creator> {
         CreatorControl::get_creator(self, index)
@@ -128,10 +143,6 @@ impl ViToken {
 
     fn total_campaigns(&self) -> U256 {
         campaign_data::total_campaigns()
-    }
-
-    fn total_beneficiaries(&self) -> U256 {
-        beneficiaries_control::total_beneficiaries()
     }
 
     fn total_creators(&self) -> U256 {
@@ -186,36 +197,43 @@ impl ViToken {
 
     fn set_beneficiary(
         &mut self,
+        // beneficiary_id: U256,
         mode: String,
         name: String,
         description: String,
-        address: String,
+        address: Key,
         is_approved: bool,
     ) -> Result<(), Error> {
-        let caller = ViToken::default().get_caller();
+        // let caller = ViToken::default().get_caller();
 
-        if !ViToken::default().is_admin(caller) {
-            revert(ApiError::User(20));
-        }
+        // if !ViToken::default().is_admin(caller) {
+        //     revert(ApiError::User(20));
+        // }
 
         match mode.as_str() {
             "ADD" | "UPDATE" => {
+                let cloned_mode = mode.clone();
                 let new_beneficiary_count = beneficiaries_control::total_beneficiaries()
                     .checked_add(U256::one())
                     .unwrap();
 
                 let mut beneficiary =
-                    BeneficiaryControl::get_beneficiary(self, new_beneficiary_count)
-                        .unwrap_or_default();
+                    BeneficiaryControl::get_beneficiary(self, address).unwrap_or_default();
 
-                beneficiary.insert(format!("id: "), new_beneficiary_count.to_string());
                 beneficiary.insert(format!("name: "), name);
                 beneficiary.insert(format!("description: "), description);
-                beneficiary.insert(format!("address: "), address);
+                beneficiary.insert(format!("address: "), address.to_string());
                 beneficiary.insert(format!("isApproved: "), is_approved.to_string());
 
-                BeneficiaryControl::add_beneficiary(self, new_beneficiary_count, beneficiary);
-                beneficiaries_control::set_total_beneficiaries(new_beneficiary_count);
+                BeneficiaryControl::add_beneficiary(self, address, beneficiary);
+
+                if cloned_mode == "ADD" {
+                    let mut beneficiaries: Vec<Key> =
+                        beneficiaries_control::get_all_beneficiaries();
+                    beneficiaries.push(address);
+                    beneficiaries_control::set_all_beneficiaries(beneficiaries);
+                    beneficiaries_control::set_total_beneficiaries(new_beneficiary_count);
+                }
             }
             _ => {
                 return Err(Error::WrongArguments);
@@ -224,18 +242,18 @@ impl ViToken {
         Ok(())
     }
 
-    fn set_is_approved_beneficiary(&mut self, index: U256, status: bool) -> Result<(), Error> {
+    fn set_is_approved_beneficiary(&mut self, address: Key, status: bool) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
 
         if !ViToken::default().is_admin(caller) {
             revert(ApiError::User(20));
         }
 
-        let mut beneficiary = BeneficiaryControl::get_beneficiary(self, index).unwrap_or_default();
-
+        let mut beneficiary =
+            BeneficiaryControl::get_beneficiary(self, address).unwrap_or_default();
         beneficiary.insert(format!("isApproved: "), status.to_string());
 
-        BeneficiaryControl::add_beneficiary(self, index, beneficiary);
+        BeneficiaryControl::add_beneficiary(self, address, beneficiary);
 
         Ok(())
     }
@@ -499,10 +517,11 @@ impl ViToken {
 
     fn create_beneficiary(
         &mut self,
+        // beneficiary_id: U256,
         mode: String,
         name: String,
         description: String,
-        address: String,
+        address: Key,
         is_approved: bool,
     ) -> Result<(), Error> {
         // let caller = ViToken::default().get_caller();
@@ -510,19 +529,64 @@ impl ViToken {
         // if !ViToken::default().is_admin(caller) {
         //     revert(ApiError::User(20));
         // }
-        self.set_beneficiary(mode, name, description, address, is_approved)
-            .unwrap_or_revert();
+        self.set_beneficiary(
+            // beneficiary_id,
+            mode,
+            name,
+            description,
+            address,
+            is_approved,
+        )
+        .unwrap_or_revert();
         Ok(())
     }
 
-    fn approve_beneficiary(&mut self, index: U256, status: bool) -> Result<(), Error> {
+    fn approve_beneficiary(
+        &mut self,
+        address: Key,
+        status: bool,
+        profile_contract: String,
+    ) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
 
         if !ViToken::default().is_admin(caller) {
             revert(ApiError::User(20));
         }
-        self.set_is_approved_beneficiary(index, status)
+
+        if !ViToken::default().is_existent_beneficiary() {
+            //save profile
+            let mut beneficiary =
+                BeneficiaryControl::get_beneficiary(self, address).unwrap_or_default();
+            let new_beneficiary_count = beneficiaries_control::total_beneficiaries()
+                .checked_add(U256::one())
+                .unwrap();
+
+            beneficiary.insert(format!("name: "), "".to_string());
+            beneficiary.insert(format!("description: "), "".to_string());
+            beneficiary.insert(format!("address: "), address.to_string());
+            beneficiary.insert(format!("isApproved: "), status.to_string());
+
+            BeneficiaryControl::add_beneficiary(self, address, beneficiary);
+
+            let mut beneficiaries: Vec<Key> = beneficiaries_control::get_all_beneficiaries();
+            beneficiaries.push(address);
+            beneficiaries_control::set_all_beneficiaries(beneficiaries);
+            beneficiaries_control::set_total_beneficiaries(new_beneficiary_count);
+        }
+        let profile_contract_hash: ContractHash =
+            ContractHash::from_formatted_str(&profile_contract).unwrap_or_default();
+
+        let method: &str = "approve_beneficiary";
+        let args: RuntimeArgs = runtime_args! {
+                "address" => address.clone(),
+                "status" => status.clone(),
+        };
+
+        runtime::call_contract::<()>(profile_contract_hash, method, args);
+
+        self.set_is_approved_beneficiary(address, status)
             .unwrap_or_revert();
+
         Ok(())
     }
 
@@ -638,9 +702,21 @@ fn total_beneficiaries() {
 }
 
 #[no_mangle]
+fn get_all_beneficiaries() {
+    let ret = ViToken::default().get_all_beneficiaries();
+    runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
+}
+
+#[no_mangle]
 fn get_beneficiary() {
-    let index = runtime::get_named_arg::<U256>("index");
-    let ret = ViToken::default().get_beneficiary(index);
+    let address = runtime::get_named_arg::<Key>("address");
+    let ret = ViToken::default().get_beneficiary(address);
+    runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
+}
+
+#[no_mangle]
+fn is_beneficiary_exist() {
+    let ret = ViToken::default().is_existent_beneficiary();
     runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
 }
 
@@ -877,28 +953,21 @@ fn revoke_minter() {
 
 #[no_mangle]
 fn add_beneficiary() {
+    let caller = Key::Account(runtime::get_caller());
     let mode = runtime::get_named_arg::<String>("mode");
     let name = runtime::get_named_arg::<String>("name");
     let description = runtime::get_named_arg::<String>("description");
-    let address = runtime::get_named_arg::<String>("address");
-    // let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
-    // let profile_contract_hash: ContractHash =
-    //     ContractHash::from_formatted_str(&profile_contract_string).unwrap();
-
-    let address_hash: Key = Key::from_formatted_str(&address).unwrap();
-    let caller = Key::Account(runtime::get_caller());
-
-    let profile_contract_key: Key = runtime::get_named_arg("profile_contract_hash");
-    let profile_contract_hash_add: HashAddr =
-        profile_contract_key.into_hash().unwrap_or_revert().into();
-    let profile_contract_hash: ContractHash = ContractHash::new(profile_contract_hash_add);
+    let address = runtime::get_named_arg::<Key>("address");
+    let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
+    let profile_contract_hash: ContractHash =
+        ContractHash::from_formatted_str(&profile_contract_string).unwrap_or_default();
 
     let is_approved;
 
     if ViToken::default().is_admin(caller) {
         is_approved = true;
     } else {
-        if caller == address_hash {
+        if caller == address {
             is_approved = false;
         } else {
             revert(ApiError::User(20));
@@ -907,6 +976,7 @@ fn add_beneficiary() {
 
     ViToken::default()
         .create_beneficiary(
+            // beneficiary_id.clone(),
             mode.clone(),
             name.clone(),
             description.clone(),
@@ -915,39 +985,37 @@ fn add_beneficiary() {
         )
         .unwrap_or_revert();
 
-    // runtime::call_contract(
-    //     profile_contract_hash,
-    //     "add_profile",
-    //     runtime_args! {
-    //         "mode" => mode.clone(),
-    //         "address" => address_hash.clone(),
-    //         "username" => name.clone(),
-    //         "tagline" => "".to_string(),
-    //         "img_url" => "".to_string(),
-    //         "nft_url" => "".to_string(),
-    //         "first_name" => "".to_string(),
-    //         "last_name" => "".to_string(),
-    //         "bio" => description.clone(),
-    //         "external_link" => "".to_string(),
-    //         "phone" => "".to_string(),
-    //         "twitter" => "".to_string(),
-    //         "instagram" => "".to_string(),
-    //         "facebook" => "".to_string(),
-    //         "medium" => "".to_string(),
-    //         "telegram" => "".to_string(),
-    //         "mail" => "".to_string(),
-    //         "profile_type" => "beneficiary".to_string(),
-    //     },
-    // )
+    let method: &str = "create_profile";
+    let args: RuntimeArgs = runtime_args! {"mode" => mode.clone(),
+    "address" => address.clone(),
+    "username" => name.clone(),
+    "tagline" => "".to_string(),
+    "imgUrl" => "".to_string(),
+    "nftUrl" => "".to_string(),
+    "firstName" => "".to_string(),
+    "lastName" => "".to_string(),
+    "bio" => description.clone(),
+    "externalLink" => "".to_string(),
+    "phone" => "".to_string(),
+    "twitter" => "".to_string(),
+    "instagram" => "".to_string(),
+    "facebook" => "".to_string(),
+    "medium" => "".to_string(),
+    "telegram" => "".to_string(),
+    "mail" => "".to_string(),
+    "profileType" => "beneficiary".to_string(),};
+
+    runtime::call_contract::<()>(profile_contract_hash, method, args);
 }
 
 #[no_mangle]
 fn approve_beneficiary() {
-    let index = runtime::get_named_arg::<U256>("index");
+    let address = runtime::get_named_arg::<Key>("address");
     let status = runtime::get_named_arg::<bool>("status");
+    let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
 
     ViToken::default()
-        .approve_beneficiary(index, status)
+        .approve_beneficiary(address, status, profile_contract_string)
         .unwrap_or_revert();
 }
 
@@ -967,12 +1035,23 @@ fn add_creator() {
 #[no_mangle]
 fn grant_admin() {
     let admin = runtime::get_named_arg::<Key>("admin");
+    let caller = Key::Account(runtime::get_caller());
+
+    if ViToken::default().is_admin(caller) {
+        revert(ApiError::User(20));
+    }
+
     ViToken::default().add_admin(admin);
 }
 
 #[no_mangle]
 fn revoke_admin() {
     let admin = runtime::get_named_arg::<Key>("admin");
+    let caller = Key::Account(runtime::get_caller());
+
+    if ViToken::default().is_admin(caller) {
+        revert(ApiError::User(20));
+    }
     ViToken::default().disable_admin(admin);
 }
 
@@ -1001,67 +1080,100 @@ fn call() {
 
     let contract_name: String = runtime::get_named_arg("contract_name");
 
-    let (contract_hash, contract_version) = storage::new_contract(
-        get_entry_points(),
-        None,
-        Some(String::from(&format!(
-            "{}_contract_package_hash",
-            contract_name
-        ))),
-        Some(format!("{}_package_access_token", contract_name)),
-    );
-    let version_uref = storage::new_uref(contract_version);
+    if !runtime::has_key(&format!("{}_package_hash", contract_name)) {
+        // Build new package with initial a first version of the contract.
+        let (package_hash, access_token) = storage::create_contract_package_at_hash();
+        let (contract_hash, _) =
+            storage::add_contract_version(package_hash, get_entry_points(), Default::default());
 
-    // Prepare constructor args
-    let constructor_args = runtime_args! {
-        "name" => name,
-        "symbol" => symbol,
-        "meta" => meta,
-        "admin" => admin,
-        "profile_contract_hash" => profile_contract_hash
-    };
+        // let (contract_hash, contract_version) = storage::new_contract(
+        //     get_entry_points(),
+        //     None,
+        //     Some(String::from(&format!(
+        //         "{}_contract_package_hash",
+        //         contract_name
+        //     ))),
+        //     Some(format!("{}_package_access_token", contract_name)),
+        // );
+        // let version_uref = storage::new_uref(contract_version);
 
-    let package_hash = ContractPackageHash::new(
-        runtime::get_key(&format!("{}_contract_package_hash", contract_name))
-            .unwrap_or_revert()
-            .into_hash()
-            .unwrap_or_revert(),
-    );
+        // Prepare constructor args
+        let constructor_args = runtime_args! {
+            "name" => name,
+            "symbol" => symbol,
+            "meta" => meta,
+            "admin" => admin,
+            "profile_contract_hash" => profile_contract_hash
+        };
 
-    // Add the constructor group to the package hash with a single URef.
-    let constructor_access: URef =
-        storage::create_contract_user_group(package_hash, "constructor", 1, Default::default())
-            .unwrap_or_revert()
-            .pop()
+        // Add the constructor group to the package hash with a single URef.
+        let constructor_access: URef =
+            storage::create_contract_user_group(package_hash, "constructor", 1, Default::default())
+                .unwrap_or_revert()
+                .pop()
+                .unwrap_or_revert();
+
+        // Call the constructor entry point
+        let _: () = runtime::call_contract(contract_hash, "constructor", constructor_args);
+
+        // let package_hash = ContractPackageHash::new(
+        //     runtime::get_key(&format!("{}_contract_package_hash", contract_name))
+        //         .unwrap_or_revert()
+        //         .into_hash()
+        //         .unwrap_or_revert(),
+        // );
+
+        // Remove all URefs from the constructor group, so no one can call it for the second time.
+        let mut urefs = BTreeSet::new();
+        urefs.insert(constructor_access);
+        storage::remove_contract_user_group_urefs(package_hash, "constructor", urefs)
             .unwrap_or_revert();
 
-    // Call the constructor entry point
-    let _: () = runtime::call_contract(contract_hash, "constructor", constructor_args);
+        // Store contract in the account's named keys.
+        // Store contract in the account's named keys.
+        runtime::put_key(
+            &format!("{}_package_hash", contract_name),
+            package_hash.into(),
+        );
+        runtime::put_key(
+            &format!("{}_package_hash_wrapped", contract_name),
+            storage::new_uref(package_hash).into(),
+        );
+        runtime::put_key(
+            &format!("{}_contract_hash", contract_name),
+            contract_hash.into(),
+        );
+        runtime::put_key(
+            &format!("{}_contract_hash_wrapped", contract_name),
+            storage::new_uref(contract_hash).into(),
+        );
+        runtime::put_key(
+            &format!("{}_package_access_token", contract_name),
+            access_token.into(),
+        );
+    } else {
+        // this is a contract upgrade
 
-    // Remove all URefs from the constructor group, so no one can call it for the second time.
-    let mut urefs = BTreeSet::new();
-    urefs.insert(constructor_access);
-    storage::remove_contract_user_group_urefs(package_hash, "constructor", urefs)
-        .unwrap_or_revert();
+        let package_hash: ContractPackageHash =
+            runtime::get_key(&format!("{}_package_hash", contract_name))
+                .unwrap_or_revert()
+                .into_hash()
+                .unwrap()
+                .into();
 
-    // Store contract in the account's named keys.
-    runtime::put_key(
-        &format!("{}_contract_hash", contract_name),
-        contract_hash.into(),
-    );
-    runtime::put_key(
-        &format!("{}_contract_hash_wrapped", contract_name),
-        storage::new_uref(contract_hash).into(),
-    );
-    runtime::put_key(
-        &format!("{}_package_hash_wrapped", contract_name),
-        storage::new_uref(package_hash).into(),
-    );
+        let (contract_hash, _): (ContractHash, _) =
+            storage::add_contract_version(package_hash, get_entry_points(), Default::default());
 
-    runtime::put_key(
-        &format!("{}_version_wrapped", contract_name),
-        version_uref.into(),
-    );
+        // update contract hash
+        runtime::put_key(
+            &format!("{}_contract_hash", contract_name),
+            contract_hash.into(),
+        );
+        runtime::put_key(
+            &format!("{}_contract_hash_wrapped", contract_name),
+            storage::new_uref(contract_hash).into(),
+        );
+    }
 }
 
 fn get_entry_points() -> EntryPoints {
@@ -1139,6 +1251,27 @@ fn get_entry_points() -> EntryPoints {
         "total_beneficiaries",
         vec![],
         U256::cl_type(),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "get_all_beneficiaries",
+        vec![],
+        CLType::List(Box::new(Key::cl_type())),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "is_beneficiary_exist",
+        vec![],
+        CLType::Option(Box::new(CLType::Bool)),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "get_beneficiary",
+        vec![Parameter::new("address", Key::cl_type())],
+        Beneficiary::cl_type(),
         EntryPointAccess::Public,
         EntryPointType::Contract,
     ));
@@ -1361,13 +1494,19 @@ fn get_entry_points() -> EntryPoints {
     entry_points.add_entry_point(EntryPoint::new(
         "add_beneficiary",
         vec![
-            Parameter::new("mode", String::cl_type()),
-            Parameter::new("name", String::cl_type()),
-            Parameter::new("description", String::cl_type()),
-            Parameter::new("address", String::cl_type()),
-            Parameter::new("profile_contract_hash", Key::cl_type()),
-            // Parameter::new("profile_contract_hash", String::cl_type()),
-        ],
+                    // Parameter::new("beneficiary_id", U256::cl_type()),
+                    Parameter::new("mode", String::cl_type()),
+                    Parameter::new("name", String::cl_type()),
+                    Parameter::new("description", String::cl_type()),
+        <<<<<<< HEAD
+                    Parameter::new("address", String::cl_type()),
+                    Parameter::new("profile_contract_hash", Key::cl_type()),
+                    // Parameter::new("profile_contract_hash", String::cl_type()),
+        =======
+                    Parameter::new("address", Key::cl_type()),
+                    Parameter::new("profile_contract_hash", String::cl_type()),
+        >>>>>>> origin/adjust-profile-feature
+                ],
         <()>::cl_type(),
         EntryPointAccess::Public,
         EntryPointType::Contract,
@@ -1375,8 +1514,9 @@ fn get_entry_points() -> EntryPoints {
     entry_points.add_entry_point(EntryPoint::new(
         "approve_beneficiary",
         vec![
-            Parameter::new("index", U256::cl_type()),
+            Parameter::new("address", Key::cl_type()),
             Parameter::new("status", bool::cl_type()),
+            Parameter::new("profile_contract_hash", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,

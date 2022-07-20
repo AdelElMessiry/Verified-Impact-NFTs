@@ -74,6 +74,10 @@ impl ViProfile {
         profiles_control::get_all_profiles()
     }
 
+    fn set_all_profiles(&mut self, all_profiles: Vec<Key>) {
+        profiles_control::set_all_profiles(all_profiles);
+    }
+
     fn total_profiles(&self) -> U256 {
         profiles_control::total_profiles()
     }
@@ -81,7 +85,7 @@ impl ViProfile {
     fn set_profile(
         &mut self,
         mode: String,
-        address: Key,
+        address: String,
         username: String,
         tagline: String,
         img_url: String,
@@ -98,21 +102,17 @@ impl ViProfile {
         telegram: String,
         mail: String,
         profile_type: String,
+        is_approved: bool,
     ) -> Result<(), Error> {
-        // let caller = ViProfile::default().get_caller();
-
-        // if !ViProfile::default().is_admin(caller) {
-        //     revert(ApiError::User(20));
-        // }
-
         match mode.as_str() {
             "ADD" | "UPDATE" => {
                 let cloned_mode = mode.clone();
                 let new_profile_count = profiles_control::total_profiles()
                     .checked_add(U256::one())
                     .unwrap();
-
-                let mut profile = ProfileControl::get_profile(self, address).unwrap_or_default();
+                let mapped_address = Key::from_formatted_str(&address).unwrap();
+                let mut profile =
+                    ProfileControl::get_profile(self, mapped_address).unwrap_or_default();
 
                 profile.insert(format!("{}_address", profile_type), address.to_string());
                 profile.insert(format!("{}_username", profile_type), username);
@@ -130,13 +130,18 @@ impl ViProfile {
                 profile.insert(format!("{}_medium", profile_type), medium);
                 profile.insert(format!("{}_telegram", profile_type), telegram);
                 profile.insert(format!("{}_mail", profile_type), mail);
+                profile.insert(
+                    format!("{}_is_approved", profile_type),
+                    is_approved.to_string(),
+                );
 
-                ProfileControl::add_profile(self, address, profile);
+                ProfileControl::add_profile(self, mapped_address.clone(), profile);
 
                 if cloned_mode == "ADD" {
-                    let mut profiles: Vec<Key> = profiles_control::get_all_profiles();
-                    profiles.push(address);
-                    profiles_control::set_all_profiles(profiles);
+                    let mut profiles: Vec<Key> = self.get_all_profiles();
+                    let mut mapped_profiles = vec![profiles.clone()];
+                    mapped_profiles.push(mapped_address.clone());
+                    self.set_all_profiles(mapped_profiles);
                     profiles_control::set_total_profiles(new_profile_count);
                 }
             }
@@ -162,7 +167,7 @@ impl ViProfile {
     fn create_profile(
         &mut self,
         mode: String,
-        address: Key,
+        address: String,
         username: String,
         tagline: String,
         img_url: String,
@@ -179,11 +184,8 @@ impl ViProfile {
         telegram: String,
         mail: String,
         profile_type: String,
+        is_approved: bool,
     ) -> Result<(), Error> {
-        // let caller = ViProfile::default().get_caller();
-        // if !ViProfile::default().is_admin(caller) {
-        //     revert(ApiError::User(20));
-        // }
         self.set_profile(
             mode,
             address,
@@ -203,6 +205,7 @@ impl ViProfile {
             telegram,
             mail,
             profile_type,
+            is_approved,
         )
         .unwrap_or_revert();
         Ok(())
@@ -210,6 +213,24 @@ impl ViProfile {
 
     fn delete_profile(&mut self, address: Key) -> Result<(), Error> {
         self.remove_profile(address).unwrap_or_revert();
+        Ok(())
+    }
+
+    fn set_is_approved_beneficiary(&mut self, address: Key, status: bool) -> Result<(), Error> {
+        let caller = ViProfile::default().get_caller();
+
+        if !ViProfile::default().is_admin(caller) {
+            revert(ApiError::User(20));
+        }
+
+        let mut profile = ProfileControl::get_profile(self, address).unwrap_or_default();
+        profile.insert(
+            format!("{}_is_approved", "beneficiary".to_string()),
+            status.to_string(),
+        );
+
+        ProfileControl::add_profile(self, address, profile);
+
         Ok(())
     }
 }
@@ -234,7 +255,7 @@ fn get_all_profiles() {
 }
 
 #[no_mangle]
-fn get_profile() {
+pub extern "C" fn get_profile() {
     let address = runtime::get_named_arg::<Key>("address");
     let ret = ViProfile::default().get_profile(address);
     runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
@@ -249,7 +270,7 @@ fn is_profile_exist() {
 #[no_mangle]
 pub extern "C" fn add_profile() {
     let mode = runtime::get_named_arg::<String>("mode");
-    let address = runtime::get_named_arg::<Key>("address");
+    let address = runtime::get_named_arg::<String>("address");
     let username = runtime::get_named_arg::<String>("username");
     let tagline = runtime::get_named_arg::<String>("tagline");
     let img_url = runtime::get_named_arg::<String>("imgUrl");
@@ -266,6 +287,14 @@ pub extern "C" fn add_profile() {
     let telegram = runtime::get_named_arg::<String>("telegram");
     let mail = runtime::get_named_arg::<String>("mail");
     let profile_type = runtime::get_named_arg::<String>("profileType");
+
+    let is_approved;
+
+    if mode == "beneficiary" {
+        is_approved = false;
+    } else {
+        is_approved = true;
+    }
 
     ViProfile::default()
         .create_profile(
@@ -287,7 +316,18 @@ pub extern "C" fn add_profile() {
             telegram,
             mail,
             profile_type,
+            is_approved,
         )
+        .unwrap_or_revert();
+}
+
+#[no_mangle]
+pub extern "C" fn approve_beneficiary() {
+    let address = runtime::get_named_arg::<Key>("address");
+    let status = runtime::get_named_arg::<bool>("status");
+
+    ViProfile::default()
+        .set_is_approved_beneficiary(address, status)
         .unwrap_or_revert();
 }
 
@@ -301,7 +341,30 @@ fn remove_profile() {
 }
 
 #[no_mangle]
-pub extern "C" fn call() {
+fn grant_admin() {
+    let admin = runtime::get_named_arg::<Key>("admin");
+    let caller = Key::Account(runtime::get_caller());
+
+    if ViProfile::default().is_admin(caller) {
+        revert(ApiError::User(20));
+    }
+
+    ViProfile::default().add_admin(admin);
+}
+
+#[no_mangle]
+fn revoke_admin() {
+    let admin = runtime::get_named_arg::<Key>("admin");
+    let caller = Key::Account(runtime::get_caller());
+
+    if ViProfile::default().is_admin(caller) {
+        revert(ApiError::User(20));
+    }
+    ViProfile::default().disable_admin(admin);
+}
+
+#[no_mangle]
+fn call() {
     let admin: Key = runtime::get_named_arg("admin");
     let contract_name: String = runtime::get_named_arg("contract_name");
     let (contract_hash, contract_version) = storage::new_contract(
@@ -397,7 +460,7 @@ fn get_entry_points() -> EntryPoints {
         "add_profile",
         vec![
             Parameter::new("mode", String::cl_type()),
-            Parameter::new("address", Key::cl_type()),
+            Parameter::new("address", String::cl_type()),
             Parameter::new("username", String::cl_type()),
             Parameter::new("tagline", String::cl_type()),
             Parameter::new("imgUrl", String::cl_type()),
@@ -422,6 +485,30 @@ fn get_entry_points() -> EntryPoints {
     entry_points.add_entry_point(EntryPoint::new(
         "remove_profile",
         vec![Parameter::new("address", Key::cl_type())],
+        <()>::cl_type(),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "approve_beneficiary",
+        vec![
+            Parameter::new("address", Key::cl_type()),
+            Parameter::new("status", bool::cl_type()),
+        ],
+        <()>::cl_type(),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "grant_admin",
+        vec![Parameter::new("admin", Key::cl_type())],
+        <()>::cl_type(),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "revoke_admin",
+        vec![Parameter::new("admin", Key::cl_type())],
         <()>::cl_type(),
         EntryPointAccess::Public,
         EntryPointType::Contract,
