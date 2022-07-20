@@ -21,6 +21,7 @@ interface NFTState {
   collections?: [];
   uniqueCollections?: [];
   creators?: [];
+  vINFTsBeneficiaries?: [];
   isLoading: boolean;
   beneficiaryCount?: Number;
   campaignsCount?: Number;
@@ -60,6 +61,7 @@ function nftReducer(state: NFTState, action: NFTAction): NFTState {
         campaignsCount: action.payload.campaignsCount,
         creatorsCount: action.payload.creatorsCount,
         collectionsCount: action.payload.collectionsCount,
+        vINFTsBeneficiaries: action.payload.vINFTsBeneficiaries
       };
     }
     default: {
@@ -100,6 +102,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
         creators: [],
         campaigns: [],
         beneficiaries: [],
+        vINFTsBeneficiaries:[]
       },
     });
 
@@ -113,8 +116,10 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
         Object.keys(lists.beneficiary).length !== 0 &&
           selectedList.push(lists.beneficiary);
       });
-    debugger;
     const beneficiariesList = profiles &&selectedList;
+
+    const beneficiariesVINFTsList = await getBeneficiariesList();
+
     // beneficiariesList && setBeneficiaries(beneficiariesList);
 
     const campaignsList = await getCampaignsList();
@@ -144,9 +149,9 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
         beneficiaryName:
           beneficiariesList.find(
             ({ address }: any) =>
-              CLPublicKey.fromHex(nft.beneficiary).toAccountHashStr() ===
+              nft.beneficiary ===
               address
-          )?.name || '',
+          )?.username || '',
         collectionName:
           collectionsList.collectionsList.find(
             ({ id }: any) => nft.collection === id
@@ -175,6 +180,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
           creators: creatorsList,
           campaigns: campaignsList,
           beneficiaries: beneficiariesList,
+          vINFTsBeneficiaries:beneficiariesVINFTsList
         },
       });
   }, []);
