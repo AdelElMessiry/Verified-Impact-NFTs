@@ -648,9 +648,9 @@ fn constructor() {
     let profile_contract_hash = runtime::get_named_arg::<String>("profile_contract_hash");
     ViToken::default().constructor(name, symbol, meta);
     ViToken::default().add_admin_without_checked(admin);
-    ViToken::default()
-        .set_profile_hash(profile_contract_hash)
-        .unwrap_or_revert();
+    // ViToken::default()
+    //     .set_profile_hash(profile_contract_hash)
+    //     .unwrap_or_revert();
 }
 
 #[no_mangle]

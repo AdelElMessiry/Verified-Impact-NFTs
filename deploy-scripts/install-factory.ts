@@ -34,6 +34,8 @@ const publicKey: any = Keys.Ed25519.privateToPublicKey(privateKey);
 const KEYS = Keys.Ed25519.parseKeyPair(publicKey, privateKey);
 
 const test = async () => {
+  console.log(CHAIN_NAME);
+
   const client = new CasperClient(NODE_ADDRESS!);
   const contract = new Contracts.Contract(client);
 

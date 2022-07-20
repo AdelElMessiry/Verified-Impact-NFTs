@@ -37,6 +37,8 @@ const privateKey = Keys.Ed25519.parsePrivateKey(
 );
 
 const publicKey: any = Keys.Ed25519.privateToPublicKey(privateKey);
+console.log(publicKey);
+
 const KEYS = Keys.Ed25519.parseKeyPair(publicKey, privateKey);
 
 const installContract = async () => {

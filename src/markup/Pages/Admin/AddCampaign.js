@@ -19,13 +19,13 @@ const AddCampaign = () => {
   const { beneficiaries } = useNFTState();
   const { entityInfo, isLoggedIn } = useAuth();
   const [beneficiary, setBeneficiary] = React.useState();
-  debugger;
+  
   //getting beneficiary details
   const selectedBeneficiary = React.useCallback(async () => {
     const firstBeneficiary = beneficiaries?.filter(
       ({ approved }) => approved === 'true'
     );
-    debugger;
+    
  firstBeneficiary&&setBeneficiary(firstBeneficiary[0]?.address);
   }, [beneficiary,beneficiaries]);
 
@@ -59,7 +59,7 @@ const AddCampaign = () => {
 
   //saving new campaign related to beneficiary function
   const saveCampaign = async () => {
-    debugger;
+    
     const savedCampaign = await createCampaign(
       state.inputs.name,
       state.inputs.description,
