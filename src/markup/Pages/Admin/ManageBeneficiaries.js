@@ -14,30 +14,12 @@ import { profileClient } from '../../../api/profileInfo';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import plusIcon from './../../../images/icon/plus.png';
+import { useNFTState } from '../../../contexts/NFTContext';
 
 //Manage Beneficiaries page
 const ManageBeneficiaries = () => {
   const { isLoggedIn, entityInfo } = useAuth();
-  const [beneficiaries, setBeneficiaries] = useState();
-
-  const loadBeneficiaries = React.useCallback(async () => {
-    let selectedList = [];
-    let profiles = await profileClient.getProfilesList();
-
-    profiles &&
-      profiles.map((data) => {
-        let lists = Object.values(data)[0];
-        
-    Object.keys(lists.beneficiary).length!==0&&selectedList.push(lists.beneficiary);
-      });
-      debugger;
-    profiles && setBeneficiaries(selectedList);
-  }, []);
-
-  //getting beneficiary list
-  React.useEffect(() => {
-    !beneficiaries && loadBeneficiaries();
-  }, [beneficiaries, loadBeneficiaries]);
+  const { beneficiaries } = useNFTState();
 
   //saving new collection function
   const handleApproveBeneficiary = async (beneficiary) => {
