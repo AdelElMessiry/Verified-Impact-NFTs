@@ -5,7 +5,6 @@ import { toast as VIToast } from 'react-toastify';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { getDeployDetails } from '../../../api/universal';
-import { getBeneficiariesList } from '../../../api/beneficiaryInfo';
 import { createCampaign } from '../../../api/createCampaign';
 
 import Layout from '../../Layout';
@@ -13,12 +12,24 @@ import PageTitle from '../../Layout/PageTitle';
 import PromptLogin from '../PromptLogin';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
+import { useNFTState } from '../../../contexts/NFTContext';
 
 //adding new campaign page
 const AddCampaign = () => {
+  const { beneficiaries } = useNFTState();
   const { entityInfo, isLoggedIn } = useAuth();
-  const [beneficiaries, setBeneficiaries] = React.useState();
   const [beneficiary, setBeneficiary] = React.useState();
+  //getting beneficiary details
+  const selectedBeneficiary = React.useCallback(async () => {
+    const firstBeneficiary = beneficiaries?.filter(
+      ({ approved }) => approved === 'true'
+    );
+ firstBeneficiary&&setBeneficiary(firstBeneficiary[0]?.address);
+  }, [beneficiary,beneficiaries]);
+
+  React.useEffect(() => {
+    !beneficiary && selectedBeneficiary();
+  }, [beneficiary, selectedBeneficiary]);
   //setting initial values of controls
   const [state, setState] = React.useState({
     inputs: {
@@ -28,15 +39,6 @@ const AddCampaign = () => {
       requestedRoyalty: '',
     },
   });
-
-  //getting beneficiary list
-  React.useEffect(() => {
-    (async () => {
-      let beneficiaryList = !beneficiaries && (await getBeneficiariesList());
-      !beneficiaries && setBeneficiaries(beneficiaryList);
-      !beneficiaries && setBeneficiary(beneficiaryList[0]?.address);
-    })();
-  }, [beneficiaries]);
 
   const handleChange = (e, isBeneficiary = false) => {
     if (isBeneficiary) {
@@ -117,14 +119,22 @@ const AddCampaign = () => {
                           placeholder='Beneficiary'
                           className='form-control'
                           onChange={(e) => handleChange(e, true)}
-                          value={beneficiary}
+                          value={
+                            beneficiary
+                              ? beneficiary
+                              : beneficiaries?.filter(
+                                  ({ approved }) => approved === 'true'
+                                )[0]?.address
+                          }
                         >
-                          {beneficiaries?.map(({ name, address }) => (
-                            <option key={address} value={address}>
-                              {' '}
-                              {name}
-                            </option>
-                          ))}
+                          {beneficiaries
+                            ?.filter(({ approved }) => approved === 'true')
+                            .map(({ username, address }) => (
+                              <option key={address} value={address}>
+                                {' '}
+                                {username}
+                              </option>
+                            ))}
                         </select>
                       </Col>
                       <Col>

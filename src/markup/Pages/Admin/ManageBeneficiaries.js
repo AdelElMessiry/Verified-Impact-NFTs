@@ -5,41 +5,34 @@ import { CLPublicKey } from 'casper-js-sdk';
 import { toast as VIToast } from 'react-toastify';
 
 import { useAuth } from '../../../contexts/AuthContext';
-import { getBeneficiariesList } from '../../../api/beneficiaryInfo';
 import { approveBeneficiary } from '../../../api/addBeneficiary';
 import PromptLogin from '../PromptLogin';
 import Layout from '../../Layout';
 import VINFTsTooltip from '../../Element/Tooltip';
 import { getDeployDetails } from '../../../api/universal';
+import { profileClient } from '../../../api/profileInfo';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import plusIcon from './../../../images/icon/plus.png';
+import { useNFTState } from '../../../contexts/NFTContext';
 
 //Manage Beneficiaries page
 const ManageBeneficiaries = () => {
   const { isLoggedIn, entityInfo } = useAuth();
-  const [beneficiaries, setBeneficiaries] = useState();
-
-  //getting beneficiary list
-  useEffect(() => {
-    (async () => {
-      let beneficiaryList = !beneficiaries && (await getBeneficiariesList());
-      !beneficiaries && setBeneficiaries(beneficiaryList);
-    })();
-  }, [beneficiaries]);
+  const { beneficiaries } = useNFTState();
 
   //saving new collection function
   const handleApproveBeneficiary = async (beneficiary) => {
     const approveBeneficiaryOut = await approveBeneficiary(
-      beneficiary.id,
-      beneficiary.isApproved === 'true' ? false : true,
+      beneficiary.address,
+      beneficiary.approved === 'true' ? false : true,
       CLPublicKey.fromHex(entityInfo.publicKey)
     );
     const deployResult = await getDeployDetails(approveBeneficiaryOut);
     console.log('......  saved successfully', deployResult);
     VIToast.success(
       `Beneficiary is ${
-        beneficiary.isApproved === 'true' ? 'unapproved' : 'approved'
+        beneficiary.approved === 'true' ? 'unapproved' : 'approved'
       } successfully`
     );
 
@@ -60,7 +53,7 @@ const ManageBeneficiaries = () => {
                 <span className='mr-1'>
                   Manage Beneficiaries{' '}
                   <VINFTsTooltip title={`Add New Beneficiary`}>
-                    <Link to={'./add-beneficiary'}>
+                    <Link to={'./admin_beneficiary'}>
                       <img
                         alt='plusIcon'
                         src={plusIcon}
@@ -102,7 +95,6 @@ const ManageBeneficiaries = () => {
                               <th scope='col'></th>
                               <th scope='col'>Name</th>
                               <th scope='col'>Address</th>
-                              <th scope='col'>Description</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -116,14 +108,13 @@ const ManageBeneficiaries = () => {
                                         handleApproveBeneficiary(beneficiary)
                                       }
                                     >
-                                      {beneficiary.isApproved == 'true'
+                                      {beneficiary.approved == 'true'
                                         ? 'Unapprove'
                                         : 'Approve'}
                                     </button>
                                   </th>
-                                  <td>{beneficiary.name}</td>
+                                  <td>{beneficiary.username}</td>
                                   <td>{beneficiary.address}</td>
-                                  <td>{beneficiary.description}</td>
                                 </tr>
                               ))}
                           </tbody>

@@ -4,6 +4,7 @@ import ImageUploader from 'react-images-upload';
 import { toast as VIToast } from 'react-toastify';
 import { Form } from 'react-bootstrap';
 import CreatableSelect from 'react-select/creatable';
+import validator from 'validator';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNFTState } from '../../../contexts/NFTContext';
@@ -11,7 +12,7 @@ import { useNFTState } from '../../../contexts/NFTContext';
 import { uploadImg } from '../../../api/imageCDN';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
-import validator from 'validator';
+import { profileClient } from '../../../api/profileInfo';
 
 import PageTitle from '../../Layout/PageTitle';
 import PromptLogin from '../PromptLogin';
@@ -20,6 +21,7 @@ import Layout from '../../Layout';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet, SendTweetWithImage } from '../../../utils/VINFTsTweets';
+import { CLPublicKey } from 'casper-js-sdk';
 
 //handling of creating new option in creatable select control
 const createOption = (label) => ({
@@ -30,7 +32,7 @@ const createOption = (label) => ({
 //minting new nft page
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
-  const { campaigns, beneficiaries, creators, collections } = useNFTState();
+  const { campaigns,beneficiaries, collections } = useNFTState();
   let storageData= localStorage.getItem('selectedData');
   let savedData=storageData?JSON.parse(storageData):null
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
@@ -51,6 +53,7 @@ const MintNFT = () => {
   );
   const [isCreateNewCollection, setIsCreateNewCollection] = React.useState();
   const [beneficiaryPercentage, setBeneficiaryPercentage] = React.useState();
+  const [beneficiariesList, setBeneficiariesList] = React.useState();
   const [state, setState] = React.useState({
     inputs: {
       imageUrl: '',
@@ -67,16 +70,22 @@ const MintNFT = () => {
   });
 
   const loadCollections = React.useCallback(async () => {
-    if (entityInfo.publicKey && creators && collections) {
-      const existingCreator = creators.find(
-        ({ address }) => address === entityInfo.publicKey
-      );
-      existingCreator && setIsCreatorExist(true);
-      existingCreator && setCreator(existingCreator.name);
+    let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
+    if (entityInfo.publicKey && userProfiles) {
+      if (userProfiles.err === 'Address Not Found') {
+        setCreator(null);
+        setIsCreatorExist(false)
+     setCollectionsList(null);
+      } else {
+        let list = Object.values(userProfiles)[0];
+
+        userProfiles && setCreator(list.creator.username);
+        userProfiles && setIsCreatorExist(true);
+      if(list?.creator?.address!==""){
 
       const _collections =
         // existingCreator &&
-        collections.filter(({ creator }) => creator === entityInfo.publicKey);
+        collections&&collections.filter(({ creator }) => creator === entityInfo.publicKey);
 
       const selectedCollections =
         _collections &&
@@ -87,10 +96,14 @@ const MintNFT = () => {
 
       selectedCollections && setCollectionsList(selectedCollections);
       selectedCollections && setSelectedCollectionValue(savedData?savedData.collection:selectedCollections[0]);
+      }
+      else{
+      setCollectionsList(null);
+      }
+    }
     }
   }, [
     entityInfo.publicKey,
-    creators,
     collections,
     setCollectionsList,
     setCreator,
@@ -101,32 +114,40 @@ const MintNFT = () => {
   React.useEffect(() => {
     beneficiaries?.length &&
       !beneficiary &&
-      setBeneficiary(beneficiaries[0].address);
+      setBeneficiary(beneficiaries?.filter(
+        ({ approved }) => approved === 'true'
+      )[0]?.address);
     campaigns?.length && !campaign && setCampaign(savedData?savedData.campaign:campaigns[0]?.id);
     !campaignsList &&
       campaigns?.length &&
       setCampaignsList(
         campaigns.filter(
-          ({ wallet_address }) => (savedData?savedData.beneficiary:beneficiaries[0].address) === wallet_address
+          ({ wallet_address }) => (savedData?savedData.beneficiary:beneficiaries?.filter(
+            ({ approved }) => approved === 'true'
+          )[0]?.address) === wallet_address
         )
       );
     !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
-    !collectionsList && collections?.length && loadCollections();
     !campaignsList &&
       campaigns?.length &&
       setCampaignSelectedData(campaigns, savedData?savedData.campaign:campaigns[0]?.id);
   }, [
-    collectionsList,
-    collections,
     campaignsList,
     campaigns,
     beneficiaries,
     beneficiary,
     campaign,
-    loadCollections,
     setBeneficiary,
     setCampaign,
     setCampaignsList,
+  ]);
+
+  React.useEffect(() => {
+    !collectionsList && loadCollections();
+  }, [
+    collectionsList,
+    collections,
+    loadCollections,
   ]);
 
   //handling of adding new option to the existing collections in creatable select
@@ -150,14 +171,16 @@ const MintNFT = () => {
     const { inputs } = state;
 
     if (isBeneficiary) {
-      let selectedBeneficiary = beneficiaries.find(
+      let selectedBeneficiary = beneficiaries?.filter(
+        ({ approved }) => approved === 'true'
+      ).find(
         ({ address }) => address === value
       );
-      const filteredCampaigns = allCampaignsList.filter(
+      const filteredCampaigns = allCampaignsList?.filter(
         ({ wallet_address }) => selectedBeneficiary.address === wallet_address
       );
       setCampaignsList(filteredCampaigns);
-      filteredCampaigns.length > 0 &&
+      filteredCampaigns?.length > 0 &&
         setCampaignSelectedData(filteredCampaigns, filteredCampaigns[0].id);
     }
 
@@ -389,9 +412,9 @@ const MintNFT = () => {
                               }}
                               value={beneficiary}
                             >
-                              {beneficiaries?.map(({ name, address }) => (
+                              {beneficiaries?.filter(({approved})=>approved=="true").map(({ username, address }) => (
                                 <option key={address} value={address}>
-                                  {name}
+                                  {username}
                                 </option>
                               ))}
                             </select>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Row, Col, Form, Spinner } from 'react-bootstrap';
 import ImageUploader from 'react-images-upload';
 import validator from 'validator';
@@ -15,40 +15,35 @@ const ProfileForm = ({
   formName,
   isProfileExist,
   formData,
-  isAdmin = false,
+  isVINftExist = false,
 }) => {
   const { entityInfo, refreshAuth } = useAuth();
   //setting initial values of controls
   const [state, setState] = useState({
     inputs: {
-      userName: formData !== {} && formData !== null ? formData.username : '',
-      shortTagLine:
-        formData !== {} && formData !== null ? formData.tagline : '',
-      firstName: formData !== {} && formData !== null ? formData.firstName : '',
-      lastName: formData !== {} && formData !== null ? formData.lastName : '',
-      fullBio: formData !== {} && formData !== null ? formData.bio : '',
-      externalSiteLink:
-        formData !== {} && formData !== null ? formData.externalLink : '',
-      phone: formData !== {} && formData !== null ? formData.phone : '',
-      twitter: formData !== {} && formData !== null ? formData.twitter : '',
-      instagram: formData !== {} && formData !== null ? formData.instagram : '',
-      facebook: formData !== {} && formData !== null ? formData.facebook : '',
-      medium: formData !== {} && formData !== null ? formData.medium : '',
-      email: formData !== {} && formData !== null ? formData.mail : '',
-      telegram: formData !== {} && formData !== null ? formData.telegram : '',
+      userName: '',
+      shortTagLine: '',
+      firstName: '',
+      lastName: '',
+      fullBio: '',
+      externalSiteLink: '',
+      phone: '',
+      twitter: '',
+      instagram: '',
+      facebook: '',
+      medium: '',
+      email: '',
+      telegram: '',
       isProfileImageURL: '',
       isNFTImageURL: '',
-      address: formData !== {} && formData !== null ? formData.address : '',
+      address: '',
     },
   });
 
-  const [uploadedProfileImageURL, setUploadedProfileImage] = React.useState(
-    formData !== {} && formData !== null ? formData.imgUrl : null
-  );
+  const [uploadedProfileImageURL, setUploadedProfileImage] =
+    React.useState(null);
   const [uploadedProfileFile, setUploadedProfileFile] = React.useState(null);
-  const [uploadedNFTImageURL, setUploadedNFTImage] = React.useState(
-    formData !== {} && formData !== null ? formData.nftUrl : null
-  );
+  const [uploadedNFTImageURL, setUploadedNFTImage] = React.useState(null);
   const [uploadedNFTFile, setUploadedNFTFile] = React.useState(null);
   const [isSaveButtonClicked, setIsSaveButtonClicked] = React.useState(false);
   const [isOndropProfileClicked, setIsOndropProfileClicked] = useState(false);
@@ -57,6 +52,31 @@ const ProfileForm = ({
   const [showProfileURLErrorMsg, setShowProfileURLErrorMsg] =
     React.useState(false);
   const [showNFTURLErrorMsg, setShowNFTURLErrorMsg] = React.useState(false);
+
+  React.useEffect(() => {
+    setState({
+      inputs: {
+        userName: formData ? formData.username : '',
+        shortTagLine: formData ? formData.tagline : '',
+        firstName: formData ? formData.firstName : '',
+        lastName: formData ? formData.lastName : '',
+        fullBio: formData ? formData.bio : '',
+        externalSiteLink: formData ? formData.externalLink : '',
+        phone: formData ? formData.phone : '',
+        twitter: formData ? formData.twitter : '',
+        instagram: formData ? formData.instagram : '',
+        facebook: formData ? formData.facebook : '',
+        medium: formData ? formData.medium : '',
+        email: formData ? formData.mail : '',
+        telegram: formData ? formData.telegram : '',
+        isProfileImageURL: '',
+        isNFTImageURL: '',
+        address: formData ? formData.address : '',
+      },
+    });
+    setUploadedProfileImage(formData ? formData?.imgUrl : null);
+    setUploadedNFTImage(formData ? formData?.nftUrl : null);
+  }, [formData]);
 
   const handleChange = (e) => {
     const { value, name, checked, type } = e.target;
@@ -158,9 +178,8 @@ const ProfileForm = ({
       console.log(formData);
       try {
         saveDeployHash = await profileClient.addUpdateProfile(
-          isAdmin
-            ? CLPublicKey.fromHex(state.inputs.address)
-            : CLPublicKey.fromHex(entityInfo.publicKey),
+          CLPublicKey.fromHex(entityInfo.publicKey),
+          // entityInfo.publicKey,
           state.inputs.userName,
           state.inputs.shortTagLine,
           ProfileImgURL,
@@ -184,6 +203,7 @@ const ProfileForm = ({
           CLPublicKey.fromHex(entityInfo.publicKey),
           isProfileExist ? 'UPDATE' : 'ADD'
         );
+       
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
@@ -197,7 +217,11 @@ const ProfileForm = ({
       try {
         const deployResult = await getDeployDetails(saveDeployHash);
         console.log('...... Profile Saved successfully', deployResult);
-
+        if (formName === ProfileFormsEnum.BeneficiaryProfile) {
+          const mailto = `mailto:verifiedimpactnfts@gmail.com?subject=New Beneficiary ${state.inputs.userName}&body=Dear Verified Impact NFTs Team:%0D%0A%0D%0AHello, ${state.inputs.userName} would like to signup .%0D%0A%0D%0APlease approve my beneficiary.%0D%0A%0D%0AAdditional notes:%0D%0A
+          (Please type your notes here)%0D%0A%0D%0AMany thanks.%0D%0AWith kind regards,`;
+          window.location.href = mailto;
+        }
         VIToast.success('Profile Saved successfully');
         //NOTE: every channel has a special keys and tokens sorted on .env file
         setTimeout(() => {
@@ -218,20 +242,6 @@ const ProfileForm = ({
     <div className='shop-account '>
       <Row>
         <Col>
-          {isAdmin && (
-            <Row className='form-group'>
-              <Col>
-                <span>Address</span>
-                <input
-                  type='text'
-                  name='address'
-                  className='form-control'
-                  value={state.inputs.address}
-                  onChange={(e) => handleChange(e)}
-                />
-              </Col>
-            </Row>
-          )}
           <Row className='form-group'>
             <Col>
               <span>User Name</span>
@@ -411,7 +421,7 @@ const ProfileForm = ({
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
                   defaultImages={[
                     !isOndropProfileClicked
-                      ? (formData !== {} && formData !== null) && formData.imgUrl
+                      ? formData && formData?.imgUrl
                       : uploadedProfileImageURL
                       ? uploadedProfileImageURL
                       : '',
@@ -466,7 +476,7 @@ const ProfileForm = ({
                   label={'Max file size: 20mb, accepted: jpg|gif|png'}
                   defaultImages={[
                     !isOndropNFTClicked
-                      ? (formData !== {} && formData !== null) && formData.nftUrl
+                      ? formData && formData?.nftUrl
                       : uploadedNFTImageURL
                       ? uploadedNFTImageURL
                       : '',

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { _getBeneficiariesCampaignsList } from '../../api/beneficiaryInfo';
 import { _getCreatorsCollectionsList } from '../../api/creatorInfo';
+import { profileClient } from '../../api/profileInfo';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNFTState } from '../../contexts/NFTContext';
 
@@ -10,16 +11,16 @@ const HeaderMenu = () => {
   const { isLoggedIn } = useAuth();
   const { beneficiaries, campaigns, collections, creators } = useNFTState();
 
-  const [beneficiariesList, setBeneficiariesList] = React.useState();
   const [creatorsList, setCreatorsList] = React.useState();
+  const [beneficiariesList, setBeneficiariesList] = React.useState()
+
 
   const loadSubMenu = React.useCallback(async () => {
     const beneficiaryList =
-      beneficiaries &&
-      campaigns &&
-      (await _getBeneficiariesCampaignsList(beneficiaries, campaigns));
-    beneficiaryList && setBeneficiariesList(beneficiaryList);
-
+    beneficiaries &&
+    campaigns &&
+    (await _getBeneficiariesCampaignsList(beneficiaries?.filter(({approved})=>approved==='true'), campaigns));
+  beneficiaryList && setBeneficiariesList(beneficiaryList);
     const creatorList =
       creators &&
       collections &&
@@ -50,7 +51,7 @@ const HeaderMenu = () => {
                   to={`./BeneficiaryNFTs?beneficiary=${b.address}`}
                   className='dez-page'
                 >
-                  {b.name} <i className='fa fa-angle-right'></i>
+                  {b.username} <i className='fa fa-angle-right'></i>
                 </Link>
                 <ul className='sub-menu'>
                   {b.campaigns?.map((c, index) => (
@@ -68,7 +69,7 @@ const HeaderMenu = () => {
             ))}
             <li>
               <Link to={`./signup-as-beneficiary`} className='dez-page'>
-                Sign up as a beneficiary
+              Signup As Beneficiary
               </Link>
             </li>
           </ul>
