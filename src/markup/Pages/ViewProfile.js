@@ -20,15 +20,25 @@ const ViewProfile = ({ show, handleCloseParent, data, formName }) => {
 
   //getting beneficiary details
   const getProfile = React.useCallback(async () => {
-    let userProfiles = await profileClient.getProfile(data.address);
+    debugger;
+    let userProfiles = await profileClient.getProfile(
+      data,
+      formName === ProfileFormsEnum.BeneficiaryProfile ? true : false
+    );
     if (userProfiles) {
       if (userProfiles.err === 'Address Not Found') {
         setProfileDetails(null);
       } else {
         let list = Object.values(userProfiles)[0];
-        userProfiles && setProfileDetails(formName===ProfileFormsEnum.BeneficiaryProfile? list.beneficiary:list.creator);
+        userProfiles &&
+          setProfileDetails(
+            formName === ProfileFormsEnum.BeneficiaryProfile
+              ? list.beneficiary
+              : list.creator
+          );
+      }
     }
-  }}, [profileDetails]);
+  }, [profileDetails]);
 
   React.useEffect(() => {
     !profileDetails && getProfile();
@@ -49,7 +59,9 @@ const ViewProfile = ({ show, handleCloseParent, data, formName }) => {
         className="modal-full-screen"
       >
         <Modal.Header closeButton>
-          <Modal.Title>{profileDetails&&profileDetails?.username}</Modal.Title>
+          <Modal.Title>
+            {profileDetails && profileDetails?.username}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {profileDetails ? (
@@ -58,68 +70,78 @@ const ViewProfile = ({ show, handleCloseParent, data, formName }) => {
                 <Col>
                   <Row className="form-group">
                     <Col>
-                      <span>User Name</span>
+                      <span>User Name: </span>
                       <label>{profileDetails.username}</label>
                     </Col>
                     <Col>
-                      <span>Short Tag Line</span>
+                      <span>Short Tag Line: </span>
                       <label>{profileDetails.tagline}</label>
                     </Col>
                   </Row>
                   <Row className="form-group">
                     <Col>
-                      <span>First Name</span>
-                      <label>{profileDetails.firstname}</label>
+                      <span>First Name: </span>
+                      <label>{profileDetails.firstName}</label>
                     </Col>
                     <Col>
-                      <span>Last Name</span>
-                      <label>{profileDetails.lastname}</label>
+                      <span>Last Name: </span>
+                      <label>{profileDetails.lastName}</label>
                     </Col>
                   </Row>
                   <Row className="form-group">
                     <Col>
-                      <span>External Site Link</span>
+                      <span>External Site Link: </span>
                       <label>{profileDetails.externalLink}</label>
                     </Col>
                     <Col>
-                      <span>Phone</span>
+                      <span>Phone: </span>
                       <label>{profileDetails.phone}</label>
                     </Col>
                   </Row>
                   <Row className="form-group">
                     <Col>
-                      <span>E-mail</span>
+                      <span>E-mail: </span>
                       <label>{profileDetails.mail}</label>
                     </Col>
                   </Row>
                   <Row>
                     <Col>
-                      <ul className='list-inline'>
-                        <li>
-                          <a href={profileDetails.facebook} target="_blank">
-                            <FontAwesomeIcon icon={faFacebook} size="2x"/>
-                          </a>
-                        </li>
-                        <li>
-                          <a href={profileDetails.telegram} target="_blank">
-                            <FontAwesomeIcon icon={faTelegram}  size="2x"/>
-                          </a>
-                        </li>
-                        <li>
-                          <a href={profileDetails.twitter} target="_blank">
-                            <FontAwesomeIcon icon={faTwitter}  size="2x"/>
-                          </a>
-                        </li>
-                        <li>
-                          <a href={profileDetails.meduim} target="_blank">
-                            <FontAwesomeIcon icon={faMedium}  size="2x"/>
-                          </a>
-                        </li>
-                        <li>
-                          <a href={profileDetails.instagram} target="_blank">
-                            <FontAwesomeIcon icon={faInstagram}  size="2x"/>
-                          </a>
-                        </li>
+                      <ul className="list-inline">
+                        {profileDetails.facebook && (
+                          <li>
+                            <a href={profileDetails.facebook} target="_blank">
+                              <FontAwesomeIcon icon={faFacebook} size="2x" />
+                            </a>
+                          </li>
+                        )}
+                        {profileDetails.telegram && (
+                          <li>
+                            <a href={profileDetails.telegram} target="_blank">
+                              <FontAwesomeIcon icon={faTelegram} size="2x" />
+                            </a>
+                          </li>
+                        )}
+                        {profileDetails.twitter && (
+                          <li>
+                            <a href={profileDetails.twitter} target="_blank">
+                              <FontAwesomeIcon icon={faTwitter} size="2x" />
+                            </a>
+                          </li>
+                        )}
+                        {profileDetails.meduim && (
+                          <li>
+                            <a href={profileDetails.meduim} target="_blank">
+                              <FontAwesomeIcon icon={faMedium} size="2x" />
+                            </a>
+                          </li>
+                        )}
+                        {profileDetails.instagram && (
+                          <li>
+                            <a href={profileDetails.instagram} target="_blank">
+                              <FontAwesomeIcon icon={faInstagram} size="2x" />
+                            </a>
+                          </li>
+                        )}
                       </ul>
                     </Col>
                   </Row>
@@ -144,12 +166,14 @@ const ViewProfile = ({ show, handleCloseParent, data, formName }) => {
                 </Col>
               </Row>
             </>
-          ):( <div className='vinft-page-loader'>
-          <div className='vinft-spinner-body'>
-            <Spinner animation='border' variant='success' />
-            <p>Fetching Data Please wait...</p>
-          </div>
-        </div>)}
+          ) : (
+            <div className="vinft-page-loader">
+              <div className="vinft-spinner-body">
+                <Spinner animation="border" variant="success" />
+                <p>Fetching Data Please wait...</p>
+              </div>
+            </div>
+          )}
         </Modal.Body>
       </Modal>
     </>
