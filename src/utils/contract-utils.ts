@@ -218,7 +218,8 @@ export const transferFees = async (buyer: string, tokenId: string) => {
   owner = await hashToURef(owner);
   const deployer = DEPLOYER_ACC;
 
-  const { beneficiary, price, campaign } = tokenDetails;
+  let { beneficiary, price, campaign } = tokenDetails;
+  beneficiary = `account-hash-${beneficiary}`;
 
   const campaignDetails: any = await getCampaignDetails(campaign);
   const parsedCampaigns: any = parseCampaign(campaignDetails);
@@ -238,7 +239,7 @@ export const transferFees = async (buyer: string, tokenId: string) => {
 
   const beneficiaryTransfer =
     beneficiaryAmount &&
-    (await nativeTransfer(deployer, beneficiary, beneficiaryAmount, false));
+    (await nativeTransfer(deployer, beneficiary, beneficiaryAmount, true));
 
   const ownerTransfer =
     ownerAmount &&
