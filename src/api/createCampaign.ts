@@ -1,4 +1,4 @@
-import { CLPublicKey } from 'casper-js-sdk';
+import { CLPublicKey, CLValueBuilder } from 'casper-js-sdk';
 
 import { cep47 } from '../lib/cep47';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
@@ -30,7 +30,7 @@ export async function createCampaign(
     // tokenId,
     name,
     description,
-    wallet_address,
+    CLValueBuilder.byteArray(Buffer.from(wallet_address, 'hex')),
     url,
     requested_royalty,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
