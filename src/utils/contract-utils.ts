@@ -161,13 +161,13 @@ export const nativeTransfer = async (
   toAddress: any,
   amount: any,
   isSignerTransfer: boolean,
-  ifOwner?: boolean
+  ifHash?: boolean
 ) => {
   const MOTE_RATE = 1000000000;
   console.log(selectedAddress);
 
   const fromAccount = CLPublicKey.fromHex(selectedAddress);
-  const toAccount = !ifOwner ? CLPublicKey.fromHex(toAddress) : toAddress;
+  const toAccount = ifHash ? toAddress : CLPublicKey.fromHex(toAddress);
   amount = parseInt(amount) * MOTE_RATE;
   const ttl = 1800000;
 
@@ -220,9 +220,7 @@ export const transferFees = async (buyer: string, tokenId: string) => {
   const deployer = DEPLOYER_ACC;
 
   let { beneficiary, price, campaign } = tokenDetails;
-  beneficiary = CLValueBuilder.key(
-    CLValueBuilder.byteArray(Buffer.from(beneficiary, 'hex'))
-  );
+  beneficiary = await hashToURef(`account-hash-${beneficiary}`);
 
   const campaignDetails: any = await getCampaignDetails(campaign);
   const parsedCampaigns: any = parseCampaign(campaignDetails);
@@ -242,7 +240,13 @@ export const transferFees = async (buyer: string, tokenId: string) => {
 
   const beneficiaryTransfer =
     beneficiaryAmount &&
-    (await nativeTransfer(deployer, beneficiary, beneficiaryAmount, true));
+    (await nativeTransfer(
+      deployer,
+      beneficiary,
+      beneficiaryAmount,
+      false,
+      true
+    ));
 
   const ownerTransfer =
     ownerAmount &&
