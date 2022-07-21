@@ -169,7 +169,7 @@ export function getMappedNftsByList(
     )?.name,
     beneficiaryName: beneficiariesList.find(
       ({ address }: any) => nft.beneficiary === address
-    )?.name,
+    )?.username,
     collectionName: collectionsList.find(({ id }: any) => nft.collection === id)
       ?.name,
   }));
