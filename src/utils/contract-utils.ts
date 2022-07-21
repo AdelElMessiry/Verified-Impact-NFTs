@@ -6,6 +6,7 @@ import {
   CasperServiceByJsonRPC,
   DeployUtil,
   Signer,
+  CLValueBuilder,
 } from 'casper-js-sdk';
 
 import { cep47 } from '../lib/cep47';
@@ -219,7 +220,9 @@ export const transferFees = async (buyer: string, tokenId: string) => {
   const deployer = DEPLOYER_ACC;
 
   let { beneficiary, price, campaign } = tokenDetails;
-  beneficiary = `account-hash-${beneficiary}`;
+  beneficiary = CLValueBuilder.key(
+    CLValueBuilder.byteArray(Buffer.from(beneficiary, 'hex'))
+  );
 
   const campaignDetails: any = await getCampaignDetails(campaign);
   const parsedCampaigns: any = parseCampaign(campaignDetails);
