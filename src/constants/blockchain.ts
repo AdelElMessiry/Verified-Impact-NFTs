@@ -9,7 +9,7 @@ export const USER_KEY_PAIR_PATH =
 
 export const DEPLOYER_ACC =
   process.env.REACT_APP_DEPLOYER_ACC ||
-  '01e23d200eb0f3c8a3dacc8453644e6fcf4462585a68234ebb1c3d6cc8971148c2';
+  '0131561311ded2e4c2bbb6d2497e231ae554afc86e7b6b9a083a84330830b8cfc5';
 
 export const CONNECTION = {
   NODE_ADDRESS: proxyServer + NODE_RPC_ADDRESS,
