@@ -20,7 +20,6 @@ const ViewProfile = ({ show, handleCloseParent, data, formName }) => {
 
   //getting beneficiary details
   const getProfile = React.useCallback(async () => {
-    debugger;
     let userProfiles = await profileClient.getProfile(
       data,
       formName === ProfileFormsEnum.BeneficiaryProfile ? true : false
