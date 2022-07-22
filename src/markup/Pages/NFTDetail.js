@@ -32,31 +32,34 @@ const NFTDetail = () => {
     })();
   }, [allNFTs, nfts, id]);
 
+  const getNftDetails = React.useCallback(async () => {
+    if(item){
+      beneficiaries &&
+        creators &&
+        campaigns &&
+        collections &&
+        setItem({
+          ...item,
+          campaignName: campaigns.find(
+            ({ id }) => item.campaign === id
+          ).name,
+          creatorName: creators.find(
+            ({ address }) => item.creator === address
+          ).name,
+          beneficiaryName: beneficiaries.find(
+            ({ address }) => item.beneficiary === address
+          ).name,
+          collectionName: collections.find(
+            ({ id }) => item.collection === id
+          ).name,
+        });
+      }
+  }, [beneficiaries, creators, collections, campaigns]);
+
+  //getting nft details
   React.useEffect(() => {
-    (async () => {
-        if(item){
-        beneficiaries &&
-          creators &&
-          campaigns &&
-          collections &&
-          setItem({
-            ...item,
-            campaignName: campaigns.find(
-              ({ id }) => item.campaign === id
-            ).name,
-            creatorName: creators.find(
-              ({ address }) => item.creator === address
-            ).name,
-            beneficiaryName: beneficiaries.find(
-              ({ address }) => item.beneficiary === address
-            ).name,
-            collectionName: collections.find(
-              ({ id }) => item.collection === id
-            ).name,
-          });
-        }
-    })();
-  }, [ beneficiaries, creators, collections, campaigns]);
+    getNftDetails();
+  }, [getNftDetails]);
 
   const IconImage = ({ nft }) => {
     return (
