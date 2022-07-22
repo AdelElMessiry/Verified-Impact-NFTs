@@ -37,6 +37,7 @@ const MintNFT = () => {
   let savedData=storageData?JSON.parse(storageData):null
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
   const [isMintClicked, setIsMintClicked] = React.useState(false);
+  const [isMintAnotherClicked, setIsMintAnotherClicked] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [beneficiary, setBeneficiary] = React.useState(savedData?savedData.beneficiary:undefined);
   const [campaign, setCampaign] = React.useState(savedData?savedData.campaign:undefined);
@@ -70,8 +71,9 @@ const MintNFT = () => {
   });
 
   const loadCollections = React.useCallback(async () => {
+    if (entityInfo.publicKey){
     let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
-    if (entityInfo.publicKey && userProfiles) {
+    if (userProfiles) {
       if (userProfiles.err === 'Address Not Found') {
         setCreator(null);
         setIsCreatorExist(false)
@@ -102,6 +104,7 @@ const MintNFT = () => {
       }
     }
     }
+  }
   }, [
     entityInfo.publicKey,
     collections,
@@ -214,7 +217,7 @@ const MintNFT = () => {
     if (state.inputs.isImageURL && showURLErrorMsg) {
       return;
     }
-    setIsMintClicked(true);
+    isAnotherMint?setIsMintAnotherClicked(true): setIsMintClicked(true);
     let cloudURL = uploadedImageURL;
     if (!state.inputs.isImageURL && uploadedFile) {
       console.log('Img', uploadedFile);
@@ -272,6 +275,7 @@ const MintNFT = () => {
           VIToast.error(err.message);
         }
         setIsMintClicked(false);
+        setIsMintAnotherClicked(false);
         return;
       }
 
@@ -337,11 +341,13 @@ const MintNFT = () => {
         }
         window.location.reload();
         setIsMintClicked(false);
+        setIsMintAnotherClicked(false);
       } catch (err) {
         console.log(err);
         //   setErrStage(MintingStages.TX_PENDING);
         VIToast.error(err);
         setIsMintClicked(false);
+        setIsMintAnotherClicked(false);
       }
 
       setState({
@@ -647,10 +653,10 @@ const MintNFT = () => {
                               state.inputs.name === '' ||
                               (state.inputs.isForSale &&
                                 state.inputs.price === '') ||
-                              isMintClicked
+                              isMintAnotherClicked
                             }
                           >
-                            {isMintClicked ? (
+                            {isMintAnotherClicked ? (
                               <Spinner animation='border' variant='light' />
                             ) : (
                               'Mint another NFT'
