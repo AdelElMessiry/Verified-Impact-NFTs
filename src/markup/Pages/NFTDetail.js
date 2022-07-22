@@ -48,7 +48,7 @@ const NFTDetail = () => {
           ).name,
           beneficiaryName: beneficiaries.find(
             ({ address }) => item.beneficiary === address
-          ).name,
+          ).username,
           collectionName: collections.find(
             ({ id }) => item.collection === id
           ).name,
