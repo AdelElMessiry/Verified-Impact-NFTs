@@ -32,14 +32,19 @@ const createOption = (label) => ({
 //minting new nft page
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
-  const { campaigns,beneficiaries, collections } = useNFTState();
-  let storageData= localStorage.getItem('selectedData');
-  let savedData=storageData?JSON.parse(storageData):null
+  const { campaigns, beneficiaries, collections } = useNFTState();
+  let storageData = localStorage.getItem('selectedData');
+  let savedData = storageData ? JSON.parse(storageData) : null;
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
   const [isMintClicked, setIsMintClicked] = React.useState(false);
+  const [isMintAnotherClicked, setIsMintAnotherClicked] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [beneficiary, setBeneficiary] = React.useState(savedData?savedData.beneficiary:undefined);
-  const [campaign, setCampaign] = React.useState(savedData?savedData.campaign:undefined);
+  const [beneficiary, setBeneficiary] = React.useState(
+    savedData ? savedData.beneficiary : undefined
+  );
+  const [campaign, setCampaign] = React.useState(
+    savedData ? savedData.campaign : undefined
+  );
   const [collectionsList, setCollectionsList] = React.useState();
   const [campaignsList, setCampaignsList] = React.useState();
   const [allCampaignsList, setAllCampaignsList] = React.useState();
@@ -49,7 +54,7 @@ const MintNFT = () => {
   const [uploadedImageURL, setUploadedImage] = React.useState(null);
   const [uploadedFile, setUploadedFile] = React.useState(null);
   const [selectedCollectionValue, setSelectedCollectionValue] = React.useState(
- savedData?savedData.collection: {}
+    {}
   );
   const [isCreateNewCollection, setIsCreateNewCollection] = React.useState();
   const [beneficiaryPercentage, setBeneficiaryPercentage] = React.useState();
@@ -70,37 +75,43 @@ const MintNFT = () => {
   });
 
   const loadCollections = React.useCallback(async () => {
-    let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
-    if (entityInfo.publicKey && userProfiles) {
-      if (userProfiles.err === 'Address Not Found') {
-        setCreator(null);
-        setIsCreatorExist(false)
-     setCollectionsList(null);
-      } else {
-        let list = Object.values(userProfiles)[0];
+    if (entityInfo.publicKey) {
+      let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
+      if (userProfiles) {
+        if (userProfiles.err === 'Address Not Found') {
+          setCreator(null);
+          setIsCreatorExist(false);
+          setCollectionsList();
+        } else {
+          let list = Object.values(userProfiles)[0];
 
-        userProfiles && setCreator(list.creator.username);
-        userProfiles && setIsCreatorExist(true);
-      if(list?.creator?.address!==""){
+          userProfiles && setCreator(list.creator.username);
+          userProfiles && setIsCreatorExist(true);
+          if (list?.creator?.address !== '') {
+            const _collections =
+              // existingCreator &&
+              collections &&
+              collections.filter(
+                ({ creator }) => creator === entityInfo.publicKey
+              );
 
-      const _collections =
-        // existingCreator &&
-        collections&&collections.filter(({ creator }) => creator === entityInfo.publicKey);
+            const selectedCollections =
+              _collections &&
+              _collections?.map((col) => ({
+                value: col.id,
+                label: col.name,
+              }));
 
-      const selectedCollections =
-        _collections &&
-        _collections?.map((col) => ({
-          value: col.id,
-          label: col.name,
-        }));
-
-      selectedCollections && setCollectionsList(selectedCollections);
-      selectedCollections && setSelectedCollectionValue(savedData?savedData.collection:selectedCollections[0]);
+            selectedCollections && setCollectionsList(selectedCollections);
+            selectedCollections &&
+              setSelectedCollectionValue(
+                savedData ? savedData.collection : selectedCollections[0]
+              );
+          } else {
+            setCollectionsList();
+          }
+        }
       }
-      else{
-      setCollectionsList(null);
-      }
-    }
     }
   }, [
     entityInfo.publicKey,
@@ -114,23 +125,30 @@ const MintNFT = () => {
   React.useEffect(() => {
     beneficiaries?.length &&
       !beneficiary &&
-      setBeneficiary(beneficiaries?.filter(
-        ({ approved }) => approved === 'true'
-      )[0]?.address);
-    campaigns?.length && !campaign && setCampaign(savedData?savedData.campaign:campaigns[0]?.id);
+      setBeneficiary(
+        beneficiaries?.filter(({ approved }) => approved === 'true')[0]?.address
+      );
+    campaigns?.length &&
+      !campaign &&
+      setCampaign(savedData ? savedData.campaign : campaigns[0]?.id);
     !campaignsList &&
       campaigns?.length &&
       setCampaignsList(
         campaigns.filter(
-          ({ wallet_address }) => (savedData?savedData.beneficiary:beneficiaries?.filter(
-            ({ approved }) => approved === 'true'
-          )[0]?.address) === wallet_address
+          ({ wallet_address }) =>
+            (savedData
+              ? savedData.beneficiary
+              : beneficiaries?.filter(({ approved }) => approved === 'true')[0]
+                  ?.address) === wallet_address
         )
       );
     !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
     !campaignsList &&
       campaigns?.length &&
-      setCampaignSelectedData(campaigns, savedData?savedData.campaign:campaigns[0]?.id);
+      setCampaignSelectedData(
+        campaigns,
+        savedData ? savedData.campaign : campaigns[0]?.id
+      );
   }, [
     campaignsList,
     campaigns,
@@ -144,11 +162,7 @@ const MintNFT = () => {
 
   React.useEffect(() => {
     !collectionsList && loadCollections();
-  }, [
-    collectionsList,
-    collections,
-    loadCollections,
-  ]);
+  }, [collectionsList, collections, loadCollections]);
 
   //handling of adding new option to the existing collections in creatable select
   const handleCreate = (inputValue) => {
@@ -171,11 +185,9 @@ const MintNFT = () => {
     const { inputs } = state;
 
     if (isBeneficiary) {
-      let selectedBeneficiary = beneficiaries?.filter(
-        ({ approved }) => approved === 'true'
-      ).find(
-        ({ address }) => address === value
-      );
+      let selectedBeneficiary = beneficiaries
+        ?.filter(({ approved }) => approved === 'true')
+        .find(({ address }) => address === value);
       const filteredCampaigns = allCampaignsList?.filter(
         ({ wallet_address }) => selectedBeneficiary.address === wallet_address
       );
@@ -214,7 +226,7 @@ const MintNFT = () => {
     if (state.inputs.isImageURL && showURLErrorMsg) {
       return;
     }
-    setIsMintClicked(true);
+    isAnotherMint?setIsMintAnotherClicked(true): setIsMintClicked(true);
     let cloudURL = uploadedImageURL;
     if (!state.inputs.isImageURL && uploadedFile) {
       console.log('Img', uploadedFile);
@@ -272,6 +284,7 @@ const MintNFT = () => {
           VIToast.error(err.message);
         }
         setIsMintClicked(false);
+        setIsMintAnotherClicked(false);
         return;
       }
 
@@ -286,11 +299,17 @@ const MintNFT = () => {
           selectedCollectionValue !== null &&
           isAnotherMint
         ) {
-          localStorage.setItem('selectedData', JSON.stringify({
-            campaign: campaign,
-            beneficiary: beneficiary,
-            collection:  {value:selectedCollectionValue.value,label:selectedCollectionValue.label},
-          }));
+          localStorage.setItem(
+            'selectedData',
+            JSON.stringify({
+              campaign: campaign,
+              beneficiary: beneficiary,
+              collection: {
+                value: selectedCollectionValue.value,
+                label: selectedCollectionValue.label,
+              },
+            })
+          );
         } else {
           localStorage.setItem('selectedData', null);
         }
@@ -337,11 +356,13 @@ const MintNFT = () => {
         }
         window.location.reload();
         setIsMintClicked(false);
+        setIsMintAnotherClicked(false);
       } catch (err) {
         console.log(err);
         //   setErrStage(MintingStages.TX_PENDING);
         VIToast.error(err);
         setIsMintClicked(false);
+        setIsMintAnotherClicked(false);
       }
 
       setState({
@@ -412,11 +433,13 @@ const MintNFT = () => {
                               }}
                               value={beneficiary}
                             >
-                              {beneficiaries?.filter(({approved})=>approved=="true").map(({ username, address }) => (
-                                <option key={address} value={address}>
-                                  {username}
-                                </option>
-                              ))}
+                              {beneficiaries
+                                ?.filter(({ approved }) => approved == 'true')
+                                .map(({ username, address }) => (
+                                  <option key={address} value={address}>
+                                    {username}
+                                  </option>
+                                ))}
                             </select>
                           </Col>
                         </Row>
@@ -647,10 +670,10 @@ const MintNFT = () => {
                               state.inputs.name === '' ||
                               (state.inputs.isForSale &&
                                 state.inputs.price === '') ||
-                              isMintClicked
+                              isMintAnotherClicked
                             }
                           >
-                            {isMintClicked ? (
+                            {isMintAnotherClicked ? (
                               <Spinner animation='border' variant='light' />
                             ) : (
                               'Mint another NFT'
