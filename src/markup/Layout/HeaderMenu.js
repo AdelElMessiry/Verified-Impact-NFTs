@@ -117,7 +117,7 @@ const HeaderMenu = () => {
                 </li>
                 <li>
                   <Link to={'./my-collections'} className='dez-page'>
-                    My Creations
+                    My Collections
                   </Link>
                 </li>
                 <li>
