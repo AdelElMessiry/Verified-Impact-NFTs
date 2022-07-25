@@ -24,10 +24,11 @@ export async function createCampaign(
   url: string,
   requested_royalty: string,
   // paymentAmount: string,
-  deploySender: CLPublicKey
+  deploySender: CLPublicKey,
+  mode?: string
 ) {
   const campaignDeploy = await cep47.createCampaign(
-    // tokenId,
+    mode ? mode : 'ADD',
     name,
     description,
     CLValueBuilder.byteArray(Buffer.from(wallet_address, 'hex')),
