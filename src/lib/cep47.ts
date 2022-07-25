@@ -593,7 +593,7 @@ class CEP47Client {
   }
 
   public async createCampaign(
-    // ids: string[],
+    mode: string,
     name: string,
     description: string,
     wallet_address: CLAccountHash,
@@ -605,7 +605,7 @@ class CEP47Client {
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       collection_ids: CLValueBuilder.list([CLValueBuilder.u256(0)]),
-      mode: CLValueBuilder.string('ADD'),
+      mode: CLValueBuilder.string(mode),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       wallet_address: CLValueBuilder.key(wallet_address),

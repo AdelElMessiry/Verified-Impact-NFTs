@@ -178,6 +178,7 @@ impl ViToken {
                     collection_ids.iter().map(ToString::to_string).collect(),
                 );
                 campaign.insert(format!("requested_royalty: "), requested_royalty);
+
                 if ViToken::default().is_beneficiary() {
                     if ViToken::default().is_admin(caller) {
                         campaign.insert(format!("wallet_address: "), wallet_address.to_string());
@@ -191,10 +192,11 @@ impl ViToken {
                         revert(ApiError::User(20));
                     }
                 }
-
                 campaigns_dict.set(new_campaign_count, campaign);
-
-                campaign_data::set_total_campaigns(new_campaign_count);
+                
+                if mode.clone() == "ADD" {
+                    campaign_data::set_total_campaigns(new_campaign_count);
+                }
             }
             _ => {
                 return Err(Error::WrongArguments);
