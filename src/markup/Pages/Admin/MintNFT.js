@@ -73,17 +73,6 @@ const MintNFT = () => {
       isImageURL: false,
     },
   });
-useEffect(()=>{
-  console.log(process.env.REACT_APP_GENERAL_WEBHOOK_ID ,process.env.REACT_APP_GENERAL_TOKEN , 
-    "from the mint nft screen " )
-  sendDiscordMessage(
-    process.env.REACT_APP_GENERAL_WEBHOOK_ID,
-    process.env.REACT_APP_GENERAL_TOKEN,
-    "test with general channel",
-    '',
-    `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts click here to know more about their cause.`
-  );
-},[])
   const loadCollections = React.useCallback(async () => {
     if (entityInfo.publicKey) {
       let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
