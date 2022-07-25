@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import ImageUploader from 'react-images-upload';
 import { toast as VIToast } from 'react-toastify';
@@ -73,7 +73,17 @@ const MintNFT = () => {
       isImageURL: false,
     },
   });
-
+useEffect(()=>{
+  console.log(process.env.REACT_APP_GENERAL_WEBHOOK_ID ,process.env.REACT_APP_GENERAL_TOKEN , 
+    "from the mint nft screen " )
+  sendDiscordMessage(
+    process.env.REACT_APP_GENERAL_WEBHOOK_ID,
+    process.env.REACT_APP_GENERAL_TOKEN,
+    "test with general channel",
+    '',
+    `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts click here to know more about their cause.`
+  );
+},[])
   const loadCollections = React.useCallback(async () => {
     if (entityInfo.publicKey) {
       let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
@@ -645,7 +655,8 @@ const MintNFT = () => {
                               state.inputs.name === '' ||
                               (state.inputs.isForSale &&
                                 state.inputs.price === '') ||
-                              isMintClicked
+                              isMintClicked ||
+                              isMintAnotherClicked
                             }
                           >
                             {isMintClicked ? (
@@ -670,7 +681,8 @@ const MintNFT = () => {
                               state.inputs.name === '' ||
                               (state.inputs.isForSale &&
                                 state.inputs.price === '') ||
-                              isMintAnotherClicked
+                              isMintAnotherClicked||
+                              isMintClicked
                             }
                           >
                             {isMintAnotherClicked ? (
