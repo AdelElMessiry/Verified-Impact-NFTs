@@ -193,7 +193,7 @@ impl ViToken {
                     }
                 }
                 campaigns_dict.set(new_campaign_count, campaign);
-                
+
                 if mode.clone() == "ADD" {
                     campaign_data::set_total_campaigns(new_campaign_count);
                 }
@@ -1354,7 +1354,7 @@ fn get_entry_points() -> EntryPoints {
     entry_points.add_entry_point(EntryPoint::new(
         "create_campaign",
         vec![
-            Parameter::new("token_ids", CLType::List(Box::new(TokenId::cl_type()))),
+            Parameter::new("collection_ids", CLType::List(Box::new(TokenId::cl_type()))),
             Parameter::new("mode", String::cl_type()),
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
