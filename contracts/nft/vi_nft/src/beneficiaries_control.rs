@@ -13,9 +13,9 @@ pub trait BeneficiaryControl<Storage: ContractStorage>: ContractContext<Storage>
         Beneficiaries::init();
     }
 
-    fn revoke_beneficiary(&mut self, address: Key) {
-        Beneficiaries::instance().revoke_beneficiary(address);
-    }
+    // fn revoke_beneficiary(&mut self, address: Key) {
+    //     Beneficiaries::instance().revoke_beneficiary(address);
+    // }
 
     fn add_beneficiary(&self, address: Key, value: Beneficiary) {
         Beneficiaries::instance().add_beneficiary(address, value);
@@ -57,11 +57,11 @@ impl Beneficiaries {
         self.beneficiaries_list_dict.set_by_key(&address, value);
     }
 
-    pub fn revoke_beneficiary(&self, address: Key) {
-        self.dict.remove_by_key::<()>(&address);
-        self.beneficiaries_list_dict
-            .remove_by_key::<Beneficiary>(&address);
-    }
+    // pub fn revoke_beneficiary(&self, address: Key) {
+    //     self.dict.remove_by_key::<()>(&address);
+    //     self.beneficiaries_list_dict
+    //         .remove_by_key::<Beneficiary>(&address);
+    // }
 
     pub fn get_beneficiary(&self, address: Key) -> Option<Beneficiary> {
         self.beneficiaries_list_dict.get_by_key(&address)

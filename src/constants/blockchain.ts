@@ -8,8 +8,8 @@ export const USER_KEY_PAIR_PATH =
   'D:/Ibrahim/github-projects/New folder/casperNFT_marketplace/deploy-scripts/keys/';
 
 export const DEPLOYER_ACC =
-  process.env.REACT_APP_DEPLOYER_ACC ||
-  '0131561311ded2e4c2bbb6d2497e231ae554afc86e7b6b9a083a84330830b8cfc5';
+  process.env.REACT_APP_CASPER_PUBLIC_KEY ||
+  '01fb6e663984ffaca91dbf3725e8d688659c66d5bf45d0cb2705cba04908d3b6b9';
 
 export const CONNECTION = {
   NODE_ADDRESS: proxyServer + NODE_RPC_ADDRESS,

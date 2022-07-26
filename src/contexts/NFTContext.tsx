@@ -36,9 +36,8 @@ type NFTAction =
   | { type: NFTActionTypes.SUCCESS; payload: any };
 
 const NFTStateContext = React.createContext<NFTState | undefined>(undefined);
-const NFTDispatchContext = React.createContext<NFTDispatch | undefined>(
-  undefined
-);
+const NFTDispatchContext =
+  React.createContext<NFTDispatch | undefined>(undefined);
 
 function nftReducer(state: NFTState, action: NFTAction): NFTState {
   switch (action.type) {
@@ -61,7 +60,7 @@ function nftReducer(state: NFTState, action: NFTAction): NFTState {
         campaignsCount: action.payload.campaignsCount,
         creatorsCount: action.payload.creatorsCount,
         collectionsCount: action.payload.collectionsCount,
-        vINFTsBeneficiaries: action.payload.vINFTsBeneficiaries
+        vINFTsBeneficiaries: action.payload.vINFTsBeneficiaries,
       };
     }
     default: {
@@ -97,12 +96,12 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
         campaignsCount: parseInt(campaignsCount.toString()) || 0,
         creatorsCount: parseInt(creatorsCount.toString()) || 0,
         collectionsCount: parseInt(collectionsCount.toString()) || 0,
-        collections: [],
-        uniqueCollections: [],
-        creators: [],
-        campaigns: [],
-        beneficiaries: [],
-        vINFTsBeneficiaries:[]
+        collections: undefined,
+        uniqueCollections: undefined,
+        creators: undefined,
+        campaigns: undefined,
+        beneficiaries: undefined,
+        vINFTsBeneficiaries: undefined,
       },
     });
 
@@ -116,7 +115,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
         Object.keys(lists.beneficiary).length !== 0 &&
           selectedList.push(lists.beneficiary);
       });
-    const beneficiariesList = profiles &&selectedList;
+    const beneficiariesList = profiles && selectedList;
 
     const beneficiariesVINFTsList = await getBeneficiariesList();
 
@@ -148,9 +147,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
             ?.name || '',
         beneficiaryName:
           beneficiariesList.find(
-            ({ address }: any) =>
-              nft.beneficiary ===
-              address
+            ({ address }: any) => nft.beneficiary === address
           )?.username || '',
         collectionName:
           collectionsList.collectionsList.find(
@@ -180,7 +177,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
           creators: creatorsList,
           campaigns: campaignsList,
           beneficiaries: beneficiariesList,
-          vINFTsBeneficiaries:beneficiariesVINFTsList
+          vINFTsBeneficiaries: beneficiariesVINFTsList,
         },
       });
   }, []);
