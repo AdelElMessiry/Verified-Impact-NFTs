@@ -62,7 +62,7 @@ const AddEditCampaignForm = ({data=undefined,closeModal=undefined,isFromModal=fa
       state.inputs.requestedRoyalty,
       CLPublicKey.fromHex(entityInfo.publicKey),
       data?'UPDATE':'ADD',
-      data.id
+      data?data.id:undefined
     );
 
     const deployResult = await getDeployDetails(savedCampaign);
