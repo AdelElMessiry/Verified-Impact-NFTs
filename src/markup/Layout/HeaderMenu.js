@@ -41,9 +41,9 @@ const HeaderMenu = () => {
           </Link>
         </li>
         <li>
-          <Link to={'#'}>
+          <span className='menu-parent-link'>
             Beneficiaries <i className='fa fa-chevron-down'></i>
-          </Link>
+          </span>
           <ul className='sub-menu'>
             {beneficiariesList?.map((b, index) => (
               <li key={`#${index}`}>
@@ -75,9 +75,9 @@ const HeaderMenu = () => {
           </ul>
         </li>
         <li>
-          <Link to={'#'}>
+          <span className='menu-parent-link'>
             Creators <i className='fa fa-chevron-down'></i>
-          </Link>
+          </span>
           <ul className='sub-menu'>
             {creatorsList?.map((c, index) => (
               <li key={`#${index}`}>
@@ -117,7 +117,7 @@ const HeaderMenu = () => {
                 </li>
                 <li>
                   <Link to={'./my-collections'} className='dez-page'>
-                    My Creations
+                    My Collections
                   </Link>
                 </li>
                 <li>

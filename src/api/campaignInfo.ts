@@ -28,12 +28,17 @@ export async function getCampaignsList() {
       .then(async (rawCampaign: any) => {
         // console.log(rawCampaign);
         const parsedCampaigns = parseCampaign(rawCampaign);
+        parsedCampaigns.wallet_address =
+          parsedCampaigns.wallet_address.includes('Account')
+            ? parsedCampaigns.wallet_address.slice(13).replace(')', '')
+            : parsedCampaigns.wallet_address.slice(10).replace(')', '');
         campaignsList.push(parsedCampaigns);
       })
       .catch((err) => {
         console.log(err);
       });
   }
+console.log(campaignsList);
 
   return campaignsList;
 }
