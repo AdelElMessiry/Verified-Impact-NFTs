@@ -60,7 +60,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
             process.env.REACT_APP_NFT_TOKEN,
             '',
             '',
-            `Exciting news! [${data.title}] NFT of [${data.creatorName}] creator has been sold as a donation for [${data.campaignName}] campaign. Click here  to buy #verified-impact-nfts and support more causes.`
+            `Exciting news! [${data.title}] NFT of [${data.creatorName}] creator has been sold as a donation for [${data.campaignName}] campaign. [Click here  to buy #verified-impact-nfts and support more causes.] (${window.location.origin}/#/)`
           );
           SendTweetWithImage(
             data.image,

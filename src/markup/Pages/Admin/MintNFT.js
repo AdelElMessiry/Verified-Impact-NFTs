@@ -120,7 +120,6 @@ const MintNFT = () => {
     setIsCreatorExist,
     setSelectedCollectionValue,
   ]);
-
   React.useEffect(() => {
     beneficiaries?.length &&
       !beneficiary &&
@@ -321,7 +320,7 @@ const MintNFT = () => {
           process.env.REACT_APP_NFT_TOKEN,
           state.name,
           '',
-          `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts click here to know more about their cause.`
+          `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/)`
         );
         SendTweetWithImage(
           imgURL,
@@ -334,7 +333,7 @@ const MintNFT = () => {
             process.env.REACT_APP_COLLECTIONS_TOKEN,
             selectedCollectionValue.value,
             '',
-            `${creator} creator has just added a new interesting #verified-impact-nfts collection. Click here to see more interesting collections`
+            `${creator} creator has just added a new interesting #verified-impact-nfts collection. [Click here to see more interesting collections](${window.location.origin}/#/)`
           );
           SendTweet(
             `${creator} creator has just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections`
@@ -347,7 +346,7 @@ const MintNFT = () => {
             process.env.REACT_APP_CREATORS_TOKEN,
             creator,
             '',
-            `We are glad to announce that ${creator} creator has joined #verified-impact-nfts and minted a striking NFT for donations. Click here to see more about creators and their NFTs collections `
+            `We are glad to announce that ${creator} creator has joined #verified-impact-nfts and minted a striking NFT for donations. [Click here to see more about creators and their NFTs collections.](${window.location.origin}/#/) `
           );
           SendTweet(
             `We are glad to announce that ${creator} creator has joined #verified_impact_nfts and minted a striking NFT for donations. Click here ${window.location.origin}/#/ to see more about creators and their NFTs collections `
