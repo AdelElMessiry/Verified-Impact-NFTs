@@ -593,6 +593,7 @@ class CEP47Client {
   }
 
   public async createCampaign(
+    campaign_id: string,
     mode: string,
     name: string,
     description: string,
@@ -604,6 +605,7 @@ class CEP47Client {
     keys?: Keys.AsymmetricKey[]
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
+      campaign_id: CLValueBuilder.u256(campaign_id),
       collection_ids: CLValueBuilder.list([CLValueBuilder.u256(0)]),
       mode: CLValueBuilder.string(mode),
       name: CLValueBuilder.string(name),

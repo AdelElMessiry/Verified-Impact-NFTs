@@ -17,17 +17,17 @@ export interface ICampaignOptions {
 }
 
 export async function createCampaign(
-  // tokenId: string[],
   name: string,
   description: string,
   wallet_address: string,
   url: string,
   requested_royalty: string,
-  // paymentAmount: string,
   deploySender: CLPublicKey,
-  mode?: string
+  mode?: string,
+  campaign_id?: string
 ) {
   const campaignDeploy = await cep47.createCampaign(
+    campaign_id ? campaign_id : '0',
     mode ? mode : 'ADD',
     name,
     description,
