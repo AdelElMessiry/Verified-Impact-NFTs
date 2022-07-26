@@ -61,7 +61,8 @@ const AddEditCampaignForm = ({data=undefined,closeModal=undefined,isFromModal=fa
       state.inputs.campaignUrl,
       state.inputs.requestedRoyalty,
       CLPublicKey.fromHex(entityInfo.publicKey),
-      data?'UPDATE':'ADD'
+      data?'UPDATE':'ADD',
+      data.id
     );
 
     const deployResult = await getDeployDetails(savedCampaign);
@@ -69,6 +70,7 @@ const AddEditCampaignForm = ({data=undefined,closeModal=undefined,isFromModal=fa
     VIToast.success('Campaign saved successfully');
     setIsButtonClicked(false);
    isFromModal&& closeModal();
+   isFromModal&& window.location.reload();
     setState({
       inputs: {
         campaignUrl: '',
