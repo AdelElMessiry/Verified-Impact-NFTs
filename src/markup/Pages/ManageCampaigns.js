@@ -18,7 +18,7 @@ const ManageCampaigns = ({beneficiaryAddress}) => {
   useEffect(() => {
     const selectedCampaigns =
       campaigns &&
-      campaigns?.filter(({ wallet_address }) => wallet_address.slice(13).replace(")", "") ===
+      campaigns?.filter(({ wallet_address }) => wallet_address ===
           CLPublicKey.fromHex(entityInfo.publicKey).toAccountHashStr().slice(13));
     campaigns && setBeneficiaryCampaigns(selectedCampaigns);
   }, [campaigns]);

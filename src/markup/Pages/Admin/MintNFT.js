@@ -124,7 +124,7 @@ const MintNFT = () => {
         campaigns.filter(
           ({ wallet_address }) => (savedData?savedData.beneficiary:beneficiaries?.filter(
             ({ approved }) => approved === 'true'
-          )[0]?.address) === wallet_address.slice(13).replace(")","")
+          )[0]?.address) === wallet_address
         )
       );
     !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
