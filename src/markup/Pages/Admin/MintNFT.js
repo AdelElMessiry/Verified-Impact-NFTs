@@ -322,8 +322,9 @@ const MintNFT = () => {
           '',
           `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/)`
         );
+        let image = encodeURI(imgURL)
         SendTweetWithImage(
-          imgURL,
+          image,
           `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.`
         );
         if (isCreateNewCollection) {
