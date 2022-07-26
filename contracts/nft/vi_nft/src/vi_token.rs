@@ -151,6 +151,7 @@ impl ViToken {
 
     fn set_beneficiary_campaign(
         &mut self,
+        campaign_id: U256,
         collection_ids: Vec<TokenId>,
         mode: String,
         name: String,
@@ -164,12 +165,22 @@ impl ViToken {
 
         match mode.as_str() {
             "ADD" | "UPDATE" => {
-                let new_campaign_count = campaign_data::total_campaigns()
-                    .checked_add(U256::one())
-                    .unwrap();
-                let mut campaign = campaigns_dict.get(new_campaign_count).unwrap_or_default();
+                let mut campaign: BTreeMap<String, String> = BTreeMap::new();
+                let mut new_campaign_count = U256::zero();
 
-                campaign.insert(format!("id: "), new_campaign_count.to_string());
+                if mode.clone() == "UPDATE" {
+                    campaign =
+                        CollectionControl::get_collection(self, campaign_id).unwrap_or_default();
+                    campaign.insert(format!("id: "), campaign_id.to_string());
+                } else if mode.clone() == "ADD" {
+                    new_campaign_count = campaign_data::total_campaigns()
+                        .checked_add(U256::one())
+                        .unwrap();
+                    campaign = CollectionControl::get_collection(self, new_campaign_count)
+                        .unwrap_or_default();
+                    campaign.insert(format!("id: "), new_campaign_count.to_string());
+                }
+
                 campaign.insert(format!("name: "), name);
                 campaign.insert(format!("description: "), description);
                 campaign.insert(format!("url: "), url);
@@ -192,10 +203,12 @@ impl ViToken {
                         revert(ApiError::User(20));
                     }
                 }
-                campaigns_dict.set(new_campaign_count, campaign);
 
                 if mode.clone() == "ADD" {
                     campaign_data::set_total_campaigns(new_campaign_count);
+                    campaigns_dict.set(new_campaign_count, campaign);
+                } else if mode.clone() == "UPDATE" {
+                    campaigns_dict.set(campaign_id, campaign);
                 }
             }
             _ => {
@@ -496,6 +509,7 @@ impl ViToken {
 
     fn create_campaign(
         &mut self,
+        campaign_id: U256,
         collection_ids: Vec<TokenId>,
         mode: String,
         name: String,
@@ -511,6 +525,7 @@ impl ViToken {
         // }
 
         self.set_beneficiary_campaign(
+            campaign_id,
             collection_ids,
             mode,
             name,
@@ -805,6 +820,7 @@ fn update_token_meta() {
 
 #[no_mangle]
 fn create_campaign() {
+    let campaign_id = runtime::get_named_arg::<U256>("campaign_id");
     let collection_ids = runtime::get_named_arg::<Vec<TokenId>>("collection_ids");
     let mode = runtime::get_named_arg::<String>("mode");
     let name = runtime::get_named_arg::<String>("name");
@@ -814,6 +830,7 @@ fn create_campaign() {
     let requested_royalty = runtime::get_named_arg::<String>("requested_royalty");
     ViToken::default()
         .create_campaign(
+            campaign_id,
             collection_ids,
             mode,
             name,
@@ -1354,6 +1371,7 @@ fn get_entry_points() -> EntryPoints {
     entry_points.add_entry_point(EntryPoint::new(
         "create_campaign",
         vec![
+            Parameter::new("campaign_id", U256::cl_type()),
             Parameter::new("collection_ids", CLType::List(Box::new(TokenId::cl_type()))),
             Parameter::new("mode", String::cl_type()),
             Parameter::new("name", String::cl_type()),
