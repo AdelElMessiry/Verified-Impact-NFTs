@@ -137,7 +137,7 @@ const MintNFT = () => {
             (savedData
               ? savedData.beneficiary
               : beneficiaries?.filter(({ approved }) => approved === 'true')[0]
-                  ?.address) === wallet_address
+                ?.address) === wallet_address
         )
       );
     !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
@@ -224,7 +224,7 @@ const MintNFT = () => {
     if (state.inputs.isImageURL && showURLErrorMsg) {
       return;
     }
-    isAnotherMint?setIsMintAnotherClicked(true): setIsMintClicked(true);
+    isAnotherMint ? setIsMintAnotherClicked(true) : setIsMintClicked(true);
     let cloudURL = uploadedImageURL;
     if (!state.inputs.isImageURL && uploadedFile) {
       console.log('Img', uploadedFile);
@@ -311,45 +311,44 @@ const MintNFT = () => {
         } else {
           localStorage.setItem('selectedData', null);
         }
-       console.log('...... Token minted successfully', deployResult);
-
+        console.log('...... Token minted successfully', deployResult);
         VIToast.success('NFT minted successfully');
         //NOTE: every channel has a special keys and tokens sorted on .env file
-        sendDiscordMessage(
+        await sendDiscordMessage(
           process.env.REACT_APP_NFT_WEBHOOK_ID,
           process.env.REACT_APP_NFT_TOKEN,
-          state.name,
+          state.inputs.name,
           '',
           `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/)`
         );
         let image = encodeURI(imgURL)
-        SendTweetWithImage(
+        await SendTweetWithImage(
           image,
           `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.`
         );
         if (isCreateNewCollection) {
           //add collection discord
-          sendDiscordMessage(
+          await sendDiscordMessage(
             process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
             process.env.REACT_APP_COLLECTIONS_TOKEN,
             selectedCollectionValue.value,
             '',
             `${creator} creator has just added a new interesting #verified-impact-nfts collection. [Click here to see more interesting collections](${window.location.origin}/#/)`
           );
-          SendTweet(
+          await SendTweet(
             `${creator} creator has just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections`
           );
         }
         if (!isCreatorExist) {
           //add creator discord
-          sendDiscordMessage(
+          await sendDiscordMessage(
             process.env.REACT_APP_CREATORS_WEBHOOK_ID,
             process.env.REACT_APP_CREATORS_TOKEN,
             creator,
             '',
             `We are glad to announce that ${creator} creator has joined #verified-impact-nfts and minted a striking NFT for donations. [Click here to see more about creators and their NFTs collections.](${window.location.origin}/#/) `
           );
-          SendTweet(
+          await SendTweet(
             `We are glad to announce that ${creator} creator has joined #verified_impact_nfts and minted a striking NFT for donations. Click here ${window.location.origin}/#/ to see more about creators and their NFTs collections `
           );
         }
@@ -670,7 +669,7 @@ const MintNFT = () => {
                               state.inputs.name === '' ||
                               (state.inputs.isForSale &&
                                 state.inputs.price === '') ||
-                              isMintAnotherClicked||
+                              isMintAnotherClicked ||
                               isMintClicked
                             }
                           >

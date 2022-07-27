@@ -38,14 +38,14 @@ const AddBeneficiary = () => {
     const deployResult = await getDeployDetails(savedBeneficiary);
     console.log('...... Beneficiary saved successfully', deployResult);
     VIToast.success('Beneficiary saved successfully');
-    sendDiscordMessage(
+    await sendDiscordMessage(
       process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
       process.env.REACT_APP_BENEFICIARIES_TOKEN,
       beneficiaryInputs.name,
       '',
       `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)] `
     );
-    SendTweet(
+    await SendTweet(
       `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.`
     );
     setBeneficiaryInputs({
