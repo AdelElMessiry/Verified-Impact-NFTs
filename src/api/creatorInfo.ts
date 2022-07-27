@@ -26,9 +26,7 @@ export async function getCreatorsList() {
     await getCreatorDetails((id + 1).toString())
       .then(async (rawCreator: any) => {
         const parsedCreator = parseCreator(rawCreator);
-        parsedCreator.address = parsedCreator.address
-          .slice(10)
-          .replace(')', '');
+        parsedCreator.address = parsedCreator.address;
 
         creatorsList.push(parsedCreator);
       })
