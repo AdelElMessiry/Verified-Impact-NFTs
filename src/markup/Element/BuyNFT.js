@@ -55,7 +55,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
         if (deployTransferResult) {
           VIToast.success('Transaction ended successfully');
           handleClose();
-          sendDiscordMessage(
+          await sendDiscordMessage(
             process.env.REACT_APP_NFT_WEBHOOK_ID,
             process.env.REACT_APP_NFT_TOKEN,
             '',
@@ -63,7 +63,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
             `Exciting news! [${data.title}] NFT of [${data.creatorName}] creator has been sold as a donation for [${data.campaignName}] campaign. [Click here  to buy #verified-impact-nfts and support more causes.] (${window.location.origin}/#/)`
           );
           let image = encodeURI(data.image)
-          SendTweetWithImage(
+          await SendTweetWithImage(
             image ,
             `Exciting news! ${data.title} NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.`
           );

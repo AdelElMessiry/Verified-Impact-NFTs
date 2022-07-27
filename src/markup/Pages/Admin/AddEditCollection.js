@@ -68,14 +68,14 @@ const AddCollection = () => {
 
     const deployResult = await getDeployDetails(savedCollection);
     console.log('...... Collection saved successfully', deployResult);
-    sendDiscordMessage(
+    await sendDiscordMessage(
       process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
       process.env.REACT_APP_COLLECTIONS_TOKEN,
       '',
       '',
       `Exciting news! [${collectionInputs.name}] Collection is just created. [Click here  to check more available collections.](${window.location.origin}/#/)`
     );
-    SendTweet(
+    await SendTweet(
       `${collectionInputs.name} just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections`
     );
     VIToast.success('Collection saved successfully');
