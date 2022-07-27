@@ -147,7 +147,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
             ?.name || '',
         beneficiaryName:
           beneficiariesList.find(
-            ({ address }: any) => nft.beneficiary.slice(10).replace(')', '') === address
+            ({ address }: any) => nft.beneficiary === address
           )?.username || '',
         collectionName:
           collectionsList.collectionsList.find(
