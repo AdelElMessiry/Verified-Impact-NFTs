@@ -137,7 +137,7 @@ export async function getMappedNfts() {
       ({ address }: any) => nft.creator === address
     ).name,
     beneficiaryName: beneficiariesList.find(
-      ({ address }: any) => nft === address
+      ({ address }: any) => nft.beneficiary === address
     ).name,
     collectionName: collectionsList.find(({ id }: any) => nft.collection === id)
       .name,
