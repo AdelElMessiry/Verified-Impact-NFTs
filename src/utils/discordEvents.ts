@@ -3,7 +3,6 @@ import Discord from 'discord.js';
 
 export async function sendDiscordMessage  (webhookId: any, webhookToken: any, elementName: string, nftUrl:string, description:string){
     console.log('from discord event file ..', webhookId , webhookToken)
-    debugger
     const webhookClient = new Discord.WebhookClient(webhookId, webhookToken);
     const embed = new Discord.MessageEmbed()
       .setTitle(elementName)

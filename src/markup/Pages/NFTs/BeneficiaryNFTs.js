@@ -270,12 +270,12 @@ const BeneficiaryNFTs = () => {
 
     if (beneficiary && !campaign) {
       filteredNFTs =
-        nftsList && nftsList.filter((nft) => nft.beneficiary === beneficiary);
+        nftsList && nftsList.filter((nft) => nft.beneficiary.slice(10).replace(')', '') === beneficiary);
     } else if (beneficiary && campaign) {
       filteredNFTs =
         nftsList &&
         nftsList.filter(
-          (nft) => nft.beneficiary === beneficiary && nft.campaign === campaign
+          (nft) => nft.beneficiary.slice(10).replace(')', '') === beneficiary && nft.campaign === campaign
         );
     } else {
       filteredNFTs = nftsList && nftsList;
@@ -482,7 +482,7 @@ const BeneficiaryNFTs = () => {
           title={`Click to see all NFTs for '${nft.beneficiaryName}' beneficiary`}
         >
           <Link
-            to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary}`}
+            to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary.slice(10).replace(')', '')}`}
             className='dez-page text-white'
             onClick={() => {
               setOpenSlider(false);
@@ -501,7 +501,7 @@ const BeneficiaryNFTs = () => {
         >
           {nft.beneficiary ? (
             <Link
-              to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary}&campaign=${nft.campaign}`}
+              to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary.slice(10).replace(')', '')}&campaign=${nft.campaign}`}
               className='dez-page text-white'
               onClick={() => {
                 setOpenSlider(false);
