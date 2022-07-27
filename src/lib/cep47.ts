@@ -10,6 +10,7 @@ import {
   CLValueBuilder,
   CLValueParsers,
   CLByteArray,
+  CLAccountHash,
 } from 'casper-js-sdk';
 import { concat } from '@ethersproject/bytes';
 import blake from 'blakejs';
@@ -421,10 +422,11 @@ class CEP47Client {
       campaign: CLValueBuilder.string(campaign),
       creator: CLValueBuilder.string(creator),
       creatorPercentage: CLValueBuilder.string(creatorPercentage),
-      // isCollectionExist: CLValueBuilder.bool(!!collection),
       collection: CLValueBuilder.u256(collection),
       collectionName: CLValueBuilder.string(collectionName || ''),
-      beneficiary: CLValueBuilder.string(beneficiary),
+      beneficiary: CLValueBuilder.key(
+        CLValueBuilder.byteArray(Buffer.from(beneficiary, 'hex'))
+      ),
       beneficiaryPercentage: CLValueBuilder.string(beneficiaryPercentage),
     });
 
@@ -591,10 +593,11 @@ class CEP47Client {
   }
 
   public async createCampaign(
-    // ids: string[],
+    campaign_id: string,
+    mode: string,
     name: string,
     description: string,
-    wallet_address: string,
+    wallet_address: CLAccountHash,
     url: string,
     requested_royalty: string,
     paymentAmount: string,
@@ -602,11 +605,12 @@ class CEP47Client {
     keys?: Keys.AsymmetricKey[]
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
+      campaign_id: CLValueBuilder.u256(campaign_id),
       collection_ids: CLValueBuilder.list([CLValueBuilder.u256(0)]),
-      mode: CLValueBuilder.string('ADD'),
+      mode: CLValueBuilder.string(mode),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
-      wallet_address: CLValueBuilder.string(wallet_address),
+      wallet_address: CLValueBuilder.key(wallet_address),
       url: CLValueBuilder.string(url),
       // recipient: CLValueBuilder.key(CLPublicKey.fromHex(wallet_address)),
       requested_royalty: CLValueBuilder.string(requested_royalty),
