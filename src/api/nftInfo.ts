@@ -137,7 +137,7 @@ export async function getMappedNfts() {
       ({ address }: any) => nft.creator === address
     ).name,
     beneficiaryName: beneficiariesList.find(
-      ({ address }: any) => nft.beneficiary === address
+      ({ address }: any) => nft.beneficiary.slice(10).replace(')', '') === address
     ).name,
     collectionName: collectionsList.find(({ id }: any) => nft.collection === id)
       .name,
@@ -168,7 +168,7 @@ export function getMappedNftsByList(
       ({ address }: any) => nft.creator === address
     )?.name,
     beneficiaryName: beneficiariesList.find(
-      ({ address }: any) => nft.beneficiary === address
+      ({ address }: any) => nft.beneficiary.slice(10).replace(')', '') === address
     )?.username,
     collectionName: collectionsList.find(({ id }: any) => nft.collection === id)
       ?.name,

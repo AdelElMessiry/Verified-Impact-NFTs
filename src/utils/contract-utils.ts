@@ -220,7 +220,7 @@ export const transferFees = async (buyer: string, tokenId: string) => {
   const deployer = DEPLOYER_ACC;
 
   let { beneficiary, price, campaign } = tokenDetails;
-  beneficiary = await hashToURef(`account-hash-${beneficiary}`);
+  beneficiary = await hashToURef(`account-hash-${beneficiary.slice(10).replace(')', '')}`);
 
   const campaignDetails: any = await getCampaignDetails(campaign);
   const parsedCampaigns: any = parseCampaign(campaignDetails);

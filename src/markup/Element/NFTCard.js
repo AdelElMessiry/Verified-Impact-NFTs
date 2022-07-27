@@ -136,7 +136,7 @@ const NFTCard = ({
                     title={`Click to see all NFTs for "${item.beneficiaryName}" beneficiary`}
                   >
                     <Link
-                      to={`./BeneficiaryNFTs?beneficiary=${item.beneficiary}`}
+                      to={`./BeneficiaryNFTs?beneficiary=${item.beneficiary.slice(10).replace(')', '')}`}
                       className='dez-page text-white'
                     >
                       {item.beneficiaryName}
@@ -156,7 +156,7 @@ const NFTCard = ({
                   >
                     {item.beneficiary && (
                       <Link
-                        to={`./BeneficiaryNFTs?beneficiary=${item.beneficiary}&campaign=${item.campaign}`}
+                        to={`./BeneficiaryNFTs?beneficiary=${item.beneficiary.slice(10).replace(')', '')}&campaign=${item.campaign}`}
                         className='dez-page text-white'
                       >
                         {item.campaignName}

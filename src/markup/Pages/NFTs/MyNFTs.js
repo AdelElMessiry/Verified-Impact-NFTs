@@ -289,7 +289,7 @@ const MyNFTs = () => {
           title={`Click to see all NFTs for "${nft.beneficiaryName}" beneficiary`}
         >
           <Link
-            to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary}`}
+            to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary.slice(10).replace(')', '')}`}
             className='dez-page text-white'
             onClick={() => {
               setOpenSlider(false);
@@ -308,7 +308,7 @@ const MyNFTs = () => {
         >
           {nft.beneficiary ? (
             <Link
-              to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary}&campaign=${nft.campaign}`}
+              to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary.slice(10).replace(')', '')}&campaign=${nft.campaign}`}
               className='dez-page text-white'
               onClick={() => {
                 setOpenSlider(false);
