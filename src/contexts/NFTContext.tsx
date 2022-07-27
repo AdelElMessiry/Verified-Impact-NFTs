@@ -92,7 +92,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
       type: NFTActionTypes.SUCCESS,
       payload: {
         nfts: nftsList,
-        beneficiaryCount: parseInt(beneficiaryCount.toString()) || 0,
+        beneficiaryCount: undefined,
         campaignsCount: parseInt(campaignsCount.toString()) || 0,
         creatorsCount: parseInt(creatorsCount.toString()) || 0,
         collectionsCount: parseInt(collectionsCount.toString()) || 0,
@@ -168,7 +168,8 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
         type: NFTActionTypes.SUCCESS,
         payload: {
           nfts: mappedNFTS,
-          beneficiaryCount: parseInt(beneficiaryCount.toString()),
+          // beneficiaryCount: parseInt(beneficiaryCount.toString()),
+          beneficiaryCount: beneficiariesList.length,
           campaignsCount: parseInt(campaignsCount.toString()),
           creatorsCount: parseInt(creatorsCount.toString()),
           collectionsCount: parseInt(collectionsCount.toString()),
