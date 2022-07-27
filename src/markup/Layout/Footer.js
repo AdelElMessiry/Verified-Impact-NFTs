@@ -38,7 +38,7 @@ class Footer extends React.Component {
                 <div className='col-lg-6 col-md-6 col-sm-6 text-left'>
                   <ul className="list-inline d-flex ">
                     <li className='text-success mr-3 align-items-center'>FOllow us</li>
-                    <li  className='mr-3'>ءص
+                    <li  className='mr-3'>
                       <a href={process.env.REACT_APP_DISCORD_INVITE_LINK} target="_blank">
                         <FontAwesomeIcon icon={faDiscord} size="2x" />
                       </a>
