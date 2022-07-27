@@ -151,29 +151,36 @@ impl ViToken {
 
     fn set_beneficiary_campaign(
         &mut self,
+        campaign_id: U256,
         collection_ids: Vec<TokenId>,
         mode: String,
         name: String,
         description: String,
-        wallet_address: String,
+        wallet_address: Key,
         url: String,
         requested_royalty: String,
     ) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
         let campaigns_dict = Campaigns::instance();
 
-        if !ViToken::default().is_beneficiary() && !ViToken::default().is_admin(caller) {
-            revert(ApiError::User(20));
-        }
-
         match mode.as_str() {
             "ADD" | "UPDATE" => {
-                let new_campaign_count = campaign_data::total_campaigns()
-                    .checked_add(U256::one())
-                    .unwrap();
-                let mut campaign = campaigns_dict.get(new_campaign_count).unwrap_or_default();
+                let mut campaign: BTreeMap<String, String> = BTreeMap::new();
+                let mut new_campaign_count = U256::zero();
 
-                campaign.insert(format!("id: "), new_campaign_count.to_string());
+                if mode.clone() == "UPDATE" {
+                    campaign =
+                        CollectionControl::get_collection(self, campaign_id).unwrap_or_default();
+                    campaign.insert(format!("id: "), campaign_id.to_string());
+                } else if mode.clone() == "ADD" {
+                    new_campaign_count = campaign_data::total_campaigns()
+                        .checked_add(U256::one())
+                        .unwrap();
+                    campaign = CollectionControl::get_collection(self, new_campaign_count)
+                        .unwrap_or_default();
+                    campaign.insert(format!("id: "), new_campaign_count.to_string());
+                }
+
                 campaign.insert(format!("name: "), name);
                 campaign.insert(format!("description: "), description);
                 campaign.insert(format!("url: "), url);
@@ -182,11 +189,27 @@ impl ViToken {
                     collection_ids.iter().map(ToString::to_string).collect(),
                 );
                 campaign.insert(format!("requested_royalty: "), requested_royalty);
-                campaign.insert(format!("wallet_address: "), wallet_address);
 
-                campaigns_dict.set(new_campaign_count, campaign);
+                if ViToken::default().is_beneficiary() {
+                    if ViToken::default().is_admin(caller) {
+                        campaign.insert(format!("wallet_address: "), wallet_address.to_string());
+                    } else {
+                        campaign.insert(format!("wallet_address: "), caller.to_string());
+                    }
+                } else {
+                    if ViToken::default().is_admin(caller) {
+                        campaign.insert(format!("wallet_address: "), wallet_address.to_string());
+                    } else {
+                        revert(ApiError::User(20));
+                    }
+                }
 
-                campaign_data::set_total_campaigns(new_campaign_count);
+                if mode.clone() == "ADD" {
+                    campaign_data::set_total_campaigns(new_campaign_count);
+                    campaigns_dict.set(new_campaign_count, campaign);
+                } else if mode.clone() == "UPDATE" {
+                    campaigns_dict.set(campaign_id, campaign);
+                }
             }
             _ => {
                 return Err(Error::WrongArguments);
@@ -347,7 +370,6 @@ impl ViToken {
     fn mint(
         &mut self,
         recipient: Key,
-        // owner: Key,
         creator_name: String,
         title: String,
         description: String,
@@ -358,10 +380,9 @@ impl ViToken {
         campaign: String,
         creator: String,
         creator_percentage: String,
-        // is_collection_exist: bool,
         collection: U256,
         collection_name: String,
-        beneficiary: String,
+        beneficiary: Key,
         beneficiary_percentage: String,
     ) -> Result<Vec<TokenId>, Error> {
         let mut mapped_meta: BTreeMap<String, String> = BTreeMap::new();
@@ -413,7 +434,7 @@ impl ViToken {
         mapped_meta.insert(format!("currency"), currency);
         mapped_meta.insert(format!("campaign"), campaign);
         mapped_meta.insert(format!("creator"), cloned_creator);
-        mapped_meta.insert(format!("beneficiary"), beneficiary);
+        mapped_meta.insert(format!("beneficiary"), beneficiary.to_string());
         mapped_meta.insert(format!("creatorPercentage"), creator_percentage);
         mapped_meta.insert(format!("beneficiaryPercentage"), beneficiary_percentage);
 
@@ -488,21 +509,23 @@ impl ViToken {
 
     fn create_campaign(
         &mut self,
+        campaign_id: U256,
         collection_ids: Vec<TokenId>,
         mode: String,
         name: String,
         description: String,
-        wallet_address: String,
+        wallet_address: Key,
         url: String,
         requested_royalty: String,
     ) -> Result<(), Error> {
-        let caller = ViToken::default().get_caller();
+        // let caller = ViToken::default().get_caller();
 
-        if !ViToken::default().is_admin(caller) {
-            revert(ApiError::User(20));
-        }
+        // if !ViToken::default().is_admin(caller) {
+        //     revert(ApiError::User(20));
+        // }
 
         self.set_beneficiary_campaign(
+            campaign_id,
             collection_ids,
             mode,
             name,
@@ -645,7 +668,7 @@ fn constructor() {
     let symbol = runtime::get_named_arg::<String>("symbol");
     let meta = runtime::get_named_arg::<Meta>("meta");
     let admin = runtime::get_named_arg::<Key>("admin");
-    let profile_contract_hash = runtime::get_named_arg::<String>("profile_contract_hash");
+    // let profile_contract_hash = runtime::get_named_arg::<String>("profile_contract_hash");
     ViToken::default().constructor(name, symbol, meta);
     ViToken::default().add_admin_without_checked(admin);
     // ViToken::default()
@@ -797,15 +820,17 @@ fn update_token_meta() {
 
 #[no_mangle]
 fn create_campaign() {
+    let campaign_id = runtime::get_named_arg::<U256>("campaign_id");
     let collection_ids = runtime::get_named_arg::<Vec<TokenId>>("collection_ids");
     let mode = runtime::get_named_arg::<String>("mode");
     let name = runtime::get_named_arg::<String>("name");
     let description = runtime::get_named_arg::<String>("description");
-    let wallet_address = runtime::get_named_arg::<String>("wallet_address");
+    let wallet_address = runtime::get_named_arg::<Key>("wallet_address");
     let url = runtime::get_named_arg::<String>("url");
     let requested_royalty = runtime::get_named_arg::<String>("requested_royalty");
     ViToken::default()
         .create_campaign(
+            campaign_id,
             collection_ids,
             mode,
             name,
@@ -853,10 +878,9 @@ fn mint() {
     let campaign = runtime::get_named_arg::<String>("campaign");
     let creator = runtime::get_named_arg::<String>("creator");
     let creator_percentage = runtime::get_named_arg::<String>("creatorPercentage");
-    // let is_collection_exist = runtime::get_named_arg::<bool>("isCollectionExist");
     let collection = runtime::get_named_arg::<U256>("collection");
     let collection_name = runtime::get_named_arg::<String>("collectionName");
-    let beneficiary = runtime::get_named_arg::<String>("beneficiary");
+    let beneficiary = runtime::get_named_arg::<Key>("beneficiary");
     let beneficiary_percentage = runtime::get_named_arg::<String>("beneficiaryPercentage");
 
     ViToken::default()
@@ -1347,11 +1371,12 @@ fn get_entry_points() -> EntryPoints {
     entry_points.add_entry_point(EntryPoint::new(
         "create_campaign",
         vec![
-            Parameter::new("token_ids", CLType::List(Box::new(TokenId::cl_type()))),
+            Parameter::new("campaign_id", U256::cl_type()),
+            Parameter::new("collection_ids", CLType::List(Box::new(TokenId::cl_type()))),
             Parameter::new("mode", String::cl_type()),
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
-            Parameter::new("wallet_address", String::cl_type()),
+            Parameter::new("wallet_address", Key::cl_type()),
             Parameter::new("url", String::cl_type()),
             Parameter::new("requested_royalty", String::cl_type()),
         ],
@@ -1413,7 +1438,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("creatorPercentage", String::cl_type()),
             Parameter::new("collection", U256::cl_type()),
             Parameter::new("collectionName", String::cl_type()),
-            Parameter::new("beneficiary", String::cl_type()),
+            Parameter::new("beneficiary", Key::cl_type()),
             Parameter::new("beneficiaryPercentage", String::cl_type()),
         ],
         <()>::cl_type(),
