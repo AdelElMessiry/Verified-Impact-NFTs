@@ -73,17 +73,6 @@ const MintNFT = () => {
       isImageURL: false,
     },
   });
-useEffect(()=>{
-  console.log(process.env.REACT_APP_GENERAL_WEBHOOK_ID ,process.env.REACT_APP_GENERAL_TOKEN , 
-    "from the mint nft screen " )
-  sendDiscordMessage(
-    process.env.REACT_APP_GENERAL_WEBHOOK_ID,
-    process.env.REACT_APP_GENERAL_TOKEN,
-    "test with general channel",
-    '',
-    `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts click here to know more about their cause.`
-  );
-},[])
   const loadCollections = React.useCallback(async () => {
     if (entityInfo.publicKey) {
       let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
@@ -131,7 +120,6 @@ useEffect(()=>{
     setIsCreatorExist,
     setSelectedCollectionValue,
   ]);
-
   React.useEffect(() => {
     beneficiaries?.length &&
       !beneficiary &&
@@ -332,10 +320,11 @@ useEffect(()=>{
           process.env.REACT_APP_NFT_TOKEN,
           state.name,
           '',
-          `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts click here to know more about their cause.`
+          `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/)`
         );
+        let image = encodeURI(imgURL)
         SendTweetWithImage(
-          imgURL,
+          image,
           `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.`
         );
         if (isCreateNewCollection) {
@@ -345,7 +334,7 @@ useEffect(()=>{
             process.env.REACT_APP_COLLECTIONS_TOKEN,
             selectedCollectionValue.value,
             '',
-            `${creator} creator has just added a new interesting #verified-impact-nfts collection. Click here to see more interesting collections`
+            `${creator} creator has just added a new interesting #verified-impact-nfts collection. [Click here to see more interesting collections](${window.location.origin}/#/)`
           );
           SendTweet(
             `${creator} creator has just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections`
@@ -358,7 +347,7 @@ useEffect(()=>{
             process.env.REACT_APP_CREATORS_TOKEN,
             creator,
             '',
-            `We are glad to announce that ${creator} creator has joined #verified-impact-nfts and minted a striking NFT for donations. Click here to see more about creators and their NFTs collections `
+            `We are glad to announce that ${creator} creator has joined #verified-impact-nfts and minted a striking NFT for donations. [Click here to see more about creators and their NFTs collections.](${window.location.origin}/#/) `
           );
           SendTweet(
             `We are glad to announce that ${creator} creator has joined #verified_impact_nfts and minted a striking NFT for donations. Click here ${window.location.origin}/#/ to see more about creators and their NFTs collections `
