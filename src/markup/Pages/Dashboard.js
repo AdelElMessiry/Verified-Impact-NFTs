@@ -7,7 +7,6 @@ import Carousel from 'react-elastic-carousel';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper } from 'simple-react-lightbox';
 import QRCode from 'react-qr-code';
-import { CLPublicKey, Keys } from 'casper-js-sdk';
 
 import { useNFTState } from '../../contexts/NFTContext';
 // import { profileClient } from '../../api/profileInfo';

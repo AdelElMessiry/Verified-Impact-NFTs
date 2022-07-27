@@ -256,7 +256,7 @@ class CEP47Client {
       jsMap.set(innerKey, value);
     }
     let mapObj = Object.fromEntries(jsMap);
-
+    mapObj.beneficiary = mapObj.beneficiary.slice(10).replace(')', '');
     return mapObj;
   }
 
