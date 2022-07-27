@@ -67,7 +67,7 @@ const TagLi = ({ item, handleSetTag, tagActive, type, creator }) => {
             <Link
               to={
                 type === 'campaign'
-                  ? `./BeneficiaryNFTs?beneficiary=${item?.beneficiary.slice(10).replace(')', '')}&campaign=${item?.id}`
+                  ? `./BeneficiaryNFTs?beneficiary=${item?.beneficiary}&campaign=${item?.id}`
                   : `./CreatorNFTs?creator=${creator}&collection=${item?.id}`
               }
               className="mr-1 text-success text-underline"
@@ -76,7 +76,7 @@ const TagLi = ({ item, handleSetTag, tagActive, type, creator }) => {
                 className="mr-1"
                 value={
                   type === 'campaign'
-                    ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${item?.beneficiary.slice(10).replace(')', '')}&campaign=${item?.id}`
+                    ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${item?.beneficiary}&campaign=${item?.id}`
                     : `${window.location.origin}/#/CreatorNFTs?creator=${creator}&collection=${item?.id}`
                 }
                 size={90}
@@ -86,7 +86,7 @@ const TagLi = ({ item, handleSetTag, tagActive, type, creator }) => {
             <CopyText
               link={
                 type === 'campaign'
-                  ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${item?.beneficiary.slice(10).replace(')', '')}&campaign=${item?.id}`
+                  ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${item?.beneficiary}&campaign=${item?.id}`
                   : `${window.location.origin}/#/CreatorNFTs?creator=${creator}&collection=${item?.id}`
               }
             />
@@ -196,7 +196,7 @@ const CreatorNFTs = () => {
           ? {
               name: nft.campaignName,
               id: nft.campaign,
-              beneficiary: nft.beneficiary.slice(10).replace(')', ''),
+              beneficiary: nft.beneficiary,
             }
           : tag
       );
@@ -467,7 +467,7 @@ const CreatorNFTs = () => {
           title={`Click to see all NFTs for '${nft.beneficiaryName}' beneficiary`}
         >
           <Link
-            to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary.slice(10).replace(')', '')}`}
+            to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary}`}
             className='dez-page text-white'
             onClick={() => {
               setOpenSlider(false);
@@ -486,7 +486,7 @@ const CreatorNFTs = () => {
         >
           {nft.beneficiary ? (
             <Link
-              to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary.slice(10).replace(')', '')}&campaign=${nft.campaign}`}
+              to={`./BeneficiaryNFTs?beneficiary=${nft.beneficiary}&campaign=${nft.campaign}`}
               className='dez-page text-white'
               onClick={() => {
                 setOpenSlider(false);
