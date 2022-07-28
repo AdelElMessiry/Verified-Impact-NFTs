@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Col, Container, Row} from 'react-bootstrap';
+import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import { useAuth } from '../../../contexts/AuthContext';
@@ -67,21 +67,36 @@ const ManageBeneficiaries = () => {
                   <Container>
                     <Row>
                       <Col>
-                        <table className='table'>
-                          <thead>
-                            <tr>
-                              <th scope='col'></th>
-                              <th scope='col'>Name</th>
-                              <th scope='col'>Address</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {beneficiaries &&
-                              beneficiaries?.map((beneficiary) => (
-                                <BeneficiarySingleRow beneficiary={beneficiary} key={beneficiary.address}/>
-                              ))}
-                          </tbody>
-                        </table>
+                        {beneficiaries ? (
+                          <table className='table'>
+                            <thead>
+                              <tr>
+                                <th scope='col'></th>
+                                <th scope='col'>Name</th>
+                                <th scope='col'>Address</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {beneficiaries.length > 0 ? (
+                                beneficiaries?.map((beneficiary) => (
+                                  <BeneficiarySingleRow
+                                    beneficiary={beneficiary}
+                                    key={beneficiary.address}
+                                  />
+                                ))
+                              ) : (
+                                <h4 className='text-muted text-center my-5'>
+                                  No Beneficiaries registered yet
+                                </h4>
+                              )}
+                            </tbody>
+                          </table>
+                        ) : (
+                          <div className='vinft-section-loader text-center my-5'>
+                            <Spinner animation='border' variant='success' />
+                            <p>Fetching Beneficiaries Please wait...</p>
+                          </div>
+                        )}
                       </Col>
                     </Row>
                   </Container>
