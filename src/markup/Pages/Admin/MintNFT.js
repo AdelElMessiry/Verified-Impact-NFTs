@@ -21,7 +21,6 @@ import Layout from '../../Layout';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet, SendTweetWithImage } from '../../../utils/VINFTsTweets';
-import { CLPublicKey } from 'casper-js-sdk';
 
 //handling of creating new option in creatable select control
 const createOption = (label) => ({
@@ -102,9 +101,10 @@ const MintNFT = () => {
               }));
 
             selectedCollections && setCollectionsList(selectedCollections);
-            selectedCollections &&
+           const selectedCollectionsIDs= selectedCollections && selectedCollections.map(({ value }) => value)
+            selectedCollections && selectedCollections.length>0&&
               setSelectedCollectionValue(
-                savedData ? savedData.collection : selectedCollections[0]
+                (savedData &&  selectedCollectionsIDs.includes(savedData.collection.value) )?savedData.collection : selectedCollections[0]
               );
           } else {
             setCollectionsList();
