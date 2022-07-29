@@ -14,6 +14,8 @@ import Layout from '../../Layout';
 import PageTitle from '../../Layout/PageTitle';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
+import { sendDiscordMessage } from '../../../utils/discordEvents';
+import { SendTweet } from '../../../utils/VINFTsTweets';
 
 //add new beneficiary page
 const AddCollection = () => {
@@ -66,6 +68,16 @@ const AddCollection = () => {
 
     const deployResult = await getDeployDetails(savedCollection);
     console.log('...... Collection saved successfully', deployResult);
+    await sendDiscordMessage(
+      process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
+      process.env.REACT_APP_COLLECTIONS_TOKEN,
+      '',
+      '',
+      `Exciting news! [${collectionInputs.name}] Collection is just created. [Click here  to check more available collections.](${window.location.origin}/#/)`
+    );
+    await SendTweet(
+      `${collectionInputs.name} just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections`
+    );
     VIToast.success('Collection saved successfully');
     setIsSaveClicked(false);
     window.location.reload();

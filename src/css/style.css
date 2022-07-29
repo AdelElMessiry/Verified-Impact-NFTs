@@ -9682,6 +9682,14 @@ ul[class*="list-"]{
 .modal-header .modal-title {
     color: #fff;
 }
+.modal-header button{
+    font-size: 40px;
+    color: #fff;
+    opacity: 1;
+}
+.modal-header button span{
+    color: #fff;
+}
 .modal .modal-body {
     padding: 25px;
 }

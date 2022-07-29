@@ -17,9 +17,14 @@ import VINftsTooltip from '../../Element/Tooltip';
 import BuyNFTModal from '../../Element/BuyNFT';
 import Layout from '../../Layout';
 import CopyText from '../../Element/copyText';
+import ViewProfile from '../ViewProfile';
+import { ProfileFormsEnum } from '../../../Enums/index';
+
 //images
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import soldIcon from '../../../images/icon/sold.png';
+import viewIcon from '../../../images/icon/view.png';
+
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -50,8 +55,8 @@ const TagLi = ({ item, handleSetTag, tagActive, type, creator }) => {
         className={` tag ${tagActive ? 'btn active' : 'btn'}`}
         onClick={() => handleSetTag(item)}
       >
-        <input type='radio' />
-        <button className='site-button-secondry radius-sm'>
+        <input type="radio" />
+        <button className="site-button-secondry radius-sm">
           <span>
             {item?.name} {''}
           </span>{' '}
@@ -65,10 +70,10 @@ const TagLi = ({ item, handleSetTag, tagActive, type, creator }) => {
                   ? `./BeneficiaryNFTs?beneficiary=${item?.beneficiary}&campaign=${item?.id}`
                   : `./CreatorNFTs?creator=${creator}&collection=${item?.id}`
               }
-              className='mr-1 text-success text-underline'
+              className="mr-1 text-success text-underline"
             >
               <QRCode
-                className='mr-1'
+                className="mr-1"
                 value={
                   type === 'campaign'
                     ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${item?.beneficiary}&campaign=${item?.id}`
@@ -129,6 +134,8 @@ const CreatorNFTs = () => {
   const [selectedNFT, setSelectedNFT] = React.useState();
   const [collectionName, setCollectionName] = React.useState();
   const [creatorName, setCreatorName] = React.useState();
+  const [showViewModal, setShowViewModal] = React.useState(false);
+  const [selectedViewProfile, setSelectedViewProfile] = React.useState();
 
   //getting Collections details
   const getCollections = React.useCallback(async () => {
@@ -591,6 +598,16 @@ const CreatorNFTs = () => {
                   )}
                 &nbsp;
                 <CopyText link={window.location.href} />
+                &nbsp;&nbsp;
+                <img
+                  src={viewIcon}
+                  width='40px'
+                  onClick={() => {
+                    setSelectedViewProfile(creator);
+                    setShowViewModal(true);
+                  }}
+                  className='cursor-pointer'
+                />
               </h1>
 
               <div className='breadcrumb-row'>
@@ -748,6 +765,16 @@ const CreatorNFTs = () => {
           }}
           data={selectedNFT}
           isTransfer={false}
+        />
+      )}
+      {showViewModal && (
+        <ViewProfile
+          show={showViewModal}
+          handleCloseParent={() => {
+            setShowViewModal(false);
+          }}
+          data={selectedViewProfile}
+          formName={ProfileFormsEnum.CreatorProfile}
         />
       )}
     </Layout>

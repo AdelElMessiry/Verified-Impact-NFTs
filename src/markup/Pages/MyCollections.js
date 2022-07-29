@@ -718,6 +718,7 @@ const MyCollections = () => {
                                               setCaptions(NFts);
                                             }}
                                             index={index}
+                                            isCreation={true}
                                           />
                                         </li>
                                         {openSlider &&

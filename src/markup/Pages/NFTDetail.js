@@ -8,11 +8,13 @@ import Layout from '../Layout';
 import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
 import VINftsTooltip from '../Element/Tooltip';
 import soldIcon from '../../images/icon/sold.png';
+import { MenuItemUnstyled } from '@mui/base';
 
 //nft details component
 const NFTDetail = () => {
   const search = useLocation().search;
-  const { nfts } = useNFTState();
+  const { nfts, beneficiaries, creators, campaigns, collections } =
+    useNFTState();
   const queryParams = new URLSearchParams(search);
   const id = queryParams.get('id');
   const [item, setItem] = React.useState();
@@ -29,6 +31,35 @@ const NFTDetail = () => {
       }
     })();
   }, [allNFTs, nfts, id]);
+
+  const getNftDetails = React.useCallback(async () => {
+    if(item){
+      beneficiaries &&
+        creators &&
+        campaigns &&
+        collections &&
+        setItem({
+          ...item,
+          campaignName: campaigns.find(
+            ({ id }) => item.campaign === id
+          ).name,
+          creatorName: creators.find(
+            ({ address }) => item.creator === address
+          ).name,
+          beneficiaryName: beneficiaries.find(
+            ({ address }) => item.beneficiary === address
+          ).username,
+          collectionName: collections.find(
+            ({ id }) => item.collection === id
+          ).name,
+        });
+      }
+  }, [beneficiaries, creators, collections, campaigns]);
+
+  //getting nft details
+  React.useEffect(() => {
+    getNftDetails();
+  }, [getNftDetails]);
 
   const IconImage = ({ nft }) => {
     return (
@@ -140,7 +171,12 @@ const NFTDetail = () => {
                           {item?.price} {item?.currency} &nbsp;&nbsp;
                         </>
                       )}
-                    <IconImage nft={item} /> &nbsp;&nbsp;{' '}
+                    {item?.isCreatorOwner === true &&
+                      item.isForSale === 'true' && (
+                        <>
+                          <IconImage nft={item} /> &nbsp;&nbsp;{' '}
+                        </>
+                      )}
                     {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
                       <NFTTwitterShare item={item} />
                     )}

@@ -13,11 +13,13 @@ import ProfileForm from '../Element/profileForm';
 import { ProfileFormsEnum } from '../../Enums/index';
 
 import bnr1 from './../../images/banner/bnr1.jpg';
+import ManageCampaigns from './ManageCampaigns';
 
 const Profile = () => {
   const { beneficiaries, creators } = useNFTState();
   const { isLoggedIn, entityInfo } = useAuth();
   const [activeTab, setActiveTab] = useState('1');
+  const [activeBeneficiaryTab, setActiveBeneficiaryTab] = useState('4');
   const [normalProfile, setNormalProfile] = useState();
   const [beneficiaryProfile, setBeneficiaryProfile] = useState();
   const [creatorProfile, setCreatorProfile] = useState();
@@ -33,6 +35,10 @@ const Profile = () => {
     if (activeTab !== tab) setActiveTab(tab);
   };
 
+  const toggleBeneficiaryTab = (tab) => {
+    if (activeBeneficiaryTab !== tab) setActiveBeneficiaryTab(tab);
+  };
+
   const getUserProfiles = React.useCallback(async () => {
     try {
       const _beneficiaryProfile = beneficiaries?.find(
@@ -44,7 +50,6 @@ const Profile = () => {
       const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
       console.log(userProfiles);
       if (userProfiles) {
-        // 
         if (userProfiles.err === 'Address Not Found') {
           if (beneficiaries) {
             if (_beneficiaryProfile) {
@@ -100,7 +105,6 @@ const Profile = () => {
               setNoCreatorProfilesForThisUser(true);
             }
           }
-          debugger
           setNoProfilesForThisUser(true);
           setNormalProfile(null);
         } else {
@@ -119,7 +123,6 @@ const Profile = () => {
             }
           }
           let list = Object.values(userProfiles)[0];
-          
           userProfiles &&
             setNormalProfile(
               Object.keys(list.normal).length === 0 ? null : list.normal
@@ -222,7 +225,9 @@ const Profile = () => {
                 <div id='cost' className='tab-pane active py-5'>
                   <TabContent activeTab={activeTab}>
                     <TabPane tabId='1'>
-                      {(normalProfile==null||normalProfile || noProfilesForThisUser) && (
+                      {(normalProfile == null ||
+                        normalProfile ||
+                        noProfilesForThisUser) && (
                         <ProfileForm
                           formName={ProfileFormsEnum.NormalProfile}
                           isProfileExist={
@@ -258,18 +263,93 @@ const Profile = () => {
                       {(beneficiaryProfile ||
                         noBeneficiaryProfilesForThisUser) &&
                         beneficiaries && (
-                          <ProfileForm
-                            formName={ProfileFormsEnum.BeneficiaryProfile}
-                            isProfileExist={
-                              noProfilesForThisUser ||
-                              (beneficiaryProfile &&
-                                Object.keys(beneficiaryProfile).length === 0)
-                                ? false
-                                : true
-                            }
-                            formData={beneficiaryProfile}
-                            isVINftExist={!noBeneficiaryProfilesForThisUser}
-                          />
+                          <>
+                            <div className='dlab-tabs choseus-tabs'>
+                              <ul
+                                className='nav row justify-content-center'
+                                id='beneficiaryTab'
+                                role='tablist'
+                              >
+                                <li>
+                                  <Link
+                                    to={'#'}
+                                    className={
+                                      classnames({
+                                        active: activeBeneficiaryTab === '4',
+                                      }) + ''
+                                    }
+                                    onClick={() => {
+                                      toggleBeneficiaryTab('4');
+                                    }}
+                                  >
+                                    <span className='title-head'>
+                                      Account Info
+                                    </span>
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
+                                    to={'#'}
+                                    className={
+                                      classnames({
+                                        active: activeBeneficiaryTab === '5',
+                                      }) + ''
+                                    }
+                                    onClick={() => {
+                                      toggleBeneficiaryTab('5');
+                                    }}
+                                  >
+                                    <span className='title-head'>
+                                      Manage Campaigns
+                                    </span>
+                                  </Link>
+                                </li>
+                              </ul>
+                            </div>
+                            <div className='container'>
+                              <div className='tab-content chosesus-content'>
+                                <div
+                                  id='beneficiartMain'
+                                  className='tab-pane active py-5'
+                                >
+                                  <TabContent activeTab={activeBeneficiaryTab}>
+                                    <TabPane tabId='4'>
+                                      <ProfileForm
+                                        formName={
+                                          ProfileFormsEnum.BeneficiaryProfile
+                                        }
+                                        isProfileExist={
+                                          noProfilesForThisUser ||
+                                          (beneficiaryProfile &&
+                                            Object.keys(beneficiaryProfile)
+                                              .length === 0)
+                                            ? false
+                                            : true
+                                        }
+                                        formData={beneficiaryProfile}
+                                        isVINftExist={
+                                          !noBeneficiaryProfilesForThisUser
+                                        }
+                                      />
+                                    </TabPane>
+                                    <TabPane tabId='5'>
+                                      {beneficiaryProfile ? (
+                                        <ManageCampaigns
+                                          beneficiaryAddress={
+                                            beneficiaryProfile.address
+                                          }
+                                        />
+                                      ) : (
+                                        <h4 className='text-muted text-center my-5'>
+                                          Please Add Beneficiary First
+                                        </h4>
+                                      )}
+                                    </TabPane>
+                                  </TabContent>
+                                </div>
+                              </div>
+                            </div>
+                          </>
                         )}
                     </TabPane>
                   </TabContent>

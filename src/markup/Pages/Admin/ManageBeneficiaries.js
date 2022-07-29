@@ -1,44 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Col, Container, Row, Form } from 'react-bootstrap';
+import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { CLPublicKey } from 'casper-js-sdk';
-import { toast as VIToast } from 'react-toastify';
 
 import { useAuth } from '../../../contexts/AuthContext';
-import { approveBeneficiary } from '../../../api/addBeneficiary';
 import PromptLogin from '../PromptLogin';
 import Layout from '../../Layout';
 import VINFTsTooltip from '../../Element/Tooltip';
-import { getDeployDetails } from '../../../api/universal';
-import { profileClient } from '../../../api/profileInfo';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import plusIcon from './../../../images/icon/plus.png';
 import { useNFTState } from '../../../contexts/NFTContext';
+import BeneficiarySingleRow from '../../Element/beneficiarySingleRow';
 
 //Manage Beneficiaries page
 const ManageBeneficiaries = () => {
   const { isLoggedIn, entityInfo } = useAuth();
   const { beneficiaries } = useNFTState();
-
-  //saving new collection function
-  const handleApproveBeneficiary = async (beneficiary) => {
-    
-    const approveBeneficiaryOut = await approveBeneficiary(
-      beneficiary.address,
-      beneficiary.approved === 'true' ? false : true,
-      CLPublicKey.fromHex(entityInfo.publicKey)
-    );
-    const deployResult = await getDeployDetails(approveBeneficiaryOut);
-    console.log('......  saved successfully', deployResult);
-    VIToast.success(
-      `Beneficiary is ${
-        beneficiary.approved === 'true' ? 'unapproved' : 'approved'
-      } successfully`
-    );
-
-    window.location.reload();
-  };
 
   return (
     <Layout>
@@ -90,36 +67,36 @@ const ManageBeneficiaries = () => {
                   <Container>
                     <Row>
                       <Col>
-                        <table className='table'>
-                          <thead>
-                            <tr>
-                              <th scope='col'></th>
-                              <th scope='col'>Name</th>
-                              <th scope='col'>Address</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {beneficiaries &&
-                              beneficiaries?.map((beneficiary) => (
-                                <tr key={beneficiary.address}>
-                                  <th scope='row'>
-                                    <button
-                                      className='btn btn-success'
-                                      onClick={() =>
-                                        handleApproveBeneficiary(beneficiary)
-                                      }
-                                    >
-                                      {beneficiary.approved == 'true'
-                                        ? 'Unapprove'
-                                        : 'Approve'}
-                                    </button>
-                                  </th>
-                                  <td>{beneficiary.username}</td>
-                                  <td>{beneficiary.address}</td>
-                                </tr>
-                              ))}
-                          </tbody>
-                        </table>
+                        {beneficiaries ? (
+                          <table className='table'>
+                            <thead>
+                              <tr>
+                                <th scope='col'></th>
+                                <th scope='col'>Name</th>
+                                <th scope='col'>Address</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {beneficiaries.length > 0 ? (
+                                beneficiaries?.map((beneficiary) => (
+                                  <BeneficiarySingleRow
+                                    beneficiary={beneficiary}
+                                    key={beneficiary.address}
+                                  />
+                                ))
+                              ) : (
+                                <h4 className='text-muted text-center my-5'>
+                                  No Beneficiaries registered yet
+                                </h4>
+                              )}
+                            </tbody>
+                          </table>
+                        ) : (
+                          <div className='vinft-section-loader text-center my-5'>
+                            <Spinner animation='border' variant='success' />
+                            <p>Fetching Beneficiaries Please wait...</p>
+                          </div>
+                        )}
                       </Col>
                     </Row>
                   </Container>
