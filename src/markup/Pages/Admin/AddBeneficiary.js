@@ -28,25 +28,14 @@ const AddBeneficiary = () => {
   // },[])
   //saving new beneficiary function
   const saveBeneficiary = async () => {
-    console.log(
-      "BENEFICIARIES_WEBHOOK_ID",process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
-      "BENEFICIARIES_TOKEN",process.env.REACT_APP_BENEFICIARIES_TOKEN,
-      beneficiaryInputs.name
-      )
     const savedBeneficiary = await addBeneficiary(
       beneficiaryInputs.name,
       beneficiaryInputs.description,
       beneficiaryInputs.address,
       CLPublicKey.fromHex(entityInfo.publicKey)
       // 'UPDATE'
-      ).catch((error)=>{
-        console.log(error)
-        VIToast.error("add beneficiary is failed with error ")
-      });
-    const deployResult = await getDeployDetails(savedBeneficiary).catch((error)=>{
-      console.log(error)
-      VIToast.error("Deployment failed with error ")
-    })
+      );
+    const deployResult = await getDeployDetails(savedBeneficiary)
     console.log('...... Beneficiary saved successfully', deployResult);
     VIToast.success('Beneficiary saved successfully');
     await sendDiscordMessage(
@@ -54,10 +43,10 @@ const AddBeneficiary = () => {
       process.env.REACT_APP_BENEFICIARIES_TOKEN,
       beneficiaryInputs.name,
       '',
-      `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)] `
+      `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)]  @vinfts @casper_network @devxdao `
     );
     await SendTweet(
-      `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.`
+      `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
     );
     setBeneficiaryInputs({
       name: '',
