@@ -153,7 +153,7 @@ const BeneficiaryNFTs = () => {
       beneficiaries.find(({ address }) => beneficiary === address);
     setSelectedBeneficiary &&
       setBeneficiaryDescription(setSelectedBeneficiary.description);
-    setSelectedBeneficiary && setBeneficiaryName(setSelectedBeneficiary.name);
+    setSelectedBeneficiary && setBeneficiaryName(setSelectedBeneficiary.username);
   }, [beneficiary, beneficiaries]);
 
   React.useEffect(() => {
@@ -624,7 +624,7 @@ const BeneficiaryNFTs = () => {
                     setSelectedViewProfile(beneficiary);
                     setShowViewModal(true);
                   }}
-                  className='cursor-pointer d-none'
+                  className='cursor-pointer'
                 />
               </h1>
               <p className='text-white ben-desc'>

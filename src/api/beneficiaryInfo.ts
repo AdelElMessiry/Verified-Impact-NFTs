@@ -1,4 +1,4 @@
-import { CLPublicKey } from 'casper-js-sdk';
+// import { CLPublicKey } from 'casper-js-sdk';
 import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from './campaignInfo';
 
@@ -100,7 +100,7 @@ export async function _getBeneficiariesCampaignsList(
   const mappedBeneficiariesList: any = [];
 
   const pluckedCampaigns = campaignsList
-    .map(({ wallet_address }: any) => CLPublicKey.fromHex(wallet_address).toAccountHashStr())
+    .map(({ wallet_address }: any) => wallet_address)
     .filter(
       (creator: any, index: any, creators: any) =>
         creators.indexOf(creator) === index
@@ -112,7 +112,7 @@ export async function _getBeneficiariesCampaignsList(
           ...beneficiary,
           campaigns: campaignsList.filter(
             (campaign: any, index: any, campaigns: any) =>
-            CLPublicKey.fromHex(campaign.wallet_address).toAccountHashStr() === beneficiary.address
+              campaign.wallet_address === beneficiary.address
             // &&
             // index ===
             //   collections.findIndex(

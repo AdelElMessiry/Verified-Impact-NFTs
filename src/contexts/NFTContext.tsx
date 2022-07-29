@@ -1,5 +1,5 @@
 import React from 'react';
-import { CLPublicKey } from 'casper-js-sdk';
+// import { CLPublicKey } from 'casper-js-sdk';
 import { getBeneficiariesList } from '../api/beneficiaryInfo';
 import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from '../api/campaignInfo';
@@ -21,6 +21,7 @@ interface NFTState {
   collections?: [];
   uniqueCollections?: [];
   creators?: [];
+  vINFTsBeneficiaries?: [];
   isLoading: boolean;
   beneficiaryCount?: Number;
   campaignsCount?: Number;
@@ -35,9 +36,8 @@ type NFTAction =
   | { type: NFTActionTypes.SUCCESS; payload: any };
 
 const NFTStateContext = React.createContext<NFTState | undefined>(undefined);
-const NFTDispatchContext = React.createContext<NFTDispatch | undefined>(
-  undefined
-);
+const NFTDispatchContext =
+  React.createContext<NFTDispatch | undefined>(undefined);
 
 function nftReducer(state: NFTState, action: NFTAction): NFTState {
   switch (action.type) {
@@ -60,6 +60,7 @@ function nftReducer(state: NFTState, action: NFTAction): NFTState {
         campaignsCount: action.payload.campaignsCount,
         creatorsCount: action.payload.creatorsCount,
         collectionsCount: action.payload.collectionsCount,
+        vINFTsBeneficiaries: action.payload.vINFTsBeneficiaries,
       };
     }
     default: {
@@ -91,15 +92,16 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
       type: NFTActionTypes.SUCCESS,
       payload: {
         nfts: nftsList,
-        beneficiaryCount: parseInt(beneficiaryCount.toString()) || 0,
+        beneficiaryCount: undefined,
         campaignsCount: parseInt(campaignsCount.toString()) || 0,
         creatorsCount: parseInt(creatorsCount.toString()) || 0,
         collectionsCount: parseInt(collectionsCount.toString()) || 0,
-        collections: [],
-        uniqueCollections: [],
-        creators: [],
-        campaigns: [],
-        beneficiaries: [],
+        collections: undefined,
+        uniqueCollections: undefined,
+        creators: undefined,
+        campaigns: undefined,
+        beneficiaries: undefined,
+        vINFTsBeneficiaries: undefined,
       },
     });
 
@@ -107,14 +109,16 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
     let profiles = await profileClient.getProfilesList();
 
     profiles &&
-      profiles.map((data: any) => {
+      profiles.forEach((data: any) => {
         let lists: any = Object.values(data)[0];
 
         Object.keys(lists.beneficiary).length !== 0 &&
           selectedList.push(lists.beneficiary);
       });
-
     const beneficiariesList = profiles && selectedList;
+
+    const beneficiariesVINFTsList = await getBeneficiariesList();
+
     // beneficiariesList && setBeneficiaries(beneficiariesList);
 
     const campaignsList = await getCampaignsList();
@@ -143,10 +147,8 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
             ?.name || '',
         beneficiaryName:
           beneficiariesList.find(
-            ({ address }: any) =>
-              CLPublicKey.fromHex(nft.beneficiary).toAccountHashStr() ===
-              address
-          )?.name || '',
+            ({ address }: any) => nft.beneficiary === address
+          )?.username || '',
         collectionName:
           collectionsList.collectionsList.find(
             ({ id }: any) => nft.collection === id
@@ -166,7 +168,8 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
         type: NFTActionTypes.SUCCESS,
         payload: {
           nfts: mappedNFTS,
-          beneficiaryCount: parseInt(beneficiaryCount.toString()),
+          // beneficiaryCount: parseInt(beneficiaryCount.toString()),
+          beneficiaryCount: beneficiariesList.length,
           campaignsCount: parseInt(campaignsCount.toString()),
           creatorsCount: parseInt(creatorsCount.toString()),
           collectionsCount: parseInt(collectionsCount.toString()),
@@ -175,6 +178,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
           creators: creatorsList,
           campaigns: campaignsList,
           beneficiaries: beneficiariesList,
+          vINFTsBeneficiaries: beneficiariesVINFTsList,
         },
       });
   }, []);

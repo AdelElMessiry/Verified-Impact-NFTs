@@ -17,10 +17,8 @@ const ProfileForm = ({
   formData,
   isVINftExist = false,
 }) => {
-  // debugger;
   const { entityInfo, refreshAuth } = useAuth();
   //setting initial values of controls
-  // debugger;
   const [state, setState] = useState({
     inputs: {
       userName: '',
@@ -172,14 +170,12 @@ const ProfileForm = ({
   }
 
   async function saveProfile(ProfileImgURL, NFTImgURL) {
-    debugger;
     if (!uploadedProfileImageURL || !uploadedNFTImageURL) {
       return VIToast.error('Please upload image or enter direct URL');
     }
     if (entityInfo.publicKey) {
       let saveDeployHash;
       console.log(formData);
-      // debugger;
       try {
         saveDeployHash = await profileClient.addUpdateProfile(
           CLPublicKey.fromHex(entityInfo.publicKey),

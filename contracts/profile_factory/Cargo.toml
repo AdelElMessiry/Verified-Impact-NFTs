@@ -2,7 +2,6 @@
 
 members = [
     "factory",
-    "factory-tests"
 ]
 
 [profile.release]

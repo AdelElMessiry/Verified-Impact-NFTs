@@ -6,6 +6,7 @@ import {
   CasperServiceByJsonRPC,
   DeployUtil,
   Signer,
+  CLValueBuilder,
 } from 'casper-js-sdk';
 
 import { cep47 } from '../lib/cep47';
@@ -160,13 +161,13 @@ export const nativeTransfer = async (
   toAddress: any,
   amount: any,
   isSignerTransfer: boolean,
-  ifOwner?: boolean
+  ifHash?: boolean
 ) => {
   const MOTE_RATE = 1000000000;
   console.log(selectedAddress);
 
   const fromAccount = CLPublicKey.fromHex(selectedAddress);
-  const toAccount = !ifOwner ? CLPublicKey.fromHex(toAddress) : toAddress;
+  const toAccount = ifHash ? toAddress : CLPublicKey.fromHex(toAddress);
   amount = parseInt(amount) * MOTE_RATE;
   const ttl = 1800000;
 
@@ -218,7 +219,8 @@ export const transferFees = async (buyer: string, tokenId: string) => {
   owner = await hashToURef(owner);
   const deployer = DEPLOYER_ACC;
 
-  const { beneficiary, price, campaign } = tokenDetails;
+  let { beneficiary, price, campaign } = tokenDetails;
+  beneficiary = await hashToURef(`account-hash-${beneficiary}`);
 
   const campaignDetails: any = await getCampaignDetails(campaign);
   const parsedCampaigns: any = parseCampaign(campaignDetails);
@@ -238,7 +240,13 @@ export const transferFees = async (buyer: string, tokenId: string) => {
 
   const beneficiaryTransfer =
     beneficiaryAmount &&
-    (await nativeTransfer(deployer, beneficiary, beneficiaryAmount, false));
+    (await nativeTransfer(
+      deployer,
+      beneficiary,
+      beneficiaryAmount,
+      false,
+      true
+    ));
 
   const ownerTransfer =
     ownerAmount &&

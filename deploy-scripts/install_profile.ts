@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 import { Keys, CLPublicKey } from 'casper-js-sdk';
 import { resolve } from 'path';
 
-import { cep47 } from '../src/lib/cep47';
+import { cep47 } from './cep47';
 
 import { getDeploy, getAccountInfo, getAccountNamedKeyValue } from './utils';
 config({ path: '.env' });
@@ -14,7 +14,7 @@ const {
   WASM_PROFILE_PATH,
   CASPER_PRIVATE_KEY,
   CONTRACT_PROFILE_NAME,
-  INSTALL_PAYMENT_AMOUNT,
+  INSTALL_PROFILE_PAYMENT_AMOUNT,
 } = process.env;
 console.log(ADMIN);
 
@@ -33,10 +33,10 @@ const installProfileContract = async () => {
   const installDeployHash = await cep47.installProfile(
     getBinary(resolve(WASM_PROFILE_PATH as string)!),
     {
-      contractName: CONTRACT_PROFILE_NAME!,
+      // contractName: CONTRACT_PROFILE_NAME!,
       admin: CLPublicKey.fromHex(ADMIN!),
     },
-    INSTALL_PAYMENT_AMOUNT!,
+    INSTALL_PROFILE_PAYMENT_AMOUNT!,
     KEYS.publicKey,
     [KEYS]
   );

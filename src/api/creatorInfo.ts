@@ -26,6 +26,7 @@ export async function getCreatorsList() {
     await getCreatorDetails((id + 1).toString())
       .then(async (rawCreator: any) => {
         const parsedCreator = parseCreator(rawCreator);
+
         creatorsList.push(parsedCreator);
       })
       .catch((err) => {
