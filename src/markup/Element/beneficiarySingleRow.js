@@ -6,7 +6,8 @@ import { toast as VIToast } from 'react-toastify';
 import { approveBeneficiary } from '../../api/addBeneficiary';
 import { getDeployDetails } from '../../api/universal';
 import { useAuth } from '../../contexts/AuthContext';
-
+import { sendDiscordMessage } from '../../utils/discordEvents';
+import { SendTweet } from '../../utils/VINFTsTweets';
 //Manage Beneficiaries page
 const BeneficiarySingleRow = ({beneficiary}) => {
   const { isLoggedIn, entityInfo } = useAuth();
@@ -29,6 +30,20 @@ const BeneficiarySingleRow = ({beneficiary}) => {
           beneficiary.approved === 'true' ? 'unapproved' : 'approved'
         } successfully`
       );
+      // beneficiary.approved state is checking on the passed beneficiary object from the parent with the old state before admin approval
+      if(beneficiary.approved === 'false'){
+        await sendDiscordMessage(
+          process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
+          process.env.REACT_APP_BENEFICIARIES_TOKEN,
+          beneficiary.username,
+          '',
+          `Great news! [${beneficiary.username}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)] @vinfts @casper_network @devxdao`
+        );
+        await SendTweet(
+          `Great news! ${beneficiary.username} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao `
+        );
+      }
+      
       setIsApproveClicked(false);
 
       window.location.reload();
