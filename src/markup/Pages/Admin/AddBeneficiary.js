@@ -15,6 +15,7 @@ import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet } from '../../../utils/VINFTsTweets';
 
+
 //add new beneficiary page
 const AddBeneficiary = () => {
   const { isLoggedIn, entityInfo } = useAuth();
@@ -24,18 +25,28 @@ const AddBeneficiary = () => {
     description: '',
     address: '',
   });
-
+  // },[])
   //saving new beneficiary function
   const saveBeneficiary = async () => {
+    console.log(
+      "BENEFICIARIES_WEBHOOK_ID",process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
+      "BENEFICIARIES_TOKEN",process.env.REACT_APP_BENEFICIARIES_TOKEN,
+      beneficiaryInputs.name
+      )
     const savedBeneficiary = await addBeneficiary(
       beneficiaryInputs.name,
       beneficiaryInputs.description,
       beneficiaryInputs.address,
       CLPublicKey.fromHex(entityInfo.publicKey)
       // 'UPDATE'
-    );
-
-    const deployResult = await getDeployDetails(savedBeneficiary);
+      ).catch((error)=>{
+        console.log(error)
+        VIToast.error("add beneficiary is failed with error ")
+      });
+    const deployResult = await getDeployDetails(savedBeneficiary).catch((error)=>{
+      console.log(error)
+      VIToast.error("Deployment failed with error ")
+    })
     console.log('...... Beneficiary saved successfully', deployResult);
     VIToast.success('Beneficiary saved successfully');
     await sendDiscordMessage(
