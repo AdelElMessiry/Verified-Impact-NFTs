@@ -10,7 +10,7 @@ import { ProfileFormsEnum } from '../../Enums/index';
 import { useAuth } from '../../contexts/AuthContext';
 import { getDeployDetails } from '../../api/universal';
 import { uploadImg } from '../../api/imageCDN';
-
+import { SocialLinks } from 'social-links';
 const ProfileForm = ({
   formName,
   isProfileExist,
@@ -40,6 +40,7 @@ const ProfileForm = ({
     },
   });
 
+  
   const [uploadedProfileImageURL, setUploadedProfileImage] =
     React.useState(null);
   const [uploadedProfileFile, setUploadedProfileFile] = React.useState(null);
@@ -54,7 +55,13 @@ const ProfileForm = ({
   const [showNFTURLErrorMsg, setShowNFTURLErrorMsg] = React.useState(false);
   const [showExternalURLErrorMsg, setShowExternalURLErrorMsg] =
     React.useState(false);
-
+const [socialErrors , setSocialErrors] = useState({
+  twitter: true,
+  instagram: true,
+  medium: true,
+  facebook: true,
+  telegram: true
+})
   React.useEffect(() => {
     setState({
       inputs: {
@@ -123,7 +130,16 @@ const ProfileForm = ({
         : setShowExternalURLErrorMsg(true);
     }
   };
-
+  const socialLinks = new SocialLinks();
+  // check social links validation
+  const checkSocialLinksValidation  = (value , socialType) => {
+    const  urlSocialInputs = socialErrors
+      urlSocialInputs[socialType] = socialLinks.isValid(socialType, value)
+      setSocialErrors({
+        ...socialErrors,
+        urlSocialInputs,
+      });
+    }
   //handling minting new NFT
   async function handleSave() {
     if (!uploadedProfileImageURL) {
@@ -330,8 +346,14 @@ const ProfileForm = ({
                 name='twitter'
                 className='form-control'
                 value={state.inputs.twitter}
-                onChange={(e) => handleChange(e)}
+                onChange={(e) => {
+                  handleChange(e);
+                  checkSocialLinksValidation(e.target.value,'twitter')
+                }}
               />
+              {!socialErrors.twitter &&(
+                <span className='text-danger'>Please enter Valid Twitter URL </span>
+              )}
             </Col>
             <Col>
               <span>Instagram</span>
@@ -340,8 +362,14 @@ const ProfileForm = ({
                 name='instagram'
                 className='form-control'
                 value={state.inputs.instagram}
-                onChange={(e) => handleChange(e)}
+                onChange={(e) => {
+                  handleChange(e);
+                  checkSocialLinksValidation(e.target.value,'instagram')
+                }}
               />
+              {!socialErrors.instagram &&(
+                <span className='text-danger'>Please enter Valid Instagram URL </span>
+              )}
             </Col>
           </Row>
           <Row className='form-group'>
@@ -352,8 +380,14 @@ const ProfileForm = ({
                 name='facebook'
                 className='form-control'
                 value={state.inputs.facebook}
-                onChange={(e) => handleChange(e)}
+                onChange={(e) => {
+                  handleChange(e);
+                  checkSocialLinksValidation(e.target.value ,'facebook' )
+                }}
               />
+              {!socialErrors.facebook &&(
+                <span className='text-danger'>Please enter Valid Facebook URL </span>
+              )}
             </Col>
             <Col>
               <span>Medium</span>
@@ -362,8 +396,14 @@ const ProfileForm = ({
                 name='medium'
                 className='form-control'
                 value={state.inputs.medium}
-                onChange={(e) => handleChange(e)}
+                onChange={(e) => {
+                  handleChange(e);
+                  checkSocialLinksValidation(e.target.value ,'medium')
+                }}
               />
+              {!socialErrors.medium &&(
+                <span className='text-danger'>Please enter Valid Medium URL </span>
+              )}
             </Col>
           </Row>
           <Row className='form-group'>
@@ -384,9 +424,16 @@ const ProfileForm = ({
                 name='telegram'
                 className='form-control'
                 value={state.inputs.telegram}
-                onChange={(e) => handleChange(e)}
+                onChange={(e) => {
+                  handleChange(e);
+                  checkSocialLinksValidation(e.target.value , 'telegram')
+                }}
               />
+              {!socialErrors.telegram &&(
+                <span className='text-danger'>Please enter Valid Telegram URL </span>
+              )}
             </Col>
+            
           </Row>
         </Col>
         <Col>
