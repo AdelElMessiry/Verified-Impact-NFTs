@@ -52,6 +52,8 @@ const ProfileForm = ({
   const [showProfileURLErrorMsg, setShowProfileURLErrorMsg] =
     React.useState(false);
   const [showNFTURLErrorMsg, setShowNFTURLErrorMsg] = React.useState(false);
+  const [showExternalURLErrorMsg, setShowExternalURLErrorMsg] =
+    React.useState(false);
 
   React.useEffect(() => {
     setState({
@@ -106,15 +108,19 @@ const ProfileForm = ({
     }
   };
 
-  const checkURLValidation = (value, isProfile) => {
+  const checkURLValidation = (value, urlNum) => {
     if (validator.isURL(value)) {
-      isProfile
+      urlNum == 1
         ? setShowProfileURLErrorMsg(false)
-        : setShowNFTURLErrorMsg(false);
+        : urlNum == 2
+        ? setShowNFTURLErrorMsg(false)
+        : setShowExternalURLErrorMsg(false);
     } else {
-      isProfile
+      urlNum == 1
         ? setShowProfileURLErrorMsg(true)
-        : setShowNFTURLErrorMsg(false);
+        : urlNum == 2
+        ? setShowNFTURLErrorMsg(true)
+        : setShowExternalURLErrorMsg(true);
     }
   };
 
@@ -131,7 +137,8 @@ const ProfileForm = ({
     }
     if (
       (state.inputs.isProfileImageURL && showProfileURLErrorMsg) ||
-      (state.inputs.isNFTImageURL && showNFTURLErrorMsg)
+      (state.inputs.isNFTImageURL && showNFTURLErrorMsg) ||
+      (state.inputs.externalSiteLink !== '' && showExternalURLErrorMsg)
     ) {
       return;
     }
@@ -203,7 +210,6 @@ const ProfileForm = ({
           CLPublicKey.fromHex(entityInfo.publicKey),
           isProfileExist ? 'UPDATE' : 'ADD'
         );
-       
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
@@ -244,7 +250,9 @@ const ProfileForm = ({
         <Col>
           <Row className='form-group'>
             <Col>
-              <span>User Name</span>
+              <span>
+                User Name <span className='text-danger'>*</span>
+              </span>
               <input
                 type='text'
                 name='userName'
@@ -294,8 +302,14 @@ const ProfileForm = ({
                 name='externalSiteLink'
                 className='form-control'
                 value={state.inputs.externalSiteLink}
-                onChange={(e) => handleChange(e)}
+                onChange={(e) => {
+                  handleChange(e);
+                  checkURLValidation(e.target.value, 3);
+                }}
               />
+              {showExternalURLErrorMsg && (
+                <span className='text-danger'>Please enter Valid URL </span>
+              )}
             </Col>
             <Col>
               <span>Phone</span>
@@ -385,7 +399,9 @@ const ProfileForm = ({
                 onChange={(e) => handleChange(e)}
                 value={state.inputs.isProfileImageURL}
                 name='isProfileImageURL'
-              />
+                className='float-left'
+              />{' '}
+              <span className='text-danger'>*</span>
             </Col>
           </Row>
           <Row className='form-group'>
@@ -399,7 +415,7 @@ const ProfileForm = ({
                     className='form-control'
                     onChange={(e) => {
                       setUploadedProfileImage(e.target.value);
-                      checkURLValidation(e.target.value, true);
+                      checkURLValidation(e.target.value, 1);
                     }}
                     value={uploadedProfileImageURL || ''}
                   />
@@ -439,7 +455,9 @@ const ProfileForm = ({
                 onChange={(e) => handleChange(e)}
                 value={state.inputs.isNFTImageURL}
                 name='isNFTImageURL'
-              />
+                className='float-left'
+              />{' '}
+              <span className='text-danger'>*</span>
             </Col>
           </Row>
           <Row className='form-group'>
@@ -455,6 +473,7 @@ const ProfileForm = ({
                     onChange={(e) => {
                       setUploadedNFTImage(e.target.value);
                       setUploadedNFTFile(e.target.value);
+                      checkURLValidation(e.target.value, 2);
                     }}
                     value={uploadedNFTImageURL || ''}
                   />
