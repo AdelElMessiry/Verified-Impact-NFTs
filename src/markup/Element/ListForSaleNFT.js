@@ -28,7 +28,11 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
         price
       );
       if (deployUpdatedNftResult) {
-        VIToast.success(data.isForSale === 'true' ? "NFT is unlisted for sale" : 'NFT is listed for sale');
+        VIToast.success(
+          data.isForSale === 'true'
+            ? 'NFT is unlisted for sale'
+            : 'NFT is listed for sale'
+        );
         setIsListForSaleClicked(false);
         handleClose();
         window.location.reload();
@@ -87,6 +91,11 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
                   onChange={(e) => setPrice(e.target.value)}
                   value={price}
                 />
+                {price < 250 && (
+                  <span className='text-danger'>
+                    NFT price should be more than 250 CSPR
+                  </span>
+                )}
               </div>
             </div>
           )}
@@ -101,16 +110,15 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
           onClick={() => {
             ListNFTForSale();
           }}
-          disabled={isListForSaleClicked}
+          disabled={isListForSaleClicked||(price!==''&&price<250)}
         >
           {isListForSaleClicked ? (
             <Spinner animation='border' variant='light' />
+          ) : data.isForSale === 'true' ? (
+            'UnList NFT For Sale'
           ) : (
-            data.isForSale === 'true'
-            ? 'UnList NFT For Sale'
-            : 'List NFT For Sale'
+            'List NFT For Sale'
           )}
-          
         </button>
       </Modal.Footer>
     </Modal>

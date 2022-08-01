@@ -3,6 +3,7 @@ import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import { toast as VIToast } from 'react-toastify';
 import { CLPublicKey } from 'casper-js-sdk';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
+import validator from 'validator';
 
 import { getDeployDetails } from '../../../api/universal';
 import { addCollection, updateCollection } from '../../../api/addCollection';

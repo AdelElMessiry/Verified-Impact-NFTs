@@ -240,7 +240,7 @@ const MintNFT = () => {
         cloudURL = await uploadImg(uploadedFile);
       } catch (err) {
         console.log(err);
-        VIToast.error("Image couldn't be uploaded to cloud CDN !");
+        VIToast.error('Image couldn't be uploaded to cloud CDN !');
 
         return;
       }
@@ -354,12 +354,12 @@ const MintNFT = () => {
           '',
           `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
         );
-        let image = encodeURI(imgURL)
+        let image = encodeURI(imgURL);
         await SendTweetWithImage(
           image,
           `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao `
         );
-        
+
         window.location.reload();
         setIsMintClicked(false);
         setIsMintAnotherClicked(false);
@@ -510,7 +510,7 @@ const MintNFT = () => {
                               <span className='text-danger'>*</span>
                             </label>
 
-                            {collectionsList||!isCreatorExist ? (
+                            {collectionsList || !isCreatorExist ? (
                               <CreatableSelect
                                 isClearable
                                 isLoading={isLoading}
@@ -657,6 +657,11 @@ const MintNFT = () => {
                                   *
                                 </span>
                               )}
+                              {state.inputs.isForSale &&state.inputs.price!==''&& state.inputs.price < 250 && (
+                                <span className='text-danger'>
+                                  NFT price should be more than 250 CSPR
+                                </span>
+                              )}
                             </div>
                           </Col>
                           <Col>
@@ -671,7 +676,9 @@ const MintNFT = () => {
                                 <option value={'CSPR'}>CSPR</option>
                               </select>
                               {state.inputs.isForSale && (
-                                <span className='text-danger required-field-symbol'>*</span>
+                                <span className='text-danger required-field-symbol'>
+                                  *
+                                </span>
                               )}
                             </div>
                           </Col>
@@ -734,7 +741,8 @@ const MintNFT = () => {
                               creator === '' ||
                               state.inputs.name === '' ||
                               (state.inputs.isForSale &&
-                                state.inputs.price === '') ||
+                                (state.inputs.price === '' ||
+                                  state.inputs.price < 250)) ||
                               isMintAnotherClicked ||
                               isMintClicked
                             }
