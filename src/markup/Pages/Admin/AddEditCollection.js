@@ -80,35 +80,35 @@ const AddCollection = () => {
         CLPublicKey.fromHex(entityInfo.publicKey)
       );
 
-      const deployResult = await getDeployDetails(savedCollection);
-      console.log('...... Collection saved successfully', deployResult);
-      await sendDiscordMessage(
-        process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
-        process.env.REACT_APP_COLLECTIONS_TOKEN,
-        '',
-        '',
-        `Exciting news! [${collectionInputs.name}] Collection is just created. [Click here  to check more available collections.](${window.location.origin}/#/)`
-      );
-      await SendTweet(
-        `${collectionInputs.name} just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections`
-      );
-      VIToast.success('Collection saved successfully');
-      setIsSaveClicked(false);
-      window.location.reload();
-      setCollectionInputs({
-        name: '',
-        description: '',
-        creator: '',
-        url: '',
-      });
-    } catch (err) {
-      if (err.message.includes('User Cancelled')) {
-        VIToast.error('User Cancelled Signing');
-      } else {
-        VIToast.error('Error happened please try again later');
-      }
-      setIsSaveClicked(false);
+    const deployResult = await getDeployDetails(savedCollection);
+    console.log('...... Collection saved successfully', deployResult);
+    await sendDiscordMessage(
+      process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
+      process.env.REACT_APP_COLLECTIONS_TOKEN,
+      '',
+      '',
+      `Exciting news! [${collectionInputs.name}] Collection is just created. [Click here  to check more available collections.](${window.location.origin}/#/) @vinfts @casper_network @devxdao`
+    );
+    await SendTweet(
+      `${collectionInputs.name} just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections`
+    );
+    VIToast.success('Collection saved successfully');
+    setIsSaveClicked(false);
+    window.location.reload();
+    setCollectionInputs({
+      name: '',
+      description: '',
+      creator: '',
+      url: '',
+    });
+  } catch (err) {
+    if (err.message.includes('User Cancelled')) {
+      VIToast.error('User Cancelled Signing');
+    } else {
+      VIToast.error('Error happened please try again later');
     }
+    setIsSaveClicked(false);
+  }
   };
 
   const editCollection = async () => {

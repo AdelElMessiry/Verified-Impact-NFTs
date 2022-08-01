@@ -15,6 +15,7 @@ import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet } from '../../../utils/VINFTsTweets';
 
+
 //add new beneficiary page
 const AddBeneficiary = () => {
   const { isLoggedIn, entityInfo } = useAuth();
@@ -26,6 +27,7 @@ const AddBeneficiary = () => {
   });
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
 
+  // },[])
   //saving new beneficiary function
   const saveBeneficiary = async () => {
     setIsButtonClicked(true);
@@ -36,9 +38,8 @@ const AddBeneficiary = () => {
       beneficiaryInputs.address,
       CLPublicKey.fromHex(entityInfo.publicKey)
       // 'UPDATE'
-    );
-
-    const deployResult = await getDeployDetails(savedBeneficiary);
+      );
+    const deployResult = await getDeployDetails(savedBeneficiary)
     console.log('...... Beneficiary saved successfully', deployResult);
     VIToast.success('Beneficiary saved successfully');
     await sendDiscordMessage(
@@ -46,10 +47,10 @@ const AddBeneficiary = () => {
       process.env.REACT_APP_BENEFICIARIES_TOKEN,
       beneficiaryInputs.name,
       '',
-      `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)] `
+      `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)]  @vinfts @casper_network @devxdao `
     );
     await SendTweet(
-      `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.`
+      `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
     );
     setBeneficiaryInputs({
       name: '',
