@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import { toast as VIToast } from 'react-toastify';
 import { CLPublicKey } from 'casper-js-sdk';
 
@@ -24,9 +24,11 @@ const AddBeneficiary = () => {
     description: '',
     address: '',
   });
+  const [isButtonClicked, setIsButtonClicked] = React.useState(false);
 
   //saving new beneficiary function
   const saveBeneficiary = async () => {
+    setIsButtonClicked(true);
     const savedBeneficiary = await addBeneficiary(
       beneficiaryInputs.name,
       beneficiaryInputs.description,
@@ -53,8 +55,8 @@ const AddBeneficiary = () => {
       description: '',
       address: '',
     });
+    setIsButtonClicked(false);
   };
-
   return (
     <>
       <Layout>
@@ -82,34 +84,45 @@ const AddBeneficiary = () => {
                     <Container>
                       <Row>
                         <Col>
-                          <input
-                            type='text'
-                            name='name'
-                            placeholder='Name'
-                            className='form-control'
-                            value={beneficiaryInputs.name}
-                            onChange={(e) =>
-                              setBeneficiaryInputs({
-                                ...beneficiaryInputs,
-                                name: e.target.value,
-                              })
-                            }
-                          />
+                          <div className='required-field vinft-bg-gray'>
+                            <input
+                              type='text'
+                              name='name'
+                              placeholder='Name'
+                              className='form-control'
+                              value={beneficiaryInputs.name}
+                              onChange={(e) =>
+                                setBeneficiaryInputs({
+                                  ...beneficiaryInputs,
+                                  name: e.target.value,
+                                })
+                              }
+                            />
+                            <span className='text-danger required-field-symbol'>
+                              *
+                            </span>
+                          </div>
                         </Col>
                         <Col>
-                          <input
-                            type='text'
-                            placeholder='Address'
-                            name='address'
-                            className='form-control'
-                            value={beneficiaryInputs.address}
-                            onChange={(e) =>
-                              setBeneficiaryInputs({
-                                ...beneficiaryInputs,
-                                address: e.target.value,
-                              })
-                            }
-                          />
+                          <div className='required-field'>
+                            <input
+                              type='text'
+                              placeholder='Address'
+                              name='address'
+                              className='form-control'
+                              value={beneficiaryInputs.address}
+                              onChange={(e) =>
+                                setBeneficiaryInputs({
+                                  ...beneficiaryInputs,
+                                  address: e.target.value,
+                                })
+                              }
+                            />
+
+                            <span className='text-danger required-field-symbol'>
+                              *
+                            </span>
+                          </div>{' '}
                         </Col>
                       </Row>
                       <Row className='mt-4'>
@@ -131,16 +144,22 @@ const AddBeneficiary = () => {
                       </Row>
                       <Row className='mt-4'>
                         <Col>
-                          {' '}
-                          <p className='form-submit'>
-                            <input
-                              type='button'
-                              value='Create'
-                              className='btn btn-success'
-                              name='submit'
-                              onClick={saveBeneficiary}
-                            />
-                          </p>
+                          <button
+                            className='btn btn-success'
+                            name='submit'
+                            onClick={saveBeneficiary}
+                            disabled={
+                              beneficiaryInputs.name == '' ||
+                              beneficiaryInputs.address == '' ||
+                              isButtonClicked
+                            }
+                          >
+                            {isButtonClicked ? (
+                              <Spinner animation='border' variant='light' />
+                            ) : (
+                              'Create'
+                            )}
+                          </button>
                         </Col>
                       </Row>
                     </Container>
