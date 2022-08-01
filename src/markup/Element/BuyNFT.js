@@ -77,7 +77,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
         } else {
           VIToast.error('Error happened please try again later');
         }
-
+        setIsBuyClicked(false);
         handleClose();
       }
     }
