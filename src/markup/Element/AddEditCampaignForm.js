@@ -2,6 +2,7 @@ import React from 'react';
 import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import { CLPublicKey } from 'casper-js-sdk';
 import { toast as VIToast } from 'react-toastify';
+import validator from 'validator';
 
 import { useAuth } from '../../contexts/AuthContext';
 import { getDeployDetails } from '../../api/universal';
@@ -20,6 +21,8 @@ const AddEditCampaignForm = ({
   const { entityInfo, isLoggedIn } = useAuth();
   const [beneficiary, setBeneficiary] = React.useState();
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
+  const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
+
   //getting beneficiary details
   const selectedBeneficiary = React.useCallback(async () => {
     const firstBeneficiary = beneficiaries?.filter(
@@ -41,6 +44,14 @@ const AddEditCampaignForm = ({
     },
   });
 
+  const checkURLValidation = (value) => {
+    if (validator.isURL(value)) {
+      setShowURLErrorMsg(false);
+    } else {
+      setShowURLErrorMsg(true);
+    }
+  };
+
   const handleChange = (e, isBeneficiary = false) => {
     if (isBeneficiary) {
       setBeneficiary(e.target.value);
@@ -59,44 +70,47 @@ const AddEditCampaignForm = ({
   //saving new campaign related to beneficiary function
   const saveCampaign = async () => {
     setIsButtonClicked(true);
-    try{
-    const savedCampaign = await createCampaign(
-      state.inputs.name,
-      state.inputs.description,
-      beneficiaryAddress ? beneficiaryAddress : beneficiary,
-      state.inputs.campaignUrl,
-      state.inputs.requestedRoyalty,
-      CLPublicKey.fromHex(entityInfo.publicKey),
-      data ? 'UPDATE' : 'ADD',
-      data ? data.id : undefined
-    );
+    if (state.inputs.campaignUrl !== '' && showURLErrorMsg) {
+      return;
+    }
+    try {
+      const savedCampaign = await createCampaign(
+        state.inputs.name,
+        state.inputs.description,
+        beneficiaryAddress ? beneficiaryAddress : beneficiary,
+        state.inputs.campaignUrl,
+        state.inputs.requestedRoyalty,
+        CLPublicKey.fromHex(entityInfo.publicKey),
+        data ? 'UPDATE' : 'ADD',
+        data ? data.id : undefined
+      );
 
-    const deployResult = await getDeployDetails(savedCampaign);
-    console.log('...... Campaign saved successfully', deployResult);
-    VIToast.success('Campaign saved successfully');
-    setIsButtonClicked(false);
-    isFromModal && closeModal();
-    isFromModal && window.location.reload();
-    setState({
-      inputs: {
-        campaignUrl: '',
-        name: '',
-        description: '',
-        requestedRoyalty: '',
-      },
-    });
+      const deployResult = await getDeployDetails(savedCampaign);
+      console.log('...... Campaign saved successfully', deployResult);
+      VIToast.success('Campaign saved successfully');
+      setIsButtonClicked(false);
+      isFromModal && closeModal();
+      isFromModal && window.location.reload();
+      setState({
+        inputs: {
+          campaignUrl: '',
+          name: '',
+          description: '',
+          requestedRoyalty: '',
+        },
+      });
 
-    console.log('save Result', savedCampaign);
-    console.log(
-      'save Result',
-      state.inputs.name,
-      state.inputs.description,
-      beneficiary,
-      state.inputs.campaignUrl,
-      state.inputs.requestedRoyalty,
-      CLPublicKey.fromHex(entityInfo.publicKey)
-    );
-    }catch (err) {
+      console.log('save Result', savedCampaign);
+      console.log(
+        'save Result',
+        state.inputs.name,
+        state.inputs.description,
+        beneficiary,
+        state.inputs.campaignUrl,
+        state.inputs.requestedRoyalty,
+        CLPublicKey.fromHex(entityInfo.publicKey)
+      );
+    } catch (err) {
       if (err.message.includes('User Cancelled')) {
         VIToast.error('User Cancelled Signing');
       } else {
@@ -142,7 +156,11 @@ const AddEditCampaignForm = ({
                             ))}
                         </select>
                       ) : (
-                        <Spinner animation='border' variant='dark' className='my-1'/>
+                        <Spinner
+                          animation='border'
+                          variant='dark'
+                          className='my-1'
+                        />
                       )}
                       <span className='text-danger required-field-symbol'>
                         *
@@ -193,8 +211,11 @@ const AddEditCampaignForm = ({
                     name='campaignUrl'
                     className='form-control'
                     value={state.inputs.campaignUrl}
-                    onChange={(e) => handleChange(e)}
+                    onChange={(e) => {handleChange(e);checkURLValidation(e.target.value)}}
                   />
+                  {showURLErrorMsg && (
+                    <span className='text-danger'>Please enter Valid URL</span>
+                  )}
                 </Col>
               </Row>
               <Row className='mt-4'>
