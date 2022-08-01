@@ -101,8 +101,8 @@ impl ViToken {
         CollectionControl::is_collection(self, index)
     }
 
-    fn is_existent_beneficiary(&self) -> bool {
-        BeneficiaryControl::is_beneficiary(self)
+    fn is_existent_beneficiary(&self, address: Key) -> bool {
+        BeneficiaryControl::is_beneficiary(self, address)
     }
 
     fn get_beneficiary(&self, address: Key) -> Option<Beneficiary> {
@@ -190,7 +190,7 @@ impl ViToken {
                 );
                 campaign.insert(format!("requested_royalty: "), requested_royalty);
 
-                if ViToken::default().is_beneficiary() {
+                if ViToken::default().is_beneficiary(wallet_address) {
                     if ViToken::default().is_admin(caller) {
                         campaign.insert(format!("wallet_address: "), wallet_address.to_string());
                     } else {
@@ -251,11 +251,14 @@ impl ViToken {
                 BeneficiaryControl::add_beneficiary(self, address, beneficiary);
 
                 if cloned_mode == "ADD" {
-                    let mut beneficiaries: Vec<Key> =
-                        beneficiaries_control::get_all_beneficiaries();
-                    beneficiaries.push(address);
-                    beneficiaries_control::set_all_beneficiaries(beneficiaries);
-                    beneficiaries_control::set_total_beneficiaries(new_beneficiary_count);
+                    if ViToken::default().is_existent_beneficiary(address) {
+                        let mut beneficiaries: Vec<Key> =
+                            beneficiaries_control::get_all_beneficiaries();
+                        beneficiaries.push(address);
+
+                        beneficiaries_control::set_all_beneficiaries(beneficiaries);
+                        beneficiaries_control::set_total_beneficiaries(new_beneficiary_count);
+                    }
                 }
             }
             _ => {
@@ -576,7 +579,7 @@ impl ViToken {
             revert(ApiError::User(20));
         }
 
-        if !ViToken::default().is_existent_beneficiary() {
+        if !ViToken::default().is_existent_beneficiary(address) {
             //save profile
             let mut beneficiary =
                 BeneficiaryControl::get_beneficiary(self, address).unwrap_or_default();
@@ -737,11 +740,11 @@ fn get_beneficiary() {
     runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
 }
 
-#[no_mangle]
-fn is_beneficiary_exist() {
-    let ret = ViToken::default().is_existent_beneficiary();
-    runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
-}
+// #[no_mangle]
+// fn is_beneficiary_exist() {
+//     let ret = ViToken::default().is_existent_beneficiary();
+//     runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
+// }
 
 #[no_mangle]
 fn is_collection() {
@@ -1285,13 +1288,13 @@ fn get_entry_points() -> EntryPoints {
         EntryPointAccess::Public,
         EntryPointType::Contract,
     ));
-    entry_points.add_entry_point(EntryPoint::new(
-        "is_beneficiary_exist",
-        vec![],
-        CLType::Option(Box::new(CLType::Bool)),
-        EntryPointAccess::Public,
-        EntryPointType::Contract,
-    ));
+    // entry_points.add_entry_point(EntryPoint::new(
+    //     "is_beneficiary_exist",
+    //     vec![],
+    //     CLType::Option(Box::new(CLType::Bool)),
+    //     EntryPointAccess::Public,
+    //     EntryPointType::Contract,
+    // ));
     entry_points.add_entry_point(EntryPoint::new(
         "get_beneficiary",
         vec![Parameter::new("address", Key::cl_type())],
