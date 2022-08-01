@@ -48,7 +48,7 @@ const MintNFT = () => {
   const [campaignsList, setCampaignsList] = React.useState();
   const [allCampaignsList, setAllCampaignsList] = React.useState();
   const [creator, setCreator] = React.useState('');
-  const [isCreatorExist, setIsCreatorExist] = React.useState(false);
+  const [isCreatorExist, setIsCreatorExist] = React.useState();
   const [creatorPercentage, setCreatorPercentage] = React.useState();
   const [uploadedImageURL, setUploadedImage] = React.useState(null);
   const [uploadedFile, setUploadedFile] = React.useState(null);
@@ -101,10 +101,16 @@ const MintNFT = () => {
               }));
 
             selectedCollections && setCollectionsList(selectedCollections);
-           const selectedCollectionsIDs= selectedCollections && selectedCollections.map(({ value }) => value)
-            selectedCollections && selectedCollections.length>0&&
+            const selectedCollectionsIDs =
+              selectedCollections &&
+              selectedCollections.map(({ value }) => value);
+            selectedCollections &&
+              selectedCollections.length > 0 &&
               setSelectedCollectionValue(
-                (savedData &&  selectedCollectionsIDs.includes(savedData.collection.value) )?savedData.collection : selectedCollections[0]
+                savedData &&
+                  selectedCollectionsIDs.includes(savedData.collection.value)
+                  ? savedData.collection
+                  : selectedCollections[0]
               );
           } else {
             setCollectionsList();
@@ -137,7 +143,7 @@ const MintNFT = () => {
             (savedData
               ? savedData.beneficiary
               : beneficiaries?.filter(({ approved }) => approved === 'true')[0]
-                ?.address) === wallet_address
+                  ?.address) === wallet_address
         )
       );
     !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
@@ -321,10 +327,10 @@ const MintNFT = () => {
           '',
           `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/)`
         );
-        let image = encodeURI(imgURL)
+        let image = encodeURI(imgURL);
         await SendTweetWithImage(
           image,
-          `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.`
+          `Great news! '${state.inputs.name}' NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.`
         );
         if (isCreateNewCollection) {
           //add collection discord
@@ -420,80 +426,117 @@ const MintNFT = () => {
                       <Col>
                         <Row className='form-group'>
                           <Col>
-                            <label>Select Beneficiary</label>
-                            <select
-                              name='beneficiary'
-                              placeholder='Beneficiary'
-                              className='form-control'
-                              onChange={(e) => {
-                                handleChange(e, true);
-                                setBeneficiary(e.target.value);
-                              }}
-                              value={beneficiary}
-                            >
-                              {beneficiaries
-                                ?.filter(({ approved }) => approved == 'true')
-                                .map(({ username, address }) => (
-                                  <option key={address} value={address}>
-                                    {username}
-                                  </option>
-                                ))}
-                            </select>
-                          </Col>
-                        </Row>
-                        <Row className='form-group'>
-                          <Col>
-                            <label>Select Campaign</label>
-                            <select
-                              name='campaign'
-                              placeholder='Campaign'
-                              className='form-control'
-                              onChange={(e) =>
-                                setCampaignSelectedData(
-                                  campaigns,
-                                  e.target.value
-                                )
-                              }
-                              value={campaign}
-                            >
-                              {campaignsList?.map(
-                                ({ name, id, requested_royalty }) => (
-                                  <option key={id} value={id}>
-                                    {name} (creator Percentage is{' '}
-                                    {100 - requested_royalty})
-                                  </option>
-                                )
-                              )}
-                            </select>
+                            <label>
+                              Select Beneficiary{' '}
+                              <span className='text-danger'>*</span>
+                            </label>
+                            {beneficiaries ? (
+                              <select
+                                name='beneficiary'
+                                placeholder='Beneficiary'
+                                className='form-control'
+                                onChange={(e) => {
+                                  handleChange(e, true);
+                                  setBeneficiary(e.target.value);
+                                }}
+                                value={beneficiary}
+                              >
+                                {beneficiaries
+                                  ?.filter(({ approved }) => approved == 'true')
+                                  .map(({ username, address }) => (
+                                    <option key={address} value={address}>
+                                      {username}
+                                    </option>
+                                  ))}
+                              </select>
+                            ) : (
+                              <label className='d-block vinft-bg-gray'>
+                                <Spinner
+                                  animation='border'
+                                  variant='dark'
+                                  className='my-1'
+                                />
+                              </label>
+                            )}
                           </Col>
                         </Row>
                         <Row className='form-group'>
                           <Col>
                             <label>
-                              Select Existing Collection or Create new one
+                              Select Campaign{' '}
+                              <span className='text-danger'>*</span>
+                            </label>
+                            {campaignsList ? (
+                              <select
+                                name='campaign'
+                                placeholder='Campaign'
+                                className='form-control'
+                                onChange={(e) =>
+                                  setCampaignSelectedData(
+                                    campaigns,
+                                    e.target.value
+                                  )
+                                }
+                                value={campaign}
+                              >
+                                {campaignsList?.map(
+                                  ({ name, id, requested_royalty }) => (
+                                    <option key={id} value={id}>
+                                      {name} (creator Percentage is{' '}
+                                      {100 - requested_royalty})
+                                    </option>
+                                  )
+                                )}
+                              </select>
+                            ) : (
+                              <label className='d-block vinft-bg-gray'>
+                                <Spinner
+                                  animation='border'
+                                  variant='dark'
+                                  className='my-1'
+                                />
+                              </label>
+                            )}
+                          </Col>
+                        </Row>
+                        <Row className='form-group'>
+                          <Col>
+                            <label>
+                              Select Existing Collection or Create new one{' '}
+                              <span className='text-danger'>*</span>
                             </label>
 
-                            <CreatableSelect
-                              isClearable
-                              isLoading={isLoading}
-                              onChange={(v) => setSelectedCollectionValue(v)}
-                              onCreateOption={(v) => handleCreate(v)}
-                              options={collectionsList}
-                              value={selectedCollectionValue}
-                              menuPortalTarget={document.body}
-                              placeholder='Select...'
-                              className='creatable-select'
-                              formatCreateLabel={(v) =>
-                                'Click here to create "' + v + '" Collection'
-                              }
-                            />
+                            {collectionsList||!isCreatorExist ? (
+                              <CreatableSelect
+                                isClearable
+                                isLoading={isLoading}
+                                onChange={(v) => setSelectedCollectionValue(v)}
+                                onCreateOption={(v) => handleCreate(v)}
+                                options={collectionsList}
+                                value={selectedCollectionValue}
+                                menuPortalTarget={document.body}
+                                placeholder='Select...'
+                                className='creatable-select'
+                                formatCreateLabel={(v) =>
+                                  'Click here to create "' + v + '" Collection'
+                                }
+                              />
+                            ) : (
+                              <label className='d-block vinft-bg-gray'>
+                                <Spinner
+                                  animation='border'
+                                  variant='dark'
+                                  className='my-1'
+                                />
+                              </label>
+                            )}
                           </Col>
                         </Row>
                         <Row className='form-group'>
                           <Col>
                             <label>
                               Please enter your creator name the name can not be
-                              changed
+                              changed <span className='text-danger'>*</span>
                             </label>
                             <input
                               type='text'
@@ -508,14 +551,19 @@ const MintNFT = () => {
                         </Row>
                         <Row className='form-group'>
                           <Col>
-                            <input
-                              type='text'
-                              placeholder='NFT Name'
-                              name='name'
-                              className='form-control'
-                              onChange={(e) => handleChange(e)}
-                              value={state.inputs.name}
-                            />
+                            <div className='required-field vinft-bg-gray'>
+                              <input
+                                type='text'
+                                placeholder='NFT Name'
+                                name='name'
+                                className='form-control'
+                                onChange={(e) => handleChange(e)}
+                                value={state.inputs.name}
+                              />{' '}
+                              <span className='text-danger required-field-symbol'>
+                                *
+                              </span>
+                            </div>
                           </Col>
                         </Row>
                       </Col>
@@ -529,7 +577,9 @@ const MintNFT = () => {
                               onChange={(e) => handleChange(e)}
                               value={state.inputs.isImageURL}
                               name='isImageURL'
-                            />
+                              className='float-left'
+                            />{' '}
+                            <span className='text-danger'>*</span>
                           </Col>
                         </Row>
                         <Row className='form-group'>
@@ -588,26 +638,38 @@ const MintNFT = () => {
                       <>
                         <Row className='form-group'>
                           <Col>
-                            <input
-                              type='number'
-                              placeholder='Price'
-                              name='price'
-                              className='form-control'
-                              onChange={(e) => handleChange(e)}
-                              value={state.inputs.price}
-                              min={0}
-                            />
+                            <div className='required-field'>
+                              <input
+                                type='number'
+                                placeholder='Price'
+                                name='price'
+                                className='form-control'
+                                onChange={(e) => handleChange(e)}
+                                value={state.inputs.price}
+                                min={0}
+                              />
+                              {state.inputs.isForSale && (
+                                <span className='text-danger required-field-symbol'>
+                                  *
+                                </span>
+                              )}
+                            </div>
                           </Col>
                           <Col>
-                            <select
-                              placeholder='Currency'
-                              name='currency'
-                              className='form-control'
-                              onChange={(e) => handleChange(e)}
-                              value={state.inputs.currency}
-                            >
-                              <option value={'CSPR'}>CSPR</option>
-                            </select>
+                            <div className='required-field'>
+                              <select
+                                placeholder='Currency'
+                                name='currency'
+                                className='form-control'
+                                onChange={(e) => handleChange(e)}
+                                value={state.inputs.currency}
+                              >
+                                <option value={'CSPR'}>CSPR</option>
+                              </select>
+                              {state.inputs.isForSale && (
+                                <span className='text-danger required-field-symbol'>*</span>
+                              )}
+                            </div>
                           </Col>
                         </Row>
                       </>

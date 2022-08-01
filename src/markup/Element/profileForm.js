@@ -244,7 +244,9 @@ const ProfileForm = ({
         <Col>
           <Row className='form-group'>
             <Col>
-              <span>User Name</span>
+              <span>
+                User Name <span className='text-danger'>*</span>
+              </span>
               <input
                 type='text'
                 name='userName'
@@ -385,7 +387,9 @@ const ProfileForm = ({
                 onChange={(e) => handleChange(e)}
                 value={state.inputs.isProfileImageURL}
                 name='isProfileImageURL'
-              />
+                className='float-left'
+              />{' '}
+              <span className='text-danger'>*</span>
             </Col>
           </Row>
           <Row className='form-group'>
@@ -439,7 +443,9 @@ const ProfileForm = ({
                 onChange={(e) => handleChange(e)}
                 value={state.inputs.isNFTImageURL}
                 name='isNFTImageURL'
-              />
+                className='float-left'
+              />{' '}
+              <span className='text-danger'>*</span>
             </Col>
           </Row>
           <Row className='form-group'>

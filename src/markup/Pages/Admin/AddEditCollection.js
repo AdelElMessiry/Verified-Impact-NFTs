@@ -23,6 +23,7 @@ const AddCollection = () => {
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
   const collectionId = queryParams.get('id');
+  debugger;
   const { collections } = useNFTState();
 
   const [isSaveClicked, setIsSaveClicked] = React.useState(false);
@@ -48,7 +49,7 @@ const AddCollection = () => {
 
   //getting list of NFTs
   React.useEffect(() => {
-    if (collectionId !== '0') {
+    if (collectionId !== '0' && collectionId !== null) {
       getSelectedCollection();
     } else {
       setSelectedCollection(true);
@@ -116,8 +117,12 @@ const AddCollection = () => {
             style={{ backgroundImage: 'url(' + bnr1 + ')' }}
           >
             <PageTitle
-              motherMenu={`${collectionId !== '0' ? 'Edit' : 'Add'} Collection`}
-              activeMenu={`${collectionId !== '0' ? 'Edit' : 'Add'} Collection`}
+              motherMenu={`${
+                collectionId !== '0' && collectionId !== null ? 'Edit' : 'Add'
+              } Collection`}
+              activeMenu={`${
+                collectionId !== '0' && collectionId !== null ? 'Edit' : 'Add'
+              } Collection`}
             />
           </div>
           {/* <!-- inner page banner END --> */}
@@ -135,21 +140,27 @@ const AddCollection = () => {
                     <Container>
                       <Row>
                         <Col>
-                          <input
-                            type='text'
-                            name='name'
-                            placeholder='Name'
-                            className='form-control'
-                            value={collectionInputs.name}
-                            onChange={(e) =>
-                              setCollectionInputs({
-                                ...collectionInputs,
-                                name: e.target.value,
-                              })
-                            }
-                          />
+                          <div className='required-field'>
+                            <input
+                              type='text'
+                              name='name'
+                              placeholder='Name'
+                              className='form-control'
+                              value={collectionInputs.name}
+                              onChange={(e) =>
+                                setCollectionInputs({
+                                  ...collectionInputs,
+                                  name: e.target.value,
+                                })
+                              }
+                            />{' '}
+                            <span className='text-danger required-field-symbol'>
+                              *
+                            </span>
+                          </div>
                         </Col>
                         <Col>
+                          {' '}
                           <input
                             type='text'
                             placeholder='URL'
@@ -184,26 +195,26 @@ const AddCollection = () => {
                       </Row>
                       <Row className='mt-4'>
                         <Col>
-                          {' '}
-                          <p className='form-submit'>
-                            <button
-                              className='btn btn-success'
-                              name='submit'
-                              onClick={
-                                collectionId === '0'
-                                  ? addNewCollection
-                                  : editCollection
-                              }
-                            >
-                              {isSaveClicked ? (
-                                <Spinner animation='border' variant='light' />
-                              ) : collectionId === '0' ? (
-                                'Add'
-                              ) : (
-                                'Edit'
-                              )}
-                            </button>
-                          </p>
+                          <button
+                            className='btn btn-success'
+                            name='submit'
+                            onClick={
+                              collectionId === '0' || collectionId === null
+                                ? addNewCollection
+                                : editCollection
+                            }
+                            disabled={
+                              collectionInputs.name == '' || isSaveClicked
+                            }
+                          >
+                            {isSaveClicked ? (
+                              <Spinner animation='border' variant='light' />
+                            ) : collectionId === '0' || collectionId === null ? (
+                              'Add'
+                            ) : (
+                              'Edit'
+                            )}
+                          </button>
                         </Col>
                       </Row>
                     </Container>
