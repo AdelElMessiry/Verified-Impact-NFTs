@@ -37,8 +37,12 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
         setIsListForSaleClicked(false);
       }
     } catch (err) {
-      console.log('Transfer Err ' + err);
-      VIToast.error('Error happened please try again later');
+      if (err.message.includes('User Cancelled')) {
+        VIToast.error('User Cancelled Signing');
+      } else {
+        VIToast.error(err.message);
+      }
+      setIsListForSaleClicked(false);
     }
   };
 

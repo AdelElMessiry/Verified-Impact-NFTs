@@ -59,6 +59,7 @@ const AddCollection = () => {
   //saving new collection function
   const addNewCollection = async () => {
     setIsSaveClicked(true);
+    try{
     const savedCollection = await addCollection(
       collectionInputs.name,
       collectionInputs.description,
@@ -88,6 +89,14 @@ const AddCollection = () => {
       creator: '',
       url: '',
     });
+  }catch (err) {
+    if (err.message.includes('User Cancelled')) {
+      VIToast.error('User Cancelled Signing');
+    } else {
+      VIToast.error('Error happened please try again later');
+    }
+    setIsSaveClicked(false);
+  }
   };
 
   const editCollection = async () => {

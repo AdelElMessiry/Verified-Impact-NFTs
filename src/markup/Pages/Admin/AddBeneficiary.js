@@ -29,6 +29,7 @@ const AddBeneficiary = () => {
   //saving new beneficiary function
   const saveBeneficiary = async () => {
     setIsButtonClicked(true);
+    try{
     const savedBeneficiary = await addBeneficiary(
       beneficiaryInputs.name,
       beneficiaryInputs.description,
@@ -56,6 +57,16 @@ const AddBeneficiary = () => {
       address: '',
     });
     setIsButtonClicked(false);
+  }
+  catch (err) {
+    if (err.message.includes('User Cancelled')) {
+      VIToast.error('User Cancelled Signing');
+    } else {
+      VIToast.error(err.message);
+    }
+    setIsButtonClicked(false);
+    return;
+  }
   };
   return (
     <>

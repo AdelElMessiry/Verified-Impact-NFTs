@@ -59,6 +59,7 @@ const AddEditCampaignForm = ({
   //saving new campaign related to beneficiary function
   const saveCampaign = async () => {
     setIsButtonClicked(true);
+    try{
     const savedCampaign = await createCampaign(
       state.inputs.name,
       state.inputs.description,
@@ -95,6 +96,15 @@ const AddEditCampaignForm = ({
       state.inputs.requestedRoyalty,
       CLPublicKey.fromHex(entityInfo.publicKey)
     );
+    }catch (err) {
+      if (err.message.includes('User Cancelled')) {
+        VIToast.error('User Cancelled Signing');
+      } else {
+        VIToast.error(err.message);
+      }
+      setIsButtonClicked(false);
+      return;
+    }
   };
 
   return (

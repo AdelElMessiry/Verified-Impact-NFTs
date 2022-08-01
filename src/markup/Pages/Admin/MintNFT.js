@@ -362,9 +362,11 @@ const MintNFT = () => {
         setIsMintClicked(false);
         setIsMintAnotherClicked(false);
       } catch (err) {
-        console.log(err);
-        //   setErrStage(MintingStages.TX_PENDING);
-        VIToast.error(err);
+        if (err.message.includes('User Cancelled')) {
+          VIToast.error('User Cancelled Signing');
+        } else {
+          VIToast.error(err.message);
+        }
         setIsMintClicked(false);
         setIsMintAnotherClicked(false);
       }
