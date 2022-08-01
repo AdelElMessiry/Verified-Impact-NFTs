@@ -240,7 +240,7 @@ const MintNFT = () => {
         cloudURL = await uploadImg(uploadedFile);
       } catch (err) {
         console.log(err);
-        VIToast.error('Image couldn't be uploaded to cloud CDN !');
+        VIToast.error("Image couldn't be uploaded to cloud CDN !");
 
         return;
       }
