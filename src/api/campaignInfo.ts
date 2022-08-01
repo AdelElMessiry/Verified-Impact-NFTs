@@ -38,7 +38,7 @@ export async function getCampaignsList() {
         console.log(err);
       });
   }
-console.log(campaignsList);
+  // console.log(campaignsList);
 
   return campaignsList;
 }
