@@ -24,7 +24,6 @@ const AddCollection = () => {
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
   const collectionId = queryParams.get('id');
-  debugger;
   const { collections } = useNFTState();
 
   const [isSaveClicked, setIsSaveClicked] = React.useState(false);
