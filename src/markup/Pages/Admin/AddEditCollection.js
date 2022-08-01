@@ -34,6 +34,7 @@ const AddCollection = () => {
     creator: '',
     url: '',
   });
+  const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
 
   const getSelectedCollection = React.useCallback(async () => {
     const collectionData =
@@ -56,47 +57,58 @@ const AddCollection = () => {
     }
   }, [collectionId, getSelectedCollection]);
 
+  const checkURLValidation = (value) => {
+    if (validator.isURL(value)) {
+      setShowURLErrorMsg(false);
+    } else {
+      setShowURLErrorMsg(true);
+    }
+  };
+
   //saving new collection function
   const addNewCollection = async () => {
     setIsSaveClicked(true);
-    try{
-    const savedCollection = await addCollection(
-      collectionInputs.name,
-      collectionInputs.description,
-      collectionInputs.url,
-      entityInfo.publicKey,
-      CLPublicKey.fromHex(entityInfo.publicKey)
-    );
-
-    const deployResult = await getDeployDetails(savedCollection);
-    console.log('...... Collection saved successfully', deployResult);
-    await sendDiscordMessage(
-      process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
-      process.env.REACT_APP_COLLECTIONS_TOKEN,
-      '',
-      '',
-      `Exciting news! [${collectionInputs.name}] Collection is just created. [Click here  to check more available collections.](${window.location.origin}/#/)`
-    );
-    await SendTweet(
-      `${collectionInputs.name} just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections`
-    );
-    VIToast.success('Collection saved successfully');
-    setIsSaveClicked(false);
-    window.location.reload();
-    setCollectionInputs({
-      name: '',
-      description: '',
-      creator: '',
-      url: '',
-    });
-  }catch (err) {
-    if (err.message.includes('User Cancelled')) {
-      VIToast.error('User Cancelled Signing');
-    } else {
-      VIToast.error('Error happened please try again later');
+    if (collectionInputs.url !== '' && showURLErrorMsg) {
+      return;
     }
-    setIsSaveClicked(false);
-  }
+    try {
+      const savedCollection = await addCollection(
+        collectionInputs.name,
+        collectionInputs.description,
+        collectionInputs.url,
+        entityInfo.publicKey,
+        CLPublicKey.fromHex(entityInfo.publicKey)
+      );
+
+      const deployResult = await getDeployDetails(savedCollection);
+      console.log('...... Collection saved successfully', deployResult);
+      await sendDiscordMessage(
+        process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
+        process.env.REACT_APP_COLLECTIONS_TOKEN,
+        '',
+        '',
+        `Exciting news! [${collectionInputs.name}] Collection is just created. [Click here  to check more available collections.](${window.location.origin}/#/)`
+      );
+      await SendTweet(
+        `${collectionInputs.name} just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections`
+      );
+      VIToast.success('Collection saved successfully');
+      setIsSaveClicked(false);
+      window.location.reload();
+      setCollectionInputs({
+        name: '',
+        description: '',
+        creator: '',
+        url: '',
+      });
+    } catch (err) {
+      if (err.message.includes('User Cancelled')) {
+        VIToast.error('User Cancelled Signing');
+      } else {
+        VIToast.error('Error happened please try again later');
+      }
+      setIsSaveClicked(false);
+    }
   };
 
   const editCollection = async () => {
@@ -169,20 +181,25 @@ const AddCollection = () => {
                           </div>
                         </Col>
                         <Col>
-                          {' '}
                           <input
                             type='text'
                             placeholder='URL'
                             name='url'
                             className='form-control'
                             value={collectionInputs.url}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               setCollectionInputs({
                                 ...collectionInputs,
                                 url: e.target.value,
-                              })
-                            }
+                              });
+                              checkURLValidation(e.target.value);
+                            }}
                           />
+                          {showURLErrorMsg && (
+                            <span className='text-danger'>
+                              Please enter Valid URL
+                            </span>
+                          )}
                         </Col>
                       </Row>
                       <Row className='mt-4'>
@@ -218,7 +235,8 @@ const AddCollection = () => {
                           >
                             {isSaveClicked ? (
                               <Spinner animation='border' variant='light' />
-                            ) : collectionId === '0' || collectionId === null ? (
+                            ) : collectionId === '0' ||
+                              collectionId === null ? (
                               'Add'
                             ) : (
                               'Edit'
