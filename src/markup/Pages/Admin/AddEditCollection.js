@@ -3,6 +3,7 @@ import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import { toast as VIToast } from 'react-toastify';
 import { CLPublicKey } from 'casper-js-sdk';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
+import validator from 'validator';
 
 import { getDeployDetails } from '../../../api/universal';
 import { addCollection, updateCollection } from '../../../api/addCollection';
@@ -33,6 +34,7 @@ const AddCollection = () => {
     creator: '',
     url: '',
   });
+  const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
 
   const getSelectedCollection = React.useCallback(async () => {
     const collectionData =
@@ -48,23 +50,35 @@ const AddCollection = () => {
 
   //getting list of NFTs
   React.useEffect(() => {
-    if (collectionId !== '0') {
+    if (collectionId !== '0' && collectionId !== null) {
       getSelectedCollection();
     } else {
       setSelectedCollection(true);
     }
   }, [collectionId, getSelectedCollection]);
 
+  const checkURLValidation = (value) => {
+    if (validator.isURL(value)) {
+      setShowURLErrorMsg(false);
+    } else {
+      setShowURLErrorMsg(true);
+    }
+  };
+
   //saving new collection function
   const addNewCollection = async () => {
     setIsSaveClicked(true);
-    const savedCollection = await addCollection(
-      collectionInputs.name,
-      collectionInputs.description,
-      collectionInputs.url,
-      entityInfo.publicKey,
-      CLPublicKey.fromHex(entityInfo.publicKey)
-    );
+    if (collectionInputs.url !== '' && showURLErrorMsg) {
+      return;
+    }
+    try {
+      const savedCollection = await addCollection(
+        collectionInputs.name,
+        collectionInputs.description,
+        collectionInputs.url,
+        entityInfo.publicKey,
+        CLPublicKey.fromHex(entityInfo.publicKey)
+      );
 
     const deployResult = await getDeployDetails(savedCollection);
     console.log('...... Collection saved successfully', deployResult);
@@ -73,7 +87,7 @@ const AddCollection = () => {
       process.env.REACT_APP_COLLECTIONS_TOKEN,
       '',
       '',
-      `Exciting news! [${collectionInputs.name}] Collection is just created. [Click here  to check more available collections.](${window.location.origin}/#/)`
+      `Exciting news! [${collectionInputs.name}] Collection is just created. [Click here  to check more available collections.](${window.location.origin}/#/) @vinfts @casper_network @devxdao`
     );
     await SendTweet(
       `${collectionInputs.name} just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections`
@@ -87,6 +101,14 @@ const AddCollection = () => {
       creator: '',
       url: '',
     });
+  } catch (err) {
+    if (err.message.includes('User Cancelled')) {
+      VIToast.error('User Cancelled Signing');
+    } else {
+      VIToast.error('Error happened please try again later');
+    }
+    setIsSaveClicked(false);
+  }
   };
 
   const editCollection = async () => {
@@ -116,8 +138,12 @@ const AddCollection = () => {
             style={{ backgroundImage: 'url(' + bnr1 + ')' }}
           >
             <PageTitle
-              motherMenu={`${collectionId !== '0' ? 'Edit' : 'Add'} Collection`}
-              activeMenu={`${collectionId !== '0' ? 'Edit' : 'Add'} Collection`}
+              motherMenu={`${
+                collectionId !== '0' && collectionId !== null ? 'Edit' : 'Add'
+              } Collection`}
+              activeMenu={`${
+                collectionId !== '0' && collectionId !== null ? 'Edit' : 'Add'
+              } Collection`}
             />
           </div>
           {/* <!-- inner page banner END --> */}
@@ -135,19 +161,24 @@ const AddCollection = () => {
                     <Container>
                       <Row>
                         <Col>
-                          <input
-                            type='text'
-                            name='name'
-                            placeholder='Name'
-                            className='form-control'
-                            value={collectionInputs.name}
-                            onChange={(e) =>
-                              setCollectionInputs({
-                                ...collectionInputs,
-                                name: e.target.value,
-                              })
-                            }
-                          />
+                          <div className='required-field'>
+                            <input
+                              type='text'
+                              name='name'
+                              placeholder='Name'
+                              className='form-control'
+                              value={collectionInputs.name}
+                              onChange={(e) =>
+                                setCollectionInputs({
+                                  ...collectionInputs,
+                                  name: e.target.value,
+                                })
+                              }
+                            />{' '}
+                            <span className='text-danger required-field-symbol'>
+                              *
+                            </span>
+                          </div>
                         </Col>
                         <Col>
                           <input
@@ -156,13 +187,19 @@ const AddCollection = () => {
                             name='url'
                             className='form-control'
                             value={collectionInputs.url}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               setCollectionInputs({
                                 ...collectionInputs,
                                 url: e.target.value,
-                              })
-                            }
+                              });
+                              checkURLValidation(e.target.value);
+                            }}
                           />
+                          {showURLErrorMsg && (
+                            <span className='text-danger'>
+                              Please enter Valid URL
+                            </span>
+                          )}
                         </Col>
                       </Row>
                       <Row className='mt-4'>
@@ -184,26 +221,27 @@ const AddCollection = () => {
                       </Row>
                       <Row className='mt-4'>
                         <Col>
-                          {' '}
-                          <p className='form-submit'>
-                            <button
-                              className='btn btn-success'
-                              name='submit'
-                              onClick={
-                                collectionId === '0'
-                                  ? addNewCollection
-                                  : editCollection
-                              }
-                            >
-                              {isSaveClicked ? (
-                                <Spinner animation='border' variant='light' />
-                              ) : collectionId === '0' ? (
-                                'Add'
-                              ) : (
-                                'Edit'
-                              )}
-                            </button>
-                          </p>
+                          <button
+                            className='btn btn-success'
+                            name='submit'
+                            onClick={
+                              collectionId === '0' || collectionId === null
+                                ? addNewCollection
+                                : editCollection
+                            }
+                            disabled={
+                              collectionInputs.name == '' || isSaveClicked
+                            }
+                          >
+                            {isSaveClicked ? (
+                              <Spinner animation='border' variant='light' />
+                            ) : collectionId === '0' ||
+                              collectionId === null ? (
+                              'Add'
+                            ) : (
+                              'Edit'
+                            )}
+                          </button>
                         </Col>
                       </Row>
                     </Container>

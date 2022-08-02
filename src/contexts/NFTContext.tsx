@@ -116,6 +116,9 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
           selectedList.push(lists.beneficiary);
       });
     const beneficiariesList = profiles && selectedList;
+    const beneficiariesCount = beneficiariesList.filter(
+      ({ approved }: any) => approved === 'true'
+    )?.length;
 
     const beneficiariesVINFTsList = await getBeneficiariesList();
 
@@ -169,7 +172,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
         payload: {
           nfts: mappedNFTS,
           // beneficiaryCount: parseInt(beneficiaryCount.toString()),
-          beneficiaryCount: beneficiariesList.length,
+          beneficiaryCount: beneficiariesCount,
           campaignsCount: parseInt(campaignsCount.toString()),
           creatorsCount: parseInt(creatorsCount.toString()),
           collectionsCount: parseInt(collectionsCount.toString()),

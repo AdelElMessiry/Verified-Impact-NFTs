@@ -21,9 +21,9 @@ pub trait BeneficiaryControl<Storage: ContractStorage>: ContractContext<Storage>
         Beneficiaries::instance().add_beneficiary(address, value);
     }
 
-    fn is_beneficiary(&self) -> bool {
-        let caller = self.get_caller();
-        Beneficiaries::instance().is_beneficiary(&caller)
+    fn is_beneficiary(&self, address: Key) -> bool {
+        // let caller = self.get_caller();
+        Beneficiaries::instance().is_beneficiary(&address)
     }
 
     fn get_beneficiary(&self, address: Key) -> Option<Beneficiary> {

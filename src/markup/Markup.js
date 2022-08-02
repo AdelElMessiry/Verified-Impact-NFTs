@@ -21,6 +21,7 @@ import ScrollToTop from './Element/ScrollToTop';
 import MyCollections from './Pages/MyCollections';
 import AddCollection from './Pages/Admin/AddEditCollection';
 import SignUpAsBeneficiary from './Pages/SignUpAsBeneficiary';
+import TermsOfServices from './Pages/TermsAndConditions';
 
 const Markup = () => {
   return (
@@ -58,6 +59,11 @@ const Markup = () => {
                 path='/signup-as-beneficiary'
                 exact
                 component={SignUpAsBeneficiary}
+              />
+               <Route
+                path='/terms-of-services'
+                exact
+                component={TermsOfServices}
               />
             </Switch>
           </div>

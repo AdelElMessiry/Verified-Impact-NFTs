@@ -14,7 +14,7 @@ import BeneficiarySingleRow from '../../Element/beneficiarySingleRow';
 
 //Manage Beneficiaries page
 const ManageBeneficiaries = () => {
-  const { isLoggedIn, entityInfo } = useAuth();
+  const { isLoggedIn } = useAuth();
   const { beneficiaries } = useNFTState();
 
   return (

@@ -60,12 +60,12 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
             process.env.REACT_APP_NFT_TOKEN,
             '',
             '',
-            `Exciting news! [${data.title}] NFT of [${data.creatorName}] creator has been sold as a donation for [${data.campaignName}] campaign. [Click here  to buy #verified-impact-nfts and support more causes.] (${window.location.origin}/#/)`
+            `Exciting news! [${data.title}] NFT of [${data.creatorName}] creator has been sold as a donation for [${data.campaignName}] campaign. [Click here  to buy #verified-impact-nfts and support more causes.] (${window.location.origin}/#/)  @vinfts @casper_network @devxdao `
           );
           let image = encodeURI(data.image)
           await SendTweetWithImage(
             image ,
-            `Exciting news! ${data.title} NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.`
+            `Exciting news! ${data.title} NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao `
           );
           window.location.reload();
         } else {
@@ -77,7 +77,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
         } else {
           VIToast.error('Error happened please try again later');
         }
-
+        setIsBuyClicked(false);
         handleClose();
       }
     }

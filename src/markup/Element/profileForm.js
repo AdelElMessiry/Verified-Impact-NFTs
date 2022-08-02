@@ -10,7 +10,7 @@ import { ProfileFormsEnum } from '../../Enums/index';
 import { useAuth } from '../../contexts/AuthContext';
 import { getDeployDetails } from '../../api/universal';
 import { uploadImg } from '../../api/imageCDN';
-
+import { SocialLinks } from 'social-links';
 const ProfileForm = ({
   formName,
   isProfileExist,
@@ -40,6 +40,7 @@ const ProfileForm = ({
     },
   });
 
+  
   const [uploadedProfileImageURL, setUploadedProfileImage] =
     React.useState(null);
   const [uploadedProfileFile, setUploadedProfileFile] = React.useState(null);
@@ -52,7 +53,15 @@ const ProfileForm = ({
   const [showProfileURLErrorMsg, setShowProfileURLErrorMsg] =
     React.useState(false);
   const [showNFTURLErrorMsg, setShowNFTURLErrorMsg] = React.useState(false);
-
+  const [showExternalURLErrorMsg, setShowExternalURLErrorMsg] =
+    React.useState(false);
+const [socialErrors , setSocialErrors] = useState({
+  twitter: true,
+  instagram: true,
+  medium: true,
+  facebook: true,
+  telegram: true
+})
   React.useEffect(() => {
     setState({
       inputs: {
@@ -106,18 +115,37 @@ const ProfileForm = ({
     }
   };
 
-  const checkURLValidation = (value, isProfile) => {
+  const checkURLValidation = (value, urlNum) => {
     if (validator.isURL(value)) {
-      isProfile
+      urlNum == 1
         ? setShowProfileURLErrorMsg(false)
-        : setShowNFTURLErrorMsg(false);
+        : urlNum == 2
+        ? setShowNFTURLErrorMsg(false)
+        : setShowExternalURLErrorMsg(false);
     } else {
-      isProfile
+      urlNum == 1
         ? setShowProfileURLErrorMsg(true)
-        : setShowNFTURLErrorMsg(false);
+        : urlNum == 2
+        ? setShowNFTURLErrorMsg(true)
+        : setShowExternalURLErrorMsg(true);
     }
   };
-
+  const socialLinks = new SocialLinks();
+  // check social links validation
+  const checkSocialLinksValidation  = (value , socialType) => {
+    const  urlSocialInputs = socialErrors   
+      if (value == "" ){
+        urlSocialInputs[socialType] = true
+      }else if(!value.includes("https://")){
+        urlSocialInputs[socialType] = value.includes("https://")
+      }else{
+        urlSocialInputs[socialType] = socialLinks.isValid(socialType, value)
+      }      
+      setSocialErrors({
+        ...socialErrors,
+        urlSocialInputs,
+      });
+    }
   //handling minting new NFT
   async function handleSave() {
     if (!uploadedProfileImageURL) {
@@ -131,10 +159,18 @@ const ProfileForm = ({
     }
     if (
       (state.inputs.isProfileImageURL && showProfileURLErrorMsg) ||
-      (state.inputs.isNFTImageURL && showNFTURLErrorMsg)
+      (state.inputs.isNFTImageURL && showNFTURLErrorMsg) ||
+      (state.inputs.externalSiteLink !== '' && showExternalURLErrorMsg)
     ) {
       return;
     }
+    if (
+      !socialErrors.facebook ||
+      !socialErrors.twitter ||
+      !socialErrors.instagram ||
+      !socialErrors.medium ||
+      !socialErrors.telegram
+    ) return;
     setIsSaveButtonClicked(true);
     let cloudProfileURL = uploadedProfileImageURL;
     let cloudNFTURL = uploadedNFTImageURL;
@@ -203,7 +239,6 @@ const ProfileForm = ({
           CLPublicKey.fromHex(entityInfo.publicKey),
           isProfileExist ? 'UPDATE' : 'ADD'
         );
-       
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
@@ -244,7 +279,9 @@ const ProfileForm = ({
         <Col>
           <Row className='form-group'>
             <Col>
-              <span>User Name</span>
+              <span>
+                User Name <span className='text-danger'>*</span>
+              </span>
               <input
                 type='text'
                 name='userName'
@@ -294,8 +331,14 @@ const ProfileForm = ({
                 name='externalSiteLink'
                 className='form-control'
                 value={state.inputs.externalSiteLink}
-                onChange={(e) => handleChange(e)}
+                onChange={(e) => {
+                  handleChange(e);
+                  checkURLValidation(e.target.value, 3);
+                }}
               />
+              {showExternalURLErrorMsg && (
+                <span className='text-danger'>Please enter Valid URL </span>
+              )}
             </Col>
             <Col>
               <span>Phone</span>
@@ -316,8 +359,15 @@ const ProfileForm = ({
                 name='twitter'
                 className='form-control'
                 value={state.inputs.twitter}
-                onChange={(e) => handleChange(e)}
+                placeholder="https://twitter.com/userName"
+                onChange={(e) => {
+                  handleChange(e);
+                  checkSocialLinksValidation(e.target.value,'twitter')
+                }}
               />
+              {!socialErrors.twitter &&(
+                <span className='text-danger'>Please enter Valid Twitter URL </span>
+              )}
             </Col>
             <Col>
               <span>Instagram</span>
@@ -326,8 +376,15 @@ const ProfileForm = ({
                 name='instagram'
                 className='form-control'
                 value={state.inputs.instagram}
-                onChange={(e) => handleChange(e)}
+                placeholder="https://instagram.com/userName"
+                onChange={(e) => {
+                  handleChange(e);
+                  checkSocialLinksValidation(e.target.value,'instagram')
+                }}
               />
+              {!socialErrors.instagram &&(
+                <span className='text-danger'>Please enter Valid Instagram URL </span>
+              )}
             </Col>
           </Row>
           <Row className='form-group'>
@@ -338,8 +395,15 @@ const ProfileForm = ({
                 name='facebook'
                 className='form-control'
                 value={state.inputs.facebook}
-                onChange={(e) => handleChange(e)}
+                placeholder="https://facebook.com/userName"
+                onChange={(e) => {
+                  handleChange(e);
+                  checkSocialLinksValidation(e.target.value , 'facebook')
+                }}
               />
+              {!socialErrors.facebook &&(
+                <span className='text-danger'>Please enter Valid Facebook URL </span>
+              )}
             </Col>
             <Col>
               <span>Medium</span>
@@ -348,8 +412,15 @@ const ProfileForm = ({
                 name='medium'
                 className='form-control'
                 value={state.inputs.medium}
-                onChange={(e) => handleChange(e)}
+                placeholder="https://medium.com/@userName"
+                onChange={(e) => {
+                  handleChange(e);
+                  checkSocialLinksValidation(e.target.value ,'medium')
+                }}
               />
+              {!socialErrors.medium &&(
+                <span className='text-danger'>Please enter Valid Medium URL </span>
+              )}
             </Col>
           </Row>
           <Row className='form-group'>
@@ -370,9 +441,17 @@ const ProfileForm = ({
                 name='telegram'
                 className='form-control'
                 value={state.inputs.telegram}
-                onChange={(e) => handleChange(e)}
+                placeholder="https://telegram.com/userName"
+                onChange={(e) => {
+                  handleChange(e);
+                  checkSocialLinksValidation(e.target.value , 'telegram')
+                }}
               />
+              {!socialErrors.telegram &&(
+                <span className='text-danger'>Please enter Valid Telegram URL </span>
+              )}
             </Col>
+            
           </Row>
         </Col>
         <Col>
@@ -385,7 +464,9 @@ const ProfileForm = ({
                 onChange={(e) => handleChange(e)}
                 value={state.inputs.isProfileImageURL}
                 name='isProfileImageURL'
-              />
+                className='float-left'
+              />{' '}
+              <span className='text-danger'>*</span>
             </Col>
           </Row>
           <Row className='form-group'>
@@ -399,7 +480,7 @@ const ProfileForm = ({
                     className='form-control'
                     onChange={(e) => {
                       setUploadedProfileImage(e.target.value);
-                      checkURLValidation(e.target.value, true);
+                      checkURLValidation(e.target.value, 1);
                     }}
                     value={uploadedProfileImageURL || ''}
                   />
@@ -439,7 +520,9 @@ const ProfileForm = ({
                 onChange={(e) => handleChange(e)}
                 value={state.inputs.isNFTImageURL}
                 name='isNFTImageURL'
-              />
+                className='float-left'
+              />{' '}
+              <span className='text-danger'>*</span>
             </Col>
           </Row>
           <Row className='form-group'>
@@ -455,6 +538,7 @@ const ProfileForm = ({
                     onChange={(e) => {
                       setUploadedNFTImage(e.target.value);
                       setUploadedNFTFile(e.target.value);
+                      checkURLValidation(e.target.value, 2);
                     }}
                     value={uploadedNFTImageURL || ''}
                   />
