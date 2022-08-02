@@ -11,6 +11,7 @@ import './plugins/slick/slick-theme.min.css';
 import 'react-modal-video/css/modal-video.min.css';
 import 'react-image-lightbox/style.css';
 import './css/scss/_custom.scss';
+import './css/scss/_sidebar.scss';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
