@@ -11714,6 +11714,11 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
+social-links@^1.4.5:
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/social-links/-/social-links-1.4.5.tgz#4a1bcd692b503c03f8c826fd56b2510583026e10"
+  integrity sha512-HzUwJ+QILy6x0Kk1BGl/Q1YqQMgaq3ea9DVA7CXSgYZPmooYlPViWbaRI6CdY+ORtKQzqfkkt2MdFxqAW7m3hg==
+
 sockjs-client@^1.5.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/sockjs-client/-/sockjs-client-1.6.0.tgz#e0277b8974558edcb557eafc7d3027ef6128d865"
