@@ -2515,7 +2515,7 @@ blockquote:before {
 
 .site-header {
     position: relative;
-    z-index: 99999;
+    z-index: 1000;
 }
 .site-header ul,
 .site-header ol {
@@ -9676,10 +9676,18 @@ ul[class*="list-"]{
     -moz-border-radius: 0 0 3px 3px;
 }
 .modal-header {
-    background: #EFBB20;
+    background: #77ae40;
     padding: 15px 25px;
 }
 .modal-header .modal-title {
+    color: #fff;
+}
+.modal-header button{
+    font-size: 40px;
+    color: #fff;
+    opacity: 1;
+}
+.modal-header button span{
     color: #fff;
 }
 .modal .modal-body {
@@ -12711,7 +12719,7 @@ ol.commentlist li .star-rating {
     border: 0 none;
     box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.05);
     font-size: 14px;
-    height: 50px;
+    /* height: 50px; */
     padding: 0 20px;
 }
 .shop-account .site-button.button-lg {
@@ -13074,10 +13082,13 @@ ol.commentlist li .star-rating {
 	opacity: 0.5;
 }
 .portfolio  .buy-icon{
-    right: 65px;
+    right: 55px;
+}
+.portfolio  .sale-icon {
+    right: 145px;
 }
 .portfolio  .twitter-icon{
-    right:120px;
+    right:100px;
     opacity: 1;
 }
 .portfolio  .portfolio-fullscreen:hover{

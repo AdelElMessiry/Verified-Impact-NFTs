@@ -1,219 +1,144 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-class HeaderMenu extends Component {
-  render() {
-    return (
-      <>
-        <ul className="nav navbar-nav">
-          <li>
-            <Link to={"./"}>
-              <span className="ti-home"></span> Home
-            </Link>
-          </li>
-          <li>
-            <Link to={"#"}>
-              Beneficiaries <i className="fa fa-chevron-down"></i>
-            </Link>
-            <ul className="sub-menu">
-              <li>
+import { _getBeneficiariesCampaignsList } from '../../api/beneficiaryInfo';
+import { _getCreatorsCollectionsList } from '../../api/creatorInfo';
+// import { profileClient } from '../../api/profileInfo';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNFTState } from '../../contexts/NFTContext';
+
+const HeaderMenu = () => {
+  const { isLoggedIn } = useAuth();
+  const { beneficiaries, campaigns, collections, creators } = useNFTState();
+
+  const [creatorsList, setCreatorsList] = React.useState();
+  const [beneficiariesList, setBeneficiariesList] = React.useState();
+
+  const loadSubMenu = React.useCallback(async () => {
+    const beneficiaryList =
+      beneficiaries &&
+      campaigns &&
+      (await _getBeneficiariesCampaignsList(
+        beneficiaries?.filter(({ approved }) => approved === 'true'),
+        campaigns
+      ));
+    beneficiaryList && setBeneficiariesList(beneficiaryList);
+    const creatorList =
+      creators &&
+      collections &&
+      (await _getCreatorsCollectionsList(creators, collections));
+    creatorList && setCreatorsList(creatorList);
+  }, [beneficiaries, campaigns, collections, creators]);
+
+  React.useEffect(() => {
+    loadSubMenu();
+  }, [loadSubMenu]);
+
+  return (
+    <>
+      <ul className='nav navbar-nav'>
+        <li>
+          <Link to={'./'}>
+            <span className='ti-home'></span> Home
+          </Link>
+        </li>
+        <li>
+          <span className='menu-parent-link'>
+            Beneficiaries <i className='fa fa-chevron-down'></i>
+          </span>
+          <ul className='sub-menu'>
+            {beneficiariesList?.map((b, index) => (
+              <li key={`#${index}`}>
                 <Link
-                  to={"./BenefeiciaryNFTs?beneficiary=Ukraine Gov"}
-                  className="dez-page"
+                  to={`./BeneficiaryNFTs?beneficiary=${b.address}`}
+                  className='dez-page'
                 >
-                  Ukraine Gov <i className="fa fa-angle-right"></i>
+                  {b.username} <i className='fa fa-angle-right'></i>
                 </Link>
-                <ul className="sub-menu">
-                  <li>
-                    <Link
-                      to={
-                        "./BenefeiciaryNFTs?beneficiary=Ukraine Gov&campaign=Stand With Ukraine"
-                      }
-                      className="dez-page"
-                    >
-                      Stand With Ukraine{" "}
-                    </Link>
-                  </li>
-
-                  <li>
-                    <Link
-                      to={
-                        "./BenefeiciaryNFTs?beneficiary=Ukraine Gov&campaign=Refugees"
-                      }
-                      className="dez-page"
-                    >
-                      Refugees{" "}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to={
-                        "./BenefeiciaryNFTs?beneficiary=Ukraine Gov&campaign=Reconstruction"
-                      }
-                      className="dez-page"
-                    >
-                      Reconstruction{" "}
-                    </Link>
-                  </li>
+                <ul className='sub-menu'>
+                  {b.campaigns?.map((c, index) => (
+                    <li key={index}>
+                      <Link
+                        to={`./BeneficiaryNFTs?beneficiary=${b.address}&campaign=${c.id}`}
+                        className='dez-page'
+                      >
+                        {c.name}{' '}
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
               </li>
-              <li>
+            ))}
+            <li>
+              <Link to={`./signup-as-beneficiary`} className='dez-page'>
+                Signup As Beneficiary
+              </Link>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <span className='menu-parent-link'>
+            Creators <i className='fa fa-chevron-down'></i>
+          </span>
+          <ul className='sub-menu'>
+            {creatorsList?.map((c, index) => (
+              <li key={`#${index}`}>
                 <Link
-                  to={"./BenefeiciaryNFTs?beneficiary=USA for Ukraine"}
-                  className="dez-page"
+                  to={`./CreatorNFTs?creator=${c.address}`}
+                  className='dez-page'
                 >
-                  USA for Ukraine <i className="fa fa-angle-right"></i>
+                  {c.name} <i className='fa fa-angle-right'></i>
                 </Link>
-                <ul className="sub-menu">
+                <ul className='sub-menu'>
+                  {c.collections?.map((col, index) => (
+                    <li key={index}>
+                      <Link
+                        to={`./CreatorNFTs?creator=${c.address}&collection=${col.id}`}
+                        className='dez-page'
+                      >
+                        {col.name}{' '}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </li>
+        <li>
+          {isLoggedIn && (
+            <>
+              <Link to={'#'}>
+                My Collection <i className='fa fa-chevron-down'></i>
+              </Link>
+              <ul className='sub-menu'>
                 <li>
-                    <Link
-                      to={
-                        "./BenefeiciaryNFTs?beneficiary=USA for Ukraine&campaign=Selfies for Ukraine"
-                      }
-                      className="dez-page"
-                    >
-                      Selfies for Ukraine{" "}
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <Link to={"#"}>
-              Creators <i className="fa fa-chevron-down"></i>
-            </Link>
-            <ul className="sub-menu">
-              <li>
-                <Link
-                  to={"./CreatorNFTs?creator=Script Culture"}
-                  className="dez-page"
-                >
-                  Script Culture <i className="fa fa-angle-right"></i>
-                </Link>
-                <ul className="sub-menu">
-                  <li>
-                    <Link
-                      to={
-                        "./CreatorNFTs?creator=Script Culture&collection=Ukraine Calligraphy"
-                      }
-                      className="dez-page"
-                    >
-                      Ukraine Calligraphy{" "}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to={
-                        "./CreatorNFTs?creator=Script Culture&collection=English Calligraphy"
-                      }
-                      className="dez-page"
-                    >
-                      English Calligraphy{" "}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to={
-                        "./CreatorNFTs?creator=Script Culture&collection=Arabic Calligraphy"
-                      }
-                      className="dez-page"
-                    >
-                      Arabic Calligraphy{" "}
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <Link
-                  to={"./CreatorNFTs?creator=NFT Punks"}
-                  className="dez-page"
-                >
-                  NFT Punks <i className="fa fa-angle-right"></i>
-                </Link>
-                <ul className="sub-menu">
-                  <li>
-                    <Link
-                      to={
-                        "./CreatorNFTs?creator=NFT Punks&collection=Forever Keys"
-                      }
-                      className="dez-page"
-                    >
-                      Forever Keys{" "}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to={
-                        "./CreatorNFTs?creator=NFT Punks&collection=Never Forget"
-                      }
-                      className="dez-page"
-                    >
-                      Never Forget{" "}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to={
-                        "./CreatorNFTs?creator=NFT Punks&collection=A Hero's Stand"
-                      }
-                      className="dez-page"
-                    >
-                      A Hero’s Stand{" "}
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <Link
-                  to={"./CreatorNFTs?creator=Vic Guiza"}
-                  className="dez-page"
-                >
-                  Vic Guiza <i className="fa fa-angle-right"></i>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to={"./CreatorNFTs?creator=Olga Litvinenko"}
-                  className="dez-page"
-                >
-                  Olga Litvinenko <i className="fa fa-angle-right"></i>
-                </Link>
-                <ul className="sub-menu">
-                  <li>
-                    <Link
-                      to={
-                        "./CreatorNFTs?creator=Olga Litvinenko&collection=Bucha"
-                      }
-                      className="dez-page"
-                    >
-                      Bucha{" "}
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <Link to={"#"}>
-              My Collection <i className="fa fa-chevron-down"></i>
-            </Link>
-            <ul className="sub-menu">
-              <li>
-                <Link to={"./NFTs"} className="dez-page">
-                  My NFTs
-                </Link>
-              </li>
-              <li>
-                <Link to={"./NFTs"} className="dez-page">
-                  My Creations
-                </Link>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </>
-    );
-  }
-}
+                  <Link to={'./my-NFTs'} className='dez-page'>
+                    My NFTs
+                  </Link>
+                </li>
+                <li>
+                  <Link to={'./my-collections'} className='dez-page'>
+                    My Collections
+                  </Link>
+                </li>
+                <li>
+                  <Link to={'./profile'} className='dez-page'>
+                    Profile
+                  </Link>
+                </li>
+                {/* commented untill compelete phase2 */}
+                {/* <li>
+                  <Link to={'./profile'} className='dez-page'>
+                    Profile
+                  </Link>
+                </li> */}
+              </ul>
+            </>
+          )}
+        </li>
+      </ul>
+    </>
+  );
+};
 export default HeaderMenu;
