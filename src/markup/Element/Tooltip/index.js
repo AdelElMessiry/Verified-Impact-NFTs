@@ -1,19 +1,21 @@
-import React from "react";
-import { Tooltip } from "@mui/material";
-const VINFTsTooltip = ({ children, title }) => {
+import React from 'react';
+import { Tooltip } from '@mui/material';
+
+//shared tooltip component
+const VINftsTooltip = ({ children, title }) => {
   return (
     <Tooltip
       classes={{
-        tooltip: "vinft-tooltip",
-        arrow: "vinft-tooltip-arrow",
+        tooltip: 'vinft-tooltip',
+        arrow: 'vinft-tooltip-arrow',
       }}
-      className=""
+      className=''
       arrow
-      placement="top"
+      placement='top'
       title={title}
     >
       {children}
     </Tooltip>
   );
 };
-export default VINFTsTooltip;
+export default VINftsTooltip;

@@ -1,0 +1,9 @@
+[workspace]
+
+members = [
+    "factory",
+]
+
+[profile.release]
+codegen-units = 1
+lto = true
