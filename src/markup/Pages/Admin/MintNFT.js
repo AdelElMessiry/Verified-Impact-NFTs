@@ -715,7 +715,8 @@ const MintNFT = () => {
                               creator === '' ||
                               state.inputs.name === '' ||
                               (state.inputs.isForSale &&
-                                state.inputs.price === '') ||
+                                (state.inputs.price === ''||
+                                state.inputs.price < 250)) ||
                               isMintClicked ||
                               isMintAnotherClicked
                             }
