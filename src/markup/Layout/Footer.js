@@ -4,6 +4,7 @@ import {
   faTwitter,
 } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {Link} from "react-router-dom";
 class Footer extends React.Component {
   render() {
     return (
@@ -48,7 +49,7 @@ class Footer extends React.Component {
                         <FontAwesomeIcon icon={faTwitter} size="2x" />
                       </a>
                     </li>
-
+                    <li className='text-success mr-3 align-items-center'><Link to={"/terms-of-services"}>Terms Of Services</Link></li>
                   </ul>
                 </div>
               </div>
