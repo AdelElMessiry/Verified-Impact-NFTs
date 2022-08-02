@@ -30,8 +30,10 @@ export async function getCampaignsList() {
         const parsedCampaigns = parseCampaign(rawCampaign);
         parsedCampaigns.wallet_address =
           parsedCampaigns.wallet_address.includes('Account')
-            ? parsedCampaigns.wallet_address.slice(13).replace(')', '')
-            : parsedCampaigns.wallet_address.slice(10).replace(')', '');
+            ? parsedCampaigns.wallet_address.includes('Account')
+              ? parsedCampaigns.wallet_address.slice(13).replace(')', '')
+              : parsedCampaigns.wallet_address.slice(10).replace(')', '')
+            : parsedCampaigns.wallet_address;
         campaignsList.push(parsedCampaigns);
       })
       .catch((err) => {
