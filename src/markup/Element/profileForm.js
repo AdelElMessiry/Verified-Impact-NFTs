@@ -133,8 +133,14 @@ const [socialErrors , setSocialErrors] = useState({
   const socialLinks = new SocialLinks();
   // check social links validation
   const checkSocialLinksValidation  = (value , socialType) => {
-    const  urlSocialInputs = socialErrors
-      urlSocialInputs[socialType] = socialLinks.isValid(socialType, value)
+    const  urlSocialInputs = socialErrors   
+      if (value == "" ){
+        urlSocialInputs[socialType] = true
+      }else if(!value.includes("https://")){
+        urlSocialInputs[socialType] = value.includes("https://")
+      }else{
+        urlSocialInputs[socialType] = socialLinks.isValid(socialType, value)
+      }      
       setSocialErrors({
         ...socialErrors,
         urlSocialInputs,
@@ -158,6 +164,13 @@ const [socialErrors , setSocialErrors] = useState({
     ) {
       return;
     }
+    if (
+      !socialErrors.facebook ||
+      !socialErrors.twitter ||
+      !socialErrors.instagram ||
+      !socialErrors.medium ||
+      !socialErrors.telegram
+    ) return;
     setIsSaveButtonClicked(true);
     let cloudProfileURL = uploadedProfileImageURL;
     let cloudNFTURL = uploadedNFTImageURL;
@@ -346,6 +359,7 @@ const [socialErrors , setSocialErrors] = useState({
                 name='twitter'
                 className='form-control'
                 value={state.inputs.twitter}
+                placeholder="https://twitter.com/userName"
                 onChange={(e) => {
                   handleChange(e);
                   checkSocialLinksValidation(e.target.value,'twitter')
@@ -362,6 +376,7 @@ const [socialErrors , setSocialErrors] = useState({
                 name='instagram'
                 className='form-control'
                 value={state.inputs.instagram}
+                placeholder="https://instagram.com/userName"
                 onChange={(e) => {
                   handleChange(e);
                   checkSocialLinksValidation(e.target.value,'instagram')
@@ -380,9 +395,10 @@ const [socialErrors , setSocialErrors] = useState({
                 name='facebook'
                 className='form-control'
                 value={state.inputs.facebook}
+                placeholder="https://facebook.com/userName"
                 onChange={(e) => {
                   handleChange(e);
-                  checkSocialLinksValidation(e.target.value ,'facebook' )
+                  checkSocialLinksValidation(e.target.value , 'facebook')
                 }}
               />
               {!socialErrors.facebook &&(
@@ -396,6 +412,7 @@ const [socialErrors , setSocialErrors] = useState({
                 name='medium'
                 className='form-control'
                 value={state.inputs.medium}
+                placeholder="https://medium.com/@userName"
                 onChange={(e) => {
                   handleChange(e);
                   checkSocialLinksValidation(e.target.value ,'medium')
@@ -424,6 +441,7 @@ const [socialErrors , setSocialErrors] = useState({
                 name='telegram'
                 className='form-control'
                 value={state.inputs.telegram}
+                placeholder="https://telegram.com/userName"
                 onChange={(e) => {
                   handleChange(e);
                   checkSocialLinksValidation(e.target.value , 'telegram')
