@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import ImageUploader from 'react-images-upload';
 import { toast as VIToast } from 'react-toastify';
 import { Form } from 'react-bootstrap';
 import CreatableSelect from 'react-select/creatable';
 import validator from 'validator';
+import { NFTStorage } from 'nft.storage';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNFTState } from '../../../contexts/NFTContext';
-
 import { uploadImg } from '../../../api/imageCDN';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
@@ -17,6 +17,8 @@ import { profileClient } from '../../../api/profileInfo';
 import PageTitle from '../../Layout/PageTitle';
 import PromptLogin from '../PromptLogin';
 import Layout from '../../Layout';
+
+import { NFT_STORAGE_KEY } from '../../../constants/blockchain';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
@@ -57,7 +59,7 @@ const MintNFT = () => {
   );
   const [isCreateNewCollection, setIsCreateNewCollection] = React.useState();
   const [beneficiaryPercentage, setBeneficiaryPercentage] = React.useState();
-  const [beneficiariesList, setBeneficiariesList] = React.useState();
+  // const [beneficiariesList, setBeneficiariesList] = React.useState();
   const [state, setState] = React.useState({
     inputs: {
       imageUrl: '',
@@ -125,7 +127,9 @@ const MintNFT = () => {
     setCreator,
     setIsCreatorExist,
     setSelectedCollectionValue,
+    savedData,
   ]);
+
   React.useEffect(() => {
     beneficiaries?.length &&
       !beneficiary &&
@@ -162,6 +166,7 @@ const MintNFT = () => {
     setBeneficiary,
     setCampaign,
     setCampaignsList,
+    savedData,
   ]);
 
   React.useEffect(() => {
@@ -208,7 +213,14 @@ const MintNFT = () => {
   };
 
   //handling of selecting image in image control
-  const onDrop = (picture) => {
+  const onDrop = (picture, file) => {
+    const blob = new Blob(file);
+    console.log(picture);
+    console.log(blob);
+    console.log(blob instanceof Blob);
+    console.log(file);
+    console.log(file[0] instanceof Blob);
+
     if (picture.length > 0) {
       const newImageUrl = URL.createObjectURL(picture[0]);
       setUploadedImage(newImageUrl);
@@ -221,6 +233,10 @@ const MintNFT = () => {
 
   //handling minting new NFT
   async function mintNFT(isAnotherMint) {
+    const client = new NFTStorage({ token: NFT_STORAGE_KEY });
+    const imageKey = await client.storeBlob();
+    const imageURI = imageKey.url.replace(/^ipfs:\/\//, '');
+
     if (!uploadedImageURL) {
       return VIToast.error('Please upload image or enter direct URL');
     }
@@ -346,7 +362,7 @@ const MintNFT = () => {
             `${creator} creator has just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections  @vinfts @casper_network @devxdao`
           );
         }
-        
+
         await sendDiscordMessage(
           process.env.REACT_APP_NFT_WEBHOOK_ID,
           process.env.REACT_APP_NFT_TOKEN,
@@ -548,7 +564,7 @@ const MintNFT = () => {
                               name='creator'
                               className='form-control'
                               onChange={(e) => setCreator(e.target.value)}
-                              value={creator}
+                              value={creator === '' ? null : creator}
                               disabled={isCreatorExist}
                             />
                           </Col>
@@ -657,11 +673,13 @@ const MintNFT = () => {
                                   *
                                 </span>
                               )}
-                              {state.inputs.isForSale &&state.inputs.price!==''&& state.inputs.price < 250 && (
-                                <span className='text-danger'>
-                                  NFT price should be more than 250 CSPR
-                                </span>
-                              )}
+                              {state.inputs.isForSale &&
+                                state.inputs.price !== '' &&
+                                state.inputs.price < 250 && (
+                                  <span className='text-danger'>
+                                    NFT price should be more than 250 CSPR
+                                  </span>
+                                )}
                             </div>
                           </Col>
                           <Col>
@@ -715,8 +733,8 @@ const MintNFT = () => {
                               creator === '' ||
                               state.inputs.name === '' ||
                               (state.inputs.isForSale &&
-                                (state.inputs.price === ''||
-                                state.inputs.price < 250)) ||
+                                (state.inputs.price === '' ||
+                                  state.inputs.price < 250)) ||
                               isMintClicked ||
                               isMintAnotherClicked
                             }
