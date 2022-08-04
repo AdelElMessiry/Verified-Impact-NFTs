@@ -27,6 +27,7 @@ import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import {
   getAccountInfo,
   getAccountNamedKeyValue,
+  getNFTImage,
 } from '../utils/contract-utils';
 
 const { NODE_ADDRESS, CHAIN_NAME, CONTRACT_NAME } = CONNECTION;
@@ -257,6 +258,7 @@ class CEP47Client {
     }
     let mapObj = Object.fromEntries(jsMap);
     mapObj.beneficiary = mapObj.beneficiary.slice(10).replace(')', '');
+    mapObj.image = await getNFTImage(mapObj.image);
     return mapObj;
   }
 

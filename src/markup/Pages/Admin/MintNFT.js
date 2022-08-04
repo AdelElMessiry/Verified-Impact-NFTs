@@ -13,6 +13,7 @@ import { uploadImg } from '../../../api/imageCDN';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
 import { profileClient } from '../../../api/profileInfo';
+import { getNFTImage } from '../../../utils/contract-utils';
 
 import PageTitle from '../../Layout/PageTitle';
 import PromptLogin from '../PromptLogin';
@@ -52,6 +53,7 @@ const MintNFT = () => {
   const [creator, setCreator] = React.useState('');
   const [isCreatorExist, setIsCreatorExist] = React.useState();
   const [creatorPercentage, setCreatorPercentage] = React.useState();
+  const [uploadedImageBlob, setUploadedBlobImage] = React.useState(null);
   const [uploadedImageURL, setUploadedImage] = React.useState(null);
   const [uploadedFile, setUploadedFile] = React.useState(null);
   const [selectedCollectionValue, setSelectedCollectionValue] = React.useState(
@@ -74,6 +76,7 @@ const MintNFT = () => {
       isImageURL: false,
     },
   });
+
   const loadCollections = React.useCallback(async () => {
     if (entityInfo.publicKey) {
       let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
@@ -214,17 +217,13 @@ const MintNFT = () => {
 
   //handling of selecting image in image control
   const onDrop = (picture, file) => {
-    const blob = new Blob(file);
-    console.log(picture);
-    console.log(blob);
-    console.log(blob instanceof Blob);
-    console.log(file);
-    console.log(file[0] instanceof Blob);
-
     if (picture.length > 0) {
       const newImageUrl = URL.createObjectURL(picture[0]);
       setUploadedImage(newImageUrl);
       setUploadedFile(picture[0]);
+
+      const blob = new Blob(file);
+      setUploadedBlobImage(blob);
     } else {
       setUploadedImage(null);
       setUploadedFile(null);
@@ -233,10 +232,6 @@ const MintNFT = () => {
 
   //handling minting new NFT
   async function mintNFT(isAnotherMint) {
-    const client = new NFTStorage({ token: NFT_STORAGE_KEY });
-    const imageKey = await client.storeBlob();
-    const imageURI = imageKey.url.replace(/^ipfs:\/\//, '');
-
     if (!uploadedImageURL) {
       return VIToast.error('Please upload image or enter direct URL');
     }
@@ -248,12 +243,16 @@ const MintNFT = () => {
     }
     isAnotherMint ? setIsMintAnotherClicked(true) : setIsMintClicked(true);
     let cloudURL = uploadedImageURL;
+    let imageKey;
     if (!state.inputs.isImageURL && uploadedFile) {
       console.log('Img', uploadedFile);
       console.log('Img url', uploadedImageURL);
 
       try {
-        cloudURL = await uploadImg(uploadedFile);
+        // cloudURL = await uploadImg(uploadedFile);
+        const client = new NFTStorage({ token: NFT_STORAGE_KEY });
+        imageKey = await client.storeBlob(uploadedImageBlob);
+        // imageKey = await getNFTImage(imageKey);
       } catch (err) {
         console.log(err);
         VIToast.error("Image couldn't be uploaded to cloud CDN !");
@@ -262,7 +261,7 @@ const MintNFT = () => {
       }
       VIToast.success('Image uploaded to cloud CDN successfully !');
     }
-    mintNewNFT(cloudURL, isAnotherMint);
+    mintNewNFT(imageKey, isAnotherMint);
   }
 
   async function mintNewNFT(imgURL, isAnotherMint) {
