@@ -22,6 +22,7 @@ import MyCollections from './Pages/MyCollections';
 import AddCollection from './Pages/Admin/AddEditCollection';
 import SignUpAsBeneficiary from './Pages/SignUpAsBeneficiary';
 import TermsOfServices from './Pages/TermsAndConditions';
+import NFTCard from './Element/NFTCard';
 
 const Markup = () => {
   return (
@@ -64,6 +65,11 @@ const Markup = () => {
                 path='/terms-of-services'
                 exact
                 component={TermsOfServices}
+              />
+                <Route
+                path='/nft-card'
+                exact
+                component={NFTCard}
               />
             </Switch>
           </div>
