@@ -78,7 +78,7 @@ const MintNFT = () => {
   });
 
   const loadCollections = React.useCallback(async () => {
-    if (entityInfo.publicKey) {      
+    if (entityInfo.publicKey) {
       let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
       if (userProfiles) {
         if (userProfiles.err === 'Address Not Found') {
@@ -137,7 +137,11 @@ const MintNFT = () => {
     beneficiaries?.length &&
       !beneficiary &&
       setBeneficiary(
-        beneficiaries?.filter(({ approved }) => approved === 'true')[0]?.address
+        beneficiaries?.filter(
+          (beneficiary) =>
+            beneficiary?.approved === 'true' ||
+            beneficiary?.isApproved === 'true'
+        )[0]?.address
       );
     campaigns?.length &&
       !campaign &&
@@ -149,8 +153,11 @@ const MintNFT = () => {
           ({ wallet_address }) =>
             (savedData
               ? savedData.beneficiary
-              : beneficiaries?.filter(({ approved }) => approved === 'true')[0]
-                  ?.address) === wallet_address
+              : beneficiaries?.filter(
+                  (beneficiary) =>
+                    beneficiary?.approved === 'true' ||
+                    beneficiary?.isApproved === 'true'
+                )[0]?.address) === wallet_address
         )
       );
     !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
@@ -198,7 +205,11 @@ const MintNFT = () => {
 
     if (isBeneficiary) {
       let selectedBeneficiary = beneficiaries
-        ?.filter(({ approved }) => approved === 'true')
+        ?.filter(
+          (beneficiary) =>
+            beneficiary?.approved === 'true' ||
+            beneficiary?.isApproved === 'true'
+        )
         .find(({ address }) => address === value);
       const filteredCampaigns = allCampaignsList?.filter(
         ({ wallet_address }) => selectedBeneficiary.address === wallet_address
@@ -461,7 +472,11 @@ const MintNFT = () => {
                                 value={beneficiary}
                               >
                                 {beneficiaries
-                                  ?.filter(({ approved }) => approved == 'true')
+                                  ?.filter(
+                                    (beneficiary) =>
+                                      beneficiary?.approved === 'true' ||
+                                      beneficiary?.isApproved === 'true'
+                                  )
                                   .map(({ username, address }) => (
                                     <option key={address} value={address}>
                                       {username}
