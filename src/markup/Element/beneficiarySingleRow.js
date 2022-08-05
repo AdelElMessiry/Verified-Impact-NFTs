@@ -20,10 +20,9 @@ const BeneficiarySingleRow = ({ beneficiary }) => {
     try {
       const approveBeneficiaryOut = await approveBeneficiary(
         beneficiary.address,
-        (beneficiary) =>
-          beneficiary?.approved === 'true' || beneficiary?.isApproved === 'true'
-            ? false
-            : true,
+        beneficiary?.approved === 'true' || beneficiary?.isApproved === 'true'
+          ? false
+          : true,
         CLPublicKey.fromHex(entityInfo.publicKey)
       );
       const deployResult = await getDeployDetails(approveBeneficiaryOut);
