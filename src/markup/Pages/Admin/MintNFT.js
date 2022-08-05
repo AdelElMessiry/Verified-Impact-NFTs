@@ -218,15 +218,15 @@ const MintNFT = () => {
   //handling of selecting image in image control
   const onDrop = (picture, file) => {
     if (picture.length > 0) {
-      const newImageUrl = URL.createObjectURL(picture[0]);
-      setUploadedImage(newImageUrl);
-      setUploadedFile(picture[0]);
+      // const newImageUrl = URL.createObjectURL(picture[0]);
+      // setUploadedImage(newImageUrl);
+      // setUploadedFile(picture[0]);
 
       const blob = new Blob(file);
       setUploadedBlobImage(blob);
     } else {
-      setUploadedImage(null);
-      setUploadedFile(null);
+      // setUploadedImage(null);
+      // setUploadedFile(null);
     }
   };
 
@@ -243,8 +243,8 @@ const MintNFT = () => {
     }
     isAnotherMint ? setIsMintAnotherClicked(true) : setIsMintClicked(true);
     let cloudURL = uploadedImageURL;
-    let imageKey;
-    if (!state.inputs.isImageURL && uploadedFile) {
+    let imageKey = uploadedImageURL;
+    if (!state.inputs.isImageURL && uploadedImageBlob) {
       console.log('Img', uploadedFile);
       console.log('Img url', uploadedImageURL);
 
@@ -563,7 +563,7 @@ const MintNFT = () => {
                               name='creator'
                               className='form-control'
                               onChange={(e) => setCreator(e.target.value)}
-                              value={creator === '' ? null : creator}
+                              value={creator || ''}
                               disabled={isCreatorExist}
                             />
                           </Col>
@@ -612,10 +612,15 @@ const MintNFT = () => {
                                   name='imageUrl'
                                   className='form-control'
                                   onChange={(e) => {
-                                    setUploadedImage(e.target.value);
+                                    // setUploadedImage(e.target.value);
+                                    setUploadedBlobImage(e.target.value);
                                     checkURLValidation(e.target.value);
                                   }}
-                                  value={uploadedImageURL || ''}
+                                  value={
+                                    uploadedImageURL === ''
+                                      ? null
+                                      : uploadedImageURL
+                                  }
                                 />
                                 {showURLErrorMsg && (
                                   <span className='text-danger'>
