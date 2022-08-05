@@ -78,7 +78,7 @@ const MintNFT = () => {
   });
 
   const loadCollections = React.useCallback(async () => {
-    if (entityInfo.publicKey) {
+    if (entityInfo.publicKey) {      
       let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
       if (userProfiles) {
         if (userProfiles.err === 'Address Not Found') {
@@ -353,7 +353,7 @@ const MintNFT = () => {
           await sendDiscordMessage(
             process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
             process.env.REACT_APP_COLLECTIONS_TOKEN,
-            selectedCollectionValue.value,
+            selectedCollectionValue.label,
             '',
             `${creator} creator has just added a new interesting #verified-impact-nfts collection. [Click here to see more interesting collections](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
           );
