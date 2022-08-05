@@ -26,10 +26,11 @@ const AddEditCampaignForm = ({
   //getting beneficiary details
   const selectedBeneficiary = React.useCallback(async () => {
     const firstBeneficiary = beneficiaries?.filter(
-      ({ approved }) => approved === 'true'
+      (beneficiary) =>
+        beneficiary?.approved === 'true' || beneficiary?.isApproved === 'true'
     );
     firstBeneficiary && setBeneficiary(firstBeneficiary[0]?.address);
-  }, [beneficiary, beneficiaries]);
+  }, [beneficiaries]);
 
   React.useEffect(() => {
     !beneficiary && selectedBeneficiary();
@@ -142,12 +143,18 @@ const AddEditCampaignForm = ({
                             beneficiary
                               ? beneficiary
                               : beneficiaries?.filter(
-                                  ({ approved }) => approved === 'true'
+                                  (beneficiary) =>
+                                    beneficiary?.approved === 'true' ||
+                                    beneficiary?.isApproved === 'true'
                                 )[0]?.address
                           }
                         >
                           {beneficiaries
-                            ?.filter(({ approved }) => approved === 'true')
+                            ?.filter(
+                              (beneficiary) =>
+                                beneficiary?.approved === 'true' ||
+                                beneficiary?.isApproved === 'true'
+                            )
                             .map(({ username, address }) => (
                               <option key={address} value={address}>
                                 {' '}
@@ -211,7 +218,10 @@ const AddEditCampaignForm = ({
                     name='campaignUrl'
                     className='form-control'
                     value={state.inputs.campaignUrl}
-                    onChange={(e) => {handleChange(e);checkURLValidation(e.target.value)}}
+                    onChange={(e) => {
+                      handleChange(e);
+                      checkURLValidation(e.target.value);
+                    }}
                   />
                   {showURLErrorMsg && (
                     <span className='text-danger'>Please enter Valid URL</span>

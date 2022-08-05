@@ -9,7 +9,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { sendDiscordMessage } from '../../utils/discordEvents';
 import { SendTweet } from '../../utils/VINFTsTweets';
 //Manage Beneficiaries page
-const BeneficiarySingleRow = ({beneficiary}) => {
+const BeneficiarySingleRow = ({ beneficiary }) => {
   const { isLoggedIn, entityInfo } = useAuth();
 
   const [isApproveClicked, setIsApproveClicked] = React.useState(false);
@@ -20,18 +20,25 @@ const BeneficiarySingleRow = ({beneficiary}) => {
     try {
       const approveBeneficiaryOut = await approveBeneficiary(
         beneficiary.address,
-        beneficiary.approved === 'true' ? false : true,
+        (beneficiary) =>
+          beneficiary?.approved === 'true' || beneficiary?.isApproved === 'true'
+            ? false
+            : true,
         CLPublicKey.fromHex(entityInfo.publicKey)
       );
       const deployResult = await getDeployDetails(approveBeneficiaryOut);
       console.log('......  saved successfully', deployResult);
       VIToast.success(
-        `Beneficiary is ${
-          beneficiary.approved === 'true' ? 'unapproved' : 'approved'
-        } successfully`
+        `Beneficiary is ${(beneficiary) =>
+          beneficiary?.approved === 'true' || beneficiary?.isApproved === 'true'
+            ? 'unapproved'
+            : 'approved'} successfully`
       );
       // beneficiary.approved state is checking on the passed beneficiary object from the parent with the old state before admin approval
-      if(beneficiary.approved === 'false'){
+      if (
+        beneficiary?.approved === 'false' ||
+        beneficiary?.isApproved === 'false'
+      ) {
         await sendDiscordMessage(
           process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
           process.env.REACT_APP_BENEFICIARIES_TOKEN,
@@ -43,7 +50,7 @@ const BeneficiarySingleRow = ({beneficiary}) => {
           `Great news! ${beneficiary.username} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao `
         );
       }
-      
+
       setIsApproveClicked(false);
 
       window.location.reload();
@@ -60,14 +67,15 @@ const BeneficiarySingleRow = ({beneficiary}) => {
 
   return (
     <tr key={beneficiary.address}>
-      <th scope="row">
+      <th scope='row'>
         <button
-          className="btn btn-success"
+          className='btn btn-success'
           onClick={() => handleApproveBeneficiary(beneficiary)}
         >
           {isApproveClicked ? (
-            <Spinner animation="border" variant="light" />
-          ) : beneficiary.approved == 'true' ? (
+            <Spinner animation='border' variant='light' />
+          ) : beneficiary?.approved === 'true' ||
+            beneficiary?.isApproved === 'true' ? (
             'Unapprove'
           ) : (
             'Approve'
