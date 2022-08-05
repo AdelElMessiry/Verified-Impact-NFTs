@@ -28,10 +28,11 @@ const BeneficiarySingleRow = ({ beneficiary }) => {
       const deployResult = await getDeployDetails(approveBeneficiaryOut);
       console.log('......  saved successfully', deployResult);
       VIToast.success(
-        `Beneficiary is ${(beneficiary) =>
+        `Beneficiary is ${
           beneficiary?.approved === 'true' || beneficiary?.isApproved === 'true'
             ? 'unapproved'
-            : 'approved'} successfully`
+            : 'approved'
+        } successfully`
       );
       // beneficiary.approved state is checking on the passed beneficiary object from the parent with the old state before admin approval
       if (
