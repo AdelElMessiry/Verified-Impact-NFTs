@@ -243,7 +243,7 @@ const MintNFT = () => {
 
   //handling minting new NFT
   async function mintNFT(isAnotherMint) {
-    if (!uploadedImageURL) {
+    if (!uploadedImageBlob) {
       return VIToast.error('Please upload image or enter direct URL');
     }
     if (!entityInfo.publicKey) {
@@ -253,8 +253,8 @@ const MintNFT = () => {
       return;
     }
     isAnotherMint ? setIsMintAnotherClicked(true) : setIsMintClicked(true);
-    let cloudURL = uploadedImageURL;
-    let imageKey = uploadedImageURL;
+    // let cloudURL = uploadedImageURL;
+    let imageKey = uploadedImageBlob;
     if (!state.inputs.isImageURL && uploadedImageBlob) {
       console.log('Img', uploadedFile);
       console.log('Img url', uploadedImageURL);
@@ -276,7 +276,7 @@ const MintNFT = () => {
   }
 
   async function mintNewNFT(imgURL, isAnotherMint) {
-    if (!uploadedImageURL) {
+    if (!uploadedImageBlob) {
       return VIToast.error('Please upload image or enter direct URL');
     }
 
