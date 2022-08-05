@@ -36,9 +36,8 @@ type NFTAction =
   | { type: NFTActionTypes.SUCCESS; payload: any };
 
 const NFTStateContext = React.createContext<NFTState | undefined>(undefined);
-const NFTDispatchContext = React.createContext<NFTDispatch | undefined>(
-  undefined
-);
+const NFTDispatchContext =
+  React.createContext<NFTDispatch | undefined>(undefined);
 
 function nftReducer(state: NFTState, action: NFTAction): NFTState {
   switch (action.type) {
@@ -120,7 +119,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
 
     const beneficiariesVINFTsList = await getBeneficiariesList();
     const beneficiariesCount = beneficiariesVINFTsList?.filter(
-      ({ approved }: any) => approved === 'true'
+      ({ isApproved }: any) => isApproved === 'true'
     )?.length;
 
     // beneficiariesList && setBeneficiaries(beneficiariesList);

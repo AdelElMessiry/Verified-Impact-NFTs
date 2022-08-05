@@ -148,7 +148,7 @@ fn create_profile() {
     profile.insert(format!("{}_telegram", profile_type), telegram);
     profile.insert(format!("{}_mail", profile_type), mail);
     profile.insert(
-        format!("{}_is_approved", profile_type),
+        format!("{}_isApproved", profile_type),
         is_approved.to_string(),
     );
 
@@ -185,7 +185,7 @@ pub extern "C" fn approve_beneficiary() {
 
     let mut profile = Factory::default().get_profile(address).unwrap_or_default();
     profile.insert(
-        format!("{}_is_approved", "beneficiary".to_string()),
+        format!("{}_isApproved", "beneficiary".to_string()),
         status.to_string(),
     );
 
