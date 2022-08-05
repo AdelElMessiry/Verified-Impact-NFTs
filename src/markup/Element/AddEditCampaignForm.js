@@ -26,8 +26,7 @@ const AddEditCampaignForm = ({
   //getting beneficiary details
   const selectedBeneficiary = React.useCallback(async () => {
     const firstBeneficiary = beneficiaries?.filter(
-      (beneficiary) =>
-        beneficiary?.approved === 'true' || beneficiary?.isApproved === 'true'
+      ({ isApproved }) => isApproved === 'true'
     );
     firstBeneficiary && setBeneficiary(firstBeneficiary[0]?.address);
   }, [beneficiaries]);
@@ -143,18 +142,12 @@ const AddEditCampaignForm = ({
                             beneficiary
                               ? beneficiary
                               : beneficiaries?.filter(
-                                  (beneficiary) =>
-                                    beneficiary?.approved === 'true' ||
-                                    beneficiary?.isApproved === 'true'
+                                  ({ isApproved }) => isApproved === 'true'
                                 )[0]?.address
                           }
                         >
                           {beneficiaries
-                            ?.filter(
-                              (beneficiary) =>
-                                beneficiary?.approved === 'true' ||
-                                beneficiary?.isApproved === 'true'
-                            )
+                            ?.filter(({ isApproved }) => isApproved === 'true')
                             .map(({ username, address }) => (
                               <option key={address} value={address}>
                                 {' '}

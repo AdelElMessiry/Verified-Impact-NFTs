@@ -112,7 +112,10 @@ export async function _getBeneficiariesCampaignsList(
           ...beneficiary,
           campaigns: campaignsList.filter(
             (campaign: any, index: any, campaigns: any) =>
-            campaign.wallet_address === beneficiary.address
+              campaign.wallet_address.includes('Key')
+                ? campaign.wallet_address.slice(10).replace(')', '') ===
+                  beneficiary.address
+                : campaign.wallet_address === beneficiary.address
             // &&
             // index ===
             //   collections.findIndex(
