@@ -1054,9 +1054,41 @@ fn add_creator() {
     let address = runtime::get_named_arg::<String>("address");
     let url = runtime::get_named_arg::<String>("url");
 
+    let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
+    let profile_contract_hash: ContractHash =
+        ContractHash::from_formatted_str(&profile_contract_string).unwrap_or_default();
+
     ViToken::default()
-        .create_creator(mode, name, description, address, url)
+        .create_creator(
+            mode.clone(),
+            name.clone(),
+            description.clone(),
+            address.clone(),
+            url.clone(),
+        )
         .unwrap_or_revert();
+
+    let method: &str = "create_profile";
+    let args: RuntimeArgs = runtime_args! {"mode" => mode.clone(),
+    "address" => address.clone(),
+    "username" => name.clone(),
+    "tagline" => "".to_string(),
+    "imgUrl" => "".to_string(),
+    "nftUrl" => "".to_string(),
+    "firstName" => "".to_string(),
+    "lastName" => "".to_string(),
+    "bio" => description.clone(),
+    "externalLink" => url.to_string(),
+    "phone" => "".to_string(),
+    "twitter" => "".to_string(),
+    "instagram" => "".to_string(),
+    "facebook" => "".to_string(),
+    "medium" => "".to_string(),
+    "telegram" => "".to_string(),
+    "mail" => "".to_string(),
+    "profileType" => "creator".to_string(),};
+
+    runtime::call_contract::<()>(profile_contract_hash, method, args);
 }
 
 #[no_mangle]
@@ -1410,6 +1442,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("description", String::cl_type()),
             Parameter::new("address", String::cl_type()),
             Parameter::new("url", String::cl_type()),
+            Parameter::new("profile_contract_string", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,

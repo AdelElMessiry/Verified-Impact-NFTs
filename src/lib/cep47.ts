@@ -727,6 +727,9 @@ class CEP47Client {
       description: CLValueBuilder.string(description),
       address: CLValueBuilder.string(address),
       url: CLValueBuilder.string(url),
+      profile_contract_hash: CLValueBuilder.string(
+        `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
     });
 
     return this.contractClient.callEntrypoint(
