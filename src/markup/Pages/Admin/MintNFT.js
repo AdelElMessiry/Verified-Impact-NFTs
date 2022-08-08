@@ -137,11 +137,8 @@ const MintNFT = () => {
     beneficiaries?.length &&
       !beneficiary &&
       setBeneficiary(
-        beneficiaries?.filter(
-          (beneficiary) =>
-            beneficiary?.approved === 'true' ||
-            beneficiary?.isApproved === 'true'
-        )[0]?.address
+        beneficiaries?.filter(({ isApproved }) => isApproved === 'true')[0]
+          ?.address
       );
     campaigns?.length &&
       !campaign &&
@@ -154,9 +151,7 @@ const MintNFT = () => {
             (savedData
               ? savedData.beneficiary
               : beneficiaries?.filter(
-                  (beneficiary) =>
-                    beneficiary?.approved === 'true' ||
-                    beneficiary?.isApproved === 'true'
+                  ({ isApproved }) => isApproved === 'true'
                 )[0]?.address) === wallet_address
         )
       );
@@ -205,11 +200,7 @@ const MintNFT = () => {
 
     if (isBeneficiary) {
       let selectedBeneficiary = beneficiaries
-        ?.filter(
-          (beneficiary) =>
-            beneficiary?.approved === 'true' ||
-            beneficiary?.isApproved === 'true'
-        )
+        ?.filter(({ isApproved }) => isApproved === 'true')
         .find(({ address }) => address === value);
       const filteredCampaigns = allCampaignsList?.filter(
         ({ wallet_address }) => selectedBeneficiary.address === wallet_address
@@ -473,9 +464,7 @@ const MintNFT = () => {
                               >
                                 {beneficiaries
                                   ?.filter(
-                                    (beneficiary) =>
-                                      beneficiary?.approved === 'true' ||
-                                      beneficiary?.isApproved === 'true'
+                                    ({ isApproved }) => isApproved === 'true'
                                   )
                                   .map(({ username, address }) => (
                                     <option key={address} value={address}>
