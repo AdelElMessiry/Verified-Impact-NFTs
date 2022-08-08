@@ -289,7 +289,7 @@ impl ViToken {
         mode: String,
         name: String,
         description: String,
-        address: String,
+        // address: Key,
         url: String,
     ) -> Result<(), Error> {
         match mode.as_str() {
@@ -305,7 +305,7 @@ impl ViToken {
                 creator.insert(format!("id: "), new_creator_count.to_string());
                 creator.insert(format!("name: "), name);
                 creator.insert(format!("description: "), description);
-                creator.insert(format!("address: "), address);
+                creator.insert(format!("address: "), caller.to_string());
                 creator.insert(format!("url: "), url);
 
                 CreatorControl::add_creator(self, new_creator_count, caller, creator);
@@ -325,11 +325,12 @@ impl ViToken {
         mode: String,
         name: String,
         description: String,
-        creator: String,
+        // creator: Key,
         url: String,
     ) -> Result<(), Error> {
         match mode.as_str() {
             "ADD" | "UPDATE" => {
+                let caller = ViToken::default().get_caller();
                 let cloned_mode = mode.clone();
                 let mut collection: BTreeMap<String, String> = BTreeMap::new();
                 let mut new_collection_count = U256::zero();
@@ -354,7 +355,7 @@ impl ViToken {
                 collection.insert(format!("name: "), name);
                 collection.insert(format!("description: "), description);
                 collection.insert(format!("url: "), url);
-                collection.insert(format!("creator: "), creator);
+                collection.insert(format!("creator: "), caller.to_string());
 
                 if cloned_mode == "ADD" {
                     CollectionControl::add_collection(self, new_collection_count, collection);
@@ -381,7 +382,7 @@ impl ViToken {
         is_for_sale: bool,
         currency: String,
         campaign: String,
-        creator: String,
+        // creator: Key,
         creator_percentage: String,
         collection: U256,
         collection_name: String,
@@ -390,9 +391,9 @@ impl ViToken {
     ) -> Result<Vec<TokenId>, Error> {
         let mut mapped_meta: BTreeMap<String, String> = BTreeMap::new();
         let caller = ViToken::default().get_caller();
-        let creator_add = String::from(creator);
-        let cloned_creator = creator_add.clone();
-        let collection_creator = creator_add.clone();
+        // let creator_add = String::from(creator);
+        // let cloned_creator = creator_add.clone();
+        // let collection_creator = creator_add.clone();
         let token_ids = vec![ViToken::default()
             .total_supply()
             .checked_add(U256::one())
@@ -410,7 +411,7 @@ impl ViToken {
                 "ADD".to_string(),
                 collection_name,
                 "".to_string(),
-                collection_creator,
+                // collection_creator,
                 "".to_string(),
             )
             .unwrap_or_revert();
@@ -423,7 +424,7 @@ impl ViToken {
                 "ADD".to_string(),
                 creator_name,
                 "".to_string(),
-                creator_add,
+                // caller,
                 "".to_string(),
             )
             .unwrap_or_revert();
@@ -436,7 +437,7 @@ impl ViToken {
         mapped_meta.insert(format!("isForSale"), is_for_sale.to_string());
         mapped_meta.insert(format!("currency"), currency);
         mapped_meta.insert(format!("campaign"), campaign);
-        mapped_meta.insert(format!("creator"), cloned_creator);
+        mapped_meta.insert(format!("creator"), caller.to_string());
         mapped_meta.insert(format!("beneficiary"), beneficiary.to_string());
         mapped_meta.insert(format!("creatorPercentage"), creator_percentage);
         mapped_meta.insert(format!("beneficiaryPercentage"), beneficiary_percentage);
@@ -621,10 +622,11 @@ impl ViToken {
         mode: String,
         name: String,
         description: String,
-        address: String,
+        // address: String,
         url: String,
     ) -> Result<(), Error> {
-        self.set_creator(mode, name, description, address, url)
+        // self.set_creator(mode, name, description, address, url)
+        self.set_creator(mode, name, description, url)
             .unwrap_or_revert();
         Ok(())
     }
@@ -636,7 +638,7 @@ impl ViToken {
         mode: String,
         name: String,
         description: String,
-        creator: String,
+        // creator: String,
         url: String,
     ) -> Result<(), Error> {
         self.set_collection(
@@ -645,7 +647,7 @@ impl ViToken {
             mode,
             name,
             description,
-            creator,
+            // creator,
             url,
         )
         .unwrap_or_revert();
@@ -852,7 +854,7 @@ fn add_collection() {
     let mode = runtime::get_named_arg::<String>("mode");
     let name = runtime::get_named_arg::<String>("name");
     let description = runtime::get_named_arg::<String>("description");
-    let creator = runtime::get_named_arg::<String>("creator");
+    // let creator = runtime::get_named_arg::<String>("creator");
     let url = runtime::get_named_arg::<String>("url");
 
     ViToken::default()
@@ -862,7 +864,7 @@ fn add_collection() {
             mode,
             name,
             description,
-            creator,
+            // creator,
             url,
         )
         .unwrap_or_revert();
@@ -879,7 +881,7 @@ fn mint() {
     let is_for_sale = runtime::get_named_arg::<bool>("isForSale");
     let currency = runtime::get_named_arg::<String>("currency");
     let campaign = runtime::get_named_arg::<String>("campaign");
-    let creator = runtime::get_named_arg::<String>("creator");
+    // let creator = runtime::get_named_arg::<String>("creator");
     let creator_percentage = runtime::get_named_arg::<String>("creatorPercentage");
     let collection = runtime::get_named_arg::<U256>("collection");
     let collection_name = runtime::get_named_arg::<String>("collectionName");
@@ -897,7 +899,7 @@ fn mint() {
             is_for_sale,
             currency,
             campaign,
-            creator,
+            // creator,
             creator_percentage,
             // is_collection_exist,
             collection,
@@ -1048,10 +1050,11 @@ fn approve_beneficiary() {
 
 #[no_mangle]
 fn add_creator() {
+    let caller = Key::Account(runtime::get_caller());
     let mode = runtime::get_named_arg::<String>("mode");
     let name = runtime::get_named_arg::<String>("name");
     let description = runtime::get_named_arg::<String>("description");
-    let address = runtime::get_named_arg::<String>("address");
+    // let address = runtime::get_named_arg::<Key>("address");
     let url = runtime::get_named_arg::<String>("url");
 
     let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
@@ -1063,14 +1066,14 @@ fn add_creator() {
             mode.clone(),
             name.clone(),
             description.clone(),
-            address.clone(),
+            // address.clone(),
             url.clone(),
         )
         .unwrap_or_revert();
 
     let method: &str = "create_profile";
     let args: RuntimeArgs = runtime_args! {"mode" => mode.clone(),
-    "address" => address.clone(),
+    "address" => caller.to_string(),
     "username" => name.clone(),
     "tagline" => "".to_string(),
     "imgUrl" => "".to_string(),
@@ -1427,7 +1430,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("mode", String::cl_type()),
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
-            Parameter::new("creator", String::cl_type()),
+            // Parameter::new("creator", String::cl_type()),
             Parameter::new("url", String::cl_type()),
         ],
         <()>::cl_type(),
@@ -1440,7 +1443,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("mode", String::cl_type()),
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
-            Parameter::new("address", String::cl_type()),
+            // Parameter::new("address", Key::cl_type()),
             Parameter::new("url", String::cl_type()),
             Parameter::new("profile_contract_string", String::cl_type()),
         ],
@@ -1470,7 +1473,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("isForSale", bool::cl_type()),
             Parameter::new("currency", String::cl_type()),
             Parameter::new("campaign", String::cl_type()),
-            Parameter::new("creator", String::cl_type()),
+            // Parameter::new("creator", String::cl_type()),
             Parameter::new("creatorPercentage", String::cl_type()),
             Parameter::new("collection", U256::cl_type()),
             Parameter::new("collectionName", String::cl_type()),
