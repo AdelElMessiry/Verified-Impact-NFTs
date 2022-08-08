@@ -88,7 +88,7 @@ export async function setIsTokenForSale(
   deploySender: CLPublicKey,
   price?: string
 ) {
-  const nftDetails = await cep47.getMappedTokenMeta(tokenId);
+  const nftDetails = await cep47.getMappedTokenMeta(tokenId, true);
   nftDetails['isForSale'] = isForSale.toString();
   isForSale && (nftDetails['price'] = price);
 

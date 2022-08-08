@@ -59,8 +59,8 @@ const TagLi = ({ name, handleSetTag, tagActive, type }) => {
         className={` tag ${tagActive ? 'btn active' : 'btn'}`}
         onClick={() => handleSetTag(name)}
       >
-        <input type="radio" />
-        <button className="site-button-secondry radius-sm">
+        <input type='radio' />
+        <button className='site-button-secondry radius-sm'>
           <span>
             {name} {''}
           </span>{' '}
@@ -72,8 +72,7 @@ const TagLi = ({ name, handleSetTag, tagActive, type }) => {
 
 const MyNFTs = () => {
   const { isLoggedIn, entityInfo } = useAuth();
-  const { beneficiaries, creators, collections, campaigns, nfts } =
-    useNFTState();
+  const { beneficiaries, creators, collections, campaigns } = useNFTState();
 
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
@@ -276,7 +275,7 @@ const MyNFTs = () => {
       <h5>
         {nft.title}&nbsp;&nbsp;{' '}
         {nft.isCreatorOwner === false && nft.isForSale === 'false' && (
-          <img src={soldIcon} width='40px' />
+          <img src={soldIcon} width='40px' alt='soldIcon' />
         )}
       </h5>
       <p>
