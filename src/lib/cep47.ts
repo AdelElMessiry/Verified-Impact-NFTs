@@ -408,7 +408,7 @@ class CEP47Client {
       isForSale,
       currency,
       campaign,
-      creator,
+      // creator,
       creatorPercentage,
       collection,
       collectionName,
@@ -426,7 +426,7 @@ class CEP47Client {
       isForSale: CLValueBuilder.bool(isForSale),
       currency: CLValueBuilder.string(currency),
       campaign: CLValueBuilder.string(campaign),
-      creator: CLValueBuilder.string(creator),
+      // creator: CLValueBuilder.string(creator),
       creatorPercentage: CLValueBuilder.string(creatorPercentage),
       collection: CLValueBuilder.u256(collection),
       collectionName: CLValueBuilder.string(collectionName || ''),
@@ -689,7 +689,7 @@ class CEP47Client {
     mode: string,
     name: string,
     description: string,
-    creator: string,
+    // creator: string,
     url: string,
     paymentAmount: string,
     deploySender: CLPublicKey
@@ -700,7 +700,7 @@ class CEP47Client {
       mode: CLValueBuilder.string(mode),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
-      creator: CLValueBuilder.string(creator),
+      // creator: CLValueBuilder.string(creator),
       url: CLValueBuilder.string(url),
     });
 
@@ -716,7 +716,7 @@ class CEP47Client {
   public async addCreator(
     name: string,
     description: string,
-    address: string,
+    // address: string,
     url: string,
     paymentAmount: string,
     deploySender: CLPublicKey
@@ -725,8 +725,11 @@ class CEP47Client {
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
-      address: CLValueBuilder.string(address),
+      // address: CLValueBuilder.string(address),
       url: CLValueBuilder.string(url),
+      profile_contract_hash: CLValueBuilder.string(
+        `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
     });
 
     return this.contractClient.callEntrypoint(

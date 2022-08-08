@@ -88,7 +88,7 @@ class ProfileClient {
         Object.entries(mapObj)
           .filter(([key]) => key.includes('beneficiary'))
           ?.map((profileKey: any) => [
-            profileKey[0].split('_').pop(),
+            profileKey[0].split('_').slice(1).join('_'),
             profileKey[0].split('_').pop() === 'address'
               ? profileKey[1].slice(10).replace(')', '')
               : profileKey[1],
