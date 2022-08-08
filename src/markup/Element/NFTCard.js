@@ -6,7 +6,7 @@ import VINftsTooltip from './Tooltip';
 import BuyNFTModal from './BuyNFT';
 import ListForSaleNFTModal from './ListForSaleNFT';
 import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
-
+import CopyCode from './copyCode';
 import soldIcon from '../../images/icon/sold.png';
 
 //NFT Card component
@@ -19,7 +19,6 @@ const NFTCard = ({
 }) => {
   const [showBuyModal, setShowBuyModal] = React.useState(false);
   const [showListForSaleModal, setShowListForSaleModal] = React.useState(false);
-
   //function which return buttons (buy NFT) & (expand NFT) on nft card
   const IconImage = () => {
     return (
@@ -95,7 +94,8 @@ const NFTCard = ({
         )}
         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
           <NFTTwitterShare item={item} isWithoutText={true} />
-        )}
+        )}     
+          <CopyCode link={`<iframe src="https://dev.verifiedimpactnfts.com/#/nft-card?id=${item.tokenId}"></iframe>`}/>
       </>
     );
   };
