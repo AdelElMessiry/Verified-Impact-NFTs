@@ -250,7 +250,7 @@ class CEP47Client {
     return fromCLMap(maybeValue);
   }
 
-  public async getMappedTokenMeta(tokenId: string) {
+  public async getMappedTokenMeta(tokenId: string, isUpdate?: boolean) {
     const maybeValue: any = await this.getTokenMeta(tokenId);
     const jsMap: any = new Map();
 
@@ -260,9 +260,12 @@ class CEP47Client {
     let mapObj = Object.fromEntries(jsMap);
     mapObj.beneficiary = mapObj.beneficiary.slice(10).replace(')', '');
 
-    mapObj.image = isValidHttpUrl(mapObj.image)
+    mapObj.image = isUpdate
+      ? mapObj.image
+      : isValidHttpUrl(mapObj.image)
       ? mapObj.image
       : await getNFTImage(mapObj.image);
+
     return mapObj;
   }
 
