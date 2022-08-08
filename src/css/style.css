@@ -13081,6 +13081,9 @@ ol.commentlist li .star-rating {
 	color: #fff;
 	opacity: 0.5;
 }
+.portfolio .copy {
+    right: 140px;
+}
 .portfolio  .buy-icon{
     right: 55px;
 }
