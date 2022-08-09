@@ -388,9 +388,11 @@ impl ViToken {
         collection_name: String,
         beneficiary: Key,
         beneficiary_percentage: String,
+        // profile_contract_string: String,
     ) -> Result<Vec<TokenId>, Error> {
         let mut mapped_meta: BTreeMap<String, String> = BTreeMap::new();
         let caller = ViToken::default().get_caller();
+        // let caller = Key::Account(runtime::get_caller());
         // let creator_add = String::from(creator);
         // let cloned_creator = creator_add.clone();
         // let collection_creator = creator_add.clone();
@@ -419,15 +421,41 @@ impl ViToken {
             mapped_meta.insert(format!("collection"), collection.to_string());
         }
 
-        if !ViToken::default().is_creator(caller) {
+        if !ViToken::default().is_creator(caller.clone()) {
             self.set_creator(
                 "ADD".to_string(),
-                creator_name,
+                creator_name.clone(),
                 "".to_string(),
                 // caller,
                 "".to_string(),
             )
             .unwrap_or_revert();
+
+            // let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
+            // let profile_contract_hash: ContractHash =
+            //     ContractHash::from_formatted_str(&profile_contract_string).unwrap_or_default();
+
+            // let method: &str = "create_profile";
+            // let args: RuntimeArgs = runtime_args! {"mode" =>  "ADD".to_string(),
+            // "address" => creator.to_string(),
+            // "username" => creator_name.clone(),
+            // "tagline" => "".to_string(),
+            // "imgUrl" => "".to_string(),
+            // "nftUrl" => "".to_string(),
+            // "firstName" => "".to_string(),
+            // "lastName" => "".to_string(),
+            // "bio" => "".clone(),
+            // "externalLink" => "".to_string(),
+            // "phone" => "".to_string(),
+            // "twitter" => "".to_string(),
+            // "instagram" => "".to_string(),
+            // "facebook" => "".to_string(),
+            // "medium" => "".to_string(),
+            // "telegram" => "".to_string(),
+            // "mail" => "".to_string(),
+            // "profileType" => "creator".to_string(),};
+
+            // runtime::call_contract::<()>(profile_contract_hash, method, args);
         }
 
         mapped_meta.insert(format!("title"), title);
@@ -872,6 +900,7 @@ fn add_collection() {
 
 #[no_mangle]
 fn mint() {
+    let caller = Key::Account(runtime::get_caller());
     let recipient = runtime::get_named_arg::<Key>("recipient");
     let creator_name = runtime::get_named_arg::<String>("creatorName");
     let title = runtime::get_named_arg::<String>("title");
@@ -881,12 +910,41 @@ fn mint() {
     let is_for_sale = runtime::get_named_arg::<bool>("isForSale");
     let currency = runtime::get_named_arg::<String>("currency");
     let campaign = runtime::get_named_arg::<String>("campaign");
-    // let creator = runtime::get_named_arg::<String>("creator");
+    // let creator = runtime::get_named_arg::<Key>("creator");
     let creator_percentage = runtime::get_named_arg::<String>("creatorPercentage");
     let collection = runtime::get_named_arg::<U256>("collection");
     let collection_name = runtime::get_named_arg::<String>("collectionName");
     let beneficiary = runtime::get_named_arg::<Key>("beneficiary");
     let beneficiary_percentage = runtime::get_named_arg::<String>("beneficiaryPercentage");
+    let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
+
+
+    if !ViToken::default().is_creator(caller) {
+        let profile_contract_hash: ContractHash =
+        ContractHash::from_formatted_str(&profile_contract_string).unwrap_or_default();
+
+        let method: &str = "create_profile";
+        let args: RuntimeArgs = runtime_args! {"mode" => "ADD".clone(),
+        "address" => caller.clone(),
+        "username" => creator_name.clone(),
+        "tagline" => "".to_string(),
+        "imgUrl" => "".to_string(),
+        "nftUrl" => "".to_string(),
+        "firstName" => "".to_string(),
+        "lastName" => "".to_string(),
+        "bio" => "".clone(),
+        "externalLink" => "".to_string(),
+        "phone" => "".to_string(),
+        "twitter" => "".to_string(),
+        "instagram" => "".to_string(),
+        "facebook" => "".to_string(),
+        "medium" => "".to_string(),
+        "telegram" => "".to_string(),
+        "mail" => "".to_string(),
+        "profileType" => "creator".to_string(),};
+    
+        runtime::call_contract::<()>(profile_contract_hash, method, args);
+    }
 
     ViToken::default()
         .mint(
@@ -906,6 +964,7 @@ fn mint() {
             collection_name,
             beneficiary,
             beneficiary_percentage,
+            // profile_contract_string,
         )
         .unwrap_or_revert();
 }
@@ -1445,7 +1504,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("description", String::cl_type()),
             // Parameter::new("address", Key::cl_type()),
             Parameter::new("url", String::cl_type()),
-            Parameter::new("profile_contract_string", String::cl_type()),
+            Parameter::new("profile_contract_hash", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
@@ -1473,12 +1532,13 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("isForSale", bool::cl_type()),
             Parameter::new("currency", String::cl_type()),
             Parameter::new("campaign", String::cl_type()),
-            // Parameter::new("creator", String::cl_type()),
+            // Parameter::new("creator", Key::cl_type()),
             Parameter::new("creatorPercentage", String::cl_type()),
             Parameter::new("collection", U256::cl_type()),
             Parameter::new("collectionName", String::cl_type()),
             Parameter::new("beneficiary", Key::cl_type()),
             Parameter::new("beneficiaryPercentage", String::cl_type()),
+            Parameter::new("profile_contract_hash", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
