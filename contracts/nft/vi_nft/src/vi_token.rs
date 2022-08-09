@@ -421,7 +421,7 @@ impl ViToken {
             mapped_meta.insert(format!("collection"), collection.to_string());
         }
 
-        if !ViToken::default().is_creator(creator.clone()) {
+        if !ViToken::default().is_creator(caller.clone()) {
             self.set_creator(
                 "ADD".to_string(),
                 creator_name.clone(),
@@ -900,7 +900,7 @@ fn add_collection() {
 
 #[no_mangle]
 fn mint() {
-    let  = Key::Account(runtime::get_caller());
+    let caller = Key::Account(runtime::get_caller());
     let recipient = runtime::get_named_arg::<Key>("recipient");
     let creator_name = runtime::get_named_arg::<String>("creatorName");
     let title = runtime::get_named_arg::<String>("title");
@@ -924,15 +924,15 @@ fn mint() {
         ContractHash::from_formatted_str(&profile_contract_string).unwrap_or_default();
 
         let method: &str = "create_profile";
-        let args: RuntimeArgs = runtime_args! {"mode" => mode.clone(),
-        "address" => address.clone(),
-        "username" => name.clone(),
+        let args: RuntimeArgs = runtime_args! {"mode" => "ADD".clone(),
+        "address" => caller.clone(),
+        "username" => creator_name.clone(),
         "tagline" => "".to_string(),
         "imgUrl" => "".to_string(),
         "nftUrl" => "".to_string(),
         "firstName" => "".to_string(),
         "lastName" => "".to_string(),
-        "bio" => description.clone(),
+        "bio" => "".clone(),
         "externalLink" => "".to_string(),
         "phone" => "".to_string(),
         "twitter" => "".to_string(),
@@ -941,7 +941,7 @@ fn mint() {
         "medium" => "".to_string(),
         "telegram" => "".to_string(),
         "mail" => "".to_string(),
-        "profileType" => "beneficiary".to_string(),};
+        "profileType" => "creator".to_string(),};
     
         runtime::call_contract::<()>(profile_contract_hash, method, args);
     }
