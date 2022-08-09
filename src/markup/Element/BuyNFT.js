@@ -10,7 +10,7 @@ import { getDeployDetails } from '../../api/universal';
 import { useAuth } from '../../contexts/AuthContext';
 import { sendDiscordMessage } from '../../utils/discordEvents';
 import { SendTweetWithImage } from '../../utils/VINFTsTweets';
-
+import ReactGA from 'react-ga';
 const InitialInputs = () => ({
   inputs: {
     address: '',
@@ -53,6 +53,11 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
           deployTransferResult
         );
         if (deployTransferResult) {
+          ReactGA.event({
+            category: 'Success',
+            action: 'Buy nft',
+            label: `${entityInfo.publicKey}: bought a new nft id: ${nftID}`,
+          });
           VIToast.success('Transaction ended successfully');
           handleClose();
           await sendDiscordMessage(
@@ -74,8 +79,18 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
+          ReactGA.event({
+            category: 'User Cancelation',
+            action: 'Buy nft',
+            label: `${entityInfo.publicKey}: Cancelled Signing`,
+          });
         } else {
           VIToast.error('Error happened please try again later');
+          ReactGA.event({
+            category: 'Error',
+            action: 'Buy nft',
+            label: `${entityInfo.publicKey}: ${err.message}`,
+          });
         }
         setIsBuyClicked(false);
         handleClose();
