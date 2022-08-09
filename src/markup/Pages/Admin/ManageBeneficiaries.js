@@ -11,12 +11,14 @@ import bnr1 from './../../../images/banner/bnr1.jpg';
 import plusIcon from './../../../images/icon/plus.png';
 import { useNFTState } from '../../../contexts/NFTContext';
 import BeneficiarySingleRow from '../../Element/beneficiarySingleRow';
-
+import ReactGA from 'react-ga';
 //Manage Beneficiaries page
 const ManageBeneficiaries = () => {
   const { isLoggedIn } = useAuth();
   const { beneficiaries } = useNFTState();
-
+  React.useEffect(()=>{
+    ReactGA.pageview(window.location.pathname +"/manage-beneficiaries");
+  },[])
   return (
     <Layout>
       <div className='page-content bg-white'>

@@ -14,7 +14,7 @@ import PageTitle from '../../Layout/PageTitle';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet } from '../../../utils/VINFTsTweets';
-
+import ReactGA from 'react-ga';
 
 //add new beneficiary page
 const AddBeneficiary = () => {
@@ -25,6 +25,9 @@ const AddBeneficiary = () => {
     description: '',
     address: '',
   });
+  React.useEffect(()=>{
+    ReactGA.pageview(window.location.pathname +"/admin_beneficiary");
+  },[])
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
 
   // },[])

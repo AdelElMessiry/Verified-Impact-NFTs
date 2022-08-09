@@ -17,6 +17,7 @@ import PageTitle from '../../Layout/PageTitle';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet } from '../../../utils/VINFTsTweets';
+import ReactGA from 'react-ga';
 
 //add new beneficiary page
 const AddCollection = () => {
@@ -50,6 +51,7 @@ const AddCollection = () => {
 
   //getting list of NFTs
   React.useEffect(() => {
+    ReactGA.pageview(window.location.pathname +"/add-collection");
     if (collectionId !== '0' && collectionId !== null) {
       getSelectedCollection();
     } else {

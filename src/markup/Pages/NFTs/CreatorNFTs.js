@@ -24,7 +24,7 @@ import { ProfileFormsEnum } from '../../../Enums/index';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import soldIcon from '../../../images/icon/sold.png';
 import viewIcon from '../../../images/icon/view.png';
-
+import ReactGA from 'react-ga';
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -147,6 +147,7 @@ const CreatorNFTs = () => {
   }, [collection, collections]);
 
   React.useEffect(() => {
+    ReactGA.pageview(window.location.pathname +"/CreatorNFTs");
     (!collectionName || collection) && getCollections();
   }, [collectionName, getCollections, collection]);
 

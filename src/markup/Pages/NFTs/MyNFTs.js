@@ -24,7 +24,7 @@ import CopyText from '../../Element/copyText';
 //images
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import soldIcon from '../../../images/icon/sold.png';
-
+import ReactGA from 'react-ga';
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -161,6 +161,7 @@ const MyNFTs = () => {
   ]);
 
   React.useEffect(() => {
+    ReactGA.pageview(window.location.pathname +"MyNfts");
     entityInfo.publicKey && getFilteredNFTs();
   }, [entityInfo.publicKey, getFilteredNFTs]);
 

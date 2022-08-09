@@ -24,7 +24,7 @@ import { NFT_STORAGE_KEY } from '../../../constants/blockchain';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet, SendTweetWithImage } from '../../../utils/VINFTsTweets';
-
+import ReactGA from 'react-ga';
 //handling of creating new option in creatable select control
 const createOption = (label) => ({
   label,
@@ -134,6 +134,7 @@ const MintNFT = () => {
   ]);
 
   React.useEffect(() => {
+    ReactGA.pageview(window.location.pathname +"/mint-nft");
     beneficiaries?.length &&
       !beneficiary &&
       setBeneficiary(
