@@ -84,6 +84,11 @@ const AddCollection = () => {
 
     const deployResult = await getDeployDetails(savedCollection);
     console.log('...... Collection saved successfully', deployResult);
+    ReactGA.event({
+      category: 'Success',
+      action: 'Add collection',
+      label: `${entityInfo.publicKey}: added new collection ${collectionInputs.name}`,
+    });
     await sendDiscordMessage(
       process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
       process.env.REACT_APP_COLLECTIONS_TOKEN,
@@ -106,8 +111,18 @@ const AddCollection = () => {
   } catch (err) {
     if (err.message.includes('User Cancelled')) {
       VIToast.error('User Cancelled Signing');
+      ReactGA.event({
+        category: 'User Cancelation',
+        action: 'Add collection',
+        label: `${entityInfo.publicKey}: Cancelled Signing`,
+      });
     } else {
       VIToast.error('Error happened please try again later');
+      ReactGA.event({
+        category: 'Error',
+        action: 'Add collection',
+        label: `${entityInfo.publicKey}: ${err.message}`,
+      });
     }
     setIsSaveClicked(false);
   }
