@@ -78,6 +78,8 @@ const MintNFT = () => {
   });
 
   const loadCollections = React.useCallback(async () => {
+    const profiles= await profileClient.profilesList();
+    console.log(profiles);
     if (entityInfo.publicKey) {
       let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
       if (userProfiles) {
