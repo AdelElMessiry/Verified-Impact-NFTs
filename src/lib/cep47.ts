@@ -697,7 +697,7 @@ class CEP47Client {
     mode: string,
     name: string,
     description: string,
-    // creator: string,
+    creator: string,
     url: string,
     paymentAmount: string,
     deploySender: CLPublicKey
@@ -708,7 +708,9 @@ class CEP47Client {
       mode: CLValueBuilder.string(mode),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
-      // creator: CLValueBuilder.string(creator),
+      creator: CLValueBuilder.key(
+        CLValueBuilder.byteArray(CLPublicKey.fromHex(creator).toAccountHash())
+      ),
       url: CLValueBuilder.string(url),
     });
 
@@ -724,7 +726,7 @@ class CEP47Client {
   public async addCreator(
     name: string,
     description: string,
-    // address: string,
+    address: string,
     url: string,
     paymentAmount: string,
     deploySender: CLPublicKey
@@ -733,7 +735,9 @@ class CEP47Client {
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
-      // address: CLValueBuilder.string(address),
+      address: CLValueBuilder.key(
+        CLValueBuilder.byteArray(CLPublicKey.fromHex(address).toAccountHash())
+      ),
       url: CLValueBuilder.string(url),
       profile_contract_hash: CLValueBuilder.string(
         `contract-${PROFILE_CONTRACT_HASH!}`
