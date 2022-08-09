@@ -411,7 +411,7 @@ class CEP47Client {
       isForSale,
       currency,
       campaign,
-      // creator,
+      creator,
       creatorPercentage,
       collection,
       collectionName,
@@ -429,7 +429,9 @@ class CEP47Client {
       isForSale: CLValueBuilder.bool(isForSale),
       currency: CLValueBuilder.string(currency),
       campaign: CLValueBuilder.string(campaign),
-      // creator: CLValueBuilder.string(creator),
+      creator: CLValueBuilder.key(
+        CLValueBuilder.byteArray(CLPublicKey.fromHex(creator).toAccountHash())
+      ),
       creatorPercentage: CLValueBuilder.string(creatorPercentage),
       collection: CLValueBuilder.u256(collection),
       collectionName: CLValueBuilder.string(collectionName || ''),
@@ -437,6 +439,9 @@ class CEP47Client {
         CLValueBuilder.byteArray(Buffer.from(beneficiary, 'hex'))
       ),
       beneficiaryPercentage: CLValueBuilder.string(beneficiaryPercentage),
+      profile_contract_hash: CLValueBuilder.string(
+        `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
     });
 
     return this.contractClient.callEntrypoint(
