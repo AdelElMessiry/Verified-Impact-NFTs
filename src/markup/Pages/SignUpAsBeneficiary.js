@@ -11,11 +11,14 @@ import ProfileForm from '../Element/profileForm';
 import { ProfileFormsEnum } from '../../Enums/index';
 
 import bnr1 from '../../images/banner/bnr1.jpg';
+import ReactGA from 'react-ga';
 
 //add new beneficiary page
 const SignUpAsBeneficiary = () => {
   const { isLoggedIn } = useAuth();
-
+React.useEffect(()=>{
+  ReactGA.pageview(window.location.pathname +"signup-as-beneficiary");
+},[])
   return (
     <>
       <Layout>
