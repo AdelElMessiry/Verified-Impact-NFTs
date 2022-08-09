@@ -69,6 +69,7 @@ export async function getNFTsList() {
 
 export async function getCreatorNftList(address: string) {
   const creator = CLPublicKey.fromHex(address).toAccountHashStr();
+
   const nftList = await getNFTsList();
 
   for (const [index, nft] of nftList.entries()) {
@@ -77,7 +78,11 @@ export async function getCreatorNftList(address: string) {
   }
 
   const creatorList = nftList.filter(
-    (nft: any) => nft.creator === address
+    (nft: any) =>
+      nft.creator.includes('Key')
+        ? nft.creator.slice(13).replace(')', '') === creator.slice(13)
+        : nft.creator === address
+
     // && nft.isOwner
   );
 
