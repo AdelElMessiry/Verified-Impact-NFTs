@@ -6,6 +6,7 @@ import { Form } from 'react-bootstrap';
 import CreatableSelect from 'react-select/creatable';
 import validator from 'validator';
 import { NFTStorage } from 'nft.storage';
+import { CLPublicKey } from 'casper-js-sdk';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNFTState } from '../../../contexts/NFTContext';
@@ -78,7 +79,7 @@ const MintNFT = () => {
   });
 
   const loadCollections = React.useCallback(async () => {
-    const profiles= await profileClient.profilesList();
+    const profiles = await profileClient.profilesList();
     console.log(profiles);
     if (entityInfo.publicKey) {
       let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
@@ -96,8 +97,13 @@ const MintNFT = () => {
             const _collections =
               // existingCreator &&
               collections &&
-              collections.filter(
-                ({ creator }) => creator === entityInfo.publicKey
+              collections.filter(({ creator }) =>
+                creator.includes('Key')
+                  ? creator.slice(13).replace(')', '') ===
+                    CLPublicKey.fromHex(entityInfo.publicKey)
+                      .toAccountHashStr()
+                      .slice(13)
+                  : creator === entityInfo.publicKey
               );
 
             const selectedCollections =
