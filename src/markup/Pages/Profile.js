@@ -44,11 +44,13 @@ const Profile = () => {
       const _beneficiaryProfile = beneficiaries?.find(
         ({ address }) => address === entityInfo.publicKey
       );
+
       const _creatorProfile = creators?.find(
         ({ address }) => address === entityInfo.publicKey
       );
+
       const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
-      console.log(userProfiles);
+
       if (userProfiles) {
         if (userProfiles.err === 'Address Not Found') {
           if (beneficiaries) {
@@ -334,8 +336,11 @@ const Profile = () => {
                                     </TabPane>
                                     <TabPane tabId='5'>
                                       {beneficiaryProfile ? (
-                                         <ManageCampaigns beneficiaryAddress={beneficiaryProfile.address} />
-                                        
+                                        <ManageCampaigns
+                                          beneficiaryAddress={
+                                            beneficiaryProfile.address
+                                          }
+                                        />
                                       ) : (
                                         <h4 className='text-muted text-center my-5'>
                                           Please Add Beneficiary First
