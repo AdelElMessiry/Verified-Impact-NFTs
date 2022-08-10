@@ -9,7 +9,7 @@ export async function addCollection(
   name: string,
   description: string,
   url: string,
-  // creator: string,
+  creator: string,
   deploySender: CLPublicKey,
   mode?: string,
   collectionId?: string
@@ -19,7 +19,7 @@ export async function addCollection(
     mode ? mode : 'ADD',
     name,
     description,
-    // creator,
+    creator,
     url,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     deploySender
@@ -44,14 +44,14 @@ export async function updateCollection(
   name: string,
   description: string,
   url: string,
-  // creator: string,
+  creator: string,
   deploySender: CLPublicKey
 ) {
   const updateCollectionDeployHash = await addCollection(
     name,
     description,
     url,
-    // creator,
+    creator,
     deploySender,
     'UPDATE',
     collection_id
