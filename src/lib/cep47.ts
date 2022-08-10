@@ -258,8 +258,13 @@ class CEP47Client {
       jsMap.set(innerKey, value);
     }
     let mapObj = Object.fromEntries(jsMap);
-    mapObj.beneficiary = mapObj.beneficiary.slice(10).replace(')', '');
-
+    mapObj.beneficiary =
+      mapObj.beneficiary.includes('Account') ||
+      mapObj.beneficiary.includes('Key')
+        ? mapObj.beneficiary.includes('Account')
+          ? mapObj.beneficiary.slice(13).replace(')', '')
+          : mapObj.beneficiary.slice(10).replace(')', '')
+        : mapObj.beneficiary;
     mapObj.image = isUpdate
       ? mapObj.image
       : isValidHttpUrl(mapObj.image)
