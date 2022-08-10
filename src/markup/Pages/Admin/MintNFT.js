@@ -79,8 +79,6 @@ const MintNFT = () => {
   });
 
   const loadCollections = React.useCallback(async () => {
-    const profiles = await profileClient.profilesList();
-    console.log(profiles);
     if (entityInfo.publicKey) {
       let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
       if (userProfiles) {
@@ -148,21 +146,25 @@ const MintNFT = () => {
         beneficiaries?.filter(({ isApproved }) => isApproved === 'true')[0]
           ?.address
       );
+
     campaigns?.length &&
       !campaign &&
       setCampaign(savedData ? savedData.campaign : campaigns[0]?.id);
+
     !campaignsList &&
       campaigns?.length &&
       setCampaignsList(
-        campaigns.filter(
-          ({ wallet_address }) =>
-            (savedData
-              ? savedData.beneficiary
-              : beneficiaries?.filter(
-                  ({ isApproved }) => isApproved === 'true'
-                )[0]?.address) === wallet_address
+        campaigns.filter(({ wallet_address }) =>
+          (savedData
+            ? savedData.beneficiary
+            : beneficiaries?.filter(
+                ({ isApproved }) => isApproved === 'true'
+              )[0]?.address) === wallet_address.includes('Key')
+            ? wallet_address.slice(10).replace(')', '')
+            : wallet_address
         )
       );
+
     !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
     !campaignsList &&
       campaigns?.length &&
