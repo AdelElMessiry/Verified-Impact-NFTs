@@ -151,23 +151,25 @@ const MintNFT = () => {
       !campaign &&
       setCampaign(savedData ? savedData.campaign : campaigns[0]?.id);
 
-    !campaignsList &&
+    const filteredCampaigns =
+      !campaignsList &&
       campaigns?.length &&
-      setCampaignsList(
-        campaigns.filter(({ wallet_address }) =>
+      campaigns.filter(
+        ({ wallet_address }) =>
           (savedData
             ? savedData.beneficiary
             : beneficiaries?.filter(
                 ({ isApproved }) => isApproved === 'true'
-              )[0]?.address) === wallet_address.includes('Key')
-            ? wallet_address.slice(10).replace(')', '')
-            : wallet_address
-        )
+              )[0]?.address) === wallet_address
       );
+    filteredCampaigns?.length && setCampaignsList(filteredCampaigns);
 
-    !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
-    !campaignsList &&
-      campaigns?.length &&
+    // !campaignsList &&
+    campaigns?.length &&
+      filteredCampaigns?.length &&
+      setAllCampaignsList(campaigns);
+    // !campaignsList &&
+    campaigns?.length &&
       setCampaignSelectedData(
         campaigns,
         savedData ? savedData.campaign : campaigns[0]?.id
@@ -178,9 +180,9 @@ const MintNFT = () => {
     beneficiaries,
     beneficiary,
     campaign,
-    setBeneficiary,
-    setCampaign,
-    setCampaignsList,
+    // setBeneficiary,
+    // setCampaign,
+    // setCampaignsList,
     savedData,
   ]);
 
