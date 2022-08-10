@@ -99,7 +99,7 @@ const MintNFT = () => {
               collections &&
               collections.filter(({ creator }) =>
                 creator.includes('Key')
-                  ? creator.slice(13).replace(')', '') ===
+                  ? creator.slice(10).replace(')', '') ===
                     CLPublicKey.fromHex(entityInfo.publicKey)
                       .toAccountHashStr()
                       .slice(13)
