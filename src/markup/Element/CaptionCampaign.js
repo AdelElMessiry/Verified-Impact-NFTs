@@ -6,6 +6,7 @@ import VINftsTooltip from '../Element/Tooltip';
 import CopyText from './copyText';
 
 import soldIcon from '../../images/icon/sold.png';
+import CopyCode from './copyCode';
 
 export const CaptionCampaign = (data, IconImage) => (
   <div className="text-white text-left port-box">
@@ -87,7 +88,7 @@ export const CaptionCampaign = (data, IconImage) => (
           {data.price} {data.currency}
         </>
       )}
-      &nbsp;&nbsp; {data.isForSale === 'true' && <IconImage nft={data} />}
+      &nbsp;&nbsp; <IconImage nft={data} />
       {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
         <NFTTwitterShare item={data} />
       )}
@@ -104,6 +105,10 @@ export const CaptionCampaign = (data, IconImage) => (
       &nbsp;&nbsp;{' '}
       <CopyText
         link={`${window.location.origin}/#/nft-detail?id=${data.tokenId}`}
+      />
+      &nbsp;&nbsp;{' '}
+      <CopyCode
+        link={`<iframe src='https://dev.verifiedimpactnfts.com/#/nft-card?id=${data.tokenId}'></iframe>`}
       />
     </p>
   </div>

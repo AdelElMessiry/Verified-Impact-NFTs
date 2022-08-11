@@ -32,7 +32,9 @@ import plusIcon from './../../images/icon/plus.png';
 import editIcon from './../../images/icon/edit.png';
 import soldIcon from '../../images/icon/sold.png';
 import mintIcon from '../../images/icon/Mint.png';
-
+import { faStoreAlt, faStoreAltSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CopyCode from '../Element/copyCode';
 // Masonry section
 const breakPoints = [
   { width: 1, itemsToShow: 1 },
@@ -119,7 +121,7 @@ const MyCollections = () => {
   const IconImage = ({ nft }) => {
     return (
       <>
-        <VINftsTooltip title={'Transfer NFT'}>
+        {/* <VINftsTooltip title={'Transfer NFT'}>
           <i
             className='ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
             onClick={() => {
@@ -127,42 +129,41 @@ const MyCollections = () => {
               setShowBuyModal(true);
             }}
           ></i>
-        </VINftsTooltip>
-        <VINftsTooltip
-          title={
-            nft.isForSale === 'true'
-              ? 'Unlist NFT for Sale'
-              : 'List NFT for sale'
-          }
-        >
-          <div
-            onClick={() => {
-              setListForSaleNFT(nft);
-              setShowListForSaleModal(true);
-            }}
-          >
-            {nft.isForSale === 'true' ? (
-              <div>
-                {' '}
-                <i className='ti-close sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen position-absolute'></i>
-                <i className='ti-money transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'></i>
-              </div>
-            ) : (
-              <i className='ti-money transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'></i>
-            )}
-          </div>
-        </VINftsTooltip>
+        </VINftsTooltip> */}
+                 { nft.isOwner && (
+              <VINftsTooltip
+                title={
+                  nft.isForSale === 'true'
+                    ? 'Unlist NFT for Sale'
+                    : 'List NFT for sale'
+                }
+              >
+                <div
+                  onClick={() => {
+                    setListForSaleNFT(nft);
+                    setShowListForSaleModal(true);
+                  }}
+                >
+                  {nft.isForSale === 'true' ? (
+                    <FontAwesomeIcon icon={faStoreAltSlash} size='2x' />
+                  ) : (
+                    <FontAwesomeIcon icon={faStoreAlt} size='2x' />
+                  )}
+                </div>
+              </VINftsTooltip>
+          )}
       </>
     );
   };
 
   const CaptionItem = (nft) => (
     <div className='text-white text-left port-box'>
-      <h5>{nft.title}
-      &nbsp;&nbsp;{' '}
-      {nft.isCreatorOwner === false && nft.isForSale === 'false' && (
-          <img src={soldIcon} width='40px'/>
-      )}
+      <h5>
+        {nft.title}
+        &nbsp;&nbsp;{' '}
+        {nft.isCreatorOwner === false && nft.isForSale === 'false' && (
+          <img src={soldIcon} width='40px' />
+        )}
       </h5>
       <p>
         <b>Description: </b>
@@ -243,10 +244,13 @@ const MyCollections = () => {
         </Link>
       </p>
       <p className='d-flex align-content-center align-items-center'>
-      {nft.isCreatorOwner !== false && nft.isForSale !== 'false' && (<><b>Price: </b>
-        {nft.price} {nft.currency}&nbsp;&nbsp;</>)}
-        
-        <IconImage nft={nft} />
+        {nft.isCreatorOwner !== false && nft.isForSale !== 'false' && (
+          <>
+            <b>Price: </b>
+            {nft.price} {nft.currency}&nbsp;&nbsp;
+          </>
+        )}
+       {nft.isCreatorOwner === false && nft.isForSale === 'true' &&<IconImage nft={nft} />}
         &nbsp;&nbsp; &nbsp;&nbsp;{' '}
         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
           <NFTTwitterShare item={nft} />
@@ -264,6 +268,10 @@ const MyCollections = () => {
         &nbsp;&nbsp;{' '}
         <CopyText
           link={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
+        />
+        &nbsp;&nbsp;{' '}
+        <CopyCode
+          link={`<iframe src='https://dev.verifiedimpactnfts.com/#/nft-card?id=${nft.tokenId}'></iframe>`}
         />
       </p>
     </div>
@@ -507,8 +515,7 @@ const MyCollections = () => {
                         alt='plusIcon'
                       />
                     </Link>
-                  </VINftsTooltip>
-                  {' '}
+                  </VINftsTooltip>{' '}
                   <VINftsTooltip title={`Mint NFT`}>
                     <Link to={'./mint-nft'}>
                       <img
@@ -627,15 +634,11 @@ const MyCollections = () => {
                       <div key={index} className='mb-5'>
                         <h4 className='text-success text-center  d-flex align-items-center justify-content-center'>
                           <Link
-                            to={`${
-                              window.location.origin
-                            }/#/CreatorNFTs?creator=${NFts[0]?.creator}&collection=${NFts[0]?.collection}`}
+                            to={`${window.location.origin}/#/CreatorNFTs?creator=${NFts[0]?.creator}&collection=${NFts[0]?.collection}`}
                             className='mr-1 text-success text-underline'
                           >
                             <QRCode
-                              value={`${
-                                window.location.origin
-                              }/#/CreatorNFTs?creator=${NFts[0]?.creator}&collection=${NFts[0]?.collection}`}
+                              value={`${window.location.origin}/#/CreatorNFTs?creator=${NFts[0]?.creator}&collection=${NFts[0]?.collection}`}
                               size={90}
                             />
                           </Link>
@@ -649,7 +652,9 @@ const MyCollections = () => {
                           </Link>
                           &nbsp;&nbsp;
                           <VINftsTooltip title={`Edit Collection`}>
-                            <Link to={`./add-collection?id=${NFts[0]?.collection}`}>
+                            <Link
+                              to={`./add-collection?id=${NFts[0]?.collection}`}
+                            >
                               <img
                                 src={editIcon}
                                 className='img img-fluid'
@@ -664,9 +669,7 @@ const MyCollections = () => {
                               beneficiary={NFts[0]?.beneficiaryName}
                               creator={NFts[0]?.creatorName}
                               collection={NFts[0]?.collectionName}
-                              url={`${
-                                window.location.origin
-                              }/#/CreatorNFTs?creator=${NFts[0]?.creator}&collection=${NFts[0]?.collection}`}
+                              url={`${window.location.origin}/#/CreatorNFTs?creator=${NFts[0]?.creator}&collection=${NFts[0]?.collection}`}
                               beneficiaryPercentage={
                                 NFts[0]?.beneficiaryPercentage
                               }
@@ -674,9 +677,7 @@ const MyCollections = () => {
                           )}
                           &nbsp;&nbsp;{' '}
                           <CopyText
-                            link={`${
-                              window.location.origin
-                            }/#/CreatorNFTs?creator=${NFts[0]?.creator}&collection=${NFts[0]?.collection}`}
+                            link={`${window.location.origin}/#/CreatorNFTs?creator=${NFts[0]?.creator}&collection=${NFts[0]?.collection}`}
                           />
                         </h4>
                         <SimpleReactLightbox>

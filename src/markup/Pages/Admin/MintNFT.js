@@ -96,12 +96,9 @@ const MintNFT = () => {
               // existingCreator &&
               collections &&
               collections.filter(({ creator }) =>
-                creator.includes('Key')
-                  ? creator.slice(10).replace(')', '') ===
-                    CLPublicKey.fromHex(entityInfo.publicKey)
-                      .toAccountHashStr()
-                      .slice(13)
-                  : creator === entityInfo.publicKey
+                creator === CLPublicKey.fromHex(entityInfo.publicKey)
+                .toAccountHashStr()
+                .slice(13)
               );
 
             const selectedCollections =
@@ -147,40 +144,43 @@ const MintNFT = () => {
           ?.address
       );
 
-    campaigns?.length &&
-      !campaign &&
-      setCampaign(savedData ? savedData.campaign : campaigns[0]?.id);
+    // campaigns?.length &&
+    //   !campaign &&
+    //   setCampaign(savedData ? savedData.campaign : campaigns[0]?.id);
 
-    !campaignsList &&
+    const filteredCampaigns =
+      !campaignsList &&
       campaigns?.length &&
-      setCampaignsList(
-        campaigns.filter(({ wallet_address }) =>
+      campaigns.filter(
+        ({ wallet_address }) =>
           (savedData
             ? savedData.beneficiary
             : beneficiaries?.filter(
                 ({ isApproved }) => isApproved === 'true'
-              )[0]?.address) === wallet_address.includes('Key')
-            ? wallet_address.slice(10).replace(')', '')
-            : wallet_address
-        )
+              )[0]?.address) === wallet_address
       );
+    filteredCampaigns?.length && setCampaignsList(filteredCampaigns);
 
-    !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
-    !campaignsList &&
-      campaigns?.length &&
+     !campaignsList &&
+    campaigns?.length &&
+      filteredCampaigns?.length &&
+      setAllCampaignsList(campaigns);
+    if(!campaignsList)  {
+     filteredCampaigns?.length ?
       setCampaignSelectedData(
-        campaigns,
-        savedData ? savedData.campaign : campaigns[0]?.id
-      );
+        filteredCampaigns,
+        savedData ? savedData.campaign : filteredCampaigns[0]?.id
+      ):setCampaignSelectedData(null,null);
+     }
   }, [
     campaignsList,
     campaigns,
     beneficiaries,
     beneficiary,
     campaign,
-    setBeneficiary,
-    setCampaign,
-    setCampaignsList,
+    // setBeneficiary,
+    // setCampaign,
+    // setCampaignsList,
     savedData,
   ]);
 
@@ -216,8 +216,8 @@ const MintNFT = () => {
         ({ wallet_address }) => selectedBeneficiary.address === wallet_address
       );
       setCampaignsList(filteredCampaigns);
-      filteredCampaigns?.length > 0 &&
-        setCampaignSelectedData(filteredCampaigns, filteredCampaigns[0].id);
+      filteredCampaigns?.length > 0 ?
+        setCampaignSelectedData(filteredCampaigns, filteredCampaigns[0].id):setCampaignSelectedData(null,null);
     }
 
     inputs[name] = type === 'checkbox' ? checked : value;
@@ -417,11 +417,13 @@ const MintNFT = () => {
   }
 
   const setCampaignSelectedData = (allCampaigns, value) => {
-    setCampaign(value);
+    setCampaign(value?value:undefined);
+    if(allCampaigns?.length){
     let campaignPercentage = allCampaigns.filter((c) => c.id === value)[0]
       .requested_royalty;
     setCreatorPercentage(100 - campaignPercentage);
     setBeneficiaryPercentage(campaignPercentage);
+    }
   };
 
   const checkURLValidation = (value) => {
@@ -744,6 +746,7 @@ const MintNFT = () => {
                             disabled={
                               beneficiary === '' ||
                               campaign === '' ||
+                              campaign === undefined ||
                               selectedCollectionValue === {} ||
                               selectedCollectionValue === undefined ||
                               selectedCollectionValue === null ||
@@ -771,6 +774,7 @@ const MintNFT = () => {
                             disabled={
                               beneficiary === '' ||
                               campaign === '' ||
+                              campaign === undefined ||
                               selectedCollectionValue === {} ||
                               selectedCollectionValue === undefined ||
                               selectedCollectionValue === null ||

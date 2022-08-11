@@ -32,7 +32,6 @@ const NFTCardURL = () => {
 
   const getNftDetails = React.useCallback(async () => {
     if(item){
-      debugger;
       beneficiaries &&
         creators &&
         campaigns &&
