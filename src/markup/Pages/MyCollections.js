@@ -130,26 +130,28 @@ const MyCollections = () => {
             }}
           ></i>
         </VINftsTooltip> */}
-        <VINftsTooltip
-          title={
-            nft.isForSale === 'true'
-              ? 'Unlist NFT for Sale'
-              : 'List NFT for sale'
-          }
-        >
-          <div
-            onClick={() => {
-              setListForSaleNFT(nft);
-              setShowListForSaleModal(true);
-            }}
-          >
-            {nft.isForSale === 'true' ? (
-              <FontAwesomeIcon icon={faStoreAltSlash} size='2x' />
-            ) : (
-              <FontAwesomeIcon icon={faStoreAlt} size='2x' />
-            )}
-          </div>
-        </VINftsTooltip>
+                 { nft.isOwner && (
+              <VINftsTooltip
+                title={
+                  nft.isForSale === 'true'
+                    ? 'Unlist NFT for Sale'
+                    : 'List NFT for sale'
+                }
+              >
+                <div
+                  onClick={() => {
+                    setListForSaleNFT(nft);
+                    setShowListForSaleModal(true);
+                  }}
+                >
+                  {nft.isForSale === 'true' ? (
+                    <FontAwesomeIcon icon={faStoreAltSlash} size='2x' />
+                  ) : (
+                    <FontAwesomeIcon icon={faStoreAlt} size='2x' />
+                  )}
+                </div>
+              </VINftsTooltip>
+          )}
       </>
     );
   };
@@ -248,7 +250,7 @@ const MyCollections = () => {
             {nft.price} {nft.currency}&nbsp;&nbsp;
           </>
         )}
-        <IconImage nft={nft} />
+       {nft.isCreatorOwner === false && nft.isForSale === 'true' &&<IconImage nft={nft} />}
         &nbsp;&nbsp; &nbsp;&nbsp;{' '}
         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
           <NFTTwitterShare item={nft} />
