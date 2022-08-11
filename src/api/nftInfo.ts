@@ -59,8 +59,15 @@ export async function getNFTsList() {
     const isCreatorOwner = nft_metadata.creator.includes('Key')
       ? ownerAddress.slice(13) ===
         nft_metadata.creator.slice(10).replace(')', '')
-      : ownerAddress ===
-        CLPublicKey.fromHex(nft_metadata.creator).toAccountHashStr();
+      : ownerAddress === nft_metadata.creator;
+
+    nft_metadata.creator =
+      nft_metadata.creator.includes('Account') ||
+      nft_metadata.creator.includes('Key')
+        ? nft_metadata.creator.includes('Account')
+          ? nft_metadata.creator.slice(13).replace(')', '')
+          : nft_metadata.creator.slice(10).replace(')', '')
+        : nft_metadata.creator;
     nftsList.push({ ...nft_metadata, isCreatorOwner, tokenId });
   }
 
@@ -78,10 +85,10 @@ export async function getCreatorNftList(address: string) {
   }
 
   const creatorList = nftList.filter(
-    (nft: any) =>
-      nft.creator.includes('Key')
-        ? nft.creator.slice(10).replace(')', '') === creator.slice(13)
-        : nft.creator === address
+    (nft: any) =>(
+      creator.includes('hash')
+        ? nft.creator === creator.slice(13)
+        : nft.creator === address)
 
     // && nft.isOwner
   );

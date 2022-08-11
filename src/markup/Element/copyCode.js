@@ -4,17 +4,15 @@ import VINftsTooltip from './Tooltip';
 //shared tooltip component
 const CopyCode = ({ link }) => {
   return (
-    <div
-    onClick={() => {
-        navigator.clipboard.writeText(link);VIToast.success('Snapshot code copied successfully!');
-      }}
-    >
-        <VINftsTooltip
-          title={`Copy a snapshot of NFT code`}
-          >
-    <i className='ti-shortcode copy portfolio-fullscreen'/>
+    <VINftsTooltip title={`Copy a snapshot of NFT code`}>
+      <i
+        className="ti-shortcode copy "
+        onClick={() => {
+          navigator.clipboard.writeText(link);
+          VIToast.success('Snapshot code copied successfully!');
+        }}
+      />
     </VINftsTooltip>
-    </div>
   );
 };
 export default CopyCode;
