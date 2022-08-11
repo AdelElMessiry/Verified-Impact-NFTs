@@ -265,6 +265,14 @@ class CEP47Client {
           ? mapObj.beneficiary.slice(13).replace(')', '')
           : mapObj.beneficiary.slice(10).replace(')', '')
         : mapObj.beneficiary;
+
+    mapObj.creator =
+      mapObj.creator.includes('Account') || mapObj.creator.includes('Key')
+        ? mapObj.creator.includes('Account')
+          ? mapObj.creator.slice(13).replace(')', '')
+          : mapObj.creator.slice(10).replace(')', '')
+        : mapObj.creator;
+
     mapObj.image = isUpdate
       ? mapObj.image
       : isValidHttpUrl(mapObj.image)
