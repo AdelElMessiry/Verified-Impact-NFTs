@@ -88,12 +88,12 @@ export async function _getCreatorsCollectionsList(
     );
 
   creatorsList.forEach((creator: any) =>
-    pluckedCollections.includes(creator.address)
+    pluckedCollections.includes(creator.address.slice(10).replace(')', ''))
       ? mappedCreatorsList.push({
           ...creator,
           collections: collectionsList.filter(
             (collection: any, index: any, collections: any) =>
-              collection.creator === creator.address &&
+              collection.creator === creator.address.slice(10).replace(')', '') &&
               index ===
                 collections.findIndex(
                   (idx: any) => idx.name === collection.name
