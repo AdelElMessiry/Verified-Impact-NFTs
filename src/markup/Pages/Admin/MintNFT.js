@@ -144,9 +144,9 @@ const MintNFT = () => {
           ?.address
       );
 
-    campaigns?.length &&
-      !campaign &&
-      setCampaign(savedData ? savedData.campaign : campaigns[0]?.id);
+    // campaigns?.length &&
+    //   !campaign &&
+    //   setCampaign(savedData ? savedData.campaign : campaigns[0]?.id);
 
     const filteredCampaigns =
       !campaignsList &&
@@ -165,12 +165,13 @@ const MintNFT = () => {
     campaigns?.length &&
       filteredCampaigns?.length &&
       setAllCampaignsList(campaigns);
-     !campaignsList &&
-    campaigns?.length &&
+    if(!campaignsList)  {
+     filteredCampaigns?.length ?
       setCampaignSelectedData(
         filteredCampaigns,
         savedData ? savedData.campaign : filteredCampaigns[0]?.id
-      );
+      ):setCampaignSelectedData(null,null);
+     }
   }, [
     campaignsList,
     campaigns,
@@ -215,8 +216,8 @@ const MintNFT = () => {
         ({ wallet_address }) => selectedBeneficiary.address === wallet_address
       );
       setCampaignsList(filteredCampaigns);
-      filteredCampaigns?.length > 0 &&
-        setCampaignSelectedData(filteredCampaigns, filteredCampaigns[0].id);
+      filteredCampaigns?.length > 0 ?
+        setCampaignSelectedData(filteredCampaigns, filteredCampaigns[0].id):setCampaignSelectedData(null,null);
     }
 
     inputs[name] = type === 'checkbox' ? checked : value;
@@ -416,11 +417,13 @@ const MintNFT = () => {
   }
 
   const setCampaignSelectedData = (allCampaigns, value) => {
-    setCampaign(value);
+    setCampaign(value?value:undefined);
+    if(allCampaigns?.length){
     let campaignPercentage = allCampaigns.filter((c) => c.id === value)[0]
       .requested_royalty;
     setCreatorPercentage(100 - campaignPercentage);
     setBeneficiaryPercentage(campaignPercentage);
+    }
   };
 
   const checkURLValidation = (value) => {
@@ -743,6 +746,7 @@ const MintNFT = () => {
                             disabled={
                               beneficiary === '' ||
                               campaign === '' ||
+                              campaign === undefined ||
                               selectedCollectionValue === {} ||
                               selectedCollectionValue === undefined ||
                               selectedCollectionValue === null ||
@@ -770,6 +774,7 @@ const MintNFT = () => {
                             disabled={
                               beneficiary === '' ||
                               campaign === '' ||
+                              campaign === undefined ||
                               selectedCollectionValue === {} ||
                               selectedCollectionValue === undefined ||
                               selectedCollectionValue === null ||
