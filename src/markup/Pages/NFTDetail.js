@@ -65,7 +65,7 @@ const NFTDetail = () => {
     return (
       <>
         <i
-          className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
+          className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link'
           onClick={() => {
             setSelectedNFT(nft);
             setShowBuyModal(true);
