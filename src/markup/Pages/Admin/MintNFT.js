@@ -168,8 +168,8 @@ const MintNFT = () => {
      !campaignsList &&
     campaigns?.length &&
       setCampaignSelectedData(
-        campaigns,
-        savedData ? savedData.campaign : campaigns[0]?.id
+        filteredCampaigns,
+        savedData ? savedData.campaign : filteredCampaigns[0]?.id
       );
   }, [
     campaignsList,
