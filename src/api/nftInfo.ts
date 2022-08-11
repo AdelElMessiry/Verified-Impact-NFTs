@@ -59,8 +59,7 @@ export async function getNFTsList() {
     const isCreatorOwner = nft_metadata.creator.includes('Key')
       ? ownerAddress.slice(13) ===
         nft_metadata.creator.slice(10).replace(')', '')
-      : ownerAddress ===
-        CLPublicKey.fromHex(nft_metadata.creator).toAccountHashStr();
+      : ownerAddress === nft_metadata.creator;
 
     nft_metadata.creator =
       nft_metadata.creator.includes('Account') ||
