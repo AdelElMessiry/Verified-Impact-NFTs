@@ -20,10 +20,7 @@ const ViewProfile = ({ show, handleCloseParent, data, formName }) => {
 
   //getting beneficiary details
   const getProfile = React.useCallback(async () => {
-    let userProfiles = await profileClient.getProfile(
-      data,
-      formName === ProfileFormsEnum.BeneficiaryProfile ? true : false
-    );
+    let userProfiles = await profileClient.getProfile(data, true);
     if (userProfiles) {
       if (userProfiles.err === 'Address Not Found') {
         setProfileDetails(null);
