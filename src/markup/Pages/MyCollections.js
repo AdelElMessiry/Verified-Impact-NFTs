@@ -32,7 +32,9 @@ import plusIcon from './../../images/icon/plus.png';
 import editIcon from './../../images/icon/edit.png';
 import soldIcon from '../../images/icon/sold.png';
 import mintIcon from '../../images/icon/Mint.png';
-
+import { faStoreAlt, faStoreAltSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CopyCode from '../Element/copyCode';
 // Masonry section
 const breakPoints = [
   { width: 1, itemsToShow: 1 },
@@ -142,13 +144,9 @@ const MyCollections = () => {
             }}
           >
             {nft.isForSale === 'true' ? (
-              <div>
-                {' '}
-                <i className='ti-close sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen position-absolute'></i>
-                <i className='ti-money transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'></i>
-              </div>
+              <FontAwesomeIcon icon={faStoreAltSlash} size='2x' />
             ) : (
-              <i className='ti-money transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'></i>
+              <FontAwesomeIcon icon={faStoreAlt} size='2x' />
             )}
           </div>
         </VINftsTooltip>
@@ -268,6 +266,10 @@ const MyCollections = () => {
         &nbsp;&nbsp;{' '}
         <CopyText
           link={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
+        />
+        &nbsp;&nbsp;{' '}
+        <CopyCode
+          link={`<iframe src='https://dev.verifiedimpactnfts.com/#/nft-card?id=${nft.tokenId}'></iframe>`}
         />
       </p>
     </div>

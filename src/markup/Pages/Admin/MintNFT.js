@@ -164,11 +164,11 @@ const MintNFT = () => {
       );
     filteredCampaigns?.length && setCampaignsList(filteredCampaigns);
 
-    // !campaignsList &&
+     !campaignsList &&
     campaigns?.length &&
       filteredCampaigns?.length &&
       setAllCampaignsList(campaigns);
-    // !campaignsList &&
+     !campaignsList &&
     campaigns?.length &&
       setCampaignSelectedData(
         campaigns,
