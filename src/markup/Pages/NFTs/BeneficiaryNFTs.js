@@ -23,6 +23,7 @@ import { ProfileFormsEnum } from '../../../Enums/index';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import soldIcon from '../../../images/icon/sold.png';
 import viewIcon from '../../../images/icon/view.png';
+import CopyCode from '../../Element/copyCode';
 import ReactGA from 'react-ga';
 // Masonry section
 const masonryOptions = {
@@ -455,7 +456,7 @@ const BeneficiaryNFTs = () => {
     return (
       <>
         <i
-          className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
+          className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link'
           onClick={() => {
             setSelectedNFT(nft);
             setShowBuyModal(true);
@@ -578,6 +579,10 @@ const BeneficiaryNFTs = () => {
         <CopyText
           link={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
         />
+        &nbsp;
+            <CopyCode
+              link={`<iframe src="https://dev.verifiedimpactnfts.com/#/nft-card?id=${nft.tokenId}"></iframe>`}
+            />
       </p>
     </div>
   );
