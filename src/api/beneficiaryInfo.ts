@@ -44,6 +44,13 @@ export async function getBeneficiariesList() {
       .then(async (rawBeneficiary: any) => {
         // console.log(rawBeneficiary);
         const parsedBeneficiary = parseBeneficiary(rawBeneficiary);
+        parsedBeneficiary.address =
+          parsedBeneficiary.address.includes('Account') ||
+          parsedBeneficiary.address.includes('Key')
+            ? parsedBeneficiary.address.includes('Account')
+              ? parsedBeneficiary.address.slice(13).replace(')', '')
+              : parsedBeneficiary.address.slice(10).replace(')', '')
+            : parsedBeneficiary.address;
         _beneficiariesList.push(parsedBeneficiary);
       })
       .catch((err) => {
