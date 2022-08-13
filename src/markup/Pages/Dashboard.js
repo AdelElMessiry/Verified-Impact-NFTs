@@ -19,7 +19,7 @@ import Layout from '../Layout';
 import CampaignOrCollectionTwitterShare from '../Element/TwitterShare/CampaignOrCollectionTwitterShare';
 import bgImg from './../../images/main-slider/slide6.jpg';
 import CopyText from '../Element/copyText';
-
+import ReactGA from 'react-ga';
 //Light Gallery on icon click
 
 const breakPoints = [
@@ -113,6 +113,7 @@ const Dashboard = () => {
 
   //getting list of NFTs
   React.useEffect(() => {
+      ReactGA.pageview(window.location.pathname +"/");
     getNftsList();
   }, [getNftsList]);
 
