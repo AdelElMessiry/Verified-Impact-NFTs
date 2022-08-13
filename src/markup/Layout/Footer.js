@@ -50,6 +50,7 @@ class Footer extends React.Component {
                       </a>
                     </li>
                     <li className='text-success mr-3 align-items-center'><Link to={"/terms-of-services"}>Terms Of Services</Link></li>
+                    <li className='text-success mr-3 align-items-center'><Link to={"/privacy"}>Privacy</Link></li>
                   </ul>
                 </div>
               </div>
