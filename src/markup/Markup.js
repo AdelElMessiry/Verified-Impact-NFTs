@@ -24,6 +24,7 @@ import SignUpAsBeneficiary from './Pages/SignUpAsBeneficiary';
 import TermsOfServices from './Pages/TermsAndConditions';
 import NFTCardURL from './Element/NFTCardURL';
 import Privacy from './Pages/Privacy';
+import RequestForm from './Pages/RequestForm';
 
 const Markup = () => {
   return (
@@ -69,6 +70,7 @@ const Markup = () => {
               />
               <Route path='/nft-card' exact component={NFTCardURL} />
               <Route path='/privacy' exact component={Privacy} />
+              <Route path='/request-form' exact component={RequestForm} />
             </Switch>
           </div>
           <ScrollToTop />

@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import Layout from '../Layout';
 import bnr1 from '../../images/banner/bnr1.jpg';
 import PageTitle from '../Layout/PageTitle';
-import { Link } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const scrollToRef = (ref) => {
   ref.current.scrollIntoView({
@@ -447,14 +447,16 @@ const Privacy = () => {
                     </p>
                     <div className="ml-5">
                       <ul>
-                        <li>a. Third Party Service Providers. We may share
-                        your Personal Data with third party service providers
-                        to: provide technical infrastructure services; conduct
-                        quality assurance testing; analyze how our Service is
-                        used; prevent, detect, and respond to unauthorized
-                        activities; provide technical and customer support;
-                        and/or to provide other support to us and to the
-                        Service.</li>
+                        <li>
+                          a. Third Party Service Providers. We may share your
+                          Personal Data with third party service providers to:
+                          provide technical infrastructure services; conduct
+                          quality assurance testing; analyze how our Service is
+                          used; prevent, detect, and respond to unauthorized
+                          activities; provide technical and customer support;
+                          and/or to provide other support to us and to the
+                          Service.
+                        </li>
                         <li>
                           b. Affiliates. We may share some or all of your
                           Personal Data with any subsidiaries, joint ventures,
@@ -606,14 +608,17 @@ const Privacy = () => {
                     <li>
                       c. If you wish to exercise your rights under the GDPR,
                       CCPA, or other applicable data protection or privacy laws,
-                      please contact us by using the “Submit a request” link
-                      here or at the address provided in Section 13 below,
-                      specify your request, and reference the applicable law. We
-                      may ask you to verify your identity, or ask for more
-                      information about your request. We will consider and act
-                      upon any above request in accordance with applicable law.
-                      We will not discriminate against you for exercising any of
-                      these rights.
+                      please contact us by using the{' '}
+                      <Link to={'/request-form'} className="btn-link text-success  cursor-pointer">
+                        “Submit a request” link here
+                      </Link>{' '}
+                      or at the address provided in Section 13 below, specify
+                      your request, and reference the applicable law. We may ask
+                      you to verify your identity, or ask for more information
+                      about your request. We will consider and act upon any
+                      above request in accordance with applicable law. We will
+                      not discriminate against you for exercising any of these
+                      rights.
                     </li>
                     <li>
                       d. Notwithstanding the above, we cannot edit or delete any
@@ -680,7 +685,7 @@ const Privacy = () => {
                       as soon as possible. If you believe that we might have any
                       Personal Data from a child under 13, please contact us by
                       using the{' '}
-                      <Link to={'/request-form'}>
+                      <Link to={'/request-form'} className="btn-link text-success  cursor-pointer">
                         “Submit a request” link here
                       </Link>{' '}
                       or at the address indicated in Section 13 below.
@@ -725,10 +730,10 @@ const Privacy = () => {
                       you have any questions or concerns or complaints about our
                       Privacy Policy or our data collection or processing
                       practices, or if you want to report any security
-                      violations to us, please contact us by using the
-                      <Link to={'/request-form'}>
+                      violations to us, please contact us by using the{' '}
+                      <Link to={'/request-form'} className="btn-link text-success cursor-pointer">
                         “Submit a request” link here
-                      </Link>
+                      </Link>{' '}
                     </p>
                   </div>
                 </div>
