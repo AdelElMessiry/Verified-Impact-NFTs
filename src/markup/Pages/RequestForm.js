@@ -50,14 +50,12 @@ const RequestForm = () => {
       })
         .then((r) => r.json())
         .then((response) => {
-          debugger;
           setLoader(false);
           VIToast.success('Your Request Saved Successfully');
           setState(IntialInputs());
           setShowErrors(false);
         })
         .catch((error) => {
-          debugger;
           setLoader(false);
           VIToast.error('An error occured');
         });
