@@ -13,11 +13,13 @@ import PromptLogin from '../PromptLogin';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import AddEditCampaignForm from '../../Element/AddEditCampaignForm';
-
+import ReactGA from 'react-ga';
 //adding new campaign page
 const AddCampaign = () => {
   const { isLoggedIn } = useAuth();
-
+  React.useEffect(()=>{
+    ReactGA.pageview(window.location.pathname +"/admin_campaign");
+  },[])
   return (
     <Layout>
       <div className='page-content bg-white'>
