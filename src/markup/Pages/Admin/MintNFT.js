@@ -25,7 +25,7 @@ import { NFT_STORAGE_KEY } from '../../../constants/blockchain';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet, SendTweetWithImage } from '../../../utils/VINFTsTweets';
-
+import ReactGA from 'react-ga';
 //handling of creating new option in creatable select control
 const createOption = (label) => ({
   label,
@@ -137,6 +137,7 @@ const MintNFT = () => {
   ]);
 
   React.useEffect(() => {
+    ReactGA.pageview(window.location.pathname +"/mint-nft");
     beneficiaries?.length &&
       !beneficiary &&
       setBeneficiary(
@@ -311,8 +312,18 @@ const MintNFT = () => {
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
+          ReactGA.event({
+            category: 'User Cancelation',
+            action: 'Mint',
+            label: `${entityInfo.publicKey}: Cancelled Signing`
+          });
         } else {
           VIToast.error(err.message);
+          ReactGA.event({
+            category: 'Error',
+            action: 'Mint',
+            label: `${entityInfo.publicKey}: ${err.message}`,
+          });
         }
         setIsMintClicked(false);
         setIsMintAnotherClicked(false);
@@ -386,15 +397,29 @@ const MintNFT = () => {
           image,
           `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao `
         );
-
+        ReactGA.event({
+          category: 'Success',
+          action: 'Mint',
+          label: `${creator}: ${entityInfo.publicKey} mint new NFT successfully`
+        });
         window.location.reload();
         setIsMintClicked(false);
         setIsMintAnotherClicked(false);
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
+          ReactGA.event({
+            category: 'User Cancelation',
+            action: 'Mint',
+            label: `${entityInfo.publicKey}: User Cancelled Signing`
+          });
         } else {
           VIToast.error(err.message);
+          ReactGA.event({
+            category: 'Error',
+            action: 'Mint',
+            label: `${entityInfo.publicKey}: ${err.message}`
+          });
         }
         setIsMintClicked(false);
         setIsMintAnotherClicked(false);

@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import Layout from '../Layout';
 import bnr1 from '../../images/banner/bnr1.jpg';
 import PageTitle from '../Layout/PageTitle';
-
+import ReactGA from 'react-ga';
 const scrollToRef = (ref) => {
   ref.current.scrollIntoView({
     behavior: 'smooth',
@@ -23,6 +23,9 @@ const TermsOfServices = () => {
     console.log(e);
     scrollToRef(refName);
   };
+  React.useEffect(()=>{
+    ReactGA.pageview(window.location.pathname +"TermsAndConditions");
+  },[])
   return (
     <Layout>
       <div className="page-content bg-white">
