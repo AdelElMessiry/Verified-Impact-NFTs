@@ -13073,15 +13073,26 @@ ol.commentlist li .star-rating {
 	background:transparent;
 	font-size: inherit;
 }
-.portfolio  .portfolio-fullscreen{
+  .portfolio-fullscreen{
 	font-size: 30px;
 	position: absolute;
 	right: 15px;
 	line-height: 30px;
 	color: #fff;
 	opacity: 0.5;
+    display: flex;
+    flex-direction: row-reverse;
 }
-.portfolio  .buy-icon{
+  .portfolio-fullscreen i,  .portfolio-fullscreen img ,  .portfolio-fullscreen  li a i{
+	color: #fff;
+	opacity: 0.5;
+	font-size: 30px;
+
+}
+ .copy {
+    font-size: 30px;
+}
+/* .portfolio  .buy-icon{
     right: 55px;
 }
 .portfolio  .sale-icon {
@@ -13089,8 +13100,8 @@ ol.commentlist li .star-rating {
 }
 .portfolio  .twitter-icon{
     right:100px;
-    opacity: 1;
-}
+    opacity: 1; 
+}*/
 .portfolio  .portfolio-fullscreen:hover{
 	opacity:1;	
 }

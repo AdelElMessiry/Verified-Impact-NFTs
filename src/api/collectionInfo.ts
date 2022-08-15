@@ -27,6 +27,13 @@ export async function getUniqueCollectionsList() {
     await getCollectionDetails((id + 1).toString())
       .then(async (rawCollection: any) => {
         const parsedCollection = parseCollection(rawCollection);
+        parsedCollection.creator =
+          parsedCollection.creator.includes('Account') ||
+          parsedCollection.creator.includes('Key')
+            ? parsedCollection.creator.includes('Account')
+              ? parsedCollection.creator.slice(13).replace(')', '')
+              : parsedCollection.creator.slice(10).replace(')', '')
+            : parsedCollection.creator;
         collectionsList.push(parsedCollection);
       })
       .catch((err) => {
@@ -51,6 +58,13 @@ export async function getCollectionsList() {
     await getCollectionDetails((id + 1).toString())
       .then(async (rawCollection: any) => {
         const parsedCollection = parseCollection(rawCollection);
+        parsedCollection.creator =
+          parsedCollection.creator.includes('Account') ||
+          parsedCollection.creator.includes('Key')
+            ? parsedCollection.creator.includes('Account')
+              ? parsedCollection.creator.slice(13).replace(')', '')
+              : parsedCollection.creator.slice(10).replace(')', '')
+            : parsedCollection.creator;
         collectionsList.push(parsedCollection);
       })
       .catch((err) => {

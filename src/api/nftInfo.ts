@@ -56,9 +56,29 @@ export async function getNFTsList() {
 
     const nft_metadata = await cep47.getMappedTokenMeta(tokenId.toString());
     const ownerAddress = await cep47.getOwnerOf(tokenId.toString());
+
+    // const isCreatorOwner = nft_metadata.creator.includes('Key')
+    //   ? ownerAddress.slice(13) ===
+    //     nft_metadata.creator.slice(10).replace(')', '')
+    //   : ownerAddress === nft_metadata.creator;
+
     const isCreatorOwner =
-      ownerAddress ===
-      CLPublicKey.fromHex(nft_metadata.creator).toAccountHashStr();
+      nft_metadata.creator.includes('Key') ||
+      nft_metadata.creator.includes('Account')
+        ? nft_metadata.creator.includes('Account')
+          ? nft_metadata.creator.slice(13).replace(')', '') ===
+            ownerAddress.slice(13)
+          : nft_metadata.creator.slice(10).replace(')', '') ===
+            ownerAddress.slice(13)
+        : ownerAddress.slice(13) === nft_metadata.creator;
+
+    nft_metadata.creator =
+      nft_metadata.creator.includes('Account') ||
+      nft_metadata.creator.includes('Key')
+        ? nft_metadata.creator.includes('Account')
+          ? nft_metadata.creator.slice(13).replace(')', '')
+          : nft_metadata.creator.slice(10).replace(')', '')
+        : nft_metadata.creator;
     nftsList.push({ ...nft_metadata, isCreatorOwner, tokenId });
   }
 
@@ -67,6 +87,7 @@ export async function getNFTsList() {
 
 export async function getCreatorNftList(address: string) {
   const creator = CLPublicKey.fromHex(address).toAccountHashStr();
+
   const nftList = await getNFTsList();
 
   for (const [index, nft] of nftList.entries()) {
@@ -75,7 +96,11 @@ export async function getCreatorNftList(address: string) {
   }
 
   const creatorList = nftList.filter(
-    (nft: any) => nft.creator === address
+    (nft: any) =>
+      creator.includes('hash')
+        ? nft.creator === creator.slice(13)
+        : nft.creator === address
+
     // && nft.isOwner
   );
 
@@ -88,7 +113,7 @@ export async function setIsTokenForSale(
   deploySender: CLPublicKey,
   price?: string
 ) {
-  const nftDetails = await cep47.getMappedTokenMeta(tokenId);
+  const nftDetails = await cep47.getMappedTokenMeta(tokenId, true);
   nftDetails['isForSale'] = isForSale.toString();
   isForSale && (nftDetails['price'] = price);
 

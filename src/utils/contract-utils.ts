@@ -258,3 +258,22 @@ export const transferFees = async (buyer: string, tokenId: string) => {
   //   return e;
   // }
 };
+
+export const getNFTImage = async (tokenMetaUri: string) => {
+  const resp = await fetch('https://dweb.link/ipfs/' + tokenMetaUri);
+  const imgString = await resp.text();
+
+  return imgString;
+};
+
+export function isValidHttpUrl(string: string) {
+  let url;
+
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === 'http:' || url.protocol === 'https:';
+}

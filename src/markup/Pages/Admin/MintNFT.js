@@ -1,27 +1,31 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import ImageUploader from 'react-images-upload';
 import { toast as VIToast } from 'react-toastify';
 import { Form } from 'react-bootstrap';
 import CreatableSelect from 'react-select/creatable';
 import validator from 'validator';
+import { NFTStorage } from 'nft.storage';
+import { CLPublicKey } from 'casper-js-sdk';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNFTState } from '../../../contexts/NFTContext';
-
 import { uploadImg } from '../../../api/imageCDN';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
 import { profileClient } from '../../../api/profileInfo';
+import { getNFTImage } from '../../../utils/contract-utils';
 
 import PageTitle from '../../Layout/PageTitle';
 import PromptLogin from '../PromptLogin';
 import Layout from '../../Layout';
 
+import { NFT_STORAGE_KEY } from '../../../constants/blockchain';
+
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet, SendTweetWithImage } from '../../../utils/VINFTsTweets';
-
+import ReactGA from 'react-ga';
 //handling of creating new option in creatable select control
 const createOption = (label) => ({
   label,
@@ -50,6 +54,7 @@ const MintNFT = () => {
   const [creator, setCreator] = React.useState('');
   const [isCreatorExist, setIsCreatorExist] = React.useState();
   const [creatorPercentage, setCreatorPercentage] = React.useState();
+  const [uploadedImageBlob, setUploadedBlobImage] = React.useState(null);
   const [uploadedImageURL, setUploadedImage] = React.useState(null);
   const [uploadedFile, setUploadedFile] = React.useState(null);
   const [selectedCollectionValue, setSelectedCollectionValue] = React.useState(
@@ -57,7 +62,7 @@ const MintNFT = () => {
   );
   const [isCreateNewCollection, setIsCreateNewCollection] = React.useState();
   const [beneficiaryPercentage, setBeneficiaryPercentage] = React.useState();
-  const [beneficiariesList, setBeneficiariesList] = React.useState();
+  // const [beneficiariesList, setBeneficiariesList] = React.useState();
   const [state, setState] = React.useState({
     inputs: {
       imageUrl: '',
@@ -72,6 +77,7 @@ const MintNFT = () => {
       isImageURL: false,
     },
   });
+
   const loadCollections = React.useCallback(async () => {
     if (entityInfo.publicKey) {
       let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
@@ -89,8 +95,10 @@ const MintNFT = () => {
             const _collections =
               // existingCreator &&
               collections &&
-              collections.filter(
-                ({ creator }) => creator === entityInfo.publicKey
+              collections.filter(({ creator }) =>
+                creator === CLPublicKey.fromHex(entityInfo.publicKey)
+                .toAccountHashStr()
+                .slice(13)
               );
 
             const selectedCollections =
@@ -125,43 +133,56 @@ const MintNFT = () => {
     setCreator,
     setIsCreatorExist,
     setSelectedCollectionValue,
+    savedData,
   ]);
+
   React.useEffect(() => {
+    ReactGA.pageview(window.location.pathname +"/mint-nft");
     beneficiaries?.length &&
       !beneficiary &&
       setBeneficiary(
-        beneficiaries?.filter(({ approved }) => approved === 'true')[0]?.address
+        beneficiaries?.filter(({ isApproved }) => isApproved === 'true')[0]
+          ?.address
       );
+
+    // campaigns?.length &&
+    //   !campaign &&
+    //   setCampaign(savedData ? savedData.campaign : campaigns[0]?.id);
+
+    const filteredCampaigns =
+      !campaignsList &&
+      campaigns?.length &&
+      campaigns.filter(
+        ({ wallet_address }) =>
+          (savedData
+            ? savedData.beneficiary
+            : beneficiaries?.filter(
+                ({ isApproved }) => isApproved === 'true'
+              )[0]?.address) === wallet_address
+      );
+    filteredCampaigns?.length && setCampaignsList(filteredCampaigns);
+
+     !campaignsList &&
     campaigns?.length &&
-      !campaign &&
-      setCampaign(savedData ? savedData.campaign : campaigns[0]?.id);
-    !campaignsList &&
-      campaigns?.length &&
-      setCampaignsList(
-        campaigns.filter(
-          ({ wallet_address }) =>
-            (savedData
-              ? savedData.beneficiary
-              : beneficiaries?.filter(({ approved }) => approved === 'true')[0]
-                  ?.address) === wallet_address
-        )
-      );
-    !campaignsList && campaigns?.length && setAllCampaignsList(campaigns);
-    !campaignsList &&
-      campaigns?.length &&
+      filteredCampaigns?.length &&
+      setAllCampaignsList(campaigns);
+    if(!campaignsList)  {
+     filteredCampaigns?.length ?
       setCampaignSelectedData(
-        campaigns,
-        savedData ? savedData.campaign : campaigns[0]?.id
-      );
+        filteredCampaigns,
+        savedData ? savedData.campaign : filteredCampaigns[0]?.id
+      ):setCampaignSelectedData(null,null);
+     }
   }, [
     campaignsList,
     campaigns,
     beneficiaries,
     beneficiary,
     campaign,
-    setBeneficiary,
-    setCampaign,
-    setCampaignsList,
+    // setBeneficiary,
+    // setCampaign,
+    // setCampaignsList,
+    savedData,
   ]);
 
   React.useEffect(() => {
@@ -190,14 +211,14 @@ const MintNFT = () => {
 
     if (isBeneficiary) {
       let selectedBeneficiary = beneficiaries
-        ?.filter(({ approved }) => approved === 'true')
+        ?.filter(({ isApproved }) => isApproved === 'true')
         .find(({ address }) => address === value);
       const filteredCampaigns = allCampaignsList?.filter(
         ({ wallet_address }) => selectedBeneficiary.address === wallet_address
       );
       setCampaignsList(filteredCampaigns);
-      filteredCampaigns?.length > 0 &&
-        setCampaignSelectedData(filteredCampaigns, filteredCampaigns[0].id);
+      filteredCampaigns?.length > 0 ?
+        setCampaignSelectedData(filteredCampaigns, filteredCampaigns[0].id):setCampaignSelectedData(null,null);
     }
 
     inputs[name] = type === 'checkbox' ? checked : value;
@@ -208,20 +229,23 @@ const MintNFT = () => {
   };
 
   //handling of selecting image in image control
-  const onDrop = (picture) => {
+  const onDrop = (picture, file) => {
     if (picture.length > 0) {
-      const newImageUrl = URL.createObjectURL(picture[0]);
-      setUploadedImage(newImageUrl);
-      setUploadedFile(picture[0]);
+      // const newImageUrl = URL.createObjectURL(picture[0]);
+      // setUploadedImage(newImageUrl);
+      // setUploadedFile(picture[0]);
+
+      const blob = new Blob(file);
+      setUploadedBlobImage(blob);
     } else {
-      setUploadedImage(null);
-      setUploadedFile(null);
+      // setUploadedImage(null);
+      // setUploadedFile(null);
     }
   };
 
   //handling minting new NFT
   async function mintNFT(isAnotherMint) {
-    if (!uploadedImageURL) {
+    if (!uploadedImageBlob) {
       return VIToast.error('Please upload image or enter direct URL');
     }
     if (!entityInfo.publicKey) {
@@ -231,13 +255,17 @@ const MintNFT = () => {
       return;
     }
     isAnotherMint ? setIsMintAnotherClicked(true) : setIsMintClicked(true);
-    let cloudURL = uploadedImageURL;
-    if (!state.inputs.isImageURL && uploadedFile) {
+    // let cloudURL = uploadedImageURL;
+    let imageKey = uploadedImageBlob;
+    if (!state.inputs.isImageURL && uploadedImageBlob) {
       console.log('Img', uploadedFile);
       console.log('Img url', uploadedImageURL);
 
       try {
-        cloudURL = await uploadImg(uploadedFile);
+        // cloudURL = await uploadImg(uploadedFile);
+        const client = new NFTStorage({ token: NFT_STORAGE_KEY });
+        imageKey = await client.storeBlob(uploadedImageBlob);
+        // imageKey = await getNFTImage(imageKey);
       } catch (err) {
         console.log(err);
         VIToast.error("Image couldn't be uploaded to cloud CDN !");
@@ -246,11 +274,11 @@ const MintNFT = () => {
       }
       VIToast.success('Image uploaded to cloud CDN successfully !');
     }
-    mintNewNFT(cloudURL, isAnotherMint);
+    mintNewNFT(imageKey, isAnotherMint);
   }
 
   async function mintNewNFT(imgURL, isAnotherMint) {
-    if (!uploadedImageURL) {
+    if (!uploadedImageBlob) {
       return VIToast.error('Please upload image or enter direct URL');
     }
 
@@ -284,8 +312,18 @@ const MintNFT = () => {
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
+          ReactGA.event({
+            category: 'User Cancelation',
+            action: 'Mint',
+            label: `${entityInfo.publicKey}: Cancelled Signing`
+          });
         } else {
           VIToast.error(err.message);
+          ReactGA.event({
+            category: 'Error',
+            action: 'Mint',
+            label: `${entityInfo.publicKey}: ${err.message}`,
+          });
         }
         setIsMintClicked(false);
         setIsMintAnotherClicked(false);
@@ -338,7 +376,7 @@ const MintNFT = () => {
           await sendDiscordMessage(
             process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
             process.env.REACT_APP_COLLECTIONS_TOKEN,
-            selectedCollectionValue.value,
+            selectedCollectionValue.label,
             '',
             `${creator} creator has just added a new interesting #verified-impact-nfts collection. [Click here to see more interesting collections](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
           );
@@ -346,7 +384,7 @@ const MintNFT = () => {
             `${creator} creator has just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections  @vinfts @casper_network @devxdao`
           );
         }
-        
+
         await sendDiscordMessage(
           process.env.REACT_APP_NFT_WEBHOOK_ID,
           process.env.REACT_APP_NFT_TOKEN,
@@ -359,15 +397,29 @@ const MintNFT = () => {
           image,
           `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao `
         );
-
+        ReactGA.event({
+          category: 'Success',
+          action: 'Mint',
+          label: `${creator}: ${entityInfo.publicKey} mint new NFT successfully`
+        });
         window.location.reload();
         setIsMintClicked(false);
         setIsMintAnotherClicked(false);
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
+          ReactGA.event({
+            category: 'User Cancelation',
+            action: 'Mint',
+            label: `${entityInfo.publicKey}: User Cancelled Signing`
+          });
         } else {
           VIToast.error(err.message);
+          ReactGA.event({
+            category: 'Error',
+            action: 'Mint',
+            label: `${entityInfo.publicKey}: ${err.message}`
+          });
         }
         setIsMintClicked(false);
         setIsMintAnotherClicked(false);
@@ -390,11 +442,13 @@ const MintNFT = () => {
   }
 
   const setCampaignSelectedData = (allCampaigns, value) => {
-    setCampaign(value);
+    setCampaign(value?value:undefined);
+    if(allCampaigns?.length){
     let campaignPercentage = allCampaigns.filter((c) => c.id === value)[0]
       .requested_royalty;
     setCreatorPercentage(100 - campaignPercentage);
     setBeneficiaryPercentage(campaignPercentage);
+    }
   };
 
   const checkURLValidation = (value) => {
@@ -446,7 +500,9 @@ const MintNFT = () => {
                                 value={beneficiary}
                               >
                                 {beneficiaries
-                                  ?.filter(({ approved }) => approved == 'true')
+                                  ?.filter(
+                                    ({ isApproved }) => isApproved === 'true'
+                                  )
                                   .map(({ username, address }) => (
                                     <option key={address} value={address}>
                                       {username}
@@ -548,7 +604,7 @@ const MintNFT = () => {
                               name='creator'
                               className='form-control'
                               onChange={(e) => setCreator(e.target.value)}
-                              value={creator}
+                              value={creator || ''}
                               disabled={isCreatorExist}
                             />
                           </Col>
@@ -597,10 +653,15 @@ const MintNFT = () => {
                                   name='imageUrl'
                                   className='form-control'
                                   onChange={(e) => {
-                                    setUploadedImage(e.target.value);
+                                    // setUploadedImage(e.target.value);
+                                    setUploadedBlobImage(e.target.value);
                                     checkURLValidation(e.target.value);
                                   }}
-                                  value={uploadedImageURL || ''}
+                                  value={
+                                    uploadedImageURL === ''
+                                      ? null
+                                      : uploadedImageURL
+                                  }
                                 />
                                 {showURLErrorMsg && (
                                   <span className='text-danger'>
@@ -657,11 +718,13 @@ const MintNFT = () => {
                                   *
                                 </span>
                               )}
-                              {state.inputs.isForSale &&state.inputs.price!==''&& state.inputs.price < 250 && (
-                                <span className='text-danger'>
-                                  NFT price should be more than 250 CSPR
-                                </span>
-                              )}
+                              {state.inputs.isForSale &&
+                                state.inputs.price !== '' &&
+                                state.inputs.price < 250 && (
+                                  <span className='text-danger'>
+                                    NFT price should be more than 250 CSPR
+                                  </span>
+                                )}
                             </div>
                           </Col>
                           <Col>
@@ -708,6 +771,7 @@ const MintNFT = () => {
                             disabled={
                               beneficiary === '' ||
                               campaign === '' ||
+                              campaign === undefined ||
                               selectedCollectionValue === {} ||
                               selectedCollectionValue === undefined ||
                               selectedCollectionValue === null ||
@@ -715,8 +779,8 @@ const MintNFT = () => {
                               creator === '' ||
                               state.inputs.name === '' ||
                               (state.inputs.isForSale &&
-                                (state.inputs.price === ''||
-                                state.inputs.price < 250)) ||
+                                (state.inputs.price === '' ||
+                                  state.inputs.price < 250)) ||
                               isMintClicked ||
                               isMintAnotherClicked
                             }
@@ -735,6 +799,7 @@ const MintNFT = () => {
                             disabled={
                               beneficiary === '' ||
                               campaign === '' ||
+                              campaign === undefined ||
                               selectedCollectionValue === {} ||
                               selectedCollectionValue === undefined ||
                               selectedCollectionValue === null ||

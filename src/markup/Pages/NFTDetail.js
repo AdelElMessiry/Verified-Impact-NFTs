@@ -9,7 +9,7 @@ import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
 import VINftsTooltip from '../Element/Tooltip';
 import soldIcon from '../../images/icon/sold.png';
 import { MenuItemUnstyled } from '@mui/base';
-
+import ReactGA from 'react-ga';
 //nft details component
 const NFTDetail = () => {
   const search = useLocation().search;
@@ -23,6 +23,7 @@ const NFTDetail = () => {
   const [allNFTs, setAllNFTs] = React.useState();
 
   React.useEffect(() => {
+    ReactGA.pageview(window.location.pathname +"nft-detail");
     (async () => {
       if (!allNFTs) {
         nfts && setAllNFTs(nfts);
@@ -61,7 +62,7 @@ const NFTDetail = () => {
     return (
       <>
         <i
-          className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
+          className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link'
           onClick={() => {
             setSelectedNFT(nft);
             setShowBuyModal(true);
