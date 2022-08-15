@@ -22,6 +22,9 @@ import MyCollections from './Pages/MyCollections';
 import AddCollection from './Pages/Admin/AddEditCollection';
 import SignUpAsBeneficiary from './Pages/SignUpAsBeneficiary';
 import TermsOfServices from './Pages/TermsAndConditions';
+import NFTCardURL from './Element/NFTCardURL';
+import Privacy from './Pages/Privacy';
+import RequestForm from './Pages/RequestForm';
 
 const Markup = () => {
   return (
@@ -29,7 +32,7 @@ const Markup = () => {
       <NFTProvider>
         <HashRouter>
           <div className='page-wraper'>
-            <Header />
+            {!window.location.hash.includes('nft-card') && <Header />}
             <Switch>
               <Route path='/' exact component={Dashboard} />
               <Route path='/nft-detail' exact component={NFTDetail} />
@@ -65,6 +68,9 @@ const Markup = () => {
                 exact
                 component={TermsOfServices}
               />
+              <Route path='/nft-card' exact component={NFTCardURL} />
+              <Route path='/privacy' exact component={Privacy} />
+              <Route path='/request-form' exact component={RequestForm} />
             </Switch>
           </div>
           <ScrollToTop />

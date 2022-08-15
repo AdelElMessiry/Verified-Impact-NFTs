@@ -26,6 +26,13 @@ export async function getCreatorsList() {
     await getCreatorDetails((id + 1).toString())
       .then(async (rawCreator: any) => {
         const parsedCreator = parseCreator(rawCreator);
+        parsedCreator.address =
+          parsedCreator.address.includes('Account') ||
+          parsedCreator.address.includes('Key')
+            ? parsedCreator.address.includes('Account')
+              ? parsedCreator.address.slice(13).replace(')', '')
+              : parsedCreator.address.slice(10).replace(')', '')
+            : parsedCreator.address;
 
         creatorsList.push(parsedCreator);
       })

@@ -27,6 +27,8 @@ import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import {
   getAccountInfo,
   getAccountNamedKeyValue,
+  getNFTImage,
+  isValidHttpUrl,
 } from '../utils/contract-utils';
 
 const { NODE_ADDRESS, CHAIN_NAME, CONTRACT_NAME } = CONNECTION;
@@ -248,7 +250,7 @@ class CEP47Client {
     return fromCLMap(maybeValue);
   }
 
-  public async getMappedTokenMeta(tokenId: string) {
+  public async getMappedTokenMeta(tokenId: string, isUpdate?: boolean) {
     const maybeValue: any = await this.getTokenMeta(tokenId);
     const jsMap: any = new Map();
 
@@ -256,7 +258,27 @@ class CEP47Client {
       jsMap.set(innerKey, value);
     }
     let mapObj = Object.fromEntries(jsMap);
-    mapObj.beneficiary = mapObj.beneficiary.slice(10).replace(')', '');
+    mapObj.beneficiary =
+      mapObj.beneficiary.includes('Account') ||
+      mapObj.beneficiary.includes('Key')
+        ? mapObj.beneficiary.includes('Account')
+          ? mapObj.beneficiary.slice(13).replace(')', '')
+          : mapObj.beneficiary.slice(10).replace(')', '')
+        : mapObj.beneficiary;
+
+    mapObj.creator =
+      mapObj.creator.includes('Account') || mapObj.creator.includes('Key')
+        ? mapObj.creator.includes('Account')
+          ? mapObj.creator.slice(13).replace(')', '')
+          : mapObj.creator.slice(10).replace(')', '')
+        : mapObj.creator;
+
+    mapObj.image = isUpdate
+      ? mapObj.image
+      : isValidHttpUrl(mapObj.image)
+      ? mapObj.image
+      : await getNFTImage(mapObj.image);
+
     return mapObj;
   }
 
@@ -420,7 +442,9 @@ class CEP47Client {
       isForSale: CLValueBuilder.bool(isForSale),
       currency: CLValueBuilder.string(currency),
       campaign: CLValueBuilder.string(campaign),
-      creator: CLValueBuilder.string(creator),
+      creator: CLValueBuilder.key(
+        CLValueBuilder.byteArray(CLPublicKey.fromHex(creator).toAccountHash())
+      ),
       creatorPercentage: CLValueBuilder.string(creatorPercentage),
       collection: CLValueBuilder.u256(collection),
       collectionName: CLValueBuilder.string(collectionName || ''),
@@ -428,6 +452,9 @@ class CEP47Client {
         CLValueBuilder.byteArray(Buffer.from(beneficiary, 'hex'))
       ),
       beneficiaryPercentage: CLValueBuilder.string(beneficiaryPercentage),
+      profile_contract_hash: CLValueBuilder.string(
+        `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
     });
 
     return this.contractClient.callEntrypoint(
@@ -694,7 +721,9 @@ class CEP47Client {
       mode: CLValueBuilder.string(mode),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
-      creator: CLValueBuilder.string(creator),
+      creator: CLValueBuilder.key(
+        CLValueBuilder.byteArray(CLPublicKey.fromHex(creator).toAccountHash())
+      ),
       url: CLValueBuilder.string(url),
     });
 
@@ -719,8 +748,13 @@ class CEP47Client {
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
-      address: CLValueBuilder.string(address),
+      address: CLValueBuilder.key(
+        CLValueBuilder.byteArray(CLPublicKey.fromHex(address).toAccountHash())
+      ),
       url: CLValueBuilder.string(url),
+      profile_contract_hash: CLValueBuilder.string(
+        `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
     });
 
     return this.contractClient.callEntrypoint(

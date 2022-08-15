@@ -24,7 +24,8 @@ import CopyText from '../../Element/copyText';
 //images
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import soldIcon from '../../../images/icon/sold.png';
-
+import CopyCode from '../../Element/copyCode';
+import ReactGA from 'react-ga';
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -72,8 +73,7 @@ const TagLi = ({ name, handleSetTag, tagActive, type }) => {
 
 const MyNFTs = () => {
   const { isLoggedIn, entityInfo } = useAuth();
-  const { beneficiaries, creators, collections, campaigns, nfts } =
-    useNFTState();
+  const { beneficiaries, creators, collections, campaigns } = useNFTState();
 
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
@@ -162,6 +162,7 @@ const MyNFTs = () => {
   ]);
 
   React.useEffect(() => {
+    ReactGA.pageview(window.location.pathname +"MyNfts");
     entityInfo.publicKey && getFilteredNFTs();
   }, [entityInfo.publicKey, getFilteredNFTs]);
 
@@ -261,7 +262,7 @@ const MyNFTs = () => {
     return (
       <>
         <i
-          className='ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
+          className='ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link'
           onClick={() => {
             setSelectedNFT(nft);
             setShowBuyModal(true);
@@ -276,7 +277,7 @@ const MyNFTs = () => {
       <h5>
         {nft.title}&nbsp;&nbsp;{' '}
         {nft.isCreatorOwner === false && nft.isForSale === 'false' && (
-          <img src={soldIcon} width='40px' />
+          <img src={soldIcon} width='40px' alt='soldIcon' />
         )}
       </h5>
       <p>
@@ -364,9 +365,9 @@ const MyNFTs = () => {
             <b>Price: </b>
             {nft.price} {nft.currency}
             &nbsp;&nbsp;
+            <IconImage nft={nft} />
           </>
         )}
-        <IconImage nft={nft} />
         &nbsp;&nbsp; &nbsp;&nbsp;{' '}
         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
           <NFTTwitterShare item={nft} />
@@ -384,6 +385,10 @@ const MyNFTs = () => {
         &nbsp;&nbsp;{' '}
         <CopyText
           link={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
+        />
+        &nbsp;&nbsp;{' '}
+        <CopyCode
+          link={`<iframe src='https://dev.verifiedimpactnfts.com/#/nft-card?id=${nft.tokenId}'></iframe>`}
         />
       </p>
     </div>

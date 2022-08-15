@@ -14,6 +14,7 @@ import { ProfileFormsEnum } from '../../Enums/index';
 
 import bnr1 from './../../images/banner/bnr1.jpg';
 import ManageCampaigns from './ManageCampaigns';
+import ReactGA from 'react-ga';
 
 const Profile = () => {
   const { beneficiaries, creators } = useNFTState();
@@ -44,11 +45,13 @@ const Profile = () => {
       const _beneficiaryProfile = beneficiaries?.find(
         ({ address }) => address === entityInfo.publicKey
       );
+
       const _creatorProfile = creators?.find(
         ({ address }) => address === entityInfo.publicKey
       );
+
       const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
-      console.log(userProfiles);
+
       if (userProfiles) {
         if (userProfiles.err === 'Address Not Found') {
           if (beneficiaries) {
@@ -145,6 +148,7 @@ const Profile = () => {
   }, [entityInfo.publicKey, beneficiaries, creators]);
 
   React.useEffect(() => {
+    ReactGA.pageview(window.location.pathname +"Profile");
     entityInfo.publicKey && getUserProfiles();
   }, [entityInfo.publicKey, getUserProfiles]);
 

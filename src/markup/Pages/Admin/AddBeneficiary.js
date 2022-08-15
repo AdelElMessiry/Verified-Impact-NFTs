@@ -14,7 +14,7 @@ import PageTitle from '../../Layout/PageTitle';
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet } from '../../../utils/VINFTsTweets';
-
+import ReactGA from 'react-ga';
 
 //add new beneficiary page
 const AddBeneficiary = () => {
@@ -25,6 +25,9 @@ const AddBeneficiary = () => {
     description: '',
     address: '',
   });
+  React.useEffect(()=>{
+    ReactGA.pageview(window.location.pathname +"/admin_beneficiary");
+  },[])
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
 
   // },[])
@@ -42,6 +45,11 @@ const AddBeneficiary = () => {
     const deployResult = await getDeployDetails(savedBeneficiary)
     console.log('...... Beneficiary saved successfully', deployResult);
     VIToast.success('Beneficiary saved successfully');
+    ReactGA.event({
+      category: 'Success',
+      action: 'Add beneficiary',
+      label: `${entityInfo.publicKey}: [${beneficiaryInputs.name}] beneficiary has been added`,
+    });
     await sendDiscordMessage(
       process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
       process.env.REACT_APP_BENEFICIARIES_TOKEN,
@@ -62,7 +70,17 @@ const AddBeneficiary = () => {
   catch (err) {
     if (err.message.includes('User Cancelled')) {
       VIToast.error('User Cancelled Signing');
+      ReactGA.event({
+        category: 'User Cancelation',
+        action: 'Add beneficiary',
+        label: `${entityInfo.publicKey}: Cancelled Signing`,
+      });
     } else {
+      ReactGA.event({
+        category: 'Error',
+        action: 'Add beneficiary',
+        label: `${entityInfo.publicKey}: ${err.message}`,
+      });
       VIToast.error(err.message);
     }
     setIsButtonClicked(false);

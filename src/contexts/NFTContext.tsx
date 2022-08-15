@@ -116,11 +116,11 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
           selectedList.push(lists.beneficiary);
       });
     const beneficiariesList = profiles && selectedList;
-    const beneficiariesCount = beneficiariesList.filter(
-      ({ approved }: any) => approved === 'true'
-    )?.length;
 
     const beneficiariesVINFTsList = await getBeneficiariesList();
+    const beneficiariesCount = beneficiariesVINFTsList?.filter(
+      ({ isApproved }: any) => isApproved === 'true'
+    )?.length;
 
     // beneficiariesList && setBeneficiaries(beneficiariesList);
 

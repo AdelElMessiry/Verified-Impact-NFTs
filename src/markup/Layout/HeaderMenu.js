@@ -19,7 +19,7 @@ const HeaderMenu = () => {
       beneficiaries &&
       campaigns &&
       (await _getBeneficiariesCampaignsList(
-        beneficiaries?.filter(({ approved }) => approved === 'true'),
+        beneficiaries?.filter(({ isApproved }) => isApproved === 'true'),
         campaigns
       ));
     beneficiaryList && setBeneficiariesList(beneficiaryList);

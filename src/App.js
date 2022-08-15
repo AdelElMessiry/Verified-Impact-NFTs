@@ -13,6 +13,7 @@ import 'react-image-lightbox/style.css';
 import './css/scss/_custom.scss';
 import './css/scss/_sidebar.scss';
 import 'react-toastify/dist/ReactToastify.css';
+import ReactGA from 'react-ga';
 
 function App() {
   const [body_, setbody_] = useState();
@@ -22,6 +23,7 @@ function App() {
 
   useEffect(() => {
     setbody_(document.querySelector('body'));
+    ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_TRACKING_ID);
     //setHeader_(document.getElementsByClassName("main-bar-wraper"));
   }, []);
 

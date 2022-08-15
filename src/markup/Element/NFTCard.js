@@ -6,8 +6,10 @@ import VINftsTooltip from './Tooltip';
 import BuyNFTModal from './BuyNFT';
 import ListForSaleNFTModal from './ListForSaleNFT';
 import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
-
+import CopyCode from './copyCode';
 import soldIcon from '../../images/icon/sold.png';
+import { faStoreAlt, faStoreAltSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 //NFT Card component
 const NFTCard = ({
@@ -19,62 +21,77 @@ const NFTCard = ({
 }) => {
   const [showBuyModal, setShowBuyModal] = React.useState(false);
   const [showListForSaleModal, setShowListForSaleModal] = React.useState(false);
-
   //function which return buttons (buy NFT) & (expand NFT) on nft card
   const IconImage = () => {
     return (
       <>
-        <Link
-          to={'/#'}
-          onClick={(e) => {
-            e.preventDefault();
-            openSlider(index, item.campaign, item.collection);
-          }}
-          className='mfp-link portfolio-fullscreen'
-        >
-          <i className='ti-fullscreen icon-bx-xs'></i>
-        </Link>
-
-        {(isTransfer && isCreation && item.isOwner) ||
-        (isTransfer && !isCreation && item.isForSale === 'true') ? (
-          <i
-            className='ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
-            onClick={() => {
-              setShowBuyModal(true);
-            }}
-          ></i>
-        ) : (
-          !isCreation &&
-          item.isForSale === 'true' && (
+        <ul className='list-inline portfolio-fullscreen'>
+          <li className='text-success mr-1 align-items-center'>
             <i
-              className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
-              onClick={() => {
-                setShowBuyModal(true);
+              className='ti-fullscreen mfp-link fa-2x '
+              onClick={(e) => {
+                e.preventDefault();
+                openSlider(index, item.campaign, item.collection);
               }}
             ></i>
-          )
-        )}
-        {isCreation && item.isOwner && (
-          <VINftsTooltip
-            title={
-              item.isForSale === 'true'
-                ? 'Unlist NFT for Sale'
-                : 'List NFT for sale'
-            }
-          >
-            <div
-              onClick={() => {
-                setShowListForSaleModal(true);
-              }}
-            >
-              {item.isForSale === 'true' && (
-                <i className='ti-close sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'></i>
-              )}
-              <i className='ti-money sale-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'></i>
-            </div>
-          </VINftsTooltip>
-        )}
-
+          </li>
+          <li className='mr-1'>
+            {(isTransfer && isCreation && item.isOwner) ||
+            (isTransfer && !isCreation && item.isForSale === 'true') ? (
+              <i
+                className='ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x'
+                onClick={() => {
+                  setShowBuyModal(true);
+                }}
+              ></i>
+            ) : (
+              !isCreation &&
+              item.isForSale === 'true' && (
+                <i
+                  className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link'
+                  onClick={() => {
+                    setShowBuyModal(true);
+                  }}
+                ></i>
+              )
+            )}
+          </li>
+          {isCreation && item.isOwner && (
+            <li className='mr-1'>
+              <VINftsTooltip
+                title={
+                  item.isForSale === 'true'
+                    ? 'Unlist NFT for Sale'
+                    : 'List NFT for sale'
+                }
+              >
+                <div
+                  onClick={() => {
+                    setShowListForSaleModal(true);
+                  }}
+                >
+                  {item.isForSale === 'true' ? (
+                    <FontAwesomeIcon icon={faStoreAltSlash} size='2x' />
+                  ) : (
+                    item.isCreatorOwner === true && (
+                      <FontAwesomeIcon icon={faStoreAlt} size='2x' />
+                    )
+                  )}
+                </div>
+              </VINftsTooltip>
+            </li>
+          )}
+          {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
+            <li className=' mr-1 align-items-center'>
+              <NFTTwitterShare item={item} isWithoutText={true} />
+            </li>
+          )}
+          <li className=' mr-1 align-items-center'>
+            <CopyCode
+              link={`<iframe src='https://dev.verifiedimpactnfts.com/#/nft-card?id=${item.tokenId}'></iframe>`}
+            />
+          </li>
+        </ul>
         {showBuyModal && (
           <BuyNFTModal
             show={showBuyModal}
@@ -93,9 +110,6 @@ const NFTCard = ({
             }}
             data={item}
           />
-        )}
-        {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
-          <NFTTwitterShare item={item} isWithoutText={true} />
         )}
       </>
     );
@@ -191,7 +205,7 @@ const NFTCard = ({
                   {item.collectionName}
                 </Link>
               </p>
-              {item.isCreatorOwner !== false && item.isForSale !== 'false' && (
+              {item.isForSale === 'true' && (
                 <p>
                   <b>Price: </b>
                   {item.price} {item.currency}
