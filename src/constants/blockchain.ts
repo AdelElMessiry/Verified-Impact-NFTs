@@ -12,6 +12,10 @@ export const DEPLOYER_ACC =
   process.env.REACT_APP_CASPER_PUBLIC_KEY ||
   '01fb6e663984ffaca91dbf3725e8d688659c66d5bf45d0cb2705cba04908d3b6b9';
 
+export const TREASURY_WALLET =
+  process.env.REACT_APP_CASPER_TREASURY ||
+  process.env.REACT_APP_CASPER_PUBLIC_KEY;
+
 export const CONNECTION = {
   NODE_ADDRESS: proxyServer + NODE_RPC_ADDRESS,
   CHAIN_NAME: process.env.REACT_APP_CHAIN_NAME || 'casper-test',

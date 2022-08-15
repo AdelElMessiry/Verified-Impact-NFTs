@@ -11,7 +11,11 @@ import {
 
 import { cep47 } from '../lib/cep47';
 import { getCampaignDetails, parseCampaign } from '../api/campaignInfo';
-import { CONNECTION, DEPLOYER_ACC } from '../constants/blockchain';
+import {
+  CONNECTION,
+  DEPLOYER_ACC,
+  TREASURY_WALLET,
+} from '../constants/blockchain';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 
 export function HexToCLPublicKey(publicKey: string) {
@@ -218,6 +222,7 @@ export const transferFees = async (buyer: string, tokenId: string) => {
   let owner = await cep47.getOwnerOf(tokenId);
   owner = await hashToURef(owner);
   const deployer = DEPLOYER_ACC;
+  const treasury = TREASURY_WALLET;
 
   let { beneficiary, price, campaign } = tokenDetails;
   beneficiary = await hashToURef(`account-hash-${beneficiary}`);
@@ -237,6 +242,10 @@ export const transferFees = async (buyer: string, tokenId: string) => {
     creatorPercentage && (finalPrice / 100) * creatorPercentage;
 
   await nativeTransfer(buyer, deployer, price, true);
+
+  const treasuryTransfer =
+    portalFees &&
+    (await nativeTransfer(deployer, treasury, portalFees, false, true));
 
   const beneficiaryTransfer =
     beneficiaryAmount &&
