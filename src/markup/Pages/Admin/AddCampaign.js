@@ -1,11 +1,7 @@
 import React from 'react';
-// import { Col, Container, Row } from 'react-bootstrap';
-// import { CLPublicKey } from 'casper-js-sdk';
-// import { toast as VIToast } from 'react-toastify';
+import ReactGA from 'react-ga';
 
 import { useAuth } from '../../../contexts/AuthContext';
-// import { getDeployDetails } from '../../../api/universal';
-// import { createCampaign } from '../../../api/createCampaign';
 
 import Layout from '../../Layout';
 import AddEditCampaignForm from '../../Element/AddEditCampaignForm';
@@ -13,8 +9,7 @@ import PageTitle from '../../Layout/PageTitle';
 import PromptLogin from '../PromptLogin';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
-import AddEditCampaignForm from '../../Element/AddEditCampaignForm';
-import ReactGA from 'react-ga';
+
 //adding new campaign page
 const AddCampaign = () => {
   const { isLoggedIn } = useAuth();
