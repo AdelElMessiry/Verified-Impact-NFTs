@@ -144,7 +144,7 @@ const MintNFT = () => {
         beneficiaries?.filter(({ isApproved }) => isApproved === 'true')[0]
           ?.address
       );
-
+      
     // campaigns?.length &&
     //   !campaign &&
     //   setCampaign(savedData ? savedData.campaign : campaigns[0]?.id);
@@ -167,10 +167,13 @@ const MintNFT = () => {
       filteredCampaigns?.length &&
       setAllCampaignsList(campaigns);
     if(!campaignsList)  {
+      const selectedCampaignIDs =
+              filteredCampaigns?.length>0 &&
+              filteredCampaigns.map(({ id }) => id);
      filteredCampaigns?.length ?
       setCampaignSelectedData(
         filteredCampaigns,
-        savedData ? savedData.campaign : filteredCampaigns[0]?.id
+        savedData && selectedCampaignIDs.includes(savedData?.campaign) ? savedData.campaign : filteredCampaigns[0]?.id
       ):setCampaignSelectedData(null,null);
      }
   }, [
