@@ -687,8 +687,7 @@ const Privacy = () => {
                       using the{' '}
                       <Link to={'/request-form'} className="btn-link text-success  cursor-pointer">
                         “Submit a request” link here
-                      </Link>{' '}
-                      or at the address indicated in Section 13 below.
+                      </Link>
                     </p>
                   </div>
                   <div ref={outsideUSARef} className="pt-5">
