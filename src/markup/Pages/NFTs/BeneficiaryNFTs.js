@@ -158,7 +158,7 @@ const BeneficiaryNFTs = () => {
   }, [beneficiary, beneficiaries]);
 
   React.useEffect(() => {
-    ReactGA.pageview(window.location.pathname +"/BeneficiaryNFTs");
+    ReactGA.pageview(window.location.href);
     (!beneficiaryDescription || beneficiary) && getBeneficiaries();
   }, [beneficiaryDescription, getBeneficiaries, beneficiary]);
 

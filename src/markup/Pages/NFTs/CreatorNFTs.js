@@ -148,7 +148,7 @@ const CreatorNFTs = () => {
   }, [collection, collections]);
 
   React.useEffect(() => {
-    ReactGA.pageview(window.location.pathname +"/CreatorNFTs");
+    ReactGA.pageview(window.location.href);
     (!collectionName || collection) && getCollections();
   }, [collectionName, getCollections, collection]);
 
