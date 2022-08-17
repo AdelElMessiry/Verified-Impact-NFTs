@@ -230,7 +230,7 @@ const Dashboard = () => {
               {allNfts ? (
                 <>
                   {' '}
-                  <span>{allNfts?.length}</span> NFTs
+                  <span>{nfts?.length}</span> NFTs
                 </>
               ) : (
                 <>
