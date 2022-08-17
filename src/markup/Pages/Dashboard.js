@@ -150,9 +150,9 @@ const Dashboard = () => {
               <h4 className='dz-title'>Verified Impact NFTs</h4>
               <h2 className='sub-title'>Making a Verified Impact</h2>
               <div className='home-bnr-btns'>
-                <Link to={'#'} className='site-button white btn-icon'>
+                <a href={process.env.REACT_APP_MEDUIM_ACCOUNT_LINK} target="_blank" rel="noopener noreferrer" className='site-button white btn-icon'>
                   Read more <i className='fa fa-angle-double-right'></i>
-                </Link>
+                </a>
                 <VideoPopup />
               </div>
             </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   faDiscord,
+  faMediumM,
   faTwitter,
 } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -47,6 +48,11 @@ class Footer extends React.Component {
                     <li className='mr-3'>
                       <a href={process.env.REACT_APP_TWITTER_ACCOUNT_LINK} target="_blank">
                         <FontAwesomeIcon icon={faTwitter} size="2x" />
+                      </a>
+                    </li>
+                    <li className='mr-3'>
+                      <a href={process.env.REACT_APP_MEDUIM_ACCOUNT_LINK} target="_blank">
+                        <FontAwesomeIcon icon={faMediumM} size="2x" />
                       </a>
                     </li>
                     <li className='text-success mr-3 align-items-center'><Link to={"/terms-of-services"}>Terms Of Services</Link></li>
