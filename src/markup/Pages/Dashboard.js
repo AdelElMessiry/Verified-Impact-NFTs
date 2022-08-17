@@ -74,8 +74,7 @@ const Dashboard = () => {
       nfts &&
       nfts.filter(
         (nft) =>
-          nft.isForSale === 'true' ||
-          (nft.isForSale === 'false' && nft.isCreatorOwner === false)
+          nft.isForSale === 'true'
       );
 
     nftsList && setAllNfts(nftsList);
