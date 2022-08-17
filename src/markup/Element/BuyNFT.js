@@ -4,12 +4,12 @@ import { CLPublicKey } from 'casper-js-sdk';
 import { Row, Col, Spinner } from 'react-bootstrap';
 import { toast as VIToast } from 'react-toastify';
 
-import { transferFees } from '../../utils/contract-utils';
+import { transferFees,isValidHttpUrl } from '../../utils/contract-utils';
 import { transfer, purchaseNFT } from '../../api/transfer';
 import { getDeployDetails } from '../../api/universal';
 import { useAuth } from '../../contexts/AuthContext';
 import { sendDiscordMessage } from '../../utils/discordEvents';
-import { SendTweetWithImage } from '../../utils/VINFTsTweets';
+import { SendTweetWithImage, SendTweetWithImage64 } from '../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
 const InitialInputs = () => ({
   inputs: {
@@ -68,10 +68,19 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
             `Exciting news! [${data.title}] NFT of [${data.creatorName}] creator has been sold as a donation for [${data.campaignName}] campaign. [Click here  to buy #verified-impact-nfts and support more causes.] (${window.location.origin}/#/)  @vinfts @casper_network @devxdao `
           );
           let image = encodeURI(data.image)
-          await SendTweetWithImage(
-            image ,
+          if(isValidHttpUrl(data.pureImageKey)){
+            await SendTweetWithImage(
+              image ,
+              `Exciting news! ${data.title} NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao `
+            );
+          }else{
+          let image64 = 'https://dweb.link/ipfs/'+ data.pureImageKey
+          await SendTweetWithImage64(
+            image64, 
             `Exciting news! ${data.title} NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao `
-          );
+          )
+          }
+          
           window.location.reload();
         } else {
           setIsBuyClicked(false);
