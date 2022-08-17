@@ -24,7 +24,7 @@ import { NFT_STORAGE_KEY } from '../../../constants/blockchain';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
-import { SendTweet, SendTweetWithImage } from '../../../utils/VINFTsTweets';
+import { SendTweet, SendTweetWithImage, SendTweetWithImage64 } from '../../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
 //handling of creating new option in creatable select control
 const createOption = (label) => ({
@@ -167,10 +167,13 @@ const MintNFT = () => {
       filteredCampaigns?.length &&
       setAllCampaignsList(campaigns);
     if(!campaignsList)  {
+      const selectedCampaignIDs =
+              filteredCampaigns?.length>0 &&
+              filteredCampaigns.map(({ id }) => id);
      filteredCampaigns?.length ?
       setCampaignSelectedData(
         filteredCampaigns,
-        savedData ? savedData.campaign : filteredCampaigns[0]?.id
+        savedData && selectedCampaignIDs.includes(savedData?.campaign) ? savedData.campaign : filteredCampaigns[0]?.id
       ):setCampaignSelectedData(null,null);
      }
   }, [
@@ -391,12 +394,20 @@ const MintNFT = () => {
           state.inputs.name,
           '',
           `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
-        );
+        );        
         let image = encodeURI(imgURL);
-        await SendTweetWithImage(
-          image,
-          `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao `
-        );
+        if (state.inputs.isImageURL){
+          await SendTweetWithImage(
+            image,
+            `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao `
+          );
+        }else{
+          let image64 = 'https://dweb.link/ipfs/'+ image
+          await SendTweetWithImage64(
+            image64,
+            `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao `            
+          )
+        }       
         ReactGA.event({
           category: 'Success',
           action: 'Mint',

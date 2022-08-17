@@ -186,7 +186,6 @@ const RequestForm = () => {
                             ) : (
                               <span>Send</span>
                             )}
-                            <span className="ti-arrow-right" />
                           </button>
                         </Col>
                       </Row>
