@@ -73,7 +73,9 @@ const NFTCard = ({
                   {item.isForSale === 'true' ? (
                     <FontAwesomeIcon icon={faStoreAltSlash} size='2x' />
                   ) : (
-                    item.isCreatorOwner === true &&  <FontAwesomeIcon icon={faStoreAlt} size='2x' />
+                    item.isCreatorOwner === true && (
+                      <FontAwesomeIcon icon={faStoreAlt} size='2x' />
+                    )
                   )}
                 </div>
               </VINftsTooltip>
@@ -203,7 +205,7 @@ const NFTCard = ({
                   {item.collectionName}
                 </Link>
               </p>
-              {item.isCreatorOwner !== false && item.isForSale !== 'false' && (
+              {item.isForSale === 'true' && (
                 <p>
                   <b>Price: </b>
                   {item.price} {item.currency}
