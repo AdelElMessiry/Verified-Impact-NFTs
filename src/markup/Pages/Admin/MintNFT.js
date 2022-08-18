@@ -249,7 +249,7 @@ const MintNFT = () => {
   //handling minting new NFT
   async function mintNFT(isAnotherMint) {
     if (!uploadedImageBlob) {
-      return VIToast.error('Please upload image or enter direct URL');
+      return VIToast.error('Please upload image.');
     }
     if (!entityInfo.publicKey) {
       return VIToast.error('Please enter sign in First');
@@ -282,7 +282,7 @@ const MintNFT = () => {
 
   async function mintNewNFT(imgURL, isAnotherMint) {
     if (!uploadedImageBlob) {
-      return VIToast.error('Please upload image or enter direct URL');
+      return VIToast.error('Please upload image.');
     }
 
     if (entityInfo.publicKey) {
@@ -640,7 +640,7 @@ const MintNFT = () => {
                       </Col>
                       <Col>
                         <Row className='form-group'>
-                          <Col>
+                          {/* <Col>
                             <Form.Check
                               type={'checkbox'}
                               id={'isImageURL'}
@@ -651,7 +651,7 @@ const MintNFT = () => {
                               className='float-left'
                             />{' '}
                             <span className='text-danger'>*</span>
-                          </Col>
+                          </Col> */}
                         </Row>
                         <Row className='form-group'>
                           <Col>
