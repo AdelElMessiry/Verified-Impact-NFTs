@@ -62,6 +62,7 @@ const MintNFT = () => {
   );
   const [isCreateNewCollection, setIsCreateNewCollection] = React.useState();
   const [beneficiaryPercentage, setBeneficiaryPercentage] = React.useState();
+  const [creatorTwitterLink , setCreatorTwitterLink] = React.useState("")
   // const [beneficiariesList, setBeneficiariesList] = React.useState();
   const [state, setState] = React.useState({
     inputs: {
@@ -89,7 +90,8 @@ const MintNFT = () => {
         } else {
           let list = Object.values(userProfiles)[0];
 
-          userProfiles && setCreator(list.creator.username);
+          userProfiles && setCreator(list.creator.username) ;
+          userProfiles && setCreatorTwitterLink(list.creator.twitter);
           userProfiles && setIsCreatorExist(true);
           if (list?.creator?.address !== '') {
             const _collections =
@@ -249,7 +251,7 @@ const MintNFT = () => {
   //handling minting new NFT
   async function mintNFT(isAnotherMint) {
     if (!uploadedImageBlob) {
-      return VIToast.error('Please upload image or enter direct URL');
+      return VIToast.error('Please upload image.');
     }
     if (!entityInfo.publicKey) {
       return VIToast.error('Please enter sign in First');
@@ -282,7 +284,7 @@ const MintNFT = () => {
 
   async function mintNewNFT(imgURL, isAnotherMint) {
     if (!uploadedImageBlob) {
-      return VIToast.error('Please upload image or enter direct URL');
+      return VIToast.error('Please upload image.');
     }
 
     if (entityInfo.publicKey) {
@@ -360,6 +362,11 @@ const MintNFT = () => {
         }
         console.log('...... Token minted successfully', deployResult);
         VIToast.success('NFT minted successfully');
+        let twitterName =  ""
+        if(creatorTwitterLink!= ""){
+          let filed  = creatorTwitterLink.split("@")
+          twitterName  = `@${filed[1]}`;
+        }
         //NOTE: every channel has a special keys and tokens sorted on .env file
         if (!isCreatorExist) {
           //add creator discord
@@ -371,7 +378,7 @@ const MintNFT = () => {
             `We are glad to announce that ${creator} creator has joined #verified-impact-nfts and minted a striking NFT for donations. [Click here to see more about creators and their NFTs collections.](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
           );
           await SendTweet(
-            `We are glad to announce that ${creator} creator has joined #verified_impact_nfts and minted a striking NFT for donations. Click here ${window.location.origin}/#/ to see more about creators and their NFTs collections @vinfts @casper_network @devxdao `
+            `We are glad to announce that ${creator} creator has joined #verified_impact_nfts and minted a striking NFT for donations. Click here ${window.location.origin}/#/ to see more about creators and their NFTs collections @vinfts @casper_network @devxdao ${twitterName}`
           );
         }
         if (isCreateNewCollection) {
@@ -384,7 +391,7 @@ const MintNFT = () => {
             `${creator} creator has just added a new interesting #verified-impact-nfts collection. [Click here to see more interesting collections](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
           );
           await SendTweet(
-            `${creator} creator has just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections  @vinfts @casper_network @devxdao`
+            `${creator} creator has just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections  @vinfts @casper_network @devxdao ${twitterName}`
           );
         }
 
@@ -399,13 +406,13 @@ const MintNFT = () => {
         if (state.inputs.isImageURL){
           await SendTweetWithImage(
             image,
-            `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao `
+            `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
           );
         }else{
           let image64 = 'https://dweb.link/ipfs/'+ image
           await SendTweetWithImage64(
             image64,
-            `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao `            
+            `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`            
           )
         }       
         ReactGA.event({
@@ -640,7 +647,7 @@ const MintNFT = () => {
                       </Col>
                       <Col>
                         <Row className='form-group'>
-                          <Col>
+                          {/* <Col>
                             <Form.Check
                               type={'checkbox'}
                               id={'isImageURL'}
@@ -651,7 +658,7 @@ const MintNFT = () => {
                               className='float-left'
                             />{' '}
                             <span className='text-danger'>*</span>
-                          </Col>
+                          </Col> */}
                         </Row>
                         <Row className='form-group'>
                           <Col>
