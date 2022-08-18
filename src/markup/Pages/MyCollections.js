@@ -32,6 +32,7 @@ import plusIcon from './../../images/icon/plus.png';
 import editIcon from './../../images/icon/edit.png';
 import soldIcon from '../../images/icon/sold.png';
 import mintIcon from '../../images/icon/Mint.png';
+import ReactGA from 'react-ga';
 import { faStoreAlt, faStoreAltSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CopyCode from '../Element/copyCode';
@@ -368,6 +369,7 @@ const MyCollections = () => {
   ]);
 
   React.useEffect(() => {
+    ReactGA.pageview(window.location.pathname +"my-collections");
     entityInfo.publicKey && getFilteredNFTs();
   }, [entityInfo.publicKey, getFilteredNFTs]);
 

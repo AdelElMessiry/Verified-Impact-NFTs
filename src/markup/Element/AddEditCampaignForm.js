@@ -9,6 +9,7 @@ import { getDeployDetails } from '../../api/universal';
 import { createCampaign } from '../../api/createCampaign';
 
 import { useNFTState } from '../../contexts/NFTContext';
+import ReactGA from 'react-ga';
 
 //adding new campaign page
 const AddEditCampaignForm = ({
@@ -84,7 +85,11 @@ const AddEditCampaignForm = ({
         data ? 'UPDATE' : 'ADD',
         data ? data.id : undefined
       );
-
+      ReactGA.event({
+        category: 'Success',
+        action: 'Add campaign',
+        label: `${entityInfo.publicKey}: added new campaign ${state.inputs.name}`,
+      });
       const deployResult = await getDeployDetails(savedCampaign);
       console.log('...... Campaign saved successfully', deployResult);
       VIToast.success('Campaign saved successfully');
@@ -113,8 +118,18 @@ const AddEditCampaignForm = ({
     } catch (err) {
       if (err.message.includes('User Cancelled')) {
         VIToast.error('User Cancelled Signing');
+        ReactGA.event({
+          category: 'User Cancelation',
+          action: 'Add campaign',
+          label: `${entityInfo.publicKey}: Cancelled Signing`,
+        });
       } else {
         VIToast.error(err.message);
+        ReactGA.event({
+          category: 'Error',
+          action: 'Add campaign',
+          label: `${entityInfo.publicKey}: ${err.message}`,
+        });
       }
       setIsButtonClicked(false);
       return;
