@@ -228,3 +228,17 @@
   box-shadow: 2px 2px 4px 0 rgb(0 0 0 / 5%);
   font-size: 14px;
 }
+@media screen and (max-width: 400px){
+  .home-banner{
+    height: 130vh;
+  }
+  .home-bnr-inner{
+  align-items: start !important;
+  margin-top: 150px;
+  }
+}
+@media screen and (max-width: 468px){
+  .menu-parent-link {
+    color: #000;
+  }
+}

@@ -20,10 +20,10 @@ const CampaignOrCollectionTwitterShare = ({
       }
       title={
         creator === ''
-          ? `@vinfts @Casper_Network @DEVXDAO \nI support the "${campaign}" #NFT campaign, ${beneficiaryPercentage}% of the proceeds go to the "${beneficiary}". check it out`
-          : `@vinfts @Casper_Network @DEVXDAO \nI support the "${collection}" #NFT collection, ${beneficiaryPercentage}% of the proceeds go to the "${beneficiary}" and ${
+          ? `I support the "${campaign}" #NFT campaign, ${beneficiaryPercentage}% of the proceeds go to the "${beneficiary}". check it out \n @vinfts @Casper_Network @DEVXDAO`
+          : `I support the "${collection}" #NFT collection, ${beneficiaryPercentage}% of the proceeds go to the "${beneficiary}" and ${
               100 - Number(beneficiaryPercentage)
-            }% go to"${creator}". check it out`
+            }% go to"${creator}". check it out\n@vinfts @Casper_Network @DEVXDAO`
       }
     >
       <TwitterIcon
