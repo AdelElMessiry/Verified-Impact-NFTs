@@ -245,7 +245,7 @@ export const transferFees = async (buyer: string, tokenId: string) => {
 
   const treasuryTransfer =
     portalFees &&
-    (await nativeTransfer(deployer, treasury, portalFees, false, true));
+    (await nativeTransfer(deployer, treasury, portalFees, false, false));
 
   const beneficiaryTransfer =
     beneficiaryAmount &&
