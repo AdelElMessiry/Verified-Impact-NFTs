@@ -83,7 +83,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
     dispatch({ type: NFTActionTypes.LOADING });
 
     const nftsList = await getNFTsList();
-    const beneficiaryCount = await cep47.totalBeneficiaries();
+    // const beneficiaryCount = await cep47.totalBeneficiaries();
     const campaignsCount = await cep47.totalCampaigns();
     const creatorsCount = await cep47.totalCreators();
     const collectionsCount = await cep47.totalCollections();
@@ -118,6 +118,14 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
     const beneficiariesList = profiles && selectedList;
 
     const beneficiariesVINFTsList = await getBeneficiariesList();
+
+    // const uniqueBeneficiaries = beneficiariesVINFTsList.filter(
+    //   (beneficiary: any, index: any, beneficiaries: any) =>
+    //     index ===
+    //     beneficiaries.findIndex((idx: any) => idx.name === beneficiary.name)
+    // );
+    // console.log(uniqueBeneficiaries);
+
     const beneficiariesCount = beneficiariesVINFTsList?.filter(
       ({ isApproved }: any) => isApproved === 'true'
     )?.length;
