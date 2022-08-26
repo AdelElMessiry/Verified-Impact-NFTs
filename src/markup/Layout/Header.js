@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Avatar } from '@mui/material';
 
@@ -9,6 +9,7 @@ import VINftsTooltip from '../Element/Tooltip';
 
 import logo from './../../images/logov.png';
 import casper from './../../images/icon/casper.png';
+import { profileClient } from '../../api/profileInfo';
 
 const generateRandomCharacter = () => {
   const alphabet = 'abcdefghijklmnopqrstuvwxyz';
@@ -18,6 +19,7 @@ const generateRandomCharacter = () => {
 
 const Header = ({ isNFTDetails = false }) => {
   const { isLoggedIn, entityInfo, balance, login } = useAuth();
+  const [profileImage, setProfileImage] = useState();
 
   React.useEffect(() => {
     // sidebar open/close
@@ -53,6 +55,35 @@ const Header = ({ isNFTDetails = false }) => {
       }, 100);
     }
   }, []);
+
+  const getUserProfiles = React.useCallback(async () => {
+    try {
+      const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
+
+      if (userProfiles) {
+        if (userProfiles.err === 'Address Not Found') {
+          setProfileImage(null);
+        } else {
+          let list = Object.values(userProfiles)[0];
+         if(userProfiles) {
+              Object.keys(list.normal).length > 0
+                ? setProfileImage(list.normal.imgUrl)
+                : Object.keys(list.beneficiary).length > 0
+                ? setProfileImage(list.beneficiary.imgUrl)
+                : Object.keys(list.creator).length > 0
+                ? setProfileImage(list.creator.imgUrl)
+                : setProfileImage(null)
+         }
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, [entityInfo.publicKey]);
+
+  React.useEffect(() => {
+    entityInfo.publicKey && getUserProfiles();
+  }, [entityInfo.publicKey, getUserProfiles]);
 
   return (
     <>
@@ -123,7 +154,7 @@ const Header = ({ isNFTDetails = false }) => {
                       <VINftsTooltip title='Open settings'>
                         <>
                           <Avatar className='float-left' aria-label='avatar'>
-                            {generateRandomCharacter()}
+                             { profileImage?<img src={profileImage}/>: generateRandomCharacter()}
                           </Avatar>
                           <span className='d-inline-block ml-2 mt-2'>
                             {balance} CSPR
