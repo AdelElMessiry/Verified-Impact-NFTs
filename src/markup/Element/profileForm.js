@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Row, Col, Form, Spinner } from 'react-bootstrap';
 import ImageUploader from 'react-images-upload';
 import validator from 'validator';
@@ -14,8 +14,7 @@ import { SocialLinks } from 'social-links';
 const ProfileForm = ({
   formName,
   isProfileExist,
-  formData,
-  isVINftExist = false,
+  formData
 }) => {
   const { entityInfo, refreshAuth } = useAuth();
   //setting initial values of controls
@@ -264,9 +263,13 @@ const [socialErrors , setSocialErrors] = useState({
           window.location.reload();
         }, 50);
       } catch (err) {
+        if(err.includes("1024")){
+          VIToast.error("Sorry an error happened while saving, please try again with less number of characters in the bio field");
+        }else{
+          VIToast.error(err);
+        }
         console.log(err);
         //   setErrStage(MintingStages.TX_PENDING);
-        VIToast.error(err);
         setIsSaveButtonClicked(false);
       }
       refreshAuth();
