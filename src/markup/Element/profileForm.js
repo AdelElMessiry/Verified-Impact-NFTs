@@ -263,10 +263,10 @@ const [socialErrors , setSocialErrors] = useState({
           window.location.reload();
         }, 50);
       } catch (err) {
-        if(err.includes("1024")){
+        if(err.message.includes("1024")){
           VIToast.error("Sorry an error happened while saving, please try again with less number of characters in the bio field");
         }else{
-          VIToast.error(err);
+          VIToast.error(err.message);
         }
         console.log(err);
         //   setErrStage(MintingStages.TX_PENDING);
