@@ -243,8 +243,10 @@ const [socialErrors , setSocialErrors] = useState({
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
-        } else {
-          VIToast.error(err.message);
+        } else if(err.message.includes("1024")){
+            VIToast.error("Sorry an error happened while saving, please try again with less number of characters in the bio field");
+          }else{
+            VIToast.error(err.message);
         }
         setIsSaveButtonClicked(false);
         return;
@@ -263,10 +265,12 @@ const [socialErrors , setSocialErrors] = useState({
         }
         VIToast.success('Profile Saved successfully');
         //NOTE: every channel has a special keys and tokens sorted on .env file
-        setTimeout(() => {
-          setIsSaveButtonClicked(false);
-          window.location.reload();
-        }, 50);
+        if(formName !== ProfileFormsEnum.BeneficiaryProfile||(formName !== ProfileFormsEnum.BeneficiaryProfile&&isProfileExist)){
+         setTimeout(() => {
+            window.location.reload();
+            setIsSaveButtonClicked(false);
+           }, 50);
+          }
       } catch (err) {
         if(err.message.includes("1024")){
           VIToast.error("Sorry an error happened while saving, please try again with less number of characters in the bio field");
@@ -316,9 +320,17 @@ const [socialErrors , setSocialErrors] = useState({
         .then((r) => r.json())
         .then((response) => {
           VIToast.success('Your Sign up submitted Successfully');
+          setTimeout(() => {
+            window.location.reload();
+            setIsSaveButtonClicked(false);
+           }, 50);
         })
         .catch((error) => {
           VIToast.error('An error occured with sign up');
+          setTimeout(() => {
+            window.location.reload();
+            setIsSaveButtonClicked(false);
+           }, 50);
         });
     
   };
@@ -637,7 +649,7 @@ const [socialErrors , setSocialErrors] = useState({
         <Col>
           <button
             className='btn btn-success'
-            disabled={state.inputs.userName == '' || isSaveButtonClicked}
+            disabled={state.inputs.userName == '' || isSaveButtonClicked||!uploadedProfileImageURL || !uploadedNFTImageURL}
             onClick={(e) => {
               handleSave(e);
             }}
