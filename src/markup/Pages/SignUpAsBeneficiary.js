@@ -35,9 +35,6 @@ React.useEffect(()=>{
           </div>
           {/* <!-- inner page banner END --> */}
           {/* <!-- contact area --> */}
-          {!isLoggedIn ? (
-            <PromptLogin />
-          ) : (
             <div className='section-full content-inner shop-account'>
               {/* <!-- Product --> */}
               <div className='container'>
@@ -48,6 +45,7 @@ React.useEffect(()=>{
                         formName={ProfileFormsEnum.BeneficiaryProfile}
                         isProfileExist={false}
                         formData={ null }
+                        isSignUpBeneficiary={true}
                       />
                     </Container>
                   </div>
@@ -55,7 +53,6 @@ React.useEffect(()=>{
               </div>
               {/* <!-- Product END --> */}
             </div>
-          )}
           {/* <!-- contact area  END --> */}
         </div>
       </Layout>
