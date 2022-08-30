@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Row, Col, Form, Spinner } from 'react-bootstrap';
 import ImageUploader from 'react-images-upload';
 import validator from 'validator';
@@ -15,9 +15,9 @@ const ProfileForm = ({
   formName,
   isProfileExist,
   formData,
-  isVINftExist = false,
+  isSignUpBeneficiary=false
 }) => {
-  const { entityInfo, refreshAuth } = useAuth();
+  const { entityInfo, refreshAuth,isLoggedIn } = useAuth();
   //setting initial values of controls
   const [state, setState] = useState({
     inputs: {
@@ -154,9 +154,7 @@ const [socialErrors , setSocialErrors] = useState({
     if (!uploadedNFTImageURL) {
       return VIToast.error('Please upload NFT image or enter direct URL');
     }
-    if (!entityInfo.publicKey) {
-      return VIToast.error('Please enter sign in First');
-    }
+  
     if (
       (state.inputs.isProfileImageURL && showProfileURLErrorMsg) ||
       (state.inputs.isNFTImageURL && showNFTURLErrorMsg) ||
@@ -209,6 +207,9 @@ const [socialErrors , setSocialErrors] = useState({
     if (!uploadedProfileImageURL || !uploadedNFTImageURL) {
       return VIToast.error('Please upload image or enter direct URL');
     }
+    if (!entityInfo.publicKey&&!isSignUpBeneficiary) {
+      return VIToast.error('Please enter sign in First');
+    }
     if (entityInfo.publicKey) {
       let saveDeployHash;
       console.log(formData);
@@ -257,6 +258,9 @@ const [socialErrors , setSocialErrors] = useState({
           (Please type your notes here)%0D%0A%0D%0AMany thanks.%0D%0AWith kind regards,`;
           window.location.href = mailto;
         }
+        if(formName === ProfileFormsEnum.BeneficiaryProfile&&!isProfileExist){
+          handleSaveToSheet(ProfileImgURL, NFTImgURL);
+        }
         VIToast.success('Profile Saved successfully');
         //NOTE: every channel has a special keys and tokens sorted on .env file
         setTimeout(() => {
@@ -264,14 +268,60 @@ const [socialErrors , setSocialErrors] = useState({
           window.location.reload();
         }, 50);
       } catch (err) {
+        if(err.message.includes("1024")){
+          VIToast.error("Sorry an error happened while saving, please try again with less number of characters in the bio field");
+        }else{
+          VIToast.error(err.message);
+        }
         console.log(err);
         //   setErrStage(MintingStages.TX_PENDING);
-        VIToast.error(err);
         setIsSaveButtonClicked(false);
       }
       refreshAuth();
+    }else{
+      if(formName === ProfileFormsEnum.BeneficiaryProfile&&!isProfileExist){
+        handleSaveToSheet(ProfileImgURL, NFTImgURL);
+        setIsSaveButtonClicked(false);
+      }
     }
   }
+
+  const handleSaveToSheet= async (ProfileImgURL, NFTImgURL) => {
+      await fetch(process.env.REACT_APP_BENEFICIARIES_SIGNUP_SHEET, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          Address:isLoggedIn? entityInfo.publicKey:"Not Logged User",
+          UserName:state.inputs.userName,
+          ShoreTagName: state.inputs.shortTagLine,
+          ProfileImgURL:ProfileImgURL,
+          NFTImgURL:NFTImgURL,
+          FirstName:state.inputs.firstName,
+          LastName:state.inputs.lastName,
+          Bio:state.inputs.fullBio,
+          ExternalSiteLink:state.inputs.externalSiteLink,
+          Phone:state.inputs.phone,
+          Twitter:state.inputs.twitter,
+          Instagram:state.inputs.instagram,
+          Facebook:state.inputs.facebook,
+          Meduim:state.inputs.medium,
+          Telegram:state.inputs.telegram,
+          Email:state.inputs.email,
+       
+        }),
+      })
+        .then((r) => r.json())
+        .then((response) => {
+          VIToast.success('Your Sign up submitted Successfully');
+        })
+        .catch((error) => {
+          VIToast.error('An error occured with sign up');
+        });
+    
+  };
 
   return (
     <div className='shop-account '>
