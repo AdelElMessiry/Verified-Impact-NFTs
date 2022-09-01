@@ -364,8 +364,8 @@ const MintNFT = () => {
         VIToast.success('NFT minted successfully');
         let twitterName =  ""
         if(creatorTwitterLink!= ""){
-          let filed  = creatorTwitterLink.split("@")
-          twitterName  = `@${filed[1]}`;
+          var n = creatorTwitterLink.lastIndexOf('/');
+          twitterName = `@${creatorTwitterLink.substring(n + 1)}`;
         }
         //NOTE: every channel has a special keys and tokens sorted on .env file
         if (!isCreatorExist) {
