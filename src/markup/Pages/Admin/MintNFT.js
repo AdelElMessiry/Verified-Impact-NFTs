@@ -278,7 +278,7 @@ const MintNFT = () => {
     let fineHref =  imageFile.data.image.pathname
         fineHref = fineHref.slice(1)
         //https://dweb.link/ipfs/
-        imageFile = 'https://ipfs.io/ipfs' + fineHref
+        imageFile = 'https://cf-ipfs.com/ipfs' + fineHref
     mintNewNFT(imageFile, isAnotherMint);
   }
 
