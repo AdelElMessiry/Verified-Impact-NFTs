@@ -14,7 +14,6 @@ import { uploadImg } from '../../../api/imageCDN';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
 import { profileClient } from '../../../api/profileInfo';
-import { getNFTImage } from '../../../utils/contract-utils';
 
 import PageTitle from '../../Layout/PageTitle';
 import PromptLogin from '../PromptLogin';
@@ -245,12 +244,7 @@ const MintNFT = () => {
   //handling of selecting image in image control
   const onDrop = (picture, file) => {
     if (picture.length > 0) {
-      // const newImageUrl = URL.createObjectURL(picture[0]);
-      // setUploadedImage(newImageUrl);
-      // setUploadedFile(picture[0]);
-
-      const blob = new Blob(file);
-      setUploadedBlobImage(blob);
+      setUploadedBlobImage(picture[0]);
     } else {
       // setUploadedImage(null);
       // setUploadedFile(null);
@@ -270,16 +264,20 @@ const MintNFT = () => {
     }
     isAnotherMint ? setIsMintAnotherClicked(true) : setIsMintClicked(true);
     // let cloudURL = uploadedImageURL;
-    let imageKey = uploadedImageBlob;
+    let imageFile;
     if (!state.inputs.isImageURL && uploadedImageBlob) {
       console.log('Img', uploadedFile);
-      console.log('Img url', uploadedImageURL);
-
+      console.log('Img url', uploadedImageBlob.name);
       try {
-        // cloudURL = await uploadImg(uploadedFile);
+        const image = new File([uploadedImageBlob], uploadedImageBlob.name, {
+          type: uploadedImageBlob.type,
+        });
         const client = new NFTStorage({ token: NFT_STORAGE_KEY });
-        imageKey = await client.storeBlob(uploadedImageBlob);
-        // imageKey = await getNFTImage(imageKey);
+        imageFile = await client.store({
+          name: uploadedImageBlob.name,
+          description: 'description',
+          image: image,
+        });
       } catch (err) {
         console.log(err);
         VIToast.error("Image couldn't be uploaded to cloud CDN !");
@@ -288,7 +286,11 @@ const MintNFT = () => {
       }
       VIToast.success('Image uploaded to cloud CDN successfully !');
     }
-    mintNewNFT(imageKey, isAnotherMint);
+    let fineHref = imageFile.data.image.pathname;
+    fineHref = fineHref.slice(1);
+    //https://dweb.link/ipfs/
+    imageFile = 'https://cf-ipfs.com/ipfs' + fineHref;
+    mintNewNFT(imageFile, isAnotherMint);
   }
 
   async function mintNewNFT(imgURL, isAnotherMint) {
@@ -373,8 +375,8 @@ const MintNFT = () => {
         VIToast.success('NFT minted successfully');
         let twitterName = '';
         if (creatorTwitterLink != '') {
-          let filed = creatorTwitterLink.split('@');
-          twitterName = `@${filed[1]}`;
+          var n = creatorTwitterLink.lastIndexOf('/');
+          twitterName = `@${creatorTwitterLink.substring(n + 1)}`;
         }
         //NOTE: every channel has a special keys and tokens sorted on .env file
         if (!isCreatorExist) {
@@ -412,18 +414,17 @@ const MintNFT = () => {
           `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
         );
         let image = encodeURI(imgURL);
-        if (state.inputs.isImageURL) {
-          await SendTweetWithImage(
-            image,
-            `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
-          );
-        } else {
-          let image64 = 'https://cf-ipfs.com/ipfs/' + image;
-          await SendTweetWithImage64(
-            image64,
-            `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
-          );
-        }
+        await SendTweetWithImage(
+          image,
+          `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
+        );
+        //  else{
+        //   let image64 = 'https://dweb.link/ipfs/'+ image
+        //   await SendTweetWithImage64(
+        //     image64,
+        //     `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
+        //   )
+        // }
         ReactGA.event({
           category: 'Success',
           action: 'Mint',
