@@ -15,6 +15,7 @@ import { ProfileFormsEnum } from '../../Enums/index';
 import bnr1 from './../../images/banner/bnr1.jpg';
 import ManageCampaigns from './ManageCampaigns';
 import ReactGA from 'react-ga';
+import { Spinner } from 'react-bootstrap';
 
 const Profile = () => {
   const { beneficiaries, creators } = useNFTState();
@@ -231,7 +232,7 @@ const Profile = () => {
                     <TabPane tabId='1'>
                       {(normalProfile == null ||
                         normalProfile ||
-                        noProfilesForThisUser) && (
+                        noProfilesForThisUser) ? (
                         <ProfileForm
                           formName={ProfileFormsEnum.NormalProfile}
                           isProfileExist={
@@ -245,11 +246,13 @@ const Profile = () => {
                             noProfilesForThisUser ? null : normalProfile
                           }
                         />
-                      )}
+                      ):(  <div className='d-flex justify-content-center'>
+                      <Spinner animation='border' variant='success' />
+                      </div>)}
                     </TabPane>
                     <TabPane tabId='2'>
                       {(creatorProfile || noCreatorProfilesForThisUser) &&
-                        creators && (
+                        creators ? (
                           <ProfileForm
                             formName={ProfileFormsEnum.CreatorProfile}
                             isProfileExist={
@@ -261,12 +264,15 @@ const Profile = () => {
                             }
                             formData={creatorProfile}
                           />
-                        )}
+                        ):(
+                          <div className='d-flex justify-content-center'>
+                          <Spinner animation='border' variant='success' />
+                          </div>)}
                     </TabPane>
                     <TabPane tabId='3'>
                       {(beneficiaryProfile ||
                         noBeneficiaryProfilesForThisUser) &&
-                        beneficiaries && (
+                        beneficiaries ? (
                           <>
                             <div className='dlab-tabs choseus-tabs'>
                               <ul
@@ -354,7 +360,9 @@ const Profile = () => {
                               </div>
                             </div>
                           </>
-                        )}
+                        ):(  <div className='d-flex justify-content-center'>
+                        <Spinner animation='border' variant='success' />
+                        </div>)}
                     </TabPane>
                   </TabContent>
                 </div>
