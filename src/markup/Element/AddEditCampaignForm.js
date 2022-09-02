@@ -219,7 +219,7 @@ const AddEditCampaignForm = ({
                     )}
                     {(state.inputs.requestedRoyalty == 0 && state.inputs.requestedRoyalty != '')  && (
                       <span className='text-danger'>
-                        Requested Royalty equal to 0 it means your beneficiary don't have proportion
+                        Requested Royalty equal to 0 means your beneficiary will not have any proportion
                       </span>
                     )}
                   </div>
