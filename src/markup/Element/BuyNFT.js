@@ -77,7 +77,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
               `Exciting news! ${data.title} NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao `
             );
           } else {
-            let image64 = 'https://cf-ipfs.com/ipfs/' + data.pureImageKey;
+            let image64 = 'https://gateway.ipfs.io/ipfs/' + data.pureImageKey;
             await SendTweetWithImage64(
               image64,
               `Exciting news! ${data.title} NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao `
