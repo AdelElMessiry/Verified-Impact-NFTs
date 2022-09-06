@@ -140,6 +140,7 @@ const BeneficiaryNFTs = () => {
   const [beneficiaryDescription, setBeneficiaryDescription] = React.useState();
   const [beneficiaryName, setBeneficiaryName] = React.useState();
   const [campaignName, setCampaignName] = React.useState();
+  const [campaignDescription, setCampaignDescription,] = React.useState();
 
   const [allNFTs, setAllNFTs] = React.useState();
   const [filteredNFTs, setFilteredNFTs] = React.useState();
@@ -152,8 +153,8 @@ const BeneficiaryNFTs = () => {
       beneficiaries &&
       beneficiary &&
       beneficiaries.find(({ address }) => beneficiary === address);
-    setSelectedBeneficiary &&
-      setBeneficiaryDescription(setSelectedBeneficiary.description);
+      setSelectedBeneficiary &&
+      setBeneficiaryDescription(setSelectedBeneficiary.bio);
     setSelectedBeneficiary && setBeneficiaryName(setSelectedBeneficiary.username);
   }, [beneficiary, beneficiaries]);
 
@@ -167,6 +168,7 @@ const BeneficiaryNFTs = () => {
     const setSelectedCampaign =
       campaigns && campaign && campaigns.find(({ id }) => campaign === id);
     setSelectedCampaign && setCampaignName(setSelectedCampaign.name);
+    setSelectedCampaign && setCampaignDescription(setSelectedCampaign.description)
   }, [campaign, campaigns]);
 
   React.useEffect(() => {
@@ -636,7 +638,7 @@ const BeneficiaryNFTs = () => {
               <p className='text-white ben-desc'>
                 {!campaign && beneficiaryDescription
                   ? beneficiaryDescription
-                  : ''}
+                  : campaign && campaignDescription?campaignDescription:''}
               </p>
 
               <div className='breadcrumb-row'>
