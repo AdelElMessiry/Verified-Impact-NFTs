@@ -10,6 +10,8 @@ import { createCampaign } from '../../api/createCampaign';
 
 import { useNFTState } from '../../contexts/NFTContext';
 import ReactGA from 'react-ga';
+import SDGsMultiSelect from './SDGsMultiSelect';
+import { SDGsData } from '../../data/SDGsGoals/index';
 
 //adding new campaign page
 const AddEditCampaignForm = ({
@@ -23,6 +25,7 @@ const AddEditCampaignForm = ({
   const [beneficiary, setBeneficiary] = React.useState();
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
+  const [SDGsGoals, setSDGsGoals] = React.useState([]);
 
   //getting beneficiary details
   const selectedBeneficiary = React.useCallback(async () => {
@@ -68,6 +71,10 @@ const AddEditCampaignForm = ({
     }
   };
 
+  const handleSDGsChange = (data) => {
+    setSDGsGoals(data);
+  };
+
   //saving new campaign related to beneficiary function
   const saveCampaign = async () => {
     setIsButtonClicked(true);
@@ -83,7 +90,8 @@ const AddEditCampaignForm = ({
         state.inputs.requestedRoyalty,
         CLPublicKey.fromHex(entityInfo.publicKey),
         data ? 'UPDATE' : 'ADD',
-        data ? data.id : undefined
+        data ? data.id : undefined,
+        SDGsGoals
       );
       ReactGA.event({
         category: 'Success',
@@ -239,6 +247,11 @@ const AddEditCampaignForm = ({
                   {showURLErrorMsg && (
                     <span className='text-danger'>Please enter Valid URL</span>
                   )}
+                </Col>
+              </Row>
+              <Row className='mt-4'>
+                <Col>
+                <SDGsMultiSelect data={SDGsData} SDGsChanged={(selectedData)=>{handleSDGsChange(selectedData)}}/>
                 </Col>
               </Row>
               <Row className='mt-4'>
