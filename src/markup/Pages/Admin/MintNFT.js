@@ -25,6 +25,8 @@ import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet, SendTweetWithImage, SendTweetWithImage64 } from '../../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
+import SDGsMultiSelect from '../../Element/SDGsMultiSelect';
+import { SDGsData } from '../../../data/SDGsGoals';
 //handling of creating new option in creatable select control
 const createOption = (label) => ({
   label,
@@ -61,7 +63,9 @@ const MintNFT = () => {
   );
   const [isCreateNewCollection, setIsCreateNewCollection] = React.useState();
   const [beneficiaryPercentage, setBeneficiaryPercentage] = React.useState();
-  const [creatorTwitterLink , setCreatorTwitterLink] = React.useState("")
+  const [creatorTwitterLink , setCreatorTwitterLink] = React.useState("");
+  const [SDGsGoals, setSDGsGoals] = React.useState([]);
+
   // const [beneficiariesList, setBeneficiariesList] = React.useState();
   const [state, setState] = React.useState({
     inputs: {
@@ -230,6 +234,10 @@ const MintNFT = () => {
       ...state,
       inputs,
     });
+  };
+
+  const handleSDGsChange = (data) => {
+    setSDGsGoals(data);
   };
 
   //handling of selecting image in image control
@@ -702,6 +710,11 @@ const MintNFT = () => {
                             )}
                           </Col>
                         </Row>
+                      </Col>
+                    </Row>
+                    <Row className='form-group'>
+                      <Col>
+                      <SDGsMultiSelect data={SDGsData} SDGsChanged={(selectedData)=>{handleSDGsChange(selectedData)}}/>
                       </Col>
                     </Row>
                     <Row className='form-group'>
