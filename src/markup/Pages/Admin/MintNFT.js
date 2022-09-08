@@ -321,6 +321,7 @@ const MintNFT = () => {
           beneficiaryPercentage: beneficiaryPercentage
             ? beneficiaryPercentage
             : '',
+          SDGsGoals: SDGsGoals
         });
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
