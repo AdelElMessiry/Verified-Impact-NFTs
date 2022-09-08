@@ -228,6 +228,10 @@
   box-shadow: 2px 2px 4px 0 rgb(0 0 0 / 5%);
   font-size: 14px;
 }
+.nftcard-parent{
+  // border:1px solid rgb(79, 78, 78);
+  border-radius: 5px;
+}
 @media screen and (max-width: 400px){
   .home-banner{
     height: 130vh;

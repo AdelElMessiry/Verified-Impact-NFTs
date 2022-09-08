@@ -26,6 +26,8 @@ import soldIcon from '../../../images/icon/sold.png';
 import viewIcon from '../../../images/icon/view.png';
 import CopyCode from '../../Element/copyCode';
 import ReactGA from 'react-ga';
+import SDGsMultiSelect from '../../Element/SDGsMultiSelect';
+import { SDGsData } from '../../../data/SDGsGoals';
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -137,6 +139,7 @@ const CreatorNFTs = () => {
   const [creatorName, setCreatorName] = React.useState();
   const [showViewModal, setShowViewModal] = React.useState(false);
   const [selectedViewProfile, setSelectedViewProfile] = React.useState();
+  const [SDGsGoals, setSDGsGoals] = React.useState([]);
 
   //getting Collections details
   const getCollections = React.useCallback(async () => {
@@ -238,6 +241,10 @@ const CreatorNFTs = () => {
         ...creatorsTagsName,
       ]);
   }, []);
+
+  const handleSDGsChange = (data) => {
+    setSDGsGoals(data);
+  };
 
   const getFilteredNFTs = React.useCallback(async () => {
     const captions = [];
@@ -630,6 +637,14 @@ const CreatorNFTs = () => {
         </div>
         {/*  Section-1 Start  */}
         <div className='section-full content-inner-1 portfolio text-uppercase'>
+        <div className="site-filters clearfix  left mx-5   m-b40">
+           SDGs Goals:{' '} <SDGsMultiSelect
+              data={SDGsData}
+              SDGsChanged={(selectedData) => {
+                handleSDGsChange(selectedData);
+              }}
+            />
+          </div>
           {(creator === undefined || creator === null) && (
             <div className='site-filters clearfix  left mx-5   m-b40'>
               <ul className='filters' data-toggle='buttons'>

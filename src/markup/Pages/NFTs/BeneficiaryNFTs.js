@@ -25,6 +25,8 @@ import soldIcon from '../../../images/icon/sold.png';
 import viewIcon from '../../../images/icon/view.png';
 import CopyCode from '../../Element/copyCode';
 import ReactGA from 'react-ga';
+import SDGsMultiSelect from '../../Element/SDGsMultiSelect';
+import { SDGsData } from '../../../data/SDGsGoals';
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -140,12 +142,13 @@ const BeneficiaryNFTs = () => {
   const [beneficiaryDescription, setBeneficiaryDescription] = React.useState();
   const [beneficiaryName, setBeneficiaryName] = React.useState();
   const [campaignName, setCampaignName] = React.useState();
-  const [campaignDescription, setCampaignDescription,] = React.useState();
+  const [campaignDescription, setCampaignDescription] = React.useState();
 
   const [allNFTs, setAllNFTs] = React.useState();
   const [filteredNFTs, setFilteredNFTs] = React.useState();
   const [showViewModal, setShowViewModal] = React.useState(false);
   const [selectedViewProfile, setSelectedViewProfile] = React.useState();
+  const [SDGsGoals, setSDGsGoals] = React.useState([]);
 
   //getting beneficiary details
   const getBeneficiaries = React.useCallback(async () => {
@@ -153,9 +156,10 @@ const BeneficiaryNFTs = () => {
       beneficiaries &&
       beneficiary &&
       beneficiaries.find(({ address }) => beneficiary === address);
-      setSelectedBeneficiary &&
+    setSelectedBeneficiary &&
       setBeneficiaryDescription(setSelectedBeneficiary.bio);
-    setSelectedBeneficiary && setBeneficiaryName(setSelectedBeneficiary.username);
+    setSelectedBeneficiary &&
+      setBeneficiaryName(setSelectedBeneficiary.username);
   }, [beneficiary, beneficiaries]);
 
   React.useEffect(() => {
@@ -168,7 +172,8 @@ const BeneficiaryNFTs = () => {
     const setSelectedCampaign =
       campaigns && campaign && campaigns.find(({ id }) => campaign === id);
     setSelectedCampaign && setCampaignName(setSelectedCampaign.name);
-    setSelectedCampaign && setCampaignDescription(setSelectedCampaign.description)
+    setSelectedCampaign &&
+      setCampaignDescription(setSelectedCampaign.description);
   }, [campaign, campaigns]);
 
   React.useEffect(() => {
@@ -259,6 +264,10 @@ const BeneficiaryNFTs = () => {
     creatorsTagsName &&
       setCreatorTags([{ name: 'All', id: '' }, ...creatorsTagsName]);
   }, []);
+
+  const handleSDGsChange = (data) => {
+    setSDGsGoals(data);
+  };
 
   const getFilteredNFTs = React.useCallback(async () => {
     const captions = [];
@@ -582,9 +591,9 @@ const BeneficiaryNFTs = () => {
           link={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
         />
         &nbsp;
-            <CopyCode
-              link={`<iframe src="https://dev.verifiedimpactnfts.com/#/nft-card?id=${nft.tokenId}"></iframe>`}
-            />
+        <CopyCode
+          link={`<iframe src="https://dev.verifiedimpactnfts.com/#/nft-card?id=${nft.tokenId}"></iframe>`}
+        />
       </p>
     </div>
   );
@@ -601,7 +610,6 @@ const BeneficiaryNFTs = () => {
             <div className='dlab-bnr-inr-entry'>
               <h1 className='text-white d-flex align-items-center'>
                 <span className='mr-1'>
-                  {' '}
                   {campaign ? campaignName : beneficiaryName}
                 </span>
                 {campaign && process.env.REACT_APP_SHOW_TWITTER != 'false' && (
@@ -638,7 +646,9 @@ const BeneficiaryNFTs = () => {
               <p className='text-white ben-desc'>
                 {!campaign && beneficiaryDescription
                   ? beneficiaryDescription
-                  : campaign && campaignDescription?campaignDescription:''}
+                  : campaign && campaignDescription
+                  ? campaignDescription
+                  : ''}
               </p>
 
               <div className='breadcrumb-row'>
@@ -657,6 +667,14 @@ const BeneficiaryNFTs = () => {
         </div>
         {/*  Section-1 Start  */}
         <div className='section-full content-inner-1 portfolio text-uppercase'>
+          <div className='site-filters clearfix  left mx-5   m-b40'>
+           SDGs Goals:{' '} <SDGsMultiSelect
+              data={SDGsData}
+              SDGsChanged={(selectedData) => {
+                handleSDGsChange(selectedData);
+              }}
+            />
+          </div>
           {(creator === undefined || creator === null) && (
             <div className='site-filters clearfix  left mx-5   m-b40'>
               <ul className='filters' data-toggle='buttons'>
