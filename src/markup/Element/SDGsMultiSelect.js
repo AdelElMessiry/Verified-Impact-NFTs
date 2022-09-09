@@ -11,7 +11,7 @@ const SDGsMultiSelect = ({ data, SDGsChanged }) => {
           src={process.env.PUBLIC_URL + 'images/sdgsIcons/' + props.data.icon}
           style={{ width: 25 }}
         />{' '}
-        {props.data.label}
+        SDGs Goal {props.data.label}
       </Option>
     );
   };
