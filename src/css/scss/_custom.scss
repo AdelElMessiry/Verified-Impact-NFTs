@@ -232,6 +232,15 @@
   // border:1px solid rgb(79, 78, 78);
   border-radius: 5px;
 }
+.sdgs-goals-card {
+  text-align: justify;
+  //width: [width of img];
+
+ img {
+  display: block;
+  margin: 0 auto;
+}
+}
 @media screen and (max-width: 400px){
   .home-banner{
     height: 130vh;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Spinner } from 'react-bootstrap';
+import { Col, Row, Spinner } from 'react-bootstrap';
 import Lightbox from 'react-image-lightbox';
 import Masonry from 'react-masonry-component';
 import Carousel from 'react-elastic-carousel';
@@ -20,6 +20,8 @@ import CampaignOrCollectionTwitterShare from '../Element/TwitterShare/CampaignOr
 import bgImg from './../../images/main-slider/slide6.jpg';
 import CopyText from '../Element/copyText';
 import ReactGA from 'react-ga';
+import SDGsStatsItem from '../Element/SDGsStatsItem';
+import { SDGsGoalsState } from '../../data/SDGsStats';
 //Light Gallery on icon click
 
 const breakPoints = [
@@ -63,7 +65,8 @@ const Dashboard = () => {
   const [allNfts, setAllNfts] = React.useState();
   const [displayedCampaigns, setDisplayedCampaigns] = React.useState();
   const [selectedCampaign, setSelectedCampaign] = React.useState();
-
+  const [SDGsGoals, setSDGsGoals] = React.useState();
+  
   const getNftsList = React.useCallback(async () => {
     // const list = await profileClient
     //   .profilesList
@@ -108,6 +111,7 @@ const Dashboard = () => {
           : nftBasedCampaigns.push({ [nft.campaign]: [nft] })
       );
     nftBasedCampaigns && setDisplayedCampaigns(nftBasedCampaigns);
+    nftsList && setSDGsGoals(SDGsGoalsState.map((g)=>({...g,'nftNumber':10})))
   }, [beneficiaryCount, campaignsCount, collectionsCount, creatorsCount, nfts]);
 
   //getting list of NFTs
@@ -279,6 +283,12 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+        <Row className='mx-2 mt-4 justify-content-center'>
+          {SDGsGoals?.map((d)=>(
+          <Col sm={12} md={2} lg={1}>
+            <SDGsStatsItem data={d} key={d.value}/>
+          </Col>))}
+        </Row>
         {allNfts && selectedNFT && displayedCampaigns ? (
           displayedCampaigns.length ? (
             <>

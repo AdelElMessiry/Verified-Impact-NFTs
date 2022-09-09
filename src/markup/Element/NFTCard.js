@@ -8,6 +8,7 @@ import ListForSaleNFTModal from './ListForSaleNFT';
 import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
 import CopyCode from './copyCode';
 import soldIcon from '../../images/icon/sold.png';
+import unitedNation from '../../images/icon/unitedNation.png';
 import { faStoreAlt, faStoreAltSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -116,104 +117,106 @@ const NFTCard = ({
   };
 
   return (
-    <div  className='mb-3 nftcard-parent'>
-      <div className='dlab-box dlab-gallery-box'>
-        <div className='dlab-media dlab-img-overlay1 position-relative dlab-img-effect'>
-          <img
-            src={item.image}
-            alt=''
-            className='img img-fluid fit-img fit-img-cover'
-          />
-          <div className='qr-code-border qr-code-oncard position-absolute'>
-            <Link
-              to={`./nft-detail?id=${item.tokenId}`}
-              className='mr-1 text-success text-underline'
-            >
-              <QRCode
-                value={`${window.location.origin}/#/nft-detail?id=${item.tokenId}`}
-                size={80}
-              />
-            </Link>
-          </div>
-          {item.isCreatorOwner === false && item.isForSale === 'false' && (
-            <div className='sold-icon'>
-              <img src={soldIcon} />
+    <>
+      <div className='mb-3 nftcard-parent'>
+        <div className='dlab-box dlab-gallery-box'>
+          <div className='dlab-media dlab-img-overlay1 position-relative dlab-img-effect'>
+            <img
+              src={item.image}
+              alt=''
+              className='img img-fluid fit-img fit-img-cover'
+            />
+            <div className='qr-code-border qr-code-oncard position-absolute'>
+              <Link
+                to={`./nft-detail?id=${item.tokenId}`}
+                className='mr-1 text-success text-underline'
+              >
+                <QRCode
+                  value={`${window.location.origin}/#/nft-detail?id=${item.tokenId}`}
+                  size={80}
+                />
+              </Link>
             </div>
-          )}
-          <div className='overlay-bx'>
-            <div className='overlay-icon align-b text-white text-left'>
-              <div className='text-white text-left port-box'>
-                <h5>{item.title}</h5>
+            {item.isCreatorOwner === false && item.isForSale === 'false' && (
+              <div className='sold-icon'>
+                <img src={soldIcon} />
+              </div>
+            )}
+            <div className='overlay-bx'>
+              <div className='overlay-icon align-b text-white text-left'>
+                <div className='text-white text-left port-box'>
+                  <h5>{item.title}</h5>
 
-                {item.beneficiaryName && (
-                  <p>
-                    <b>Beneficiary: </b>
-                    <VINftsTooltip
-                      title={`Click to see all NFTs for '${item.beneficiaryName}' beneficiary`}
-                    >
-                      <Link
-                        to={`./BeneficiaryNFTs?beneficiary=${item.beneficiary}`}
-                        className='dez-page text-white'
+                  {item.beneficiaryName && (
+                    <p>
+                      <b>Beneficiary: </b>
+                      <VINftsTooltip
+                        title={`Click to see all NFTs for '${item.beneficiaryName}' beneficiary`}
                       >
-                        {item.beneficiaryName}
-                      </Link>
-                    </VINftsTooltip>
-                    <span className='bg-success text-white px-1 ml-1 border-raduis-2'>
-                      {item.beneficiaryPercentage}%
-                    </span>
-                  </p>
-                )}
-                <p>
-                  <b>Campaign: </b>
-
-                  {item.campaignName && (
-                    <VINftsTooltip
-                      title={`Click to see all NFTs for '${item.campaignName}' campaign`}
-                    >
-                      {item.beneficiary && (
                         <Link
-                          to={`./BeneficiaryNFTs?beneficiary=${item.beneficiary}&campaign=${item.campaign}`}
+                          to={`./BeneficiaryNFTs?beneficiary=${item.beneficiary}`}
                           className='dez-page text-white'
                         >
-                          {item.campaignName}
+                          {item.beneficiaryName}
                         </Link>
-                      )}
-                    </VINftsTooltip>
+                      </VINftsTooltip>
+                      <span className='bg-success text-white px-1 ml-1 border-raduis-2'>
+                        {item.beneficiaryPercentage}%
+                      </span>
+                    </p>
                   )}
-                </p>
-                <p>
-                  <b>Creator: </b>
-                  <VINftsTooltip
-                    title={`Click to see all NFTs created by '${item.creatorName}'`}
-                  >
+                  <p>
+                    <b>Campaign: </b>
+
+                    {item.campaignName && (
+                      <VINftsTooltip
+                        title={`Click to see all NFTs for '${item.campaignName}' campaign`}
+                      >
+                        {item.beneficiary && (
+                          <Link
+                            to={`./BeneficiaryNFTs?beneficiary=${item.beneficiary}&campaign=${item.campaign}`}
+                            className='dez-page text-white'
+                          >
+                            {item.campaignName}
+                          </Link>
+                        )}
+                      </VINftsTooltip>
+                    )}
+                  </p>
+                  <p>
+                    <b>Creator: </b>
+                    <VINftsTooltip
+                      title={`Click to see all NFTs created by '${item.creatorName}'`}
+                    >
+                      <Link
+                        to={`./CreatorNFTs?creator=${item.creator}`}
+                        className='dez-page text-white'
+                      >
+                        {item.creatorName}
+                      </Link>
+                    </VINftsTooltip>
+                    <span className='bg-info text-white px-1 ml-1 border-raduis-2'>
+                      {item.creatorPercentage}%
+                    </span>
+                  </p>
+                  <p>
+                    <b>Collection: </b>
                     <Link
-                      to={`./CreatorNFTs?creator=${item.creator}`}
+                      to={`./CreatorNFTs?creator=${item.creator}&collection=${item.collection}`}
                       className='dez-page text-white'
                     >
-                      {item.creatorName}
+                      {item.collectionName}
                     </Link>
-                  </VINftsTooltip>
-                  <span className='bg-info text-white px-1 ml-1 border-raduis-2'>
-                    {item.creatorPercentage}%
-                  </span>
-                </p>
-                <p>
-                  <b>Collection: </b>
-                  <Link
-                    to={`./CreatorNFTs?creator=${item.creator}&collection=${item.collection}`}
-                    className='dez-page text-white'
-                  >
-                    {item.collectionName}
-                  </Link>
-                </p>
-                {item.isForSale === 'true' && (
-                  <p>
-                    <b>Price: </b>
-                    {item.price} {item.currency}
                   </p>
-                )}
-                <div>
-                  <IconImage />
+                  {item.isForSale === 'true' && (
+                    <p>
+                      <b>Price: </b>
+                      {item.price} {item.currency}
+                    </p>
+                  )}
+                  <div>
+                    <IconImage />
+                  </div>
                 </div>
               </div>
             </div>
@@ -221,27 +224,36 @@ const NFTCard = ({
         </div>
       </div>
       <div className='mt-3 px-2'>
-        SDGS Goals:{' '}
+        <a href='https://sdgs.un.org/goals' target='_blank'>
+        <img
+          src={unitedNation}
+          style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
+        /></a>
+        :{' '}
         <VINftsTooltip title='7:Affordable And Clean Energy'>
-          <img
-            src={process.env.PUBLIC_URL + 'images/sdgsIcons/Clean_Energy.png'}
-            style={{ width: 25 }}
-          />
+          <label>
+            <img
+              src={process.env.PUBLIC_URL + 'images/sdgsIcons/Clean_Energy.png'}
+              style={{ width: 25, pointerEvents: 'none', cursor: 'default' }}
+            />
+          </label>
         </VINftsTooltip>{' '}
         <VINftsTooltip title='6:Clean Water And Sanitation'>
+          <label>
           <img
             src={process.env.PUBLIC_URL + 'images/sdgsIcons/Clean_Water.png'}
-            style={{ width: 25 }}
-          />
+            style={{ width: 25, pointerEvents: 'none', cursor: 'default' }}
+          /></label>
         </VINftsTooltip>{' '}
         <VINftsTooltip title='13:Climate Action'>
+          <label>
           <img
             src={process.env.PUBLIC_URL + 'images/sdgsIcons/Climate.png'}
-            style={{ width: 25 }}
-          />
+            style={{ width: 25, pointerEvents: 'none', cursor: 'default' }}
+          /></label>
         </VINftsTooltip>
       </div>
-    </div>
+    </>
   );
 };
 export default NFTCard;
