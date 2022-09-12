@@ -37,6 +37,7 @@ const ProfileForm = ({
       isProfileImageURL: '',
       isNFTImageURL: '',
       address: '',
+      donationReceipt: false
     },
   });
 
@@ -515,6 +516,19 @@ const [socialErrors , setSocialErrors] = useState({
             </Col>
             
           </Row>
+          <Row className='form-group'>
+            <Col>
+              <Form.Check
+                type={'checkbox'}
+                id={`donationReceipt${formName}`}
+                label={`Provide organization donation receipt `}
+                onChange={(e) => handleChange(e)}
+                value={state.inputs.donationReceipt}
+                name='isProfileImageURL'
+                className='float-left'
+              />
+            </Col>
+          </Row>
         </Col>
         <Col>
           <Row className='form-group'>
@@ -660,7 +674,7 @@ const [socialErrors , setSocialErrors] = useState({
               'Save'
             )}
           </button>
-        </Col>
+        </Col>        
       </Row>
     </div>
   );
