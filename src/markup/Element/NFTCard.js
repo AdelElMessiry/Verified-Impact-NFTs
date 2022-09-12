@@ -8,9 +8,9 @@ import ListForSaleNFTModal from './ListForSaleNFT';
 import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
 import CopyCode from './copyCode';
 import soldIcon from '../../images/icon/sold.png';
-import { faStoreAlt, faStoreAltSlash } from '@fortawesome/free-solid-svg-icons';
+import { faStoreAlt, faStoreAltSlash, faReceipt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import ReceiptModal from './RecieptModal';
 //NFT Card component
 const NFTCard = ({
   index,
@@ -18,14 +18,16 @@ const NFTCard = ({
   openSlider,
   isTransfer = false,
   isCreation = false,
+  isMyNft = false
 }) => {
   const [showBuyModal, setShowBuyModal] = React.useState(false);
   const [showListForSaleModal, setShowListForSaleModal] = React.useState(false);
+  const [showReceiptModal , setShowReceiptModal] = React.useState(false);
   //function which return buttons (buy NFT) & (expand NFT) on nft card
   const IconImage = () => {
     return (
       <>
-        <ul className='list-inline portfolio-fullscreen'>
+        <ul className='list-inline portfolio-fullscreen mt-4'>
           <li className='text-success mr-1 align-items-center'>
             <i
               className='ti-fullscreen mfp-link fa-2x '
@@ -91,6 +93,15 @@ const NFTCard = ({
               link={`<iframe src='https://dev.verifiedimpactnfts.com/#/nft-card?id=${item.tokenId}'></iframe>`}
             />
           </li>
+        {isMyNft && (
+          <VINftsTooltip
+          title={'Generate receipt'}
+          >
+            <li className=' mr-1 align-items-center' onClick={()=>setShowReceiptModal(true)}>              
+                <FontAwesomeIcon icon={faReceipt} size='2x'/>              
+            </li>  
+          </VINftsTooltip>      
+          )}          
         </ul>
         {showBuyModal && (
           <BuyNFTModal
@@ -100,6 +111,15 @@ const NFTCard = ({
             }}
             data={item}
             isTransfer={isTransfer}
+          />
+        )}
+        {showReceiptModal && (
+          <ReceiptModal 
+          show={showReceiptModal}
+            handleCloseParent={() => {
+              setShowReceiptModal(false);
+            }}
+            data= {item}
           />
         )}
         {showListForSaleModal && (
