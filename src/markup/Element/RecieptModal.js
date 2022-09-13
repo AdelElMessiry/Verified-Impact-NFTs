@@ -1,23 +1,39 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import Modal from 'react-bootstrap/Modal';
+import ReactToPrint from 'react-to-print';
 
 export default function ReceiptModal({ show, handleCloseParent, data }) {
     const [showModal, setShowModal] = React.useState(show);
-    // const handleChange = (e) => {
-    //     const { value, name, checked, type } = e.target;
-    //     const { inputs } = state;
+    const [receiptData, setReceiptData] = React.useState(
+        {
+            inputs: {
+                donorName: "",
+                donorAddress: "",
+                repName: ""
+            }
+        }
+    )
+    const [confirm, setConfirm] = React.useState(false)
+    const componentRef = useRef();
+    const handleChange = (e) => {
+        const { value, name} = e.target;
+        const { inputs } = receiptData;
 
-    //     inputs[name] = type === 'checkbox' ? checked : value;
-    //     setState({
-    //         ...state,
-    //         inputs,
-    //     });
-    // };
+        inputs[name] = value;
+        setReceiptData({
+            ...receiptData,
+            inputs,
+        });
+    };
     const handleClose = () => {
         setShowModal(false);
         handleCloseParent();
     };
-    const date = new Date().getFullYear()
+    const handelBeforePrint= ()=>{
+            setConfirm(true);
+            return Promise.resolve();
+    }
+
     return (
         <Modal
             show={showModal}
@@ -27,19 +43,19 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
             backdrop='static'
         >
             <Modal.Header closeButton>
-                {/*  <Modal.Title>
-                    501(c)(3) ORGANIZATION DONATION RECEIPT
-                </Modal.Title>*/}
+                <Modal.Title>
+                    Donation RECEIPT
+                </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <div className='form-group justify-content-center '>
+                <div className='form-group justify-content-center m-5' ref={componentRef}>
                     <center>
                         <h3 className='align-self-center'>501(c)(3) ORGANIZATION DONATION RECEIPT</h3>
                     </center>
 
                     <div className='row form-group mr-2'>
                         <div>Date: </div>
-                        <h6 className='col-4'>
+                        <h6>
                             {new Date().toLocaleString() + ""}
                         </h6>
                     </div>
@@ -47,29 +63,24 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
                         <div className='mr-2'>Name of Non-Profit Organization: </div>
                         <div>
                             <h6 className="ml-2">{data?.beneficiaryName}</h6>
-
                         </div>
                     </div>
                     <div className='row form-group'>
                         <div className=' mr-2'> Mailing Address: </div>
                         <div>
-                            <input
-                                type='text'
-                                className='form-control'
-                                name='address'
-                                placeholder=''
-                            />
+                            <h6>
+                                in progress
+                            </h6>
                         </div>
                     </div>
                     <div className='row form-group'>
                         <div className=''> EIN: </div>
 
-                        <div> <input
-                            type='text'
-                            className='form-control ml-2 col-12'
-                            name='address'
-                            placeholder=''
-                        /></div>
+                        <div>
+                            <h6>
+                                in progress
+                            </h6>
+                        </div>
 
                         <div className='ml-4'><h7>(Find on the IRS Website)</h7></div>
                     </div>
@@ -79,23 +90,38 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
                     <div className='row form-group'>
                         <div className=' mr-2'>Donor's Name: </div>
                         <div>
-                            <input
-                                type='text'
-                                className='form-control'
-                                name='address'
-                                placeholder=''
-                            />
+                            {!confirm ? (
+                                <input
+                                    type='text'
+                                    className='form-control'
+                                    name='donorName'
+                                    placeholder=''
+                                    onChange={(e) => handleChange(e)}
+                                />
+                            ) : (
+                                <h6 >
+                                    {receiptData.inputs.donorName}
+                                </h6>
+                            )}
                         </div>
                     </div>
                     <div className='row form-group'>
                         <div className=' mr-2'>Donor's Address: </div>
                         <div>
-                            <input
-                                type='text'
-                                className='form-control'
-                                name='address'
-                                placeholder=''
-                            />
+                            {!confirm ? (
+                                <input
+                                    type='text'
+                                    className='form-control'
+                                    name='donorAddress'
+                                    placeholder=''
+                                    onChange={(e) => handleChange(e)}
+                                />
+                            ) : (
+                                <h6 className='col-4'>
+                                    {receiptData.inputs.donorAddress}
+                                </h6>
+                            )}
+
                         </div>
                     </div>
                     <center>
@@ -111,29 +137,47 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
                     </div>
 
                     <div className='row form-group mr-2 mt-4'>
-                        <h6>Representative’s Name</h6>
+                        <h6>Representative’s Name: </h6>
                         <div>
-                            <input
-                                type='text'
-                                className='form-control ml-2'
-                                name='address'
-                                placeholder=''
-                            />
+                            {!confirm ? (
+                                <input
+                                    type='text'
+                                    className='form-control ml-2'
+                                    name='repName'
+                                    placeholder=''
+                                    onChange={(e) => handleChange(e)}
+                                />
+                            ) : (
+                                <h6 className='ml-2'>
+                                    {receiptData.inputs.repName}
+                                </h6>
+                            )}
                         </div>
                     </div>
-
                     <div className='row'>
                         <div>
                             <h6>Token ID: </h6>
                         </div>
                         <div className='ml-2'>
-                            {data.tokenId}
+                            {data?.tokenId}
                         </div>
                     </div>
                 </div>
-                <button className='btn btn-success'>
-                    Generate Receipt
-                </button>
+                <ReactToPrint
+                    // onBeforeGetContent={() => setConfirm(true)}
+                    trigger={() => <button className='btn btn-success' 
+                    disabled={
+                        receiptData.inputs.donorName  == "" ||
+                        receiptData.inputs.donorAddress  == "" ||
+                        receiptData.inputs.repName  == "" 
+                }
+                    >Print this out!</button>}
+                    content={() => componentRef.current}
+                    onBeforeGetContent={() =>
+                        handelBeforePrint ()
+                        }
+                    
+                />
             </Modal.Body>
         </Modal>
     )
