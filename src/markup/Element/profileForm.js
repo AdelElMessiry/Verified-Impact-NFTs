@@ -37,7 +37,8 @@ const ProfileForm = ({
       isProfileImageURL: '',
       isNFTImageURL: '',
       address: '',
-      donationReceipt: false
+      donationReceipt: false,
+      ein: ""
     },
   });
 
@@ -82,6 +83,7 @@ const [socialErrors , setSocialErrors] = useState({
         isProfileImageURL: '',
         isNFTImageURL: '',
         address: formData ? formData.address : '',
+        ein: ""
       },
     });
     setUploadedProfileImage(formData ? formData?.imgUrl : null);
@@ -461,10 +463,10 @@ const [socialErrors , setSocialErrors] = useState({
                 placeholder="https://facebook.com/userName"
                 onChange={(e) => {
                   handleChange(e);
-                  checkSocialLinksValidation(e.target.value , 'facebook')
+                  checkSocialLinksValidation(e.target.value, 'facebook')
                 }}
               />
-              {!socialErrors.facebook &&(
+              {!socialErrors.facebook && (
                 <span className='text-danger'>Please enter Valid Facebook URL </span>
               )}
             </Col>
@@ -478,10 +480,10 @@ const [socialErrors , setSocialErrors] = useState({
                 placeholder="https://medium.com/@userName"
                 onChange={(e) => {
                   handleChange(e);
-                  checkSocialLinksValidation(e.target.value ,'medium')
+                  checkSocialLinksValidation(e.target.value, 'medium')
                 }}
               />
-              {!socialErrors.medium &&(
+              {!socialErrors.medium && (
                 <span className='text-danger'>Please enter Valid Medium URL </span>
               )}
             </Col>
@@ -516,19 +518,46 @@ const [socialErrors , setSocialErrors] = useState({
             </Col>
             
           </Row>
-          <Row className='form-group'>
-            <Col>
-              <Form.Check
-                type={'checkbox'}
-                id={`donationReceipt${formName}`}
-                label={`Provide organization donation receipt `}
-                onChange={(e) => handleChange(e)}
-                value={state.inputs.donationReceipt}
-                name='isProfileImageURL'
-                className='float-left'
-              />
-            </Col>
-          </Row>
+          {(formName === ProfileFormsEnum.BeneficiaryProfile || isSignUpBeneficiary) && (
+            <>
+              
+              <Row className='form-group pt-4'>
+                <Col>
+                  <Form.Check
+                    type={'checkbox'}
+                    id={`donationReceipt${formName}`}
+                    label={`Provide organization donation receipt `}
+                    onChange={(e) => handleChange(e)}
+                    value={state.inputs.donationReceipt}
+                    name='donationReceipt'
+                    className='float-left'
+                  />
+                </Col>
+              </Row>
+              {state.inputs.donationReceipt && (
+                <Row>
+                <Col>
+                  <span>EIN</span> <span className='text-danger'>*</span>
+                  <input
+                    type='text'
+                    name='ein'
+                    className='form-control'
+                    value={state.inputs.ein}
+                    placeholder=""
+                    onChange={(e) => {
+                      handleChange(e);
+                    }}
+                  />
+                  {!socialErrors.telegram && (
+                    <span className='text-danger'>Please set the EIN</span>
+                  )}
+                </Col>
+              </Row>
+              )}
+            </>
+
+          )}
+
         </Col>
         <Col>
           <Row className='form-group'>
@@ -663,7 +692,13 @@ const [socialErrors , setSocialErrors] = useState({
         <Col>
           <button
             className='btn btn-success'
-            disabled={state.inputs.userName == '' || isSaveButtonClicked||!uploadedProfileImageURL || !uploadedNFTImageURL}
+            disabled={
+              state.inputs.userName == '' || 
+              isSaveButtonClicked || 
+              !uploadedProfileImageURL || 
+              !uploadedNFTImageURL ||
+              (state.inputs.donationReceipt &&  state.inputs.ein == "")
+            }
             onClick={(e) => {
               handleSave(e);
             }}
