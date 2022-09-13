@@ -1,28 +1,36 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import QRCode from 'react-qr-code';
+import { Spinner } from 'react-bootstrap';
 
-import VINftsTooltip from './Tooltip';
-import BuyNFTModal from './BuyNFT';
-import ListForSaleNFTModal from './ListForSaleNFT';
-import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
-import CopyCode from './copyCode';
-import soldIcon from '../../images/icon/sold.png';
-import { faStoreAlt, faStoreAltSlash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-const SDGsStatsItem = ({
-data
-}) => {
+const SDGsStatsItem = ({ data }) => {
   return (
-        <div className='sdgs-goals-card'>
-          <img
-            src={process.env.PUBLIC_URL + 'images/sdgsGoals/' + data.icon}
-            alt=''
-            className='img img-fluid fit-img fit-img-cover'
-          />
-          <div className='text-center'>{data.nftNumber}</div>
+    <Link
+    to={`./SDGGoalNFTs?id=${data.value}`}
+    className='dez-page text-white'
+  >
+    <div className="sdgs-goals-card">
+      <img
+        src={process.env.PUBLIC_URL + 'images/sdgsGoals/' + data.image}
+        alt=""
+        className="img img-fluid fit-img fit-img-cover"
+      />
+      <div className="text-center">
+        {data.nftNumber !== undefined ? (
+          <>
+            <span className='text-success'>{data.nftNumber || 0}</span> 
+          </>
+        ) : (
+          <>
+            <Spinner
+              animation="border"
+              variant="success"
+              className="stats-spinner"
+            />
+          </>
+        )}<span className='ml-1 text-gray-dark'>NFTS</span>
+      </div>
     </div>
+    </Link>
   );
 };
 export default SDGsStatsItem;
