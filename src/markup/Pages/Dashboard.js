@@ -21,7 +21,7 @@ import bgImg from './../../images/main-slider/slide6.jpg';
 import CopyText from '../Element/copyText';
 import ReactGA from 'react-ga';
 import SDGsStatsItem from '../Element/SDGsStatsItem';
-import { SDGsGoalsState } from '../../data/SDGsStats';
+import { SDGsData } from '../../data/SDGsGoals';
 //Light Gallery on icon click
 
 const breakPoints = [
@@ -65,7 +65,7 @@ const Dashboard = () => {
   const [allNfts, setAllNfts] = React.useState();
   const [displayedCampaigns, setDisplayedCampaigns] = React.useState();
   const [selectedCampaign, setSelectedCampaign] = React.useState();
-  const [SDGsGoals, setSDGsGoals] = React.useState();
+  const [SDGsGoals, setSDGsGoals] = React.useState(SDGsData);
   
   const getNftsList = React.useCallback(async () => {
     // const list = await profileClient
@@ -111,7 +111,7 @@ const Dashboard = () => {
           : nftBasedCampaigns.push({ [nft.campaign]: [nft] })
       );
     nftBasedCampaigns && setDisplayedCampaigns(nftBasedCampaigns);
-    nftsList && setSDGsGoals(SDGsGoalsState.map((g)=>({...g,'nftNumber':10})))
+    nftsList && setSDGsGoals(SDGsData.map((g)=>({...g,'nftNumber':10})))
   }, [beneficiaryCount, campaignsCount, collectionsCount, creatorsCount, nfts]);
 
   //getting list of NFTs
@@ -283,9 +283,10 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+        <h3 className='text-center mt-5'>Sustainable Development Goals</h3>
         <Row className='mx-2 mt-4 justify-content-center'>
           {SDGsGoals?.map((d)=>(
-          <Col sm={12} md={2} lg={1}>
+          <Col sm={12} md={2} lg={1} className="mb-4">
             <SDGsStatsItem data={d} key={d.value}/>
           </Col>))}
         </Row>
