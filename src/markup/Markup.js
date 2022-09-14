@@ -25,6 +25,7 @@ import TermsOfServices from './Pages/TermsAndConditions';
 import NFTCardURL from './Element/NFTCardURL';
 import Privacy from './Pages/Privacy';
 import RequestForm from './Pages/RequestForm';
+import SDGGoalNFTs from './Pages/NFTs/SDGGoalNFTs';
 
 const Markup = () => {
   return (
@@ -71,6 +72,11 @@ const Markup = () => {
               <Route path='/nft-card' exact component={NFTCardURL} />
               <Route path='/privacy' exact component={Privacy} />
               <Route path='/request-form' exact component={RequestForm} />
+              <Route
+                path='/SDGGoalNFTs'
+                exact
+                component={SDGGoalNFTs}
+              />
             </Switch>
           </div>
           <ScrollToTop />

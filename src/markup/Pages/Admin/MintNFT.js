@@ -25,6 +25,8 @@ import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet, SendTweetWithImage, SendTweetWithImage64 } from '../../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
+import SDGsMultiSelect from '../../Element/SDGsMultiSelect';
+import { SDGsData } from '../../../data/SDGsGoals';
 //handling of creating new option in creatable select control
 const createOption = (label) => ({
   label,
@@ -61,7 +63,10 @@ const MintNFT = () => {
   );
   const [isCreateNewCollection, setIsCreateNewCollection] = React.useState();
   const [beneficiaryPercentage, setBeneficiaryPercentage] = React.useState();
-  const [creatorTwitterLink , setCreatorTwitterLink] = React.useState("")
+  const [creatorTwitterLink , setCreatorTwitterLink] = React.useState("");
+  const [SDGsGoals, setSDGsGoals] = React.useState([]);
+  const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
+
   // const [beneficiariesList, setBeneficiariesList] = React.useState();
   const [state, setState] = React.useState({
     inputs: {
@@ -177,6 +182,12 @@ const MintNFT = () => {
         savedData && selectedCampaignIDs.includes(savedData?.campaign) ? savedData.campaign : filteredCampaigns[0]?.id
       ):setCampaignSelectedData(null,null);
      }
+    filteredCampaigns &&
+      setSDGsGoalsData(
+        SDGsData.filter(({ value }) =>
+        filteredCampaigns[0]?.sdgs.includes(value)
+        )
+      );
   }, [
     campaignsList,
     campaigns,
@@ -221,15 +232,32 @@ const MintNFT = () => {
         ({ wallet_address }) => selectedBeneficiary.address === wallet_address
       );
       setCampaignsList(filteredCampaigns);
-      filteredCampaigns?.length > 0 ?
-        setCampaignSelectedData(filteredCampaigns, filteredCampaigns[0].id):setCampaignSelectedData(null,null);
+      filteredCampaigns?.length > 0
+        ? setCampaignSelectedData(filteredCampaigns, filteredCampaigns[0].id)
+        : setCampaignSelectedData(null, null);
+        setSDGsGoalsData(
+          SDGsData.filter(({ value }) =>
+          filteredCampaigns[0]?.sdgs.includes(value)
+          )
+        );
+    } else if (name == 'campaign') {
+      const filteredCampaigns = campaignsList?.filter(({ id }) => value === id);
+      filteredCampaigns &&
+        setSDGsGoalsData(
+          SDGsData.filter(({ value }) =>
+            filteredCampaigns?.sdgs.includes(value)
+          )
+        );
     }
-
     inputs[name] = type === 'checkbox' ? checked : value;
     setState({
       ...state,
       inputs,
     });
+  };
+
+  const handleSDGsChange = (data) => {
+    setSDGsGoals(data);
   };
 
   //handling of selecting image in image control
@@ -313,6 +341,7 @@ const MintNFT = () => {
           beneficiaryPercentage: beneficiaryPercentage
             ? beneficiaryPercentage
             : '',
+         // SDGsGoals: SDGsGoals,
         });
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
@@ -702,6 +731,16 @@ const MintNFT = () => {
                             )}
                           </Col>
                         </Row>
+                      </Col>
+                    </Row>
+                    <Row className='form-group'>
+                      <Col>
+                        <SDGsMultiSelect
+                          data={SDGsGoalsData}
+                          SDGsChanged={(selectedData) => {
+                            handleSDGsChange(selectedData);
+                          }}
+                        />
                       </Col>
                     </Row>
                     <Row className='form-group'>
