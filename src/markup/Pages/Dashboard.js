@@ -286,8 +286,8 @@ const Dashboard = () => {
         <h3 className='text-center mt-5'>Sustainable Development Goals</h3>
         <Row className='mx-2 mt-4 justify-content-center'>
           {SDGsGoals?.map((d)=>(
-          <Col sm={12} md={2} lg={1} className="mb-4">
-            <SDGsStatsItem data={d} key={d.value}/>
+          <Col sm={12} md={2} lg={1} className="mb-4"  key={d.value}>
+            <SDGsStatsItem data={d}/>
           </Col>))}
         </Row>
         {allNfts && selectedNFT && displayedCampaigns ? (
