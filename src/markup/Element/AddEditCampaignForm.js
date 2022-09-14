@@ -96,7 +96,7 @@ const AddEditCampaignForm = ({
         CLPublicKey.fromHex(entityInfo.publicKey),
         data ? 'UPDATE' : 'ADD',
         data ? data.id : undefined,
-        SDGsGoals
+        //SDGsGoals
       );
       ReactGA.event({
         category: 'Success',
