@@ -1,9 +1,12 @@
 import React, { useRef } from 'react'
 import Modal from 'react-bootstrap/Modal';
 import ReactToPrint from 'react-to-print';
+import { useNFTState } from '../../contexts/NFTContext';
 
 export default function ReceiptModal({ show, handleCloseParent, data }) {
     const [showModal, setShowModal] = React.useState(show);
+    const { beneficiaries } =  useNFTState()
+    const [ beneficiaryData , setBeneficiaryData ] =  React.useState()  
     const [receiptData, setReceiptData] = React.useState(
         {
             inputs: {
@@ -33,7 +36,19 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
             setConfirm(true);
             return Promise.resolve();
     }
+  //getting beneficiary details
 
+  const getBeneficiaries = React.useCallback(async () => {
+    const setSelectedBeneficiary =
+      beneficiaries &&
+      beneficiaries.find(({ address }) => data.beneficiary === address);
+      setSelectedBeneficiary &&
+      setBeneficiaryData(setSelectedBeneficiary)
+  }, [ beneficiaries ]);
+
+  React.useEffect(() => {
+    (!beneficiaryData) && getBeneficiaries();
+  }, [beneficiaryData, getBeneficiaries ]);
     return (
         <Modal
             show={showModal}
@@ -65,18 +80,20 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
                             <h6 className="ml-2">{data?.beneficiaryName}</h6>
                         </div>
                     </div>
+                    {beneficiaryData?.mail && (
                     <div className='row form-group'>
                         <div className=' mr-2'> Mailing Address: </div>
                         <div>
                             <h6>
-                                in progress
+                                {beneficiaryData.mail}
                             </h6>
                         </div>
                     </div>
+                    )}
                     <div className='row form-group'>
                         <div className=''> EIN: </div>
 
-                        <div>
+                        <div className=' mr-2'>
                             <h6>
                                 in progress
                             </h6>
