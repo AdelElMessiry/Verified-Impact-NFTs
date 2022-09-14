@@ -247,7 +247,7 @@ const ProfileForm = ({
             : 'creator',
           CLPublicKey.fromHex(entityInfo.publicKey),
           isProfileExist ? 'UPDATE' : 'ADD',
-          formName === ProfileFormsEnum.BeneficiaryProfile?SDGsGoals:[]
+          //formName === ProfileFormsEnum.BeneficiaryProfile?SDGsGoals:[]
         );
       } catch (err) {
         if (err.message.includes('User Cancelled')) {

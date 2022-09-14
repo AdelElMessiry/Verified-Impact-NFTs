@@ -44,7 +44,7 @@ const AddBeneficiary = () => {
         beneficiaryInputs.description,
         beneficiaryInputs.address,
         CLPublicKey.fromHex(entityInfo.publicKey),
-        beneficiaryInputs.SDGsGoals
+        //beneficiaryInputs.SDGsGoals
         // 'UPDATE'
       );
       const deployResult = await getDeployDetails(savedBeneficiary);
