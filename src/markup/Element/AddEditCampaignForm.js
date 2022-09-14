@@ -26,6 +26,7 @@ const AddEditCampaignForm = ({
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
   const [SDGsGoals, setSDGsGoals] = React.useState([]);
+  const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
 
   //getting beneficiary details
   const selectedBeneficiary = React.useCallback(async () => {
@@ -33,6 +34,7 @@ const AddEditCampaignForm = ({
       ({ isApproved }) => isApproved === 'true'
     );
     firstBeneficiary && setBeneficiary(firstBeneficiary[0]?.address);
+    firstBeneficiary && setSDGsGoalsData(SDGsData.filter(({value})=>(firstBeneficiary[0]?.sdgs.includes(value))));
   }, [beneficiaries]);
 
   React.useEffect(() => {
@@ -59,6 +61,9 @@ const AddEditCampaignForm = ({
   const handleChange = (e, isBeneficiary = false) => {
     if (isBeneficiary) {
       setBeneficiary(e.target.value);
+      let selectedBeneficiary = beneficiaries
+        .find(({ address }) => address === e.target.value);
+     setSDGsGoalsData(SDGsData.filter(({value})=>(selectedBeneficiary.sdgs.includes(value))));
     } else {
       const { value, name, checked, type } = e.target;
       const { inputs } = state;
@@ -251,7 +256,7 @@ const AddEditCampaignForm = ({
               </Row>
               <Row className='mt-4'>
                 <Col>
-                <SDGsMultiSelect data={SDGsData} SDGsChanged={(selectedData)=>{handleSDGsChange(selectedData)}}/>
+                <SDGsMultiSelect data={SDGsGoalsData} SDGsChanged={(selectedData)=>{handleSDGsChange(selectedData)}}/>
                 </Col>
               </Row>
               <Row className='mt-4'>

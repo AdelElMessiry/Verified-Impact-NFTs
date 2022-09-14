@@ -11,6 +11,7 @@ import soldIcon from '../../images/icon/sold.png';
 import unitedNation from '../../images/icon/unitedNation.png';
 import { faStoreAlt, faStoreAltSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { SDGsData } from '../../data/SDGsGoals';
 
 //NFT Card component
 const NFTCard = ({
@@ -22,6 +23,7 @@ const NFTCard = ({
 }) => {
   const [showBuyModal, setShowBuyModal] = React.useState(false);
   const [showListForSaleModal, setShowListForSaleModal] = React.useState(false);
+  
   //function which return buttons (buy NFT) & (expand NFT) on nft card
   const IconImage = () => {
     return (
@@ -230,28 +232,16 @@ const NFTCard = ({
           style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
         /></a>
         :{' '}
-        <VINftsTooltip title='7:Affordable And Clean Energy'>
+        {SDGsData?.filter(({value})=>(item?.sdgs?.includes(value)))?.map((sdg,index)=>
+        <VINftsTooltip title={sdg.label} key={index}>
           <label>
             <img
-              src={process.env.PUBLIC_URL + 'images/sdgsIcons/Clean_Energy.png'}
+              src={process.env.PUBLIC_URL +'images/sdgsIcons/'+ sdg.icon}
               style={{ width: 25, pointerEvents: 'none', cursor: 'default' }}
             />
           </label>
-        </VINftsTooltip>{' '}
-        <VINftsTooltip title='6:Clean Water And Sanitation'>
-          <label>
-          <img
-            src={process.env.PUBLIC_URL + 'images/sdgsIcons/Clean_Water.png'}
-            style={{ width: 25, pointerEvents: 'none', cursor: 'default' }}
-          /></label>
-        </VINftsTooltip>{' '}
-        <VINftsTooltip title='13:Climate Action'>
-          <label>
-          <img
-            src={process.env.PUBLIC_URL + 'images/sdgsIcons/Climate.png'}
-            style={{ width: 25, pointerEvents: 'none', cursor: 'default' }}
-          /></label>
         </VINftsTooltip>
+        )}
       </div>
     </>
   );

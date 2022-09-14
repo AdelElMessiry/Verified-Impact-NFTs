@@ -65,6 +65,7 @@ const MintNFT = () => {
   const [beneficiaryPercentage, setBeneficiaryPercentage] = React.useState();
   const [creatorTwitterLink , setCreatorTwitterLink] = React.useState("");
   const [SDGsGoals, setSDGsGoals] = React.useState([]);
+  const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
 
   // const [beneficiariesList, setBeneficiariesList] = React.useState();
   const [state, setState] = React.useState({
@@ -181,6 +182,12 @@ const MintNFT = () => {
         savedData && selectedCampaignIDs.includes(savedData?.campaign) ? savedData.campaign : filteredCampaigns[0]?.id
       ):setCampaignSelectedData(null,null);
      }
+    filteredCampaigns &&
+      setSDGsGoalsData(
+        SDGsData.filter(({ value }) =>
+        filteredCampaigns[0]?.sdgs.includes(value)
+        )
+      );
   }, [
     campaignsList,
     campaigns,
@@ -225,10 +232,23 @@ const MintNFT = () => {
         ({ wallet_address }) => selectedBeneficiary.address === wallet_address
       );
       setCampaignsList(filteredCampaigns);
-      filteredCampaigns?.length > 0 ?
-        setCampaignSelectedData(filteredCampaigns, filteredCampaigns[0].id):setCampaignSelectedData(null,null);
+      filteredCampaigns?.length > 0
+        ? setCampaignSelectedData(filteredCampaigns, filteredCampaigns[0].id)
+        : setCampaignSelectedData(null, null);
+        setSDGsGoalsData(
+          SDGsData.filter(({ value }) =>
+          filteredCampaigns[0]?.sdgs.includes(value)
+          )
+        );
+    } else if (name == 'campaign') {
+      const filteredCampaigns = campaignsList?.filter(({ id }) => value === id);
+      filteredCampaigns &&
+        setSDGsGoalsData(
+          SDGsData.filter(({ value }) =>
+            filteredCampaigns?.sdgs.includes(value)
+          )
+        );
     }
-
     inputs[name] = type === 'checkbox' ? checked : value;
     setState({
       ...state,
@@ -321,7 +341,7 @@ const MintNFT = () => {
           beneficiaryPercentage: beneficiaryPercentage
             ? beneficiaryPercentage
             : '',
-          SDGsGoals: SDGsGoals
+          SDGsGoals: SDGsGoals,
         });
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
@@ -715,7 +735,12 @@ const MintNFT = () => {
                     </Row>
                     <Row className='form-group'>
                       <Col>
-                      <SDGsMultiSelect data={SDGsData} SDGsChanged={(selectedData)=>{handleSDGsChange(selectedData)}}/>
+                        <SDGsMultiSelect
+                          data={SDGsGoalsData}
+                          SDGsChanged={(selectedData) => {
+                            handleSDGsChange(selectedData);
+                          }}
+                        />
                       </Col>
                     </Row>
                     <Row className='form-group'>
