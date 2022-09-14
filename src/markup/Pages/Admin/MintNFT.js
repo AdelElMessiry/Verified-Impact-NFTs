@@ -375,10 +375,10 @@ const MintNFT = () => {
             process.env.REACT_APP_CREATORS_TOKEN,
             creator,
             '',
-            `We are glad to announce that ${creator} creator has joined #verified-impact-nfts and minted a striking NFT for donations. [Click here to see more about creators and their NFTs collections.](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
+            `We are glad to announce that ${creator} creator has joined #verified-impact-nfts and minted a striking #NFT for donations. [Click here to see more about creators and their NFTs collections.](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
           );
           await SendTweet(
-            `We are glad to announce that ${creator} creator has joined #verified_impact_nfts and minted a striking NFT for donations. Click here ${window.location.origin}/#/ to see more about creators and their NFTs collections @vinfts @casper_network @devxdao ${twitterName}`
+            `We are glad to announce that ${creator} creator has joined #verified_impact_nfts and minted a striking #NFT for donations. Click here ${window.location.origin}/#/ to see more about creators and their NFTs collections @vinfts @casper_network @devxdao ${twitterName}`
           );
         }
         if (isCreateNewCollection) {
@@ -400,12 +400,12 @@ const MintNFT = () => {
           process.env.REACT_APP_NFT_TOKEN,
           state.inputs.name,
           '',
-          `Great news! [${state.inputs.name}] NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
+          `Great news! [${state.inputs.name}] #NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
         );        
         let image = encodeURI(imgURL);
           await SendTweetWithImage(
             image,
-            `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
+            `Great news! "${state.inputs.name}" #NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
           );
         //  else{
         //   let image64 = 'https://dweb.link/ipfs/'+ image
