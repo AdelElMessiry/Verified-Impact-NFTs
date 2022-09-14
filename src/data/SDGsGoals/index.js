@@ -1,0 +1,116 @@
+export const SDGsData = [
+  {
+    value: '1',
+    label: 'SDGs Goal 1:No Poverty',
+    icon: 'No_Poverty.png',
+    image: 'E_SDG_Icons-01.jpg',
+  },
+  {
+    value: '2',
+    label: 'SDGs Goal 2:Zero Hunger',
+    icon: 'Zero_Hunger.png',
+    image: 'E_SDG_Icons-02.jpg',
+  },
+  {
+    value: '3',
+    label: 'SDGs Goal 3:Good Health And Well-Being',
+    icon: 'Good_Health.png',
+    image: 'E_SDG_Icons-03.jpg',
+  },
+  {
+    value: '4',
+    label: 'SDGs Goal 4:Quality Education',
+    icon: 'Education.png',
+    image: 'E_SDG_Icons-04.jpg',
+  },
+  {
+    value: '5',
+    label: 'SDGs Goal 5:Gender Equality',
+    icon: 'Gender_Equality.png',
+    image: 'E_SDG_Icons-05.jpg',
+  },
+  {
+    value: '6',
+    label: 'SDGs Goal 6:Clean Water And Sanitation',
+    icon: 'Clean_Water.png',
+    image: 'E_SDG_Icons-06.jpg',
+  },
+  {
+    value: '7',
+    label: 'SDGs Goal 7:Affordable And Clean Energy',
+    icon: 'Clean_Energy.png',
+    image: 'E_SDG_Icons-07.jpg',
+  },
+  {
+    value: '8',
+    label: 'SDGs Goal 8:Decent Work And Economic Growth',
+    icon: 'Economy_Groth.png',
+    image: 'E_SDG_Icons-08.jpg',
+  },
+  {
+    value: '9',
+    label: 'SDGs Goal 9:Industry, Innovation And Infrastructure',
+    icon: 'Industry.png',
+    image: 'E_SDG_Icons-09.jpg',
+  },
+  {
+    value: '10',
+    label: 'SDGs Goal 10:Reduced Inequalities',
+    icon: 'Reduced_Inqualities.png',
+    image: 'E_SDG_Icons-10.jpg',
+  },
+  {
+    value: '11',
+    label: 'SDGs Goal 11:Sustainable Cities And Communities',
+    icon: 'Communities.png',
+    image: 'E_SDG_Icons-11.jpg',
+  },
+  {
+    value: '12',
+    label: 'SDGs Goal 12:Responsible Consumption And Production',
+    icon: 'Responsible_Consumption.png',
+    image: 'E_SDG_Icons-12.jpg',
+  },
+  {
+    value: '13',
+    label: 'SDGs Goal 13:Climate Action',
+    icon: 'Climate.png',
+    image: 'E_SDG_Icons-13.jpg',
+  },
+  {
+    value: '14',
+    label: 'SDGs Goal 14:Life Below Water',
+    icon: 'Water.png',
+    image: 'E_SDG_Icons-14.jpg',
+  },
+  {
+    value: '15',
+    label: 'SDGs Goal 15:Life On Land',
+    icon: 'Life_on_Land.png',
+    image: 'E_SDG_Icons-15.jpg',
+  },
+  {
+    value: '16',
+    label: 'SDGs Goal 16:Peace, Justice And Strong Institutions',
+    icon: 'Peace.png',
+    image: 'E_SDG_Icons-16.jpg',
+  },
+  {
+    value: '17',
+    label: 'SDGs Goal 17:Partnerships For The Goals',
+    icon: 'Partnerships.png',
+    image: 'E_SDG_Icons-17.jpg',
+  },
+  {
+    value: '18',
+    label: 'SDGs Goal 18:Sustainable Sevelopment Goals',
+    icon: 'general.png',
+    image: 'E_SDG_Icons-18.jpg',
+  },
+  {
+    value: '19',
+    label: 'SDGs Goal 19:Other',
+    icon: 'other.png',
+    image: 'E_SDG_Icons-19.jpg',
+  }
+];
