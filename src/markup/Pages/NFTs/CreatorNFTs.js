@@ -140,6 +140,7 @@ const CreatorNFTs = () => {
   const [showViewModal, setShowViewModal] = React.useState(false);
   const [selectedViewProfile, setSelectedViewProfile] = React.useState();
   const [SDGsGoals, setSDGsGoals] = React.useState([]);
+  const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
 
   //getting Collections details
   const getCollections = React.useCallback(async () => {
@@ -242,8 +243,22 @@ const CreatorNFTs = () => {
       ]);
   }, []);
 
+  const filterSDGByTag = React.useCallback((tag, filteredNFTs) => {
+    const AllSDGsTagsName =
+      filteredNFTs &&
+      filteredNFTs.map((nft) =>(
+    {value: nft.sdgs})).flatMap(({ value }) => value);
+    let sdgsTagsName = AllSDGsTagsName.filter(function(item, pos) {
+      return AllSDGsTagsName.indexOf(item) == pos;
+  })
+    sdgsTagsName &&
+    setSDGsGoalsData(SDGsData.filter(({value})=>(sdgsTagsName.includes(value))));
+  }, []);
+
+
   const handleSDGsChange = (data) => {
     setSDGsGoals(data);
+    getSDGsBasedOnTag(data);
   };
 
   const getFilteredNFTs = React.useCallback(async () => {
@@ -294,6 +309,7 @@ const CreatorNFTs = () => {
         filteredNFTs
       );
     filteredNFTs && setAllNFTs(filteredNFTs);
+    filteredNFTs && filterSDGByTag({ name: 'All', id: '' }, filteredNFTs);
 
     //setting captions of nfts full screen mode
     filteredNFTs &&
@@ -439,6 +455,22 @@ const CreatorNFTs = () => {
           { name: 'All', id: '', beneficiary: '' },
           ...campaignsTagsName,
         ]);
+    },
+    [allNFTs, setFilteredNFTs, filterCollectionByTag, filterCampaignByTag]
+  );
+
+  const getSDGsBasedOnTag = React.useCallback(
+    (selectedData) => {
+      const filteredSDGsNFTs =
+        allNFTs &&
+        allNFTs.filter(({ sdgs }) =>
+        ( sdgs?.some(element => {
+          return selectedData.indexOf(element) !== -1;
+        }))
+        );
+     filteredSDGsNFTs && setFilteredNFTs( selectedData.length>0? filteredSDGsNFTs:filteredNFTs);
+
+        
     },
     [allNFTs, setFilteredNFTs, filterCollectionByTag, filterCampaignByTag]
   );
@@ -639,7 +671,7 @@ const CreatorNFTs = () => {
         <div className='section-full content-inner-1 portfolio text-uppercase'>
         <div className="site-filters clearfix  left mx-5   m-b40">
            SDGs Goals:{' '} <SDGsMultiSelect
-              data={SDGsData}
+              data={SDGsGoalsData}
               SDGsChanged={(selectedData) => {
                 handleSDGsChange(selectedData);
               }}

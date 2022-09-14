@@ -249,7 +249,6 @@ const BeneficiaryNFTs = () => {
 
 
   const filterSDGByTag = React.useCallback((tag, filteredNFTs) => {
-debugger
     const AllSDGsTagsName =
       filteredNFTs &&
       filteredNFTs.map((nft) =>(
@@ -292,13 +291,13 @@ debugger
       filteredNFTs = nftsList && nftsList;
     }
 
-    filteredNFTs && setFilteredNFTs(filteredNFTs.map((d)=>({...d,"sdgs":["1","2","3"]})));
+    filteredNFTs && setFilteredNFTs(filteredNFTs);
     filteredNFTs &&
-      filterCollectionByTag({ name: 'All', id: '', creator: '' }, filteredNFTs.map((d)=>({...d,"sdgs":["1","2","3"]})));
-    filteredNFTs && filterCampaignByTag({ name: 'All', id: '' }, filteredNFTs.map((d)=>({...d,"sdgs":["1","2","3"]})));
-    filteredNFTs && filterCreatorByTag({ name: 'All', id: '' }, filteredNFTs.map((d)=>({...d,"sdgs":["1","2","3"]})));
-    filteredNFTs && filterSDGByTag({ name: 'All', id: '' }, filteredNFTs.map((d)=>({...d,"sdgs":["1","2","3"]})));
-    filteredNFTs && setAllNFTs(filteredNFTs.map((d)=>({...d,"sdgs":["1","2","3"]})));
+      filterCollectionByTag({ name: 'All', id: '', creator: '' }, filteredNFTs);
+    filteredNFTs && filterCampaignByTag({ name: 'All', id: '' }, filteredNFTs);
+    filteredNFTs && filterCreatorByTag({ name: 'All', id: '' }, filteredNFTs);
+    filteredNFTs && filterSDGByTag({ name: 'All', id: '' }, filteredNFTs);
+    filteredNFTs && setAllNFTs(filteredNFTs);
 
     //setting captions of nfts full screen mode
     filteredNFTs &&
@@ -467,7 +466,7 @@ debugger
       const filteredSDGsNFTs =
         allNFTs &&
         allNFTs.filter(({ sdgs }) =>
-        ( sdgs.some(element => {
+        ( sdgs?.some(element => {
           return selectedData.indexOf(element) !== -1;
         }))
         );

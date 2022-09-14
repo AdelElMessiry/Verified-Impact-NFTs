@@ -256,15 +256,13 @@ const SDGGoalNFTs = () => {
           (nft.isForSale === 'false' && nft.isCreatorOwner === false)
       );
     //to be changed after save sdgs with nft
-    // if (id) {
-    //   filteredNFTs =
-    //     nftsList &&
-    //     nftsList.filter(
-    //       (nft) => nft.beneficiary === beneficiary && nft.campaign === campaign
-    //     );
-    // } else {
-    filteredNFTs = nftsList && nftsList;
-    //}
+    if (id) {
+      filteredNFTs =
+        nftsList &&
+        nftsList.filter(
+          (nft) => nft.sdgs.includes(id)
+        );
+    }
 
     filteredNFTs && setFilteredNFTs(filteredNFTs);
     filteredNFTs &&

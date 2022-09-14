@@ -101,11 +101,16 @@ export const SDGsData = [
     icon: 'Partnerships.png',
     image: 'E_SDG_Icons-17.jpg',
   },
-
   {
     value: '18',
     label: 'SDGs Goal 18:Sustainable Sevelopment Goals',
     icon: 'general.png',
     image: 'E_SDG_Icons-18.jpg',
   },
+  {
+    value: '19',
+    label: 'SDGs Goal 19:Other',
+    icon: 'other.png',
+    image: 'E_SDG_Icons-19.jpg',
+  }
 ];
