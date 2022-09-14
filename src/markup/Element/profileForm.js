@@ -11,13 +11,15 @@ import { useAuth } from '../../contexts/AuthContext';
 import { getDeployDetails } from '../../api/universal';
 import { uploadImg } from '../../api/imageCDN';
 import { SocialLinks } from 'social-links';
+import SDGsMultiSelect from './SDGsMultiSelect';
+import { SDGsData } from '../../data/SDGsGoals';
 const ProfileForm = ({
   formName,
   isProfileExist,
   formData,
-  isSignUpBeneficiary=false
+  isSignUpBeneficiary = false,
 }) => {
-  const { entityInfo, refreshAuth,isLoggedIn } = useAuth();
+  const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
   //setting initial values of controls
   const [state, setState] = useState({
     inputs: {
@@ -42,7 +44,6 @@ const ProfileForm = ({
     },
   });
 
-  
   const [uploadedProfileImageURL, setUploadedProfileImage] =
     React.useState(null);
   const [uploadedProfileFile, setUploadedProfileFile] = React.useState(null);
@@ -57,13 +58,15 @@ const ProfileForm = ({
   const [showNFTURLErrorMsg, setShowNFTURLErrorMsg] = React.useState(false);
   const [showExternalURLErrorMsg, setShowExternalURLErrorMsg] =
     React.useState(false);
-const [socialErrors , setSocialErrors] = useState({
-  twitter: true,
-  instagram: true,
-  medium: true,
-  facebook: true,
-  telegram: true
-})
+  const [socialErrors, setSocialErrors] = useState({
+    twitter: true,
+    instagram: true,
+    medium: true,
+    facebook: true,
+    telegram: true,
+  });
+  const [SDGsGoals, setSDGsGoals] = React.useState([]);
+
   React.useEffect(() => {
     setState({
       inputs: {
@@ -101,6 +104,10 @@ const [socialErrors , setSocialErrors] = useState({
     });
   };
 
+  const handleSDGsChange = (data) => {
+    setSDGsGoals(data);
+  };
+
   //handling of selecting image in image control
   const onDrop = (picture, isProfile) => {
     if (picture.length > 0) {
@@ -135,20 +142,20 @@ const [socialErrors , setSocialErrors] = useState({
   };
   const socialLinks = new SocialLinks();
   // check social links validation
-  const checkSocialLinksValidation  = (value , socialType) => {
-    const  urlSocialInputs = socialErrors   
-      if (value == "" ){
-        urlSocialInputs[socialType] = true
-      }else if(!value.includes("https://")){
-        urlSocialInputs[socialType] = value.includes("https://")
-      }else{
-        urlSocialInputs[socialType] = socialLinks.isValid(socialType, value)
-      }      
-      setSocialErrors({
-        ...socialErrors,
-        urlSocialInputs,
-      });
+  const checkSocialLinksValidation = (value, socialType) => {
+    const urlSocialInputs = socialErrors;
+    if (value == "" ) {
+      urlSocialInputs[socialType] = true;
+    } else if (!value.includes("https://")) {
+      urlSocialInputs[socialType] = value.includes("https://");
+    } else {
+      urlSocialInputs[socialType] = socialLinks.isValid(socialType, value);
     }
+    setSocialErrors({
+      ...socialErrors,
+      urlSocialInputs,
+    });
+  };
   //handling minting new NFT
   async function handleSave() {
     if (!uploadedProfileImageURL) {
@@ -157,7 +164,7 @@ const [socialErrors , setSocialErrors] = useState({
     if (!uploadedNFTImageURL) {
       return VIToast.error('Please upload NFT image or enter direct URL');
     }
-  
+
     if (
       (state.inputs.isProfileImageURL && showProfileURLErrorMsg) ||
       (state.inputs.isNFTImageURL && showNFTURLErrorMsg) ||
@@ -171,7 +178,8 @@ const [socialErrors , setSocialErrors] = useState({
       !socialErrors.instagram ||
       !socialErrors.medium ||
       !socialErrors.telegram
-    ) return;
+    )
+      return;
     setIsSaveButtonClicked(true);
     let cloudProfileURL = uploadedProfileImageURL;
     let cloudNFTURL = uploadedNFTImageURL;
@@ -210,7 +218,7 @@ const [socialErrors , setSocialErrors] = useState({
     if (!uploadedProfileImageURL || !uploadedNFTImageURL) {
       return VIToast.error('Please upload image or enter direct URL');
     }
-    if (!entityInfo.publicKey&&!isSignUpBeneficiary) {
+    if (!entityInfo.publicKey && !isSignUpBeneficiary) {
       return VIToast.error('Please enter sign in First');
     }
     if (entityInfo.publicKey) {
@@ -241,15 +249,18 @@ const [socialErrors , setSocialErrors] = useState({
             ? 'beneficiary'
             : 'creator',
           CLPublicKey.fromHex(entityInfo.publicKey),
-          isProfileExist ? 'UPDATE' : 'ADD'
+          isProfileExist ? 'UPDATE' : 'ADD',
+          //formName === ProfileFormsEnum.BeneficiaryProfile?SDGsGoals:[]
         );
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
           VIToast.error('User Cancelled Signing');
-        } else if(err.message.includes("1024")){
-            VIToast.error("Sorry an error happened while saving, please try again with less number of characters in the bio field");
-          }else{
-            VIToast.error(err.message);
+        } else if (err.message.includes('1024')) {
+          VIToast.error(
+            'Sorry an error happened while saving, please try again with less number of characters in the bio field'
+          );
+        } else {
+          VIToast.error(err.message);
         }
         setIsSaveButtonClicked(false);
         return;
@@ -263,21 +274,29 @@ const [socialErrors , setSocialErrors] = useState({
           (Please type your notes here)%0D%0A%0D%0AMany thanks.%0D%0AWith kind regards,`;
           window.location.href = mailto;
         }
-        if(formName === ProfileFormsEnum.BeneficiaryProfile&&!isProfileExist){
+        if (
+          formName === ProfileFormsEnum.BeneficiaryProfile &&
+          !isProfileExist
+        ) {
           handleSaveToSheet(ProfileImgURL, NFTImgURL);
         }
         VIToast.success('Profile Saved successfully');
         //NOTE: every channel has a special keys and tokens sorted on .env file
-        if(formName !== ProfileFormsEnum.BeneficiaryProfile||(formName !== ProfileFormsEnum.BeneficiaryProfile&&isProfileExist)){
-         setTimeout(() => {
+        if (
+          formName !== ProfileFormsEnum.BeneficiaryProfile ||
+          (formName !== ProfileFormsEnum.BeneficiaryProfile && isProfileExist)
+        ) {
+          setTimeout(() => {
             window.location.reload();
             setIsSaveButtonClicked(false);
-           }, 50);
-          }
+          }, 50);
+        }
       } catch (err) {
-        if(err.message.includes("1024")){
-          VIToast.error("Sorry an error happened while saving, please try again with less number of characters in the bio field");
-        }else{
+        if (err.message.includes('1024')) {
+          VIToast.error(
+            'Sorry an error happened while saving, please try again with less number of characters in the bio field'
+          );
+        } else {
           VIToast.error(err.message);
         }
         console.log(err);
@@ -285,57 +304,55 @@ const [socialErrors , setSocialErrors] = useState({
         setIsSaveButtonClicked(false);
       }
       refreshAuth();
-    }else{
-      if(formName === ProfileFormsEnum.BeneficiaryProfile&&!isProfileExist){
+    } else {
+      if (formName === ProfileFormsEnum.BeneficiaryProfile && !isProfileExist) {
         handleSaveToSheet(ProfileImgURL, NFTImgURL);
         setIsSaveButtonClicked(false);
       }
     }
   }
 
-  const handleSaveToSheet= async (ProfileImgURL, NFTImgURL) => {
-      await fetch(process.env.REACT_APP_BENEFICIARIES_SIGNUP_SHEET, {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          Address:isLoggedIn? entityInfo.publicKey:"Not Logged User",
-          UserName:state.inputs.userName,
-          ShoreTagName: state.inputs.shortTagLine,
-          ProfileImgURL:ProfileImgURL,
-          NFTImgURL:NFTImgURL,
-          FirstName:state.inputs.firstName,
-          LastName:state.inputs.lastName,
-          Bio:state.inputs.fullBio,
-          ExternalSiteLink:state.inputs.externalSiteLink,
-          Phone:state.inputs.phone,
-          Twitter:state.inputs.twitter,
-          Instagram:state.inputs.instagram,
-          Facebook:state.inputs.facebook,
-          Meduim:state.inputs.medium,
-          Telegram:state.inputs.telegram,
-          Email:state.inputs.email,
-       
-        }),
+  const handleSaveToSheet = async (ProfileImgURL, NFTImgURL) => {
+    await fetch(process.env.REACT_APP_BENEFICIARIES_SIGNUP_SHEET, {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        Address: isLoggedIn ? entityInfo.publicKey : 'Not Logged User',
+        UserName: state.inputs.userName,
+        ShoreTagName: state.inputs.shortTagLine,
+        ProfileImgURL: ProfileImgURL,
+        NFTImgURL: NFTImgURL,
+        FirstName: state.inputs.firstName,
+        LastName: state.inputs.lastName,
+        Bio: state.inputs.fullBio,
+        ExternalSiteLink: state.inputs.externalSiteLink,
+        Phone: state.inputs.phone,
+        Twitter: state.inputs.twitter,
+        Instagram: state.inputs.instagram,
+        Facebook: state.inputs.facebook,
+        Meduim: state.inputs.medium,
+        Telegram: state.inputs.telegram,
+        Email: state.inputs.email,
+      }),
+    })
+      .then((r) => r.json())
+      .then((response) => {
+        VIToast.success('Your Sign up submitted Successfully');
+        setTimeout(() => {
+          window.location.reload();
+          setIsSaveButtonClicked(false);
+        }, 50);
       })
-        .then((r) => r.json())
-        .then((response) => {
-          VIToast.success('Your Sign up submitted Successfully');
-          setTimeout(() => {
-            window.location.reload();
-            setIsSaveButtonClicked(false);
-           }, 50);
-        })
-        .catch((error) => {
-          VIToast.error('An error occured with sign up');
-          setTimeout(() => {
-            window.location.reload();
-            setIsSaveButtonClicked(false);
-           }, 50);
-        });
-    
+      .catch((error) => {
+        VIToast.error('An error occured with sign up');
+        setTimeout(() => {
+          window.location.reload();
+          setIsSaveButtonClicked(false);
+        }, 50);
+      });
   };
 
   return (
@@ -427,11 +444,13 @@ const [socialErrors , setSocialErrors] = useState({
                 placeholder="https://twitter.com/userName"
                 onChange={(e) => {
                   handleChange(e);
-                  checkSocialLinksValidation(e.target.value,'twitter')
+                  checkSocialLinksValidation(e.target.value, 'twitter');
                 }}
               />
-              {!socialErrors.twitter &&(
-                <span className='text-danger'>Please enter Valid Twitter URL </span>
+              {!socialErrors.twitter && (
+                <span className='text-danger'>
+                  Please enter Valid Twitter URL
+                </span>
               )}
             </Col>
             <Col>
@@ -444,11 +463,13 @@ const [socialErrors , setSocialErrors] = useState({
                 placeholder="https://instagram.com/userName"
                 onChange={(e) => {
                   handleChange(e);
-                  checkSocialLinksValidation(e.target.value,'instagram')
+                  checkSocialLinksValidation(e.target.value, 'instagram');
                 }}
               />
-              {!socialErrors.instagram &&(
-                <span className='text-danger'>Please enter Valid Instagram URL </span>
+              {!socialErrors.instagram && (
+                <span className='text-danger'>
+                  Please enter Valid Instagram URL
+                </span>
               )}
             </Col>
           </Row>
@@ -460,14 +481,16 @@ const [socialErrors , setSocialErrors] = useState({
                 name='facebook'
                 className='form-control'
                 value={state.inputs.facebook}
-                placeholder="https://facebook.com/userName"
+                placeholder='https://facebook.com/userName'
                 onChange={(e) => {
                   handleChange(e);
-                  checkSocialLinksValidation(e.target.value, 'facebook')
+                  checkSocialLinksValidation(e.target.value, 'facebook');
                 }}
               />
               {!socialErrors.facebook && (
-                <span className='text-danger'>Please enter Valid Facebook URL </span>
+                <span className='text-danger'>
+                  Please enter Valid Facebook URL{' '}
+                </span>
               )}
             </Col>
             <Col>
@@ -480,11 +503,13 @@ const [socialErrors , setSocialErrors] = useState({
                 placeholder="https://medium.com/@userName"
                 onChange={(e) => {
                   handleChange(e);
-                  checkSocialLinksValidation(e.target.value, 'medium')
+                  checkSocialLinksValidation(e.target.value, 'medium');
                 }}
               />
               {!socialErrors.medium && (
-                <span className='text-danger'>Please enter Valid Medium URL </span>
+                <span className='text-danger'>
+                  Please enter Valid Medium URL
+                </span>
               )}
             </Col>
           </Row>
@@ -506,17 +531,18 @@ const [socialErrors , setSocialErrors] = useState({
                 name='telegram'
                 className='form-control'
                 value={state.inputs.telegram}
-                placeholder="https://telegram.com/userName"
+                placeholder='https://telegram.com/userName'
                 onChange={(e) => {
                   handleChange(e);
-                  checkSocialLinksValidation(e.target.value , 'telegram')
+                  checkSocialLinksValidation(e.target.value, 'telegram');
                 }}
               />
-              {!socialErrors.telegram &&(
-                <span className='text-danger'>Please enter Valid Telegram URL </span>
+              {!socialErrors.telegram && (
+                <span className='text-danger'>
+                  Please enter Valid Telegram URL
+                </span>
               )}
             </Col>
-            
           </Row>
           {(formName === ProfileFormsEnum.BeneficiaryProfile || isSignUpBeneficiary) && (
             <>
@@ -558,6 +584,18 @@ const [socialErrors , setSocialErrors] = useState({
 
           )}
 
+          {formName === ProfileFormsEnum.BeneficiaryProfile && (
+            <Row>
+              <Col>
+                <SDGsMultiSelect
+                  data={SDGsData}
+                  SDGsChanged={(selectedData) => {
+                    handleSDGsChange(selectedData);
+                  }}
+                />
+              </Col>
+            </Row>
+          )}
         </Col>
         <Col>
           <Row className='form-group'>

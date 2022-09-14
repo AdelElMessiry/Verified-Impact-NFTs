@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Spinner } from 'react-bootstrap';
+import { Col, Row, Spinner } from 'react-bootstrap';
 import Lightbox from 'react-image-lightbox';
 import Masonry from 'react-masonry-component';
 import Carousel from 'react-elastic-carousel';
@@ -20,6 +20,8 @@ import CampaignOrCollectionTwitterShare from '../Element/TwitterShare/CampaignOr
 import bgImg from './../../images/main-slider/slide6.jpg';
 import CopyText from '../Element/copyText';
 import ReactGA from 'react-ga';
+import SDGsStatsItem from '../Element/SDGsStatsItem';
+import { SDGsData } from '../../data/SDGsGoals';
 //Light Gallery on icon click
 
 const breakPoints = [
@@ -63,7 +65,8 @@ const Dashboard = () => {
   const [allNfts, setAllNfts] = React.useState();
   const [displayedCampaigns, setDisplayedCampaigns] = React.useState();
   const [selectedCampaign, setSelectedCampaign] = React.useState();
-
+  const [SDGsGoals, setSDGsGoals] = React.useState(SDGsData);
+  
   const getNftsList = React.useCallback(async () => {
     // const list = await profileClient
     //   .profilesList
@@ -108,6 +111,14 @@ const Dashboard = () => {
           : nftBasedCampaigns.push({ [nft.campaign]: [nft] })
       );
     nftBasedCampaigns && setDisplayedCampaigns(nftBasedCampaigns);
+   
+    const AllSDGsTagsName =
+    nftsList &&
+    nftsList.map((nft) =>(
+  {value: nft.sdgs})).flatMap(({ value }) => value);
+  const sdgOccur=AllSDGsTagsName&&AllSDGsTagsName.reduce((b,c)=>((b[b.findIndex(d=>d.value===c)]||b[b.push({value:c,nftNumber:0})-1]).nftNumber++,b),[]);
+  const sdgsWithNFTCount =sdgOccur&& SDGsData.map(t1 => ({...t1, ...sdgOccur.find(t2 => t2.value === t1.value)}))
+    sdgsWithNFTCount && setSDGsGoals(sdgsWithNFTCount.map((s)=>(s.nftNumber?{...s,["nftNumber"]:s.nftNumber}:{...s,["nftNumber"]:0})))
   }, [beneficiaryCount, campaignsCount, collectionsCount, creatorsCount, nfts]);
 
   //getting list of NFTs
@@ -279,6 +290,13 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+        <h3 className='text-center mt-5'>Sustainable Development Goals</h3>
+        <Row className='mx-2 mt-4 justify-content-center'>
+          {SDGsGoals?.map((d)=>(
+          <Col sm={12} md={2} lg={1} className="mb-4"  key={d.value}>
+            <SDGsStatsItem data={d}/>
+          </Col>))}
+        </Row>
         {allNfts && selectedNFT && displayedCampaigns ? (
           displayedCampaigns.length ? (
             <>

@@ -15,6 +15,8 @@ import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet } from '../../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
+import { SDGsData } from '../../../data/SDGsGoals/index';
+import SDGsMultiSelect from '../../Element/SDGsMultiSelect';
 
 //add new beneficiary page
 const AddBeneficiary = () => {
@@ -24,69 +26,79 @@ const AddBeneficiary = () => {
     name: '',
     description: '',
     address: '',
+    SDGsGoals:[]
   });
-  React.useEffect(()=>{
-    ReactGA.pageview(window.location.pathname +"/admin_beneficiary");
-  },[])
+  
+  React.useEffect(() => {
+    ReactGA.pageview(window.location.pathname + '/admin_beneficiary');
+  }, []);
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
 
   // },[])
   //saving new beneficiary function
   const saveBeneficiary = async () => {
     setIsButtonClicked(true);
-    try{
-    const savedBeneficiary = await addBeneficiary(
-      beneficiaryInputs.name,
-      beneficiaryInputs.description,
-      beneficiaryInputs.address,
-      CLPublicKey.fromHex(entityInfo.publicKey)
-      // 'UPDATE'
+    try {
+      const savedBeneficiary = await addBeneficiary(
+        beneficiaryInputs.name,
+        beneficiaryInputs.description,
+        beneficiaryInputs.address,
+        CLPublicKey.fromHex(entityInfo.publicKey),
+        //beneficiaryInputs.SDGsGoals
+        // 'UPDATE'
       );
-    const deployResult = await getDeployDetails(savedBeneficiary)
-    console.log('...... Beneficiary saved successfully', deployResult);
-    VIToast.success('Beneficiary saved successfully');
-    ReactGA.event({
-      category: 'Success',
-      action: 'Add beneficiary',
-      label: `${entityInfo.publicKey}: [${beneficiaryInputs.name}] beneficiary has been added`,
-    });
-    await sendDiscordMessage(
-      process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
-      process.env.REACT_APP_BENEFICIARIES_TOKEN,
-      beneficiaryInputs.name,
-      '',
-      `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)]  @vinfts @casper_network @devxdao `
-    );
-    await SendTweet(
-      `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
-    );
-    setBeneficiaryInputs({
-      name: '',
-      description: '',
-      address: '',
-    });
-    setIsButtonClicked(false);
-  }
-  catch (err) {
-    if (err.message.includes('User Cancelled')) {
-      VIToast.error('User Cancelled Signing');
+      const deployResult = await getDeployDetails(savedBeneficiary);
+      console.log('...... Beneficiary saved successfully', deployResult);
+      VIToast.success('Beneficiary saved successfully');
       ReactGA.event({
-        category: 'User Cancelation',
+        category: 'Success',
         action: 'Add beneficiary',
-        label: `${entityInfo.publicKey}: Cancelled Signing`,
+        label: `${entityInfo.publicKey}: [${beneficiaryInputs.name}] beneficiary has been added`,
       });
-    } else {
-      ReactGA.event({
-        category: 'Error',
-        action: 'Add beneficiary',
-        label: `${entityInfo.publicKey}: ${err.message}`,
+      await sendDiscordMessage(
+        process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
+        process.env.REACT_APP_BENEFICIARIES_TOKEN,
+        beneficiaryInputs.name,
+        '',
+        `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)]  @vinfts @casper_network @devxdao `
+      );
+      await SendTweet(
+        `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
+      );
+      setBeneficiaryInputs({
+        name: '',
+        description: '',
+        address: '',
       });
-      VIToast.error(err.message);
+      setIsButtonClicked(false);
+    } catch (err) {
+      if (err.message.includes('User Cancelled')) {
+        VIToast.error('User Cancelled Signing');
+        ReactGA.event({
+          category: 'User Cancelation',
+          action: 'Add beneficiary',
+          label: `${entityInfo.publicKey}: Cancelled Signing`,
+        });
+      } else {
+        ReactGA.event({
+          category: 'Error',
+          action: 'Add beneficiary',
+          label: `${entityInfo.publicKey}: ${err.message}`,
+        });
+        VIToast.error(err.message);
+      }
+      setIsButtonClicked(false);
+      return;
     }
-    setIsButtonClicked(false);
-    return;
-  }
   };
+
+  const handleSDGsChange = (data) => {
+    setBeneficiaryInputs({
+      ...beneficiaryInputs,
+      SDGsGoals:data,
+    })
+  };
+
   return (
     <>
       <Layout>
@@ -153,6 +165,11 @@ const AddBeneficiary = () => {
                               *
                             </span>
                           </div>{' '}
+                        </Col>
+                      </Row>
+                      <Row className='mt-4'>
+                        <Col>
+                        <SDGsMultiSelect data={SDGsData} SDGsChanged={(selectedData)=>{handleSDGsChange(selectedData)}}/>
                         </Col>
                       </Row>
                       <Row className='mt-4'>
