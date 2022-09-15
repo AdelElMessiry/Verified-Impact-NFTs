@@ -414,10 +414,16 @@ const MintNFT = () => {
           `Great news! [${state.inputs.name}] #NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/) @casper_network @devxdao `
         );
         let image = encodeURI(imgURL);
-        await SendTweetWithImage(
-          image,
-          `Great news! "${state.inputs.name}" #NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @casper_network @devxdao ${twitterName}`
-        );
+        let beneficiaryInfo = beneficiaries?.find(({ address }) => address === beneficiary);
+        let beneficiaryTName =  ""
+        if(beneficiaryInfo?.twitter != ""){
+          var n = beneficiaryInfo?.twitter.lastIndexOf('/');
+          beneficiaryTName = `@${beneficiaryInfo?.twitter.substring(n + 1)}`;
+        }
+          await SendTweetWithImage(
+            image,
+            `Great news! "${state.inputs.name}" #NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @casper_network @devxdao ${twitterName} ${beneficiaryTName}`
+          );
         //  else{
         //   let image64 = 'https://dweb.link/ipfs/'+ image
         //   await SendTweetWithImage64(
