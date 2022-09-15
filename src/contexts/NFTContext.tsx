@@ -180,7 +180,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
           uniqueCollections: collectionsList.uniqueCollections,
           creators: creatorsList,
           campaigns: campaignsList.map((c:any)=>({...c,"sdgs":["19"]})),
-          beneficiaries: beneficiariesList.map((c:any)=>({...c,"sdgs":["19"]})),
+          beneficiaries: beneficiariesList.map((c:any)=>(c.username.toLowerCase()=="usa for ukraine"?{...c,"donationReceipt":true,"ein":"624230","sdgs":["19"]}: {...c,"donationReceipt":false,"ein":"","sdgs":["19"]})),
           vINFTsBeneficiaries: beneficiariesVINFTsList.map((c:any)=>({...c,"sdgs":["19"]})),
         },
       });
