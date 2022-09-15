@@ -13,6 +13,7 @@ import { faStoreAlt, faStoreAltSlash,faReceipt } from '@fortawesome/free-solid-s
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SDGsData } from '../../data/SDGsGoals';
 import ReceiptModal from './RecieptModal';
+import { useNFTState } from '../../contexts/NFTContext';
 //NFT Card component
 const NFTCard = ({
   index,
@@ -22,11 +23,24 @@ const NFTCard = ({
   isCreation = false,
   isMyNft = false
 }) => {
+  const { beneficiaries } =  useNFTState()
+
   const [showBuyModal, setShowBuyModal] = React.useState(false);
   const [showListForSaleModal, setShowListForSaleModal] = React.useState(false);
 
   const [showReceiptModal , setShowReceiptModal] = React.useState(false);
+  const [ beneficiaryData , setBeneficiaryData ] =  React.useState()  
+  const getBeneficiaries = React.useCallback(async () => {
+    const setSelectedBeneficiary =
+      beneficiaries &&
+      beneficiaries.find(({ address }) => item.beneficiary === address);
+      setSelectedBeneficiary &&
+      setBeneficiaryData(setSelectedBeneficiary)
+  }, [ beneficiaries ]);
 
+  React.useEffect(() => {
+    (!beneficiaryData) && getBeneficiaries();
+  }, [beneficiaryData, getBeneficiaries ]);
   //function which return buttons (buy NFT) & (expand NFT) on nft card
   const IconImage = () => {
     return (
@@ -97,7 +111,7 @@ const NFTCard = ({
               link={`<iframe src='https://dev.verifiedimpactnfts.com/#/nft-card?id=${item.tokenId}'></iframe>`}
             />
           </li>
-        {isMyNft && (
+        {(isMyNft &&beneficiaryData?.donationReceipt) &&(
           <VINftsTooltip
           title={'Generate receipt'}
           >

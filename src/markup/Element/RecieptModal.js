@@ -94,12 +94,12 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
                         <div className=''> EIN: </div>
 
                         <div className=' mr-2'>
-                            <h6>
-                                in progress
+                            <h6 className='ml-2'>
+                                {beneficiaryData?.ein}
                             </h6>
                         </div>
 
-                        <div className='ml-4'><h7>(Find on the IRS Website)</h7></div>
+                        <div className='ml-4'><h6>(Find on the IRS Website)</h6></div>
                     </div>
                     <center>
                         <h3>Donor Information</h3>
