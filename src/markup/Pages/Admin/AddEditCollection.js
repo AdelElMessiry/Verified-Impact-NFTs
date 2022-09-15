@@ -94,7 +94,7 @@ const AddCollection = () => {
       process.env.REACT_APP_COLLECTIONS_TOKEN,
       '',
       '',
-      `Exciting news! [${collectionInputs.name}] Collection is just created. [Click here  to check more available collections.](${window.location.origin}/#/) @vinfts @casper_network @devxdao`
+      `Exciting news! [${collectionInputs.name}] Collection is just created. [Click here  to check more available collections.](${window.location.origin}/#/) @casper_network @devxdao`
     );
     await SendTweet(
       `${collectionInputs.name} just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections`
