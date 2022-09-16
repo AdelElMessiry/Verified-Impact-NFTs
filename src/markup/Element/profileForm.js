@@ -561,7 +561,7 @@ const ProfileForm = ({
                 </Col>
               </Row>
               {state.inputs.donationReceipt && (
-                <Row>
+                <Row className='form-group'>
                 <Col>
                   <span>EIN</span> <span className='text-danger'>*</span>
                   <input

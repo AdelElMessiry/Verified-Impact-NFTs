@@ -159,6 +159,7 @@ impl ViToken {
         wallet_address: Key,
         url: String,
         requested_royalty: String,
+        sdgs_ids: Vec<U256>,
     ) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
         let campaigns_dict = Campaigns::instance();
@@ -187,6 +188,10 @@ impl ViToken {
                 campaign.insert(
                     format!("collection_ids: "),
                     collection_ids.iter().map(ToString::to_string).collect(),
+                );
+                campaign.insert(
+                    format!("sdgs_ids: "),
+                    sdgs_ids.iter().map(ToString::to_string).collect(),
                 );
                 campaign.insert(format!("requested_royalty: "), requested_royalty);
 
@@ -226,6 +231,7 @@ impl ViToken {
         description: String,
         address: Key,
         is_approved: bool,
+        sdgs_ids: Vec<U256>,
     ) -> Result<(), Error> {
         // let caller = ViToken::default().get_caller();
 
@@ -247,6 +253,10 @@ impl ViToken {
                 beneficiary.insert(format!("description: "), description);
                 beneficiary.insert(format!("address: "), address.to_string());
                 beneficiary.insert(format!("isApproved: "), is_approved.to_string());
+                beneficiary.insert(
+                    format!("sdgs_ids: "),
+                    sdgs_ids.iter().map(ToString::to_string).collect(),
+                );
 
                 BeneficiaryControl::add_beneficiary(self, address, beneficiary);
 
@@ -388,14 +398,10 @@ impl ViToken {
         collection_name: String,
         beneficiary: Key,
         beneficiary_percentage: String,
-        // profile_contract_string: String,
+        sdgs_ids: Vec<U256>,
+        has_receipt: bool,
     ) -> Result<Vec<TokenId>, Error> {
         let mut mapped_meta: BTreeMap<String, String> = BTreeMap::new();
-        // let caller = ViToken::default().get_caller();
-        // let caller = Key::Account(runtime::get_caller());
-        // let creator_add = String::from(creator);
-        // let cloned_creator = creator_add.clone();
-        // let collection_creator = creator_add.clone();
         let token_ids = vec![ViToken::default()
             .total_supply()
             .checked_add(U256::one())
@@ -430,32 +436,6 @@ impl ViToken {
                 "".to_string(),
             )
             .unwrap_or_revert();
-
-            // let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
-            // let profile_contract_hash: ContractHash =
-            //     ContractHash::from_formatted_str(&profile_contract_string).unwrap_or_default();
-
-            // let method: &str = "create_profile";
-            // let args: RuntimeArgs = runtime_args! {"mode" =>  "ADD".to_string(),
-            // "address" => creator.to_string(),
-            // "username" => creator_name.clone(),
-            // "tagline" => "".to_string(),
-            // "imgUrl" => "".to_string(),
-            // "nftUrl" => "".to_string(),
-            // "firstName" => "".to_string(),
-            // "lastName" => "".to_string(),
-            // "bio" => "".clone(),
-            // "externalLink" => "".to_string(),
-            // "phone" => "".to_string(),
-            // "twitter" => "".to_string(),
-            // "instagram" => "".to_string(),
-            // "facebook" => "".to_string(),
-            // "medium" => "".to_string(),
-            // "telegram" => "".to_string(),
-            // "mail" => "".to_string(),
-            // "profileType" => "creator".to_string(),};
-
-            // runtime::call_contract::<()>(profile_contract_hash, method, args);
         }
 
         mapped_meta.insert(format!("title"), title);
@@ -463,12 +443,17 @@ impl ViToken {
         mapped_meta.insert(format!("image"), image);
         mapped_meta.insert(format!("price"), price);
         mapped_meta.insert(format!("isForSale"), is_for_sale.to_string());
+        mapped_meta.insert(format!("hasReceipt"), has_receipt.to_string());
         mapped_meta.insert(format!("currency"), currency);
         mapped_meta.insert(format!("campaign"), campaign);
         mapped_meta.insert(format!("creator"), creator.to_string());
         mapped_meta.insert(format!("beneficiary"), beneficiary.to_string());
         mapped_meta.insert(format!("creatorPercentage"), creator_percentage);
         mapped_meta.insert(format!("beneficiaryPercentage"), beneficiary_percentage);
+        mapped_meta.insert(
+            format!("sdgs_ids"),
+            sdgs_ids.iter().map(ToString::to_string).collect(),
+        );
 
         let confirmed_token_ids =
             CEP47::mint(self, recipient, token_ids, vec![mapped_meta]).unwrap_or_revert();
@@ -549,6 +534,7 @@ impl ViToken {
         wallet_address: Key,
         url: String,
         requested_royalty: String,
+        sdgs_ids: Vec<U256>,
     ) -> Result<(), Error> {
         // let caller = ViToken::default().get_caller();
 
@@ -565,6 +551,7 @@ impl ViToken {
             wallet_address,
             url,
             requested_royalty,
+            sdgs_ids,
         )
         .unwrap_or_revert();
         Ok(())
@@ -578,6 +565,7 @@ impl ViToken {
         description: String,
         address: Key,
         is_approved: bool,
+        sdgs_ids: Vec<U256>,
     ) -> Result<(), Error> {
         // let caller = ViToken::default().get_caller();
 
@@ -591,6 +579,7 @@ impl ViToken {
             description,
             address,
             is_approved,
+            sdgs_ids,
         )
         .unwrap_or_revert();
         Ok(())
@@ -854,6 +843,7 @@ fn update_token_meta() {
 fn create_campaign() {
     let campaign_id = runtime::get_named_arg::<U256>("campaign_id");
     let collection_ids = runtime::get_named_arg::<Vec<TokenId>>("collection_ids");
+    let sdgs_ids = runtime::get_named_arg::<Vec<U256>>("sdgs_ids");
     let mode = runtime::get_named_arg::<String>("mode");
     let name = runtime::get_named_arg::<String>("name");
     let description = runtime::get_named_arg::<String>("description");
@@ -870,6 +860,7 @@ fn create_campaign() {
             wallet_address,
             url,
             requested_royalty,
+            sdgs_ids,
         )
         .unwrap_or_revert();
 }
@@ -907,6 +898,7 @@ fn mint() {
     let image = runtime::get_named_arg::<String>("image");
     let price = runtime::get_named_arg::<String>("price");
     let is_for_sale = runtime::get_named_arg::<bool>("isForSale");
+    let has_receipt = runtime::get_named_arg::<bool>("hasReceipt");
     let currency = runtime::get_named_arg::<String>("currency");
     let campaign = runtime::get_named_arg::<String>("campaign");
     let creator = runtime::get_named_arg::<Key>("creator");
@@ -916,32 +908,36 @@ fn mint() {
     let beneficiary = runtime::get_named_arg::<Key>("beneficiary");
     let beneficiary_percentage = runtime::get_named_arg::<String>("beneficiaryPercentage");
     let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
-
+    let sdgs_ids = runtime::get_named_arg::<Vec<U256>>("sdgs_ids");
 
     if !ViToken::default().is_creator(creator.clone()) {
         let profile_contract_hash: ContractHash =
-        ContractHash::from_formatted_str(&profile_contract_string).unwrap_or_default();
+            ContractHash::from_formatted_str(&profile_contract_string).unwrap_or_default();
 
         let method: &str = "create_profile";
         let args: RuntimeArgs = runtime_args! {"mode" => "ADD".clone(),
-        "address" => creator.clone(),
-        "username" => creator_name.clone(),
-        "tagline" => "".to_string(),
-        "imgUrl" => "".to_string(),
-        "nftUrl" => "".to_string(),
-        "firstName" => "".to_string(),
-        "lastName" => "".to_string(),
-        "bio" => "".clone(),
-        "externalLink" => "".to_string(),
-        "phone" => "".to_string(),
-        "twitter" => "".to_string(),
-        "instagram" => "".to_string(),
-        "facebook" => "".to_string(),
-        "medium" => "".to_string(),
-        "telegram" => "".to_string(),
-        "mail" => "".to_string(),
-        "profileType" => "creator".to_string(),};
-    
+            "address" => creator.clone(),
+            "username" => creator_name.clone(),
+            "tagline" => "".to_string(),
+            "imgUrl" => "".to_string(),
+            "nftUrl" => "".to_string(),
+            "firstName" => "".to_string(),
+            "lastName" => "".to_string(),
+            "bio" => "".to_string(),
+            "externalLink" => "".to_string(),
+            "phone" => "".to_string(),
+            "twitter" => "".to_string(),
+            "instagram" => "".to_string(),
+            "facebook" => "".to_string(),
+            "medium" => "".to_string(),
+            "telegram" => "".to_string(),
+            "mail" => "".to_string(),
+            "profileType" => "creator".to_string(),
+            "sdgs_ids" => sdgs_ids.clone(),
+            "has_receipt" => false,
+            "ein" => "".to_string(),
+        };
+
         runtime::call_contract::<()>(profile_contract_hash, method, args);
     }
 
@@ -963,7 +959,8 @@ fn mint() {
             collection_name,
             beneficiary,
             beneficiary_percentage,
-            // profile_contract_string,
+            sdgs_ids,
+            has_receipt,
         )
         .unwrap_or_revert();
 }
@@ -1045,6 +1042,7 @@ fn add_beneficiary() {
     let name = runtime::get_named_arg::<String>("name");
     let description = runtime::get_named_arg::<String>("description");
     let address = runtime::get_named_arg::<Key>("address");
+    let sdgs_ids = runtime::get_named_arg::<Vec<U256>>("sdgs_ids");
     let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
     let profile_contract_hash: ContractHash =
         ContractHash::from_formatted_str(&profile_contract_string).unwrap_or_default();
@@ -1069,28 +1067,33 @@ fn add_beneficiary() {
             description.clone(),
             address.clone(),
             is_approved,
+            sdgs_ids.clone(),
         )
         .unwrap_or_revert();
 
     let method: &str = "create_profile";
     let args: RuntimeArgs = runtime_args! {"mode" => mode.clone(),
-    "address" => address.clone(),
-    "username" => name.clone(),
-    "tagline" => "".to_string(),
-    "imgUrl" => "".to_string(),
-    "nftUrl" => "".to_string(),
-    "firstName" => "".to_string(),
-    "lastName" => "".to_string(),
-    "bio" => description.clone(),
-    "externalLink" => "".to_string(),
-    "phone" => "".to_string(),
-    "twitter" => "".to_string(),
-    "instagram" => "".to_string(),
-    "facebook" => "".to_string(),
-    "medium" => "".to_string(),
-    "telegram" => "".to_string(),
-    "mail" => "".to_string(),
-    "profileType" => "beneficiary".to_string(),};
+        "address" => address.clone(),
+        "username" => name.clone(),
+        "tagline" => "".to_string(),
+        "imgUrl" => "".to_string(),
+        "nftUrl" => "".to_string(),
+        "firstName" => "".to_string(),
+        "lastName" => "".to_string(),
+        "bio" => description.clone(),
+        "externalLink" => "".to_string(),
+        "phone" => "".to_string(),
+        "twitter" => "".to_string(),
+        "instagram" => "".to_string(),
+        "facebook" => "".to_string(),
+        "medium" => "".to_string(),
+        "telegram" => "".to_string(),
+        "mail" => "".to_string(),
+        "profileType" => "beneficiary".to_string(),
+        "sdgs_ids" => sdgs_ids.clone(),
+        "has_receipt" => false,
+        "ein" => "".to_string(),
+    };
 
     runtime::call_contract::<()>(profile_contract_hash, method, args);
 }
@@ -1114,6 +1117,7 @@ fn add_creator() {
     let description = runtime::get_named_arg::<String>("description");
     let address = runtime::get_named_arg::<Key>("address");
     let url = runtime::get_named_arg::<String>("url");
+    let sdgs_ids = runtime::get_named_arg::<Vec<U256>>("sdgs_ids");
 
     let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
     let profile_contract_hash: ContractHash =
@@ -1131,23 +1135,27 @@ fn add_creator() {
 
     let method: &str = "create_profile";
     let args: RuntimeArgs = runtime_args! {"mode" => mode.clone(),
-    "address" => address.clone(),
-    "username" => name.clone(),
-    "tagline" => "".to_string(),
-    "imgUrl" => "".to_string(),
-    "nftUrl" => "".to_string(),
-    "firstName" => "".to_string(),
-    "lastName" => "".to_string(),
-    "bio" => description.clone(),
-    "externalLink" => url.to_string(),
-    "phone" => "".to_string(),
-    "twitter" => "".to_string(),
-    "instagram" => "".to_string(),
-    "facebook" => "".to_string(),
-    "medium" => "".to_string(),
-    "telegram" => "".to_string(),
-    "mail" => "".to_string(),
-    "profileType" => "creator".to_string(),};
+        "address" => address.clone(),
+        "username" => name.clone(),
+        "tagline" => "".to_string(),
+        "imgUrl" => "".to_string(),
+        "nftUrl" => "".to_string(),
+        "firstName" => "".to_string(),
+        "lastName" => "".to_string(),
+        "bio" => description.clone(),
+        "externalLink" => url.to_string(),
+        "phone" => "".to_string(),
+        "twitter" => "".to_string(),
+        "instagram" => "".to_string(),
+        "facebook" => "".to_string(),
+        "medium" => "".to_string(),
+        "telegram" => "".to_string(),
+        "mail" => "".to_string(),
+        "profileType" => "creator".to_string(),
+        "sdgs_ids" => sdgs_ids.clone(),
+        "has_receipt" => false,
+        "ein" => "".to_string(),
+    };
 
     runtime::call_contract::<()>(profile_contract_hash, method, args);
 }
@@ -1475,6 +1483,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("wallet_address", Key::cl_type()),
             Parameter::new("url", String::cl_type()),
             Parameter::new("requested_royalty", String::cl_type()),
+            Parameter::new("sdgs_ids", CLType::List(Box::new(U256::cl_type()))),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
@@ -1529,6 +1538,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("image", String::cl_type()),
             Parameter::new("price", String::cl_type()),
             Parameter::new("isForSale", bool::cl_type()),
+            Parameter::new("hasReceipt", bool::cl_type()),
             Parameter::new("currency", String::cl_type()),
             Parameter::new("campaign", String::cl_type()),
             Parameter::new("creator", Key::cl_type()),
@@ -1538,6 +1548,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("beneficiary", Key::cl_type()),
             Parameter::new("beneficiaryPercentage", String::cl_type()),
             Parameter::new("profile_contract_hash", String::cl_type()),
+            Parameter::new("sdgs_ids", CLType::List(Box::new(U256::cl_type()))),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
@@ -1623,6 +1634,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("description", String::cl_type()),
             Parameter::new("address", Key::cl_type()),
             Parameter::new("profile_contract_hash", String::cl_type()),
+            Parameter::new("sdgs_ids", CLType::List(Box::new(U256::cl_type()))),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
