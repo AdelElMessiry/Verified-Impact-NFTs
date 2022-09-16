@@ -4,7 +4,6 @@ import {
   CasperClient,
   Contracts,
   CLValueBuilder,
-  CLAccountHash,
 } from 'casper-js-sdk';
 
 import { signDeploy } from '../utils/signer';
@@ -139,7 +138,10 @@ class ProfileClient {
     mail: string,
     profileType: string,
     deploySender: CLPublicKey,
-    mode?: string
+    mode?: string,
+    sdgs_ids?: number[],
+    has_receipt?: boolean,
+    ein?: string
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       mode: CLValueBuilder.string(mode ? mode : 'ADD'),
@@ -165,6 +167,11 @@ class ProfileClient {
       telegram: CLValueBuilder.string(telegram),
       mail: CLValueBuilder.string(mail),
       profileType: CLValueBuilder.string(profileType),
+      sdgs_ids: sdgs_ids?.length
+        ? CLValueBuilder.list(sdgs_ids.map((id) => CLValueBuilder.u256(id)))
+        : CLValueBuilder.list([CLValueBuilder.u256(0)]),
+      has_receipt: CLValueBuilder.bool(!!has_receipt),
+      ein: CLValueBuilder.string(ein || ''),
     });
 
     const profileDeploy = this.contractClient.callEntrypoint(

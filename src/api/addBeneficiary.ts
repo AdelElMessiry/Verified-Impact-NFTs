@@ -9,6 +9,7 @@ export async function addBeneficiary(
   name: string,
   description: string,
   address: string,
+  sdgs_ids: number[],
   deploySender: CLPublicKey,
   mode?: string,
   beneficiaryId?: string
@@ -20,6 +21,7 @@ export async function addBeneficiary(
     // `account-hash-${CLPublicKey.fromHex(address).toAccountHashStr().slice(13)}`,
     CLValueBuilder.byteArray(CLPublicKey.fromHex(address).toAccountHash()),
     mode ? mode : 'ADD',
+    sdgs_ids,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     deploySender
   );
