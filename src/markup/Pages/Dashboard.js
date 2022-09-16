@@ -291,9 +291,9 @@ const Dashboard = () => {
           </div>
         </div>
         <h3 className='text-center mt-5'>United Nations Sustainable Development Goals</h3>
-        <Row className='mx-2 mt-4 justify-content-center'>
+        <Row className='mx-2 mt-4 justify-content-center dash-sdgs'>
           {SDGsGoals?.map((d)=>(
-          <Col sm={12} md={2} lg={1} className="mb-4"  key={d.value}>
+          <Col className="mb-4"  key={d.value}>
             <SDGsStatsItem data={d}/>
           </Col>))}
         </Row>

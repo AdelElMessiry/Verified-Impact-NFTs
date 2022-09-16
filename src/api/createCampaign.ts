@@ -23,6 +23,7 @@ export async function createCampaign(
   url: string,
   requested_royalty: string,
   deploySender: CLPublicKey,
+  sdgs_ids: number[],
   mode?: string,
   campaign_id?: string
 ) {
@@ -34,6 +35,7 @@ export async function createCampaign(
     CLValueBuilder.byteArray(Buffer.from(wallet_address, 'hex')),
     url,
     requested_royalty,
+    sdgs_ids,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     deploySender
   );

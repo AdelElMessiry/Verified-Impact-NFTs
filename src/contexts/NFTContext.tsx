@@ -91,7 +91,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
     dispatch({
       type: NFTActionTypes.SUCCESS,
       payload: {
-        nfts: nftsList.map((c:any)=>({...c,"sdgs":["19"]})),
+        nfts: nftsList,
         beneficiaryCount: undefined,
         campaignsCount: parseInt(campaignsCount.toString()) || 0,
         creatorsCount: parseInt(creatorsCount.toString()) || 0,
@@ -170,7 +170,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
       dispatch({
         type: NFTActionTypes.SUCCESS,
         payload: {
-          nfts: mappedNFTS.map((c:any)=>({...c,"sdgs":["19"]})),
+          nfts: mappedNFTS,
           // beneficiaryCount: parseInt(beneficiaryCount.toString()),
           beneficiaryCount: beneficiariesCount,
           campaignsCount: parseInt(campaignsCount.toString()),
@@ -179,9 +179,9 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
           collections: collectionsList.collectionsList,
           uniqueCollections: collectionsList.uniqueCollections,
           creators: creatorsList,
-          campaigns: campaignsList.map((c:any)=>({...c,"sdgs":["19"]})),
-          beneficiaries: beneficiariesList.map((c:any)=>(c.username.toLowerCase()=="usa for ukraine"?{...c,"donationReceipt":true,"ein":"624230","sdgs":["19"]}: {...c,"donationReceipt":false,"ein":"","sdgs":["19"]})),
-          vINFTsBeneficiaries: beneficiariesVINFTsList.map((c:any)=>({...c,"sdgs":["19"]})),
+          campaigns: campaignsList,
+          beneficiaries: beneficiariesList,
+          vINFTsBeneficiaries: beneficiariesVINFTsList,
         },
       });
   }, []);
