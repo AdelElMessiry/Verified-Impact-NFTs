@@ -11,6 +11,7 @@ import {
   CLValueParsers,
   CLByteArray,
   CLAccountHash,
+  CLListType,
 } from 'casper-js-sdk';
 import { concat } from '@ethersproject/bytes';
 import blake from 'blakejs';
@@ -272,13 +273,13 @@ class CEP47Client {
           ? mapObj.creator.slice(13).replace(')', '')
           : mapObj.creator.slice(10).replace(')', '')
         : mapObj.creator;
-    mapObj.pureImageKey = mapObj.image
+    mapObj.pureImageKey = mapObj.image;
     mapObj.image = isUpdate
       ? mapObj.image
       : isValidHttpUrl(mapObj.image)
       ? mapObj.image
       : await getNFTImage(mapObj.image);
-      
+
     return mapObj;
   }
 
@@ -627,6 +628,7 @@ class CEP47Client {
     wallet_address: CLAccountHash,
     url: string,
     requested_royalty: string,
+    sdgs_ids: number[],
     paymentAmount: string,
     deploySender: CLPublicKey,
     keys?: Keys.AsymmetricKey[]
@@ -641,6 +643,9 @@ class CEP47Client {
       url: CLValueBuilder.string(url),
       // recipient: CLValueBuilder.key(CLPublicKey.fromHex(wallet_address)),
       requested_royalty: CLValueBuilder.string(requested_royalty),
+      sdgs_ids: CLValueBuilder.list(
+        sdgs_ids.map((id) => CLValueBuilder.u256(id))
+      ),
     });
 
     return this.contractClient.callEntrypoint(
@@ -659,6 +664,7 @@ class CEP47Client {
     description: string,
     address: CLByteArray,
     mode: string,
+    sdgs_ids: number[],
     paymentAmount: string,
     deploySender: CLPublicKey
   ) {
@@ -670,6 +676,9 @@ class CEP47Client {
       address: CLValueBuilder.key(address),
       profile_contract_hash: CLValueBuilder.string(
         `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
+      sdgs_ids: CLValueBuilder.list(
+        sdgs_ids.map((id) => CLValueBuilder.u256(id))
       ),
     });
 

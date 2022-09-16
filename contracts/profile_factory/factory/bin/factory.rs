@@ -103,6 +103,7 @@ fn all_profiles_length() {
 
 #[no_mangle]
 fn create_profile() {
+    let is_approved;
     let mode = runtime::get_named_arg::<String>("mode");
     let address = runtime::get_named_arg::<Key>("address");
     let username = runtime::get_named_arg::<String>("username");
@@ -121,13 +122,9 @@ fn create_profile() {
     let telegram = runtime::get_named_arg::<String>("telegram");
     let mail = runtime::get_named_arg::<String>("mail");
     let profile_type = runtime::get_named_arg::<String>("profileType");
-    let is_approved;
-
-    if profile_type == "beneficiary" {
-        is_approved = false;
-    } else {
-        is_approved = true;
-    }
+    let sdgs_ids = runtime::get_named_arg::<Vec<U256>>("sdgs_ids");
+    let has_receipt = runtime::get_named_arg::<bool>("has_receipt");
+    let ein = runtime::get_named_arg::<String>("ein");
 
     let mut profile = Factory::default().get_profile(address).unwrap_or_default();
 
@@ -147,6 +144,22 @@ fn create_profile() {
     profile.insert(format!("{}_medium", profile_type), medium);
     profile.insert(format!("{}_telegram", profile_type), telegram);
     profile.insert(format!("{}_mail", profile_type), mail);
+
+    if profile_type == "beneficiary" {
+        is_approved = false;
+        profile.insert(
+            format!("{}_sdgs_ids", profile_type),
+            sdgs_ids.iter().map(ToString::to_string).collect(),
+        );
+        profile.insert(
+            format!("{}_has_receipt", profile_type),
+            has_receipt.to_string(),
+        );
+        profile.insert(format!("{}_ein", profile_type), ein);
+    } else {
+        is_approved = true;
+    }
+
     profile.insert(
         format!("{}_isApproved", profile_type),
         is_approved.to_string(),
@@ -258,6 +271,10 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("telegram", String::cl_type()),
             Parameter::new("mail", String::cl_type()),
             Parameter::new("profileType", String::cl_type()),
+            Parameter::new("profileType", String::cl_type()),
+            Parameter::new("sdgs_ids", CLType::List(Box::new(U256::cl_type()))),
+            Parameter::new("has_receipt", bool::cl_type()),
+            Parameter::new("ein", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
