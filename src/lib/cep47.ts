@@ -431,6 +431,7 @@ class CEP47Client {
       collectionName,
       beneficiary,
       beneficiaryPercentage,
+      sdgs_ids,
     } = metas;
 
     const runtimeArgs = RuntimeArgs.fromMap({
@@ -455,6 +456,9 @@ class CEP47Client {
       beneficiaryPercentage: CLValueBuilder.string(beneficiaryPercentage),
       profile_contract_hash: CLValueBuilder.string(
         `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
+      sdgs_ids: CLValueBuilder.list(
+        sdgs_ids.map((id: number) => CLValueBuilder.u256(id))
       ),
     });
 
