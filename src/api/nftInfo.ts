@@ -79,7 +79,7 @@ export async function getNFTsList() {
           ? nft_metadata.creator.slice(13).replace(')', '')
           : nft_metadata.creator.slice(10).replace(')', '')
         : nft_metadata.creator;
-        nft_metadata["sdgs"]=["19"]
+    nft_metadata['sdgs'] = ['19'];
     nftsList.push({ ...nft_metadata, isCreatorOwner, tokenId });
   }
 
@@ -117,6 +117,39 @@ export async function setIsTokenForSale(
   const nftDetails = await cep47.getMappedTokenMeta(tokenId, true);
   nftDetails['isForSale'] = isForSale.toString();
   isForSale && (nftDetails['price'] = price);
+
+  const mappedNft = new Map(Object.entries(nftDetails));
+  const updatedNftDeploy = await cep47.updateTokenMeta(
+    tokenId,
+    mappedNft,
+    PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
+    deploySender
+  );
+
+  const signedUpdatedNftDeploy = await signDeploy(
+    updatedNftDeploy,
+    deploySender
+  );
+  console.log('Signed Updated NFT deploy:', signedUpdatedNftDeploy);
+
+  const updatedNftDeployHash = await signedUpdatedNftDeploy.send(
+    CONNECTION.NODE_ADDRESS
+  );
+  console.log('Deploy hash', updatedNftDeployHash);
+
+  const deployUpdatedNftResult = await getDeployDetails(updatedNftDeployHash);
+  console.log('...... NFT Updated successfully', deployUpdatedNftResult);
+
+  return deployUpdatedNftResult;
+}
+
+export async function setIsTokenHasReceipt(
+  hasReceipt: Boolean,
+  tokenId: string,
+  deploySender: CLPublicKey
+) {
+  const nftDetails = await cep47.getMappedTokenMeta(tokenId, true);
+  nftDetails['hasReceipt'] = hasReceipt.toString();
 
   const mappedNft = new Map(Object.entries(nftDetails));
   const updatedNftDeploy = await cep47.updateTokenMeta(
