@@ -108,7 +108,21 @@ class ProfileClient {
       return {
         [address]: {
           normal: { ...filteredNormalAccount },
-          beneficiary: { ...filteredBeneficiaryAccount },
+          beneficiary:
+          Object.keys(filteredBeneficiaryAccount).length !== 0?(  filteredBeneficiaryAccount?.username?.toLowerCase() ===
+            'usa for ukraine'
+              ? {
+                  ...filteredBeneficiaryAccount,
+                  sdgs: ['19'],
+                  donationReceipt: true,
+                  ein: '624230',
+                }
+              : {
+                  ...filteredBeneficiaryAccount,
+                  sdgs: ['19'],
+                  donationReceipt: false,
+                  ein: '',
+                }):{...filteredBeneficiaryAccount},
           creator: { ...filteredCreatorAccount },
         },
       };
