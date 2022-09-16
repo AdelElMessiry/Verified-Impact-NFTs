@@ -79,6 +79,7 @@ export async function getNFTsList() {
           ? nft_metadata.creator.slice(13).replace(')', '')
           : nft_metadata.creator.slice(10).replace(')', '')
         : nft_metadata.creator;
+        nft_metadata["sdgs"]=["19"]
     nftsList.push({ ...nft_metadata, isCreatorOwner, tokenId });
   }
 
