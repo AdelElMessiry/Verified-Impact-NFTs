@@ -528,6 +528,7 @@ const MyNFTs = () => {
                                   setOpenSlider(true);
                                 }}
                                 isTransfer={true}
+                                isMyNft={true}
                               />
                             </li>
                           ))}
