@@ -290,7 +290,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-        <h3 className='text-center mt-5'>Sustainable Development Goals</h3>
+        <h3 className='text-center mt-5'>United Nations Sustainable Development Goals</h3>
         <Row className='mx-2 mt-4 justify-content-center dash-sdgs'>
           {SDGsGoals?.map((d)=>(
           <Col className="mb-4"  key={d.value}>
