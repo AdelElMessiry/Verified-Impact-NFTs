@@ -39,6 +39,8 @@ const ProfileForm = ({
       isProfileImageURL: '',
       isNFTImageURL: '',
       address: '',
+      donationReceipt: false,
+      ein: ""
     },
   });
 
@@ -84,6 +86,7 @@ const ProfileForm = ({
         isProfileImageURL: '',
         isNFTImageURL: '',
         address: formData ? formData.address : '',
+        ein: ""
       },
     });
     setUploadedProfileImage(formData ? formData?.imgUrl : null);
@@ -541,6 +544,46 @@ const ProfileForm = ({
               )}
             </Col>
           </Row>
+          {(formName === ProfileFormsEnum.BeneficiaryProfile || isSignUpBeneficiary) && (
+            <>
+              
+              <Row className='form-group pt-4'>
+                <Col>
+                  <Form.Check
+                    type={'checkbox'}
+                    id={`donationReceipt${formName}`}
+                    label={`Provide organization donation receipt `}
+                    onChange={(e) => handleChange(e)}
+                    value={state.inputs.donationReceipt}
+                    name='donationReceipt'
+                    className='float-left'
+                  />
+                </Col>
+              </Row>
+              {state.inputs.donationReceipt && (
+                <Row>
+                <Col>
+                  <span>EIN</span> <span className='text-danger'>*</span>
+                  <input
+                    type='text'
+                    name='ein'
+                    className='form-control'
+                    value={state.inputs.ein}
+                    placeholder=""
+                    onChange={(e) => {
+                      handleChange(e);
+                    }}
+                  />
+                  {!socialErrors.telegram && (
+                    <span className='text-danger'>Please set the EIN</span>
+                  )}
+                </Col>
+              </Row>
+              )}
+            </>
+
+          )}
+
           {formName === ProfileFormsEnum.BeneficiaryProfile && (
             <Row>
               <Col>
@@ -688,10 +731,11 @@ const ProfileForm = ({
           <button
             className='btn btn-success'
             disabled={
-              state.inputs.userName == '' ||
-              isSaveButtonClicked ||
-              !uploadedProfileImageURL ||
-              !uploadedNFTImageURL
+              state.inputs.userName == '' || 
+              isSaveButtonClicked || 
+              !uploadedProfileImageURL || 
+              !uploadedNFTImageURL ||
+              (state.inputs.donationReceipt &&  state.inputs.ein == "")
             }
             onClick={(e) => {
               handleSave(e);
@@ -703,7 +747,7 @@ const ProfileForm = ({
               'Save'
             )}
           </button>
-        </Col>
+        </Col>        
       </Row>
     </div>
   );
