@@ -49,6 +49,7 @@ const SDGsMultiSelect = ({ data, SDGsChanged }) => {
         handleSDGsChange(v);
       }}
       styles={customStyles}
+      placeholder="Select your SDGs..."
     />
   );
 };
