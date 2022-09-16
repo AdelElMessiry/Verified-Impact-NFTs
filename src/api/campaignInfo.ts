@@ -35,6 +35,7 @@ export async function getCampaignsList() {
               ? parsedCampaigns.wallet_address.slice(13).replace(')', '')
               : parsedCampaigns.wallet_address.slice(10).replace(')', '')
             : parsedCampaigns.wallet_address;
+            parsedCampaigns["sdgs"]=["19"]
         campaignsList.push(parsedCampaigns);
       })
       .catch((err) => {
