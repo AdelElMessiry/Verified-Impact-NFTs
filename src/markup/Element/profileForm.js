@@ -86,11 +86,13 @@ const ProfileForm = ({
         isProfileImageURL: '',
         isNFTImageURL: '',
         address: formData ? formData.address : '',
-        ein: ""
+        ein: formData ? formData.ein : '',
+        donationReceipt: formData ? formData.hasReceipt : ''
       },
     });
     setUploadedProfileImage(formData ? formData?.imgUrl : null);
     setUploadedNFTImage(formData ? formData?.nftUrl : null);
+    setSDGsGoals(formData ? formData.sdgs_ids : []);
   }, [formData]);
 
   const handleChange = (e) => {
@@ -244,13 +246,15 @@ const ProfileForm = ({
           state.inputs.telegram,
           state.inputs.email,
           formName === ProfileFormsEnum.NormalProfile
-            ? 'normal'
-            : formName === ProfileFormsEnum.BeneficiaryProfile
-            ? 'beneficiary'
-            : 'creator',
+          ? 'normal'
+          : formName === ProfileFormsEnum.BeneficiaryProfile
+          ? 'beneficiary'
+          : 'creator',
           CLPublicKey.fromHex(entityInfo.publicKey),
           isProfileExist ? 'UPDATE' : 'ADD',
-          //formName === ProfileFormsEnum.BeneficiaryProfile?SDGsGoals:[]
+          formName === ProfileFormsEnum.BeneficiaryProfile?SDGsGoals:[],
+          state.inputs.donationReceipt,
+          state.inputs.ein
         );
       } catch (err) {
         if (err.message.includes('User Cancelled')) {

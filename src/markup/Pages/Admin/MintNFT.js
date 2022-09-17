@@ -185,7 +185,7 @@ const MintNFT = () => {
     filteredCampaigns &&
       setSDGsGoalsData(
         SDGsData.filter(({ value }) =>
-        filteredCampaigns[0]?.sdgs.includes(value)
+        filteredCampaigns[0]?.sdgs_ids?.includes(value)
         )
       );
   }, [
@@ -237,7 +237,7 @@ const MintNFT = () => {
         : setCampaignSelectedData(null, null);
         setSDGsGoalsData(
           SDGsData.filter(({ value }) =>
-          filteredCampaigns[0]?.sdgs.includes(value)
+          filteredCampaigns[0]?.sdgs_ids?.includes(value)
           )
         );
     } else if (name == 'campaign') {
@@ -245,7 +245,7 @@ const MintNFT = () => {
       filteredCampaigns &&
         setSDGsGoalsData(
           SDGsData.filter(({ value }) =>
-            filteredCampaigns?.sdgs.includes(value)
+            filteredCampaigns?.sdgs_ids?.includes(value)
           )
         );
     }
@@ -341,7 +341,7 @@ const MintNFT = () => {
           beneficiaryPercentage: beneficiaryPercentage
             ? beneficiaryPercentage
             : '',
-         // SDGsGoals: SDGsGoals,
+          sdgs_ids: SDGsGoals,
         });
       } catch (err) {
         if (err.message.includes('User Cancelled')) {

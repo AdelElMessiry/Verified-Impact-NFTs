@@ -252,7 +252,7 @@ const BeneficiaryNFTs = () => {
     const AllSDGsTagsName =
       filteredNFTs &&
       filteredNFTs.map((nft) =>(
-    {value: nft.sdgs})).flatMap(({ value }) => value);
+    {value: nft.sdgs_ids})).flatMap(({ value }) => value);
     let sdgsTagsName = AllSDGsTagsName.filter(function(item, pos) {
       return AllSDGsTagsName.indexOf(item) == pos;
   })
@@ -465,8 +465,8 @@ const BeneficiaryNFTs = () => {
     (selectedData) => {
       const filteredSDGsNFTs =
         allNFTs &&
-        allNFTs.filter(({ sdgs }) =>
-        ( sdgs?.some(element => {
+        allNFTs.filter(({ sdgs_ids }) =>
+        ( sdgs_ids?.some(element => {
           return selectedData.indexOf(element) !== -1;
         }))
         );

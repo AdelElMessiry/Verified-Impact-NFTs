@@ -34,7 +34,7 @@ const AddEditCampaignForm = ({
       ({ isApproved }) => isApproved === 'true'
     );
     firstBeneficiary && setBeneficiary(firstBeneficiary[0]?.address);
-    firstBeneficiary && setSDGsGoalsData(SDGsData.filter(({value})=>(firstBeneficiary[0]?.sdgs.includes(value))));
+    firstBeneficiary && setSDGsGoalsData(SDGsData.filter(({value})=>(firstBeneficiary[0]?.sdgs_ids?.includes(value))));
   }, [beneficiaries]);
 
   React.useEffect(() => {
@@ -63,7 +63,7 @@ const AddEditCampaignForm = ({
       setBeneficiary(e.target.value);
       let selectedBeneficiary = beneficiaries
         .find(({ address }) => address === e.target.value);
-     setSDGsGoalsData(SDGsData.filter(({value})=>(selectedBeneficiary.sdgs.includes(value))));
+     setSDGsGoalsData(SDGsData.filter(({value})=>(selectedBeneficiary.sdgs_ids?.includes(value))));
     } else {
       const { value, name, checked, type } = e.target;
       const { inputs } = state;
@@ -94,9 +94,9 @@ const AddEditCampaignForm = ({
         state.inputs.campaignUrl,
         state.inputs.requestedRoyalty,
         CLPublicKey.fromHex(entityInfo.publicKey),
+        SDGsGoals,
         data ? 'UPDATE' : 'ADD',
         data ? data.id : undefined,
-        //SDGsGoals
       );
       ReactGA.event({
         category: 'Success',
