@@ -267,7 +267,7 @@ const NFTCard = ({
           style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
         /></a>
         :{' '}
-        {SDGsData?.filter(({value})=>(item?.sdgs?.includes(value)))?.map((sdg,index)=>
+        {SDGsData?.filter(({value})=>(item?.sdgs_ids?.includes(value)))?.map((sdg,index)=>
         <VINftsTooltip title={sdg.label} key={index}>
           <label>
             <img
