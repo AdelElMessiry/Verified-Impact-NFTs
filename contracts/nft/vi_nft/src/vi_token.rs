@@ -191,7 +191,7 @@ impl ViToken {
                 );
                 campaign.insert(
                     format!("sdgs_ids: "),
-                    sdgs_ids.iter().map(ToString::to_string).collect(),
+                    sdgs_ids.iter().map(ToString::to_string).collect::<Vec<String>>().join(","),
                 );
                 campaign.insert(format!("requested_royalty: "), requested_royalty);
 
@@ -255,7 +255,7 @@ impl ViToken {
                 beneficiary.insert(format!("isApproved: "), is_approved.to_string());
                 beneficiary.insert(
                     format!("sdgs_ids: "),
-                    sdgs_ids.iter().map(ToString::to_string).collect(),
+                    sdgs_ids.iter().map(ToString::to_string).collect::<Vec<String>>().join(","),
                 );
 
                 BeneficiaryControl::add_beneficiary(self, address, beneficiary);
@@ -452,7 +452,7 @@ impl ViToken {
         mapped_meta.insert(format!("beneficiaryPercentage"), beneficiary_percentage);
         mapped_meta.insert(
             format!("sdgs_ids"),
-            sdgs_ids.iter().map(ToString::to_string).collect(),
+            sdgs_ids.iter().map(ToString::to_string).collect::<Vec<String>>().join(","),
         );
 
         let confirmed_token_ids =
