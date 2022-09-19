@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Select, { components } from 'react-select';
 
 const { Option } = components;
 
-const SDGsMultiSelect = ({ data, SDGsChanged,defaultValues }) => {
+const SDGsMultiSelect = ({ data, SDGsChanged,defaultValues,isClear=false }) => {
+  const selectInputRef = useRef();
+useEffect(()=>{
+ isClear&& selectInputRef.current.clearValue();
+},[isClear])
+
   const IconOption = (props) => {
     return (
       <Option {...props}>
@@ -50,6 +55,7 @@ const SDGsMultiSelect = ({ data, SDGsChanged,defaultValues }) => {
       }}
       styles={customStyles}
       placeholder="Select your SDGs..."
+      ref={selectInputRef}
     /> 
   );
 };
