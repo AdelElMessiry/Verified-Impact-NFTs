@@ -65,7 +65,7 @@ const AddEditCampaignForm = ({
       requestedRoyalty: data ? data.requested_royalty : '',
     },
   });
-
+setSDGsGoals(data ? data.sdgs_ids?.split(',') : [])
   const checkURLValidation = (value) => {
     if (validator.isURL(value)) {
       setShowURLErrorMsg(false);
