@@ -185,7 +185,7 @@ const MintNFT = () => {
     filteredCampaigns &&
       setSDGsGoalsData(
         SDGsData.filter(({ value }) =>
-        filteredCampaigns[0]?.sdgs.includes(value)
+        filteredCampaigns[0]?.sdgs_ids?.split(",").includes(value)
         )
       );
   }, [
@@ -223,7 +223,6 @@ const MintNFT = () => {
   const handleChange = (e, isBeneficiary = false) => {
     const { value, name, checked, type } = e.target;
     const { inputs } = state;
-
     if (isBeneficiary) {
       let selectedBeneficiary = beneficiaries
         ?.filter(({ isApproved }) => isApproved === 'true')
@@ -236,18 +235,11 @@ const MintNFT = () => {
         ? setCampaignSelectedData(filteredCampaigns, filteredCampaigns[0].id)
         : setCampaignSelectedData(null, null);
         setSDGsGoalsData(
-          SDGsData.filter(({ value }) =>
-          filteredCampaigns[0]?.sdgs.includes(value)
+          SDGsData.filter((sdg) =>
+          filteredCampaigns[0]?.sdgs_ids?.split(",").includes(sdg.value.toString())
           )
         );
-    } else if (name == 'campaign') {
-      const filteredCampaigns = campaignsList?.filter(({ id }) => value === id);
-      filteredCampaigns &&
-        setSDGsGoalsData(
-          SDGsData.filter(({ value }) =>
-            filteredCampaigns?.sdgs.includes(value)
-          )
-        );
+        
     }
     inputs[name] = type === 'checkbox' ? checked : value;
     setState({
@@ -317,7 +309,6 @@ const MintNFT = () => {
 
     if (entityInfo.publicKey) {
       let mintDeployHash;
-
       try {
         mintDeployHash = await mint(entityInfo.publicKey, creator, {
           title: state.inputs.name,
@@ -341,7 +332,8 @@ const MintNFT = () => {
           beneficiaryPercentage: beneficiaryPercentage
             ? beneficiaryPercentage
             : '',
-         // SDGsGoals: SDGsGoals,
+          sdgs_ids: SDGsGoals,
+          hasReceipt:false
         });
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
@@ -489,12 +481,18 @@ const MintNFT = () => {
 
   const setCampaignSelectedData = (allCampaigns, value) => {
     setCampaign(value?value:undefined);
+    let filteredCampaigns ;
     if(allCampaigns?.length){
-    let campaignPercentage = allCampaigns.filter((c) => c.id === value)[0]
-      .requested_royalty;
-    setCreatorPercentage(100 - campaignPercentage);
-    setBeneficiaryPercentage(campaignPercentage);
+    filteredCampaigns = allCampaigns.find((c) => c.id === value);
+    setCreatorPercentage(100 - filteredCampaigns.requested_royalty);
+    setBeneficiaryPercentage(filteredCampaigns.requested_royalty);
     }
+    filteredCampaigns &&
+      setSDGsGoalsData(
+        SDGsData.filter((sdg) =>
+          filteredCampaigns?.sdgs_ids?.split(",").includes(sdg.value.toString())
+        )
+      );
   };
 
   const checkURLValidation = (value) => {
@@ -733,7 +731,7 @@ const MintNFT = () => {
                         </Row>
                       </Col>
                     </Row>
-                    <Row className='form-group'>
+                  {SDGsGoalsData.length>0&&  <Row className='form-group'>
                       <Col>
                         <SDGsMultiSelect
                           data={SDGsGoalsData}
@@ -742,7 +740,7 @@ const MintNFT = () => {
                           }}
                         />
                       </Col>
-                    </Row>
+                    </Row>}
                     <Row className='form-group'>
                       <Col>
                         <Form.Check

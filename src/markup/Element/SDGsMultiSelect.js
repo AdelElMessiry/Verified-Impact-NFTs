@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Select, { components } from 'react-select';
 
 const { Option } = components;
 
-const SDGsMultiSelect = ({ data, SDGsChanged }) => {
+const SDGsMultiSelect = ({ data, SDGsChanged,defaultValues }) => {
   const IconOption = (props) => {
     return (
       <Option {...props}>
@@ -40,8 +40,8 @@ const SDGsMultiSelect = ({ data, SDGsChanged }) => {
   };
 
   return (
-    <Select
-      defaultValue={data[0]}
+    <Select 
+      defaultValue={(defaultValues!==""&&data.length>0)?data.filter((sdg)=>(defaultValues?.split(",")?.includes(sdg.value.toString()))):undefined}
       options={data}
       components={{ Option: IconOption }}
       isMulti
@@ -50,7 +50,7 @@ const SDGsMultiSelect = ({ data, SDGsChanged }) => {
       }}
       styles={customStyles}
       placeholder="Select your SDGs..."
-    />
+    /> 
   );
 };
 

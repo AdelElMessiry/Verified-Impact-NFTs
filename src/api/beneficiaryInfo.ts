@@ -51,7 +51,7 @@ export async function getBeneficiariesList() {
               ? parsedBeneficiary.address.slice(13).replace(')', '')
               : parsedBeneficiary.address.slice(10).replace(')', '')
             : parsedBeneficiary.address;
-            parsedBeneficiary["sdgs"]=["19"];
+            //parsedBeneficiary["sdgs"]=["19"];
         _beneficiariesList.push(parsedBeneficiary);
       })
       .catch((err) => {
