@@ -188,7 +188,6 @@ const MintNFT = () => {
         filteredCampaigns[0]?.sdgs_ids?.split(",").includes(value)
         )
       );
-      debugger;
   }, [
     campaignsList,
     campaigns,
@@ -310,7 +309,6 @@ const MintNFT = () => {
 
     if (entityInfo.publicKey) {
       let mintDeployHash;
-debugger;
       try {
         mintDeployHash = await mint(entityInfo.publicKey, creator, {
           title: state.inputs.name,
@@ -482,7 +480,6 @@ debugger;
   }
 
   const setCampaignSelectedData = (allCampaigns, value) => {
-    debugger;
     setCampaign(value?value:undefined);
     let filteredCampaigns ;
     if(allCampaigns?.length){
