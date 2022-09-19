@@ -260,14 +260,14 @@ const NFTCard = ({
           </div>
         </div>
       </div>
-      <div className='mt-3 px-2'>
+      {item?.sdgs_ids&&  <div className='mt-3 px-2'>
         <a href='https://sdgs.un.org/goals' target='_blank'>
         <img
           src={unitedNation}
           style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
         /></a>
         :{' '}
-        {SDGsData?.filter(({value})=>(item?.sdgs_ids?.split(",").includes(value)))?.map((sdg,index)=>
+        {SDGsData?.filter(({value})=>(item?.sdgs_ids?.split(",").includes(value.toString())))?.map((sdg,index)=>
         <VINftsTooltip title={sdg.label} key={index}>
           <label>
             <img
@@ -277,7 +277,7 @@ const NFTCard = ({
           </label>
         </VINftsTooltip>
         )}
-      </div>
+      </div>}
     </>
   );
 };
