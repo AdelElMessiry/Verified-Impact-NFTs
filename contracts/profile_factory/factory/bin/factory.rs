@@ -149,7 +149,7 @@ fn create_profile() {
         is_approved = false;
         profile.insert(
             format!("{}_sdgs_ids", profile_type),
-            sdgs_ids.iter().map(ToString::to_string).collect(),
+            sdgs_ids.iter().map(ToString::to_string).collect::<Vec<String>>().join(","),
         );
         profile.insert(
             format!("{}_has_receipt", profile_type),
