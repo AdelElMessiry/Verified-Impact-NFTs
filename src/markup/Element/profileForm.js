@@ -87,12 +87,12 @@ const ProfileForm = ({
         isNFTImageURL: '',
         address: formData ? formData.address : '',
         ein: formData ? formData.ein : '',
-        donationReceipt: formData ? formData.hasReceipt : ''
+        donationReceipt: formData ? formData.has_receipt==="true"?true:false : false
       },
     });
     setUploadedProfileImage(formData ? formData?.imgUrl : null);
     setUploadedNFTImage(formData ? formData?.nftUrl : null);
-    setSDGsGoals(formData ? formData.sdgs_ids : []);
+    setSDGsGoals(formData ? formData?.sdgs_ids?.split(",") : []);
   }, [formData]);
 
   const handleChange = (e) => {
@@ -254,7 +254,7 @@ const ProfileForm = ({
           isProfileExist ? 'UPDATE' : 'ADD',
           formName === ProfileFormsEnum.BeneficiaryProfile?SDGsGoals:[],
           state.inputs.donationReceipt,
-          state.inputs.ein
+          state.inputs.donationReceipt?state.inputs.ein:""
         );
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
@@ -561,6 +561,7 @@ const ProfileForm = ({
                     value={state.inputs.donationReceipt}
                     name='donationReceipt'
                     className='float-left'
+                    checked={state.inputs.donationReceipt}
                   />
                 </Col>
               </Row>
@@ -596,6 +597,7 @@ const ProfileForm = ({
                   SDGsChanged={(selectedData) => {
                     handleSDGsChange(selectedData);
                   }}
+                  defaultValues={formData? formData?.sdgs_ids:""}
                 />
               </Col>
             </Row>

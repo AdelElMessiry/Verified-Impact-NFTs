@@ -115,7 +115,7 @@ const Dashboard = () => {
     const AllSDGsTagsName =
     nftsList &&
     nftsList.map((nft) =>(
-  {value: nft.sdgs_ids})).flatMap(({ value }) => value);
+  {value: nft.sdgs_ids.split(",")})).flatMap(({ value }) => value);
   const sdgOccur=AllSDGsTagsName&&AllSDGsTagsName.reduce((b,c)=>((b[b.findIndex(d=>d.value===c)]||b[b.push({value:c,nftNumber:0})-1]).nftNumber++,b),[]);
   const sdgsWithNFTCount =sdgOccur&& SDGsData.map(t1 => ({...t1, ...sdgOccur.find(t2 => t2.value === t1.value)}))
     sdgsWithNFTCount && setSDGsGoals(sdgsWithNFTCount.map((s)=>(s.nftNumber?{...s,["nftNumber"]:s.nftNumber}:{...s,["nftNumber"]:0})))

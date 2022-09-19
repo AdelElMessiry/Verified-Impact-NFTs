@@ -247,7 +247,7 @@ const CreatorNFTs = () => {
     const AllSDGsTagsName =
       filteredNFTs &&
       filteredNFTs.map((nft) =>(
-    {value: nft.sdgs_ids})).flatMap(({ value }) => value);
+    {value: nft.sdgs_ids?.split(",")})).flatMap(({ value }) => value);
     let sdgsTagsName = AllSDGsTagsName.filter(function(item, pos) {
       return AllSDGsTagsName.indexOf(item) == pos;
   })
@@ -464,7 +464,7 @@ const CreatorNFTs = () => {
       const filteredSDGsNFTs =
         allNFTs &&
         allNFTs.filter(({ sdgs_ids }) =>
-        ( sdgs_ids?.some(element => {
+        ( sdgs_ids?.split(",")?.some(element => {
           return selectedData.indexOf(element) !== -1;
         }))
         );

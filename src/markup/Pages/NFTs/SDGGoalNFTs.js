@@ -260,7 +260,7 @@ const SDGGoalNFTs = () => {
       filteredNFTs =
         nftsList &&
         nftsList.filter(
-          (nft) => nft.sdgs_ids?.includes(id)
+          (nft) => nft.sdgs_ids?.split(",").includes(id)
         );
     }
 

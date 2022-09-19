@@ -33,8 +33,24 @@ const AddEditCampaignForm = ({
     const firstBeneficiary = beneficiaries?.filter(
       ({ isApproved }) => isApproved === 'true'
     );
-    firstBeneficiary && setBeneficiary(firstBeneficiary[0]?.address);
-    firstBeneficiary && setSDGsGoalsData(SDGsData.filter(({value})=>(firstBeneficiary[0]?.sdgs_ids?.includes(value))));
+    firstBeneficiary &&
+      setBeneficiary(
+        beneficiaryAddress ? beneficiaryAddress : firstBeneficiary[0]?.address
+      );
+    firstBeneficiary &&
+      setSDGsGoalsData(
+        beneficiaryAddress
+          ? SDGsData.filter(({ value }) =>
+              beneficiaries
+                .find((b) => b.address === beneficiaryAddress)
+                ?.sdgs_ids?.split(',')
+                .includes(value.toString())
+            )
+          : SDGsData.filter(({ value }) =>
+          firstBeneficiary[0]?.sdgs_ids?.split(',')
+            .includes(value.toString())
+        )
+      );
   }, [beneficiaries]);
 
   React.useEffect(() => {
@@ -61,9 +77,17 @@ const AddEditCampaignForm = ({
   const handleChange = (e, isBeneficiary = false) => {
     if (isBeneficiary) {
       setBeneficiary(e.target.value);
-      let selectedBeneficiary = beneficiaries
-        .find(({ address }) => address === e.target.value);
-     setSDGsGoalsData(SDGsData.filter(({value})=>(selectedBeneficiary.sdgs_ids?.includes(value))));
+      let selectedBeneficiary = beneficiaries.find(
+        ({ address }) => address === e.target.value
+      );
+      setSDGsGoalsData(
+        SDGsData.filter(({ value }) =>
+          selectedBeneficiary.sdgs_ids?.split(',').includes(value.toString())
+        )
+      );
+      const n = SDGsData.filter(({ value }) =>
+        selectedBeneficiary.sdgs_ids?.split(',').includes(value.toString())
+      );
     } else {
       const { value, name, checked, type } = e.target;
       const { inputs } = state;
@@ -96,7 +120,7 @@ const AddEditCampaignForm = ({
         CLPublicKey.fromHex(entityInfo.publicKey),
         SDGsGoals,
         data ? 'UPDATE' : 'ADD',
-        data ? data.id : undefined,
+        data ? data.id : undefined
       );
       ReactGA.event({
         category: 'Success',
@@ -150,21 +174,21 @@ const AddEditCampaignForm = ({
   };
 
   return (
-    <div className='section-full content-inner shop-account'>
+    <div className="section-full content-inner shop-account">
       {/* <!-- Product --> */}
-      <div className='container'>
+      <div className="container">
         <div>
-          <div className=' m-auto m-b30'>
+          <div className=" m-auto m-b30">
             <Container>
               <Row>
                 {!isFromModal && (
                   <Col>
-                    <div className='required-field vinft-bg-gray'>
+                    <div className="required-field vinft-bg-gray">
                       {beneficiaries ? (
                         <select
-                          name='Beneficiary'
-                          placeholder='Beneficiary'
-                          className='form-control'
+                          name="Beneficiary"
+                          placeholder="Beneficiary"
+                          className="form-control"
                           onChange={(e) => handleChange(e, true)}
                           value={
                             beneficiary
@@ -185,64 +209,66 @@ const AddEditCampaignForm = ({
                         </select>
                       ) : (
                         <Spinner
-                          animation='border'
-                          variant='dark'
-                          className='my-1'
+                          animation="border"
+                          variant="dark"
+                          className="my-1"
                         />
                       )}
-                      <span className='text-danger required-field-symbol'>
+                      <span className="text-danger required-field-symbol">
                         *
                       </span>
                     </div>
                   </Col>
                 )}
                 <Col>
-                  <div className='required-field'>
+                  <div className="required-field">
                     <input
-                      type='text'
-                      placeholder='Name'
-                      name='name'
-                      className='form-control'
+                      type="text"
+                      placeholder="Name"
+                      name="name"
+                      className="form-control"
                       onChange={(e) => handleChange(e)}
                       value={state.inputs.name}
                     />{' '}
-                    <span className='text-danger required-field-symbol'>*</span>
+                    <span className="text-danger required-field-symbol">*</span>
                   </div>
                 </Col>
               </Row>
-              <Row className='mt-4'>
+              <Row className="mt-4">
                 <Col>
-                  <div className='required-field'>
+                  <div className="required-field">
                     <input
-                      type='number'
-                      placeholder='Requested Royalty'
-                      name='requestedRoyalty'
-                      className='form-control'
+                      type="number"
+                      placeholder="Requested Royalty"
+                      name="requestedRoyalty"
+                      className="form-control"
                       value={state.inputs.requestedRoyalty}
                       onChange={(e) => handleChange(e)}
                       min={0}
                     />{' '}
-                    <span className='text-danger required-field-symbol'>*</span>
+                    <span className="text-danger required-field-symbol">*</span>
                     {(state.inputs.requestedRoyalty < 0 ||
                       state.inputs.requestedRoyalty > 100) && (
-                      <span className='text-danger'>
+                      <span className="text-danger">
                         Requested Royalty value must be more than 0 and less
                         than 100
                       </span>
                     )}
-                    {(state.inputs.requestedRoyalty == 0 && state.inputs.requestedRoyalty != '')  && (
-                      <span className='text-danger'>
-                        Requested Royalty equal to 0 means your beneficiary will not have any proportion
-                      </span>
-                    )}
+                    {state.inputs.requestedRoyalty == 0 &&
+                      state.inputs.requestedRoyalty != '' && (
+                        <span className="text-danger">
+                          Requested Royalty equal to 0 means your beneficiary
+                          will not have any proportion
+                        </span>
+                      )}
                   </div>
                 </Col>
                 <Col>
                   <input
-                    type='text'
-                    placeholder='URL'
-                    name='campaignUrl'
-                    className='form-control'
+                    type="text"
+                    placeholder="URL"
+                    name="campaignUrl"
+                    className="form-control"
                     value={state.inputs.campaignUrl}
                     onChange={(e) => {
                       handleChange(e);
@@ -250,32 +276,39 @@ const AddEditCampaignForm = ({
                     }}
                   />
                   {showURLErrorMsg && (
-                    <span className='text-danger'>Please enter Valid URL</span>
+                    <span className="text-danger">Please enter Valid URL</span>
                   )}
                 </Col>
               </Row>
-              <Row className='mt-4'>
+             {SDGsGoalsData.length>0 && <Row className="mt-4">
                 <Col>
-                <SDGsMultiSelect data={SDGsGoalsData} SDGsChanged={(selectedData)=>{handleSDGsChange(selectedData)}}/>
+                  <SDGsMultiSelect
+                    data={SDGsGoalsData}
+                    SDGsChanged={(selectedData) => {
+                      handleSDGsChange(selectedData);
+                    }}
+                    defaultValues={(SDGsGoalsData.length>0&&data?.sdgs_ids!=="")?data?.sdgs_ids:""}
+                  />
                 </Col>
               </Row>
-              <Row className='mt-4'>
+}
+              <Row className="mt-4">
                 <Col>
                   <textarea
                     rows={4}
-                    name='description'
-                    placeholder='Description'
-                    className='form-control'
+                    name="description"
+                    placeholder="Description"
+                    className="form-control"
                     onChange={(e) => handleChange(e)}
                     value={state.inputs.description}
                   ></textarea>
                 </Col>
               </Row>
-              <Row className='mt-4'>
+              <Row className="mt-4">
                 <Col>
-                  <p className='form-submit'>
+                  <p className="form-submit">
                     <button
-                      className='btn btn-success'
+                      className="btn btn-success"
                       onClick={saveCampaign}
                       disabled={
                         state.inputs.name == '' ||
@@ -284,7 +317,7 @@ const AddEditCampaignForm = ({
                       }
                     >
                       {isButtonClicked ? (
-                        <Spinner animation='border' variant='light' />
+                        <Spinner animation="border" variant="light" />
                       ) : data ? (
                         'Update'
                       ) : (
