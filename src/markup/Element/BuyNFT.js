@@ -68,19 +68,19 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
             process.env.REACT_APP_NFT_TOKEN,
             '',
             '',
-            `Exciting news! [${data.title}] NFT of [${data.creatorName}] creator has been sold as a donation for [${data.campaignName}] campaign. [Click here  to buy #verified-impact-nfts and support more causes.] (${window.location.origin}/#/)  @vinfts @casper_network @devxdao `
+            `Exciting news! [${data.title}] #NFT of [${data.creatorName}] creator has been sold as a donation for [${data.campaignName}] campaign. [Click here  to buy #verified-impact-nfts and support more causes.] (${window.location.origin}/#/) @casper_network @devxdao `
           );
           let image = encodeURI(data.image);
           if (isValidHttpUrl(data.pureImageKey)) {
             await SendTweetWithImage(
               image,
-              `Exciting news! ${data.title} NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao `
+              `Exciting news! ${data.title} #NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes. @casper_network @devxdao `
             );
           } else {
             let image64 = 'https://gateway.ipfs.io/ipfs/' + data.pureImageKey;
             await SendTweetWithImage64(
               image64,
-              `Exciting news! ${data.title} NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao `
+              `Exciting news! ${data.title} #NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes. @casper_network @devxdao `
             );
           }
 
