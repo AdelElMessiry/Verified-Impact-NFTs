@@ -2,11 +2,16 @@ import React, { useRef } from 'react'
 import Modal from 'react-bootstrap/Modal';
 import ReactToPrint from 'react-to-print';
 import { useNFTState } from '../../contexts/NFTContext';
+import { setIsTokenHasReceipt } from '../../api/nftInfo';
+import { Spinner } from 'react-bootstrap';
+import { useAuth } from '../../contexts/AuthContext';
+import { CLPublicKey } from 'casper-js-sdk';
 
 export default function ReceiptModal({ show, handleCloseParent, data }) {
     const [showModal, setShowModal] = React.useState(show);
     const { beneficiaries } =  useNFTState()
     const [ beneficiaryData , setBeneficiaryData ] =  React.useState()  
+    console.log(data , " data  ")
     const [receiptData, setReceiptData] = React.useState(
         {
             inputs: {
@@ -17,7 +22,11 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
         }
     )
     const [confirm, setConfirm] = React.useState(false)
+    const [loading , setLoading] = React.useState(false)
     const componentRef = useRef();
+    let hasReceipt = data.hasReceipt == "true"
+    const [confirmGenerateReceipt , setConfirmGenerateReceipt] = React.useState(hasReceipt)
+    const { entityInfo } = useAuth();
     const handleChange = (e) => {
         const { value, name} = e.target;
         const { inputs } = receiptData;
@@ -35,6 +44,22 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
     const handelBeforePrint= ()=>{
             setConfirm(true);
             return Promise.resolve();
+    }
+    const extractNftReceipt = async()=>{
+        setConfirm(true);
+        setLoading(true);
+        try{
+            const changeReceiptStatus = await setIsTokenHasReceipt(
+                "true",
+                data.tokenId,
+                CLPublicKey.fromHex(entityInfo.publicKey)
+            )
+            setLoading(false);
+            setConfirmGenerateReceipt(true);
+        }catch(error){
+            setLoading(false)
+            console.log(error)
+        }
     }
   //getting beneficiary details
 
@@ -144,7 +169,7 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
                     <center>
                         <h3>Donation Information</h3>
                     </center>
-                    <div>Thank you for your donation with a value of  $250, made to the above-mentioned 501(c)(3) Non-Profit Organization.
+                    <div>Thank you for your donation with a value of  ${data.price}, made to the above-mentioned 501(c)(3) Non-Profit Organization.
                         <br /> Donation Description:<br />
                         I, the undersigned representative, declare (or certify, verify, or state) under penalty of perjury
                         under the laws of the United States of America that there were no goods or services provided as
@@ -180,21 +205,42 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
                         </div>
                     </div>
                 </div>
-                <ReactToPrint
-                    // onBeforeGetContent={() => setConfirm(true)}
-                    trigger={() => <button className='btn btn-success' 
+                {!confirmGenerateReceipt? (
+                    <button className='btn btn-success' 
                     disabled={
                         receiptData.inputs.donorName  == "" ||
                         receiptData.inputs.donorAddress  == "" ||
                         receiptData.inputs.repName  == "" 
                 }
-                    >Print this out!</button>}
-                    content={() => componentRef.current}
-                    onBeforeGetContent={() =>
-                        handelBeforePrint ()
+                onClick={()=>extractNftReceipt()}
+                    >
+                        {!loading ?
+                        ("Generate NFT Receipt"):
+                        (
+                            <Spinner animation="border" variant="light" />
+                          ) 
                         }
-                    
-                />
+                    </button>
+                ) : (
+                    <ReactToPrint
+                        // onBeforeGetContent={() => setConfirm(true)}
+                        trigger={() => <button className='btn btn-success'
+                            disabled={
+                                receiptData.inputs.donorName == "" ||
+                                receiptData.inputs.donorAddress == "" ||
+                                receiptData.inputs.repName == ""
+                            }
+                        >Print this out!</button>}
+                        content={() => componentRef.current}
+                        onBeforeGetContent={() =>
+                            handelBeforePrint()
+                        }
+                        onAfterPrint={()=>
+                            hasReceipt? handleClose():
+                            window.location.reload()
+                        }
+                    />
+                )}                
             </Modal.Body>
         </Modal>
     )
