@@ -5,7 +5,7 @@ import VINftsTooltip from './Tooltip';
 
 const SDGsStatsItem = ({ data }) => {
   return (
-    <Link to={`./SDGGoalNFTs?id=${data.value}`} className="dez-page text-white">
+    <Link to={`./SDGGoalNFTs?id=${data.value.toString()}`} className="dez-page text-white">
       <VINftsTooltip title={data.description}>
         <div className="sdgs-goals-card">
           <img
