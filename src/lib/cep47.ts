@@ -432,6 +432,7 @@ class CEP47Client {
       beneficiary,
       beneficiaryPercentage,
       sdgs_ids,
+      hasReceipt,
     } = metas;
 
     const runtimeArgs = RuntimeArgs.fromMap({
@@ -442,6 +443,7 @@ class CEP47Client {
       image: CLValueBuilder.string(image),
       price: CLValueBuilder.string(price),
       isForSale: CLValueBuilder.bool(isForSale),
+      hasReceipt: CLValueBuilder.bool(hasReceipt),
       currency: CLValueBuilder.string(currency),
       campaign: CLValueBuilder.string(campaign),
       creator: CLValueBuilder.key(
