@@ -335,6 +335,7 @@ debugger;
             ? beneficiaryPercentage
             : '',
           sdgs_ids: SDGsGoals,
+          hasReceipt:false
         });
       } catch (err) {
         if (err.message.includes('User Cancelled')) {
