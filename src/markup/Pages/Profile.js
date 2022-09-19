@@ -74,6 +74,7 @@ const Profile = () => {
                 medium: '',
                 telegram: '',
                 mail: '',
+                sdgs_ids:_beneficiaryProfile.sdgs_ids.split(",")
               };
               setBeneficiaryProfile(beneficiary);
               setNoBeneficiaryProfilesForThisUser(false);
