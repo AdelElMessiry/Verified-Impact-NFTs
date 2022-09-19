@@ -111,7 +111,7 @@ const NFTCard = ({
               link={`<iframe src='https://dev.verifiedimpactnfts.com/#/nft-card?id=${item.tokenId}'></iframe>`}
             />
           </li>
-        {(isMyNft &&beneficiaryData?.donationReceipt) &&(
+        {(isMyNft &&beneficiaryData?.has_receipt==="true") &&(
           <VINftsTooltip
           title={'Generate receipt'}
           >
@@ -267,7 +267,7 @@ const NFTCard = ({
           style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
         /></a>
         :{' '}
-        {SDGsData?.filter(({value})=>(item?.sdgs_ids?.includes(value)))?.map((sdg,index)=>
+        {SDGsData?.filter(({value})=>(item?.sdgs_ids?.split(",").includes(value)))?.map((sdg,index)=>
         <VINftsTooltip title={sdg.label} key={index}>
           <label>
             <img
