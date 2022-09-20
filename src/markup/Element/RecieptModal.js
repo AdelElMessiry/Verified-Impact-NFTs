@@ -1,17 +1,17 @@
 import React, { useRef } from 'react'
 import Modal from 'react-bootstrap/Modal';
 import ReactToPrint from 'react-to-print';
+import { CLPublicKey } from 'casper-js-sdk';
 import { useNFTState } from '../../contexts/NFTContext';
 import { setIsTokenHasReceipt } from '../../api/nftInfo';
 import { Spinner } from 'react-bootstrap';
 import { useAuth } from '../../contexts/AuthContext';
-import { CLPublicKey } from 'casper-js-sdk';
+
 
 export default function ReceiptModal({ show, handleCloseParent, data }) {
     const [showModal, setShowModal] = React.useState(show);
     const { beneficiaries } =  useNFTState()
     const [ beneficiaryData , setBeneficiaryData ] =  React.useState()  
-    console.log(data , " data  ")
     const [receiptData, setReceiptData] = React.useState(
         {
             inputs: {
@@ -50,7 +50,7 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
         setLoading(true);
         try{
             const changeReceiptStatus = await setIsTokenHasReceipt(
-                "true",
+                true,
                 data.tokenId,
                 CLPublicKey.fromHex(entityInfo.publicKey)
             )
