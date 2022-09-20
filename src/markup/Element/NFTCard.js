@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import QRCode from 'react-qr-code';
-
+import { faStoreAlt, faStoreAltSlash,faReceipt, faPrint } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import VINftsTooltip from './Tooltip';
 import BuyNFTModal from './BuyNFT';
 import ListForSaleNFTModal from './ListForSaleNFT';
@@ -9,8 +10,6 @@ import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
 import CopyCode from './copyCode';
 import soldIcon from '../../images/icon/sold.png';
 import unitedNation from '../../images/icon/unitedNation.png';
-import { faStoreAlt, faStoreAltSlash,faReceipt, faPrint } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SDGsData } from '../../data/SDGsGoals';
 import ReceiptModal from './RecieptModal';
 import { useNFTState } from '../../contexts/NFTContext';
