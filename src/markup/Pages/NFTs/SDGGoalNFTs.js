@@ -146,7 +146,7 @@ const SDGGoalNFTs = () => {
   //getting beneficiary details
   const getSDGsData = React.useCallback(async () => {
     const setSelectedSDG =
-      SDGsData && id && SDGsData.find(({ value }) => id === value);
+      SDGsData && id && SDGsData.find(({ value }) => id === value.toString());
     setSelectedSDG && setselectedSDGData(setSelectedSDG);
   }, [id, SDGsData]);
 
