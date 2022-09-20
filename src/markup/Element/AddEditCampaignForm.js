@@ -25,7 +25,7 @@ const AddEditCampaignForm = ({
   const [beneficiary, setBeneficiary] = React.useState();
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
-  const [SDGsGoals, setSDGsGoals] = React.useState([]);
+  const [SDGsGoals, setSDGsGoals] = React.useState(data ? data.sdgs_ids?.split(',') : []);
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
 
   //getting beneficiary details
