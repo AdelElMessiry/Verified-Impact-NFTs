@@ -460,7 +460,9 @@ class CEP47Client {
         `contract-${PROFILE_CONTRACT_HASH!}`
       ),
       sdgs_ids: CLValueBuilder.list(
-        sdgs_ids.map((id: number) => CLValueBuilder.u256(id))
+        sdgs_ids?.length
+          ? sdgs_ids.map((id: number) => CLValueBuilder.u256(id))
+          : [CLValueBuilder.u256(0)]
       ),
     });
 
@@ -686,7 +688,9 @@ class CEP47Client {
         `contract-${PROFILE_CONTRACT_HASH!}`
       ),
       sdgs_ids: CLValueBuilder.list(
-        sdgs_ids.map((id) => CLValueBuilder.u256(id))
+        sdgs_ids?.length
+          ? sdgs_ids.map((id) => CLValueBuilder.u256(id))
+          : [CLValueBuilder.u256(0)]
       ),
     });
 
