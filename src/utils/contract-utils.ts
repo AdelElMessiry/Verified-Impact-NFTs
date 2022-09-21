@@ -260,7 +260,9 @@ export const transferFees = async (buyer: string, tokenId: string) => {
 };
 
 export const getNFTImage = async (tokenMetaUri: string) => {
-  const resp = await fetch('https://vinfts.mypinata.cloud/' + tokenMetaUri);
+  const resp = await fetch(
+    'https://vinfts.mypinata.cloud/ipfs/' + tokenMetaUri
+  );
   const imgString = await resp.text();
 
   return imgString;
