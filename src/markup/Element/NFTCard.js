@@ -269,7 +269,7 @@ const NFTCard = ({
           </div>
         </div>
       </div>
-      {item?.sdgs_ids&&  <div className='mt-3 px-2'>
+      {item?.sdgs_ids?.length>0&&item?.sdgs_ids!=="0"&&  <div className='mt-3 px-2'>
         <a href='https://sdgs.un.org/goals' target='_blank'>
         <img
           src={unitedNation}
