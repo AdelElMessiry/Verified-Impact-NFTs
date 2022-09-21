@@ -127,7 +127,7 @@ export const SDGsData = [
   },
   {
     value: 19,
-    label: 'SDGs Goal 19: Other',
+    label: '19: Other',
     icon: 'other.png',
     image: 'E_SDG_Icons-19.jpg',
     description: 'Other Causes',
