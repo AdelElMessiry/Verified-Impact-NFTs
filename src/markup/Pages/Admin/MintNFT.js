@@ -306,11 +306,10 @@ const MintNFT = () => {
       }
       VIToast.success('Image uploaded to cloud CDN successfully !');
     }
-    let fineHref = imageFile.data.image.pathname;
-    fineHref = fineHref.slice(1);
+    let fineHref = imageFile?.data?.image?.pathname?.slice(2);
     //https://dweb.link/ipfs/
-    imageFile = 'https://vinfts.mypinata.cloud' + fineHref;
-    mintNewNFT(imageFile, isAnotherMint);
+   // imageFile = 'https://vinfts.mypinata.cloud/ipfs' + fineHref;
+    mintNewNFT(fineHref, isAnotherMint);
   }
 
   async function mintNewNFT(imgURL, isAnotherMint) {
@@ -434,7 +433,7 @@ const MintNFT = () => {
           '',
           `Great news! [${state.inputs.name}] #NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
         );
-        let image = encodeURI(imgURL);
+        let image = encodeURI('https://vinfts.mypinata.cloud/ipfs/'+imgURL);
         await SendTweetWithImage(
           image,
           `Great news! "${state.inputs.name}" #NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
