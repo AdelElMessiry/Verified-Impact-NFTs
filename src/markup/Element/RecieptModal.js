@@ -93,8 +93,8 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
                         <h3 className='align-self-center'>501(c)(3) ORGANIZATION DONATION RECEIPT</h3>
                     </center>
 
-                    <div className='row form-group mr-2'>
-                        <div>Date: </div>
+                    <div className='row form-group'>
+                        <div className='mr-2'>Date: </div>
                         <h6>
                             {new Date().toLocaleString() + ""}
                         </h6>
@@ -130,7 +130,9 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
                         <h3>Donor Information</h3>
                     </center>
                     <div className='row form-group'>
-                        <div className=' mr-2'>Donor's Name: </div>
+                        <div className=' mr-2 justify-content-center align-self-center'>
+                            Donor's Name:
+                        </div>
                         <div>
                             {!confirm ? (
                                 <input
@@ -148,7 +150,7 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
                         </div>
                     </div>
                     <div className='row form-group'>
-                        <div className=' mr-2'>Donor's Address: </div>
+                        <div className=' mr-2 justify-content-center align-self-center'>Donor's Address: </div>
                         <div>
                             {!confirm ? (
                                 <input
@@ -178,8 +180,8 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
                         standards and regulations of the Internal Revenue Service (IRS).
                     </div>
 
-                    <div className='row form-group mr-2 mt-4'>
-                        <h6>Representative’s Name: </h6>
+                    <div className='row form-group mr-2 mt-4 '>
+                        <h6 className=' justify-content-center align-self-center mt-1'>Representative’s Name: </h6>
                         <div>
                             {!confirm ? (
                                 <input
