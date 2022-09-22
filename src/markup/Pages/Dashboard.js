@@ -35,10 +35,6 @@ const breakPoints = [
 const options = {
   buttons: { showDownloadButton: false },
 };
-// Masonry section
-const masonryOptions = {
-  transitionDuration: 0,
-};
 
 const imagesLoadedOptions = { background: '.my-bg-image-el' };
 
@@ -344,13 +340,7 @@ const Dashboard = () => {
                             id='masonry'
                             className='dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1'
                           >
-                            <Masonry
-                              className={'my-gallery-class'} // default ''
-                              options={masonryOptions} // default {}
-                              disableImagesLoaded={false} // default false
-                              updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
-                              imagesLoadedOptions={imagesLoadedOptions} // default {}
-                            >
+                           
                               <Carousel
                                 itemsToShow={4}
                                 breakPoints={breakPoints}
@@ -418,7 +408,6 @@ const Dashboard = () => {
                                   </React.Fragment>
                                 ))}
                               </Carousel>
-                            </Masonry>
                           </ul>
                         </div>
                       </SRLWrapper>
