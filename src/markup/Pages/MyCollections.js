@@ -1,7 +1,6 @@
 import React from 'react';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper } from 'simple-react-lightbox';
-import Masonry from 'react-masonry-component';
 import { Row, Col, Spinner } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Lightbox from 'react-image-lightbox';
@@ -32,10 +31,13 @@ import plusIcon from './../../images/icon/plus.png';
 import editIcon from './../../images/icon/edit.png';
 import soldIcon from '../../images/icon/sold.png';
 import mintIcon from '../../images/icon/Mint.png';
+import unitedNation from '../../images/icon/unitedNation.png';
+
 import ReactGA from 'react-ga';
 import { faStoreAlt, faStoreAltSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CopyCode from '../Element/copyCode';
+import { SDGsData } from '../../data/SDGsGoals';
 // Masonry section
 const breakPoints = [
   { width: 1, itemsToShow: 1 },
@@ -48,13 +50,9 @@ const breakPoints = [
 const options = {
   buttons: { showDownloadButton: false },
 };
-// Masonry section
-const masonryOptions = {
-  transitionDuration: 0,
-};
+
 
 const imagesLoadedOptions = { background: '.my-bg-image-el' };
-// Masonry section end
 
 //handling filtration markup
 const TagLi = ({ name, handleSetTag, tagActive, type }) => {
@@ -275,6 +273,35 @@ const MyCollections = () => {
           link={`<iframe src='https://dev.verifiedimpactnfts.com/#/nft-card?id=${nft.tokenId}'></iframe>`}
         />
       </p>
+      <p>
+      {nft?.sdgs_ids?.length > 0 && nft?.sdgs_ids !== '0' && (
+        <div className="mt-3 px-2">
+          <a href="https://sdgs.un.org/goals" target="_blank">
+            <img
+              src={unitedNation}
+              style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
+            />
+          </a>
+          :{' '}
+          {SDGsData?.filter(({ value }) =>
+            nft?.sdgs_ids?.split(',').includes(value.toString())
+          )?.map((sdg, index) => (
+            <VINftsTooltip title={sdg.label} key={index}>
+              <label>
+                <img
+                  src={process.env.PUBLIC_URL + 'images/sdgsIcons/' + sdg.icon}
+                  style={{
+                    width: 25,
+                    pointerEvents: 'none',
+                    cursor: 'default',
+                  }}
+                />
+              </label>
+            </VINftsTooltip>
+          ))}
+        </div>
+      )}
+    </p>
     </div>
   );
 
@@ -689,13 +716,6 @@ const MyCollections = () => {
                                 id='masonry'
                                 className='dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1'
                               >
-                                <Masonry
-                                  className={'my-gallery-class'} // default ''
-                                  options={masonryOptions} // default {}
-                                  disableImagesLoaded={false} // default false
-                                  updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
-                                  imagesLoadedOptions={imagesLoadedOptions} // default {}
-                                >
                                   <Carousel
                                     itemsToShow={4}
                                     breakPoints={breakPoints}
@@ -766,7 +786,6 @@ const MyCollections = () => {
                                       </React.Fragment>
                                     ))}
                                   </Carousel>
-                                </Masonry>
                               </ul>
                             </div>
                           </SRLWrapper>

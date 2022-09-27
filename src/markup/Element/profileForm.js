@@ -13,6 +13,7 @@ import { uploadImg } from '../../api/imageCDN';
 import { SocialLinks } from 'social-links';
 import SDGsMultiSelect from './SDGsMultiSelect';
 import { SDGsData } from '../../data/SDGsGoals';
+import { useNFTState } from '../../contexts/NFTContext';
 const ProfileForm = ({
   formName,
   isProfileExist,
@@ -20,6 +21,8 @@ const ProfileForm = ({
   isSignUpBeneficiary = false,
 }) => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
+  const { campaigns } = useNFTState();
+
   //setting initial values of controls
   const [state, setState] = useState({
     inputs: {
@@ -65,7 +68,8 @@ const ProfileForm = ({
     facebook: true,
     telegram: true,
   });
-  const [SDGsGoals, setSDGsGoals] = React.useState([]);
+  const [SDGsGoals, setSDGsGoals] = React.useState(SDGsData[18]);
+  const [mandatorySDGs, setMandatorySDGs] = React.useState(SDGsData[18].value);
 
   React.useEffect(() => {
     setState({
@@ -93,6 +97,17 @@ const ProfileForm = ({
     setUploadedProfileImage(formData ? formData?.imgUrl : null);
     setUploadedNFTImage(formData ? formData?.nftUrl : null);
     setSDGsGoals(formData ? formData?.sdgs_ids?.split(",") : []);
+   if (formName==ProfileFormsEnum.BeneficiaryProfile&&formData){
+    const beneficiaryCampaigns=campaigns.filter(({wallet_address})=>wallet_address==formData.address);
+  if (beneficiaryCampaigns&& beneficiaryCampaigns.length>0){
+  const sdgsCampaigns=  beneficiaryCampaigns.map(({sdgs_ids})=>sdgs_ids?.split(",")).flat();
+  const beneficiaryArray=  formData?.sdgs_ids?.split(',')
+    var savedSDGs = sdgsCampaigns.filter(function(obj) { 
+      return beneficiaryArray.indexOf(obj) > -1; 
+    });
+    setMandatorySDGs(savedSDGs);
+  }
+   }
   }, [formData]);
 
   const handleChange = (e) => {
@@ -598,6 +613,8 @@ const ProfileForm = ({
                     handleSDGsChange(selectedData);
                   }}
                   defaultValues={formData? formData?.sdgs_ids:""}
+                  mandatorySDGs={mandatorySDGs}
+                  isAddBeneficiary={formData?false:true}
                 />
               </Col>
             </Row>
@@ -741,7 +758,8 @@ const ProfileForm = ({
               isSaveButtonClicked || 
               !uploadedProfileImageURL || 
               !uploadedNFTImageURL ||
-              (state.inputs.donationReceipt &&  state.inputs.ein == "")
+              (state.inputs.donationReceipt &&  state.inputs.ein == "")||
+              (formName === ProfileFormsEnum.BeneficiaryProfile&&SDGsGoals?.length<=0||SDGsGoals==undefined)
             }
             onClick={(e) => {
               handleSave(e);
