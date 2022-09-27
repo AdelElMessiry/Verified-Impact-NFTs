@@ -1,13 +1,30 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Select, { components } from 'react-select';
+import { toast as VIToast } from 'react-toastify';
 
 const { Option } = components;
 
-const SDGsMultiSelect = ({ data, SDGsChanged,defaultValues,isClear=false }) => {
+const SDGsMultiSelect = ({
+  data,
+  SDGsChanged,
+  defaultValues,
+  isClear = false,
+  mandatorySDGs = [],
+  isAddBeneficiary=false
+}) => {
   const selectInputRef = useRef();
-useEffect(()=>{
- isClear&& selectInputRef.current.clearValue();
-},[isClear])
+  const [selectedOptions, setSelectedOptions] = useState();
+  useEffect(() => {
+    let defaults=defaultValues !== '' && defaultValues !== undefined &&data.length > 0
+    ? data.filter((sdg) =>
+        defaultValues?.split(',')?.includes(sdg.value.toString())
+      )
+    : isAddBeneficiary?data[18]:[]
+    defaults&& setSelectedOptions(defaults);
+  }, [data]);
+  useEffect(() => {
+    isClear && selectInputRef.current.clearValue();
+  }, [isClear]);
 
   const IconOption = (props) => {
     return (
@@ -16,7 +33,7 @@ useEffect(()=>{
           src={process.env.PUBLIC_URL + 'images/sdgsIcons/' + props.data.icon}
           style={{ width: 25 }}
         />{' '}
-         {props.data.label}
+        {props.data.label}
       </Option>
     );
   };
@@ -39,24 +56,51 @@ useEffect(()=>{
     }),
   };
 
-  const handleSDGsChange = (data) => {
-    let SDGsValues = data.map(d => d.value);
+  const handleSDGsChange = (data, ActionTypes) => {
+    if (mandatorySDGs &&mandatorySDGs.length>0 && ActionTypes.action == 'remove-value') {
+      var savedSDGs = mandatorySDGs.includes(
+        ActionTypes.removedValue.value.toString()
+      );
+    }
+    let finalData = [];
+    if (savedSDGs) {
+      VIToast.warning(
+        `You can't remove ${ActionTypes.removedValue.label} option becuase there is saved data associated to it`
+      );
+      setSelectedOptions([...data, ActionTypes.removedValue]);
+      finalData = [...data, ActionTypes.removedValue];
+    } else {
+      setSelectedOptions(data);
+      finalData = [...data];
+    }
+    let SDGsValues = finalData.map((d) => d.value);
     SDGsChanged(SDGsValues);
   };
 
   return (
-    <Select 
-      defaultValue={(defaultValues!==""&&data.length>0)?data.filter((sdg)=>(defaultValues?.split(",")?.includes(sdg.value.toString()))):undefined}
-      options={data}
-      components={{ Option: IconOption }}
-      isMulti
-      onChange={(v) => {
-        handleSDGsChange(v);
-      }}
-      styles={customStyles}
-      placeholder="Select your SDGs..."
-      ref={selectInputRef}
-    /> 
+    <>
+      <Select
+        defaultValue={
+          defaultValues !== '' && data.length > 0
+            ? data.filter((sdg) =>
+                defaultValues?.split(',')?.includes(sdg.value.toString())
+              )
+            : data[18]
+        }
+        options={data}
+        components={{ Option: IconOption }}
+        isMulti
+        onChange={(v, ActionTypes) => {
+          handleSDGsChange(v, ActionTypes);
+        }}
+        styles={customStyles}
+        placeholder="Select your SDGs..."
+        ref={selectInputRef}
+        isClearable={false}
+        value={selectedOptions}
+      />
+     {(selectedOptions?.length<0||selectedOptions==undefined)&&<span className="text-danger">Required</span>} 
+    </>
   );
 };
 

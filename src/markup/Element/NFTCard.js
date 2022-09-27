@@ -9,10 +9,11 @@ import ListForSaleNFTModal from './ListForSaleNFT';
 import NFTTwitterShare from './TwitterShare/NFTTwitterShare';
 import CopyCode from './copyCode';
 import soldIcon from '../../images/icon/sold.png';
-import unitedNation from '../../images/icon/unitedNation.png';
 import { SDGsData } from '../../data/SDGsGoals';
 import ReceiptModal from './RecieptModal';
 import { useNFTState } from '../../contexts/NFTContext';
+
+import unitedNation from '../../images/icon/unitedNation.png';
 //NFT Card component
 const NFTCard = ({
   index,

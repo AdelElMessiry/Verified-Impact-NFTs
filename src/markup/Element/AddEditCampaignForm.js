@@ -20,13 +20,16 @@ const AddEditCampaignForm = ({
   isFromModal = false,
   beneficiaryAddress = undefined,
 }) => {
-  const { beneficiaries } = useNFTState();
+  const { beneficiaries,nfts } = useNFTState();
   const { entityInfo } = useAuth();
   const [beneficiary, setBeneficiary] = React.useState();
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
-  const [SDGsGoals, setSDGsGoals] = React.useState(data ? data.sdgs_ids?.split(',') : []);
+  const [SDGsGoals, setSDGsGoals] = React.useState(
+    data ? data.sdgs_ids?.split(',') : []
+  );
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
+  const [mandatorySDGs, setMandatorySDGs] = React.useState();
 
   //getting beneficiary details
   const selectedBeneficiary = React.useCallback(async () => {
@@ -47,15 +50,34 @@ const AddEditCampaignForm = ({
                 .includes(value.toString())
             )
           : SDGsData.filter(({ value }) =>
-          firstBeneficiary[0]?.sdgs_ids?.split(',')
-            .includes(value.toString())
-        )
+              firstBeneficiary[0]?.sdgs_ids
+                ?.split(',')
+                .includes(value.toString())
+            )
       );
   }, [beneficiaries]);
 
   React.useEffect(() => {
     !beneficiary && selectedBeneficiary();
   }, [beneficiary, selectedBeneficiary]);
+
+  //getting beneficiary details
+  const getSavedSDGs = React.useCallback(async () => {
+    const selectedNFTs=data&&nfts&&nfts.filter(({campaign})=>campaign==data.id);
+    if (selectedNFTs&& selectedNFTs.length>0){
+      const sdgsNFTs=  selectedNFTs.map(({sdgs_ids})=>sdgs_ids?.split(","))?.flat();
+      const campaignArray=  data?.sdgs_ids?.split(',')
+        var savedSDGs = sdgsNFTs.filter(function(obj) { 
+          return campaignArray.indexOf(obj) > -1; 
+        });
+        setMandatorySDGs(savedSDGs);
+      }
+  }, [data,nfts]);
+
+  React.useEffect(() => {
+    !mandatorySDGs &&data&& getSavedSDGs();
+  }, [mandatorySDGs,getSavedSDGs]);
+
   //setting initial values of controls
   const [state, setState] = React.useState({
     inputs: {
@@ -84,9 +106,6 @@ const AddEditCampaignForm = ({
         SDGsData.filter(({ value }) =>
           selectedBeneficiary.sdgs_ids?.split(',').includes(value.toString())
         )
-      );
-      const n = SDGsData.filter(({ value }) =>
-        selectedBeneficiary.sdgs_ids?.split(',').includes(value.toString())
       );
     } else {
       const { value, name, checked, type } = e.target;
@@ -280,18 +299,24 @@ const AddEditCampaignForm = ({
                   )}
                 </Col>
               </Row>
-             {SDGsGoalsData.length>0 && <Row className="mt-4">
-                <Col>
-                  <SDGsMultiSelect
-                    data={SDGsGoalsData}
-                    SDGsChanged={(selectedData) => {
-                      handleSDGsChange(selectedData);
-                    }}
-                    defaultValues={(SDGsGoalsData.length>0&&data?.sdgs_ids!=="")?data?.sdgs_ids:""}
-                  />
-                </Col>
-              </Row>
-}
+              {SDGsGoalsData.length > 0 && (
+                <Row className="mt-4">
+                  <Col>
+                    <SDGsMultiSelect
+                      data={SDGsGoalsData}
+                      SDGsChanged={(selectedData) => {
+                        handleSDGsChange(selectedData);
+                      }}
+                      defaultValues={
+                        SDGsGoalsData.length > 0 && data?.sdgs_ids !== ''
+                          ? data?.sdgs_ids
+                          : ''
+                      }
+                      mandatorySDGs={mandatorySDGs}
+                    />
+                  </Col>
+                </Row>
+              )}
               <Row className="mt-4">
                 <Col>
                   <textarea
@@ -313,7 +338,8 @@ const AddEditCampaignForm = ({
                       disabled={
                         state.inputs.name == '' ||
                         state.inputs.requestedRoyalty < 0 ||
-                        state.inputs.requestedRoyalty > 100
+                        state.inputs.requestedRoyalty > 100||
+                        (SDGsGoalsData.length>0&& SDGsGoals.length<=0)
                       }
                     >
                       {isButtonClicked ? (
