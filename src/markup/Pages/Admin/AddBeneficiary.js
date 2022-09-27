@@ -26,7 +26,7 @@ const AddBeneficiary = () => {
     name: '',
     description: '',
     address: '',
-    SDGsGoals:[]
+    SDGsGoals:SDGsData[18]
   });
   
   React.useEffect(() => {
@@ -169,7 +169,7 @@ const AddBeneficiary = () => {
                       </Row>
                       <Row className='mt-4'>
                         <Col>
-                        <SDGsMultiSelect data={SDGsData} SDGsChanged={(selectedData)=>{handleSDGsChange(selectedData)}}/>
+                        <SDGsMultiSelect data={SDGsData} SDGsChanged={(selectedData)=>{handleSDGsChange(selectedData)}} isAddBeneficiary={true}/>
                         </Col>
                       </Row>
                       <Row className='mt-4'>
@@ -198,7 +198,7 @@ const AddBeneficiary = () => {
                             disabled={
                               beneficiaryInputs.name == '' ||
                               beneficiaryInputs.address == '' ||
-                              isButtonClicked
+                              isButtonClicked||beneficiaryInputs.SDGsGoals.length<=0
                             }
                           >
                             {isButtonClicked ? (

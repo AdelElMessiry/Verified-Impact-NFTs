@@ -69,12 +69,7 @@ const Dashboard = () => {
     //   // '0127271ea03f8cb24e0e3100d18e4d29fc860b35a2c9eb86ae4cca280a8fc40e1f'
     //   ();
     // console.log(list);
-    const nftsList =
-      nfts &&
-      nfts.filter(
-        (nft) =>
-          nft.isForSale === 'true'
-      );
+    const nftsList = nfts && nfts.filter((nft) => nft.isForSale === 'true');
 
     nftsList && setAllNfts(nftsList);
     nfts && setSelectedNFT(nftsList);
@@ -104,12 +99,36 @@ const Dashboard = () => {
     nftBasedCampaigns && setDisplayedCampaigns(nftBasedCampaigns);
    
     const AllSDGsTagsName =
-    nfts &&
-    nfts.map((nft) =>(
-  {value: nft.sdgs_ids?.split(",")})).flatMap(({ value }) => value);
-  const sdgOccur=AllSDGsTagsName&&AllSDGsTagsName.reduce((b,c)=>((b[b.findIndex(d=>d.value===c)]||b[b.push({value:c,nftNumber:0})-1]).nftNumber++,b),[]);
-  const sdgsWithNFTCount =sdgOccur&& SDGsData.map(t1 => ({...t1, ...sdgOccur.find(t2 => t2.value?.toString() === t1.value?.toString())}))
-    sdgsWithNFTCount && setSDGsGoals(sdgsWithNFTCount.map((s)=>(s.nftNumber?{...s,["nftNumber"]:s.nftNumber}:{...s,["nftNumber"]:0})))
+      nfts &&
+      nfts.filter((nft)=>nft.hasOwnProperty('sdgs_ids'))
+        .map((nft) => (({ value: nft.sdgs_ids?.split(',') })))
+        .flatMap(({ value }) => (value));
+    const sdgOccur =
+      AllSDGsTagsName &&
+      AllSDGsTagsName.reduce(
+        (b, c) => (
+          (
+            b[b.findIndex((d) => d.value === c)] ||
+            b[b.push({ value: c, nftNumber: 0 }) - 1]
+          ).nftNumber++,
+          b
+        ),
+        []
+      );
+    const sdgsWithNFTCount =
+      sdgOccur &&
+      SDGsData.map((t1) => ({
+        ...t1,
+        ...sdgOccur.find((t2) => t2.value?.toString() === t1.value?.toString()),
+      }));
+    sdgsWithNFTCount &&
+      setSDGsGoals(
+        sdgsWithNFTCount.map((s) =>
+          s.nftNumber
+            ? { ...s, ['nftNumber']: s.nftNumber }
+            : { ...s, ['nftNumber']: 0 }
+        )
+      );
   }, [nfts]);
 
   //getting list of NFTs
@@ -117,12 +136,12 @@ const Dashboard = () => {
       ReactGA.pageview(window.location.pathname +"/");
     getNftsList();
   }, [getNftsList]);
-  React.useEffect(()=>{
+  React.useEffect(() => {
     setBeneficiariesLength(beneficiaryCount);
     setCampaignsLength(campaignsCount);
     setCreatorsLength(creatorsCount);
     setCollectionLength(collectionsCount);
-  },[beneficiaryCount, campaignsCount, collectionsCount, creatorsCount])
+  }, [beneficiaryCount, campaignsCount, collectionsCount, creatorsCount]);
   const setCaptions = (data) => {
     const captionsCamp = [];
     data &&
@@ -134,13 +153,15 @@ const Dashboard = () => {
   const IconImage = ({ nft }) => {
     return (
       <>
-      {nft.isForSale === 'true' &&  <i
-          className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link'
-          onClick={() => {
-            setSelectedNFT(nft);
-            setShowBuyModal(true);
-          }}
-        ></i>}
+        {nft.isForSale === 'true' && (
+          <i
+            className='ti-shopping-cart buy-icon mfp-link fa-2x mfp-link'
+            onClick={() => {
+              setSelectedNFT(nft);
+              setShowBuyModal(true);
+            }}
+          ></i>
+        )}
       </>
     );
   };
@@ -286,7 +307,6 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-        <h3 className='text-center mt-5'>United Nations Sustainable Development Goals</h3>
         <Row className='mx-2 mt-4 justify-content-center dash-sdgs'>
           {SDGsGoals?.map((d)=>(
           <Col className="mb-4"  key={d.value}>
@@ -340,74 +360,65 @@ const Dashboard = () => {
                             id='masonry'
                             className='dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1'
                           >
-                           
-                              <Carousel
-                                itemsToShow={4}
-                                breakPoints={breakPoints}
-                              >
-                                {NFts.slice(0, 5).map((item, index) => (
-                                  <React.Fragment
-                                    key={`${index}${item.tokenId}`}
-                                  >
-                                    <li className='web design card-container p-a0'>
-                                      <NFTCard
-                                        item={item}
-                                        openSlider={(
-                                          newIndex,
-                                          itemCampaign
-                                        ) => {
-                                          setPhotoIndex(newIndex);
-                                          setOpenSliderCamp(true);
-                                          itemCampaign &&
-                                            setSelectedCampaign(itemCampaign);
-                                          setCaptions(NFts.slice(0, 5));
-                                        }}
-                                        index={index}
+                            <Carousel itemsToShow={4} breakPoints={breakPoints}>
+                              {NFts.slice(0, 5).map((item, index) => (
+                                <React.Fragment key={`${index}${item.tokenId}`}>
+                                  <li className='web design card-container p-a0'>
+                                    <NFTCard
+                                      item={item}
+                                      openSlider={(newIndex, itemCampaign) => {
+                                        setPhotoIndex(newIndex);
+                                        setOpenSliderCamp(true);
+                                        itemCampaign &&
+                                          setSelectedCampaign(itemCampaign);
+                                        setCaptions(NFts.slice(0, 5));
+                                      }}
+                                      index={index}
+                                    />
+                                  </li>
+                                  {openSliderCamp &&
+                                    campaignsName[0] === selectedCampaign && (
+                                      <Lightbox
+                                        mainSrc={NFts[photoIndex].image}
+                                        nextSrc={
+                                          NFts[
+                                            (photoIndex + 1) %
+                                              NFts.slice(0, 5).length
+                                          ].image
+                                        }
+                                        prevSrc={
+                                          NFts[
+                                            (photoIndex +
+                                              NFts.slice(0, 5).length -
+                                              1) %
+                                              NFts.slice(0, 5).length
+                                          ].image
+                                        }
+                                        onCloseRequest={() =>
+                                          setOpenSliderCamp(false)
+                                        }
+                                        onMovePrevRequest={() =>
+                                          setPhotoIndex(
+                                            (photoIndex +
+                                              NFts.slice(0, 5).length -
+                                              1) %
+                                              NFts.slice(0, 5).length
+                                          )
+                                        }
+                                        onMoveNextRequest={() =>
+                                          setPhotoIndex(
+                                            (photoIndex + 1) %
+                                              NFts.slice(0, 5).length
+                                          )
+                                        }
+                                        imageCaption={
+                                          sliderCaptionsCamp[photoIndex]
+                                        }
                                       />
-                                    </li>
-                                    {openSliderCamp &&
-                                      campaignsName[0] === selectedCampaign && (
-                                        <Lightbox
-                                          mainSrc={NFts[photoIndex].image}
-                                          nextSrc={
-                                            NFts[
-                                              (photoIndex + 1) %
-                                                NFts.slice(0, 5).length
-                                            ].image
-                                          }
-                                          prevSrc={
-                                            NFts[
-                                              (photoIndex +
-                                                NFts.slice(0, 5).length -
-                                                1) %
-                                                NFts.slice(0, 5).length
-                                            ].image
-                                          }
-                                          onCloseRequest={() =>
-                                            setOpenSliderCamp(false)
-                                          }
-                                          onMovePrevRequest={() =>
-                                            setPhotoIndex(
-                                              (photoIndex +
-                                                NFts.slice(0, 5).length -
-                                                1) %
-                                                NFts.slice(0, 5).length
-                                            )
-                                          }
-                                          onMoveNextRequest={() =>
-                                            setPhotoIndex(
-                                              (photoIndex + 1) %
-                                                NFts.slice(0, 5).length
-                                            )
-                                          }
-                                          imageCaption={
-                                            sliderCaptionsCamp[photoIndex]
-                                          }
-                                        />
-                                      )}
-                                  </React.Fragment>
-                                ))}
-                              </Carousel>
+                                    )}
+                                </React.Fragment>
+                              ))}
+                            </Carousel>
                           </ul>
                         </div>
                       </SRLWrapper>

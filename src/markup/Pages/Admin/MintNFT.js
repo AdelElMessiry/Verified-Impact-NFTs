@@ -193,7 +193,7 @@ const MintNFT = () => {
     filteredCampaigns &&
       setSDGsGoalsData(
         SDGsData.filter(({ value }) =>
-          filteredCampaigns[0]?.sdgs_ids?.split(',').includes(value)
+          filteredCampaigns[0]?.sdgs_ids?.split(',').includes(value.toString())
         )
       );
   }, [
@@ -848,7 +848,8 @@ const MintNFT = () => {
                                 (state.inputs.price === '' ||
                                   state.inputs.price < 250)) ||
                               isMintClicked ||
-                              isMintAnotherClicked
+                              isMintAnotherClicked||
+                             (SDGsGoalsData.length>0&& SDGsGoals.length<=0)
                             }
                           >
                             {isMintClicked ? (
@@ -876,7 +877,8 @@ const MintNFT = () => {
                                 (state.inputs.price === '' ||
                                   state.inputs.price < 250)) ||
                               isMintAnotherClicked ||
-                              isMintClicked
+                              isMintClicked||
+                              (SDGsGoalsData.length>0&& SDGsGoals.length<=0)
                             }
                           >
                             {isMintAnotherClicked ? (

@@ -8,8 +8,11 @@ import Layout from '../Layout';
 import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
 import VINftsTooltip from '../Element/Tooltip';
 import soldIcon from '../../images/icon/sold.png';
+import unitedNation from '../../images/icon/unitedNation.png';
+
 import { MenuItemUnstyled } from '@mui/base';
 import ReactGA from 'react-ga';
+import { SDGsData } from '../../data/SDGsGoals';
 //nft details component
 const NFTDetail = () => {
   const search = useLocation().search;
@@ -182,6 +185,35 @@ const NFTDetail = () => {
                       <NFTTwitterShare item={item} />
                     )}
                   </p>
+                  <p>
+      {item?.sdgs_ids?.length > 0 && item?.sdgs_ids !== '0' && (
+        <div className="mt-3 px-2">
+          <a href="https://sdgs.un.org/goals" target="_blank">
+            <img
+              src={unitedNation}
+              style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
+            />
+          </a>
+          :{' '}
+          {SDGsData?.filter(({ value }) =>
+            item?.sdgs_ids?.split(',').includes(value.toString())
+          )?.map((sdg, index) => (
+            <VINftsTooltip title={sdg.label} key={index}>
+              <label>
+                <img
+                  src={process.env.PUBLIC_URL + 'images/sdgsIcons/' + sdg.icon}
+                  style={{
+                    width: 25,
+                    pointerEvents: 'none',
+                    cursor: 'default',
+                  }}
+                />
+              </label>
+            </VINftsTooltip>
+          ))}
+        </div>
+      )}
+    </p>
                 </div>
               </div>
             </div>
