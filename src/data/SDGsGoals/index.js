@@ -120,14 +120,14 @@ export const SDGsData = [
   },
   {
     value: 18,
-    label: 'SDGs Goal 18: Sustainable Sevelopment Goals',
+    label: 'Sustainable Sevelopment Goals',
     icon: 'general.png',
     image: 'E_SDG_Icons-18.jpg',
     description: 'The 2030 Agenda for Sustainable Development, adopted by all United Nations Member States in 2015, provides a shared blueprint for peace and prosperity for people and the planet, now and into the future',
   },
   {
     value: 19,
-    label: '19: Other',
+    label: 'Other Causes',
     icon: 'other.png',
     image: 'E_SDG_Icons-19.jpg',
     description: 'Other Causes',
