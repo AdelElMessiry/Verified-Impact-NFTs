@@ -272,3 +272,12 @@
     color: #000;
   }
 }
+.VI-text-truncate{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    a{
+      display: contents !important;
+    }
+}
