@@ -67,8 +67,8 @@ const AddEditCampaignForm = ({
     if (selectedNFTs&& selectedNFTs.length>0){
       const sdgsNFTs=  selectedNFTs.map(({sdgs_ids})=>sdgs_ids?.split(","))?.flat();
       const campaignArray=  data?.sdgs_ids?.split(',')
-        var savedSDGs = sdgsNFTs.filter(function(obj) { 
-          return campaignArray.indexOf(obj) > -1; 
+        var savedSDGs = sdgsNFTs?.filter(function(obj) { 
+          return campaignArray?.indexOf(obj) > -1; 
         });
         setMandatorySDGs(savedSDGs);
       }
@@ -339,7 +339,7 @@ const AddEditCampaignForm = ({
                         state.inputs.name == '' ||
                         state.inputs.requestedRoyalty < 0 ||
                         state.inputs.requestedRoyalty > 100||
-                        (SDGsGoalsData.length>0&& SDGsGoals.length<=0)
+                        (SDGsGoalsData?.length>0&& SDGsGoals?.length<=0)
                       }
                     >
                       {isButtonClicked ? (
