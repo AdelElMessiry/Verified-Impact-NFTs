@@ -5,32 +5,39 @@ import VINftsTooltip from './Tooltip';
 
 const SDGsStatsItem = ({ data }) => {
   return (
-    <Link to={`./SDGGoalNFTs?id=${data.value.toString()}`} className="dez-page text-white">
-      <VINftsTooltip title={data.description}>
-        <div className="sdgs-goals-card">
+    <Link
+      to={`./SDGGoalNFTs?id=${data.value.toString()}`}
+      className="dez-page text-white"
+    >
+      <div className="sdgs-goals-card">
+        <VINftsTooltip title={data.description}>
           <img
             src={process.env.PUBLIC_URL + 'images/sdgsGoals/' + data.image}
             alt=""
             className="img img-fluid fit-img fit-img-cover"
           />
-          <div className="text-center">
-            {data.nftNumber !== undefined ? (
-              <>
-                <span className="text-success">{data.nftNumber || 0}</span>
-              </>
-            ) : (
-              <>
-                <Spinner
-                  animation="border"
-                  variant="success"
-                  className="stats-spinner"
-                />
-              </>
-            )}
-            <span className="ml-1 text-gray-dark">NFTS</span>
-          </div>
+        </VINftsTooltip>
+        <div className="text-center">
+          {data.nftNumber !== undefined ? (
+            <VINftsTooltip title={`${data.nftNumber} NFTS`}>
+              <span className="text-success fz-14">{data.nftNumber || '-'}</span>
+            </VINftsTooltip>
+          ) : (
+            <>
+              <Spinner
+                animation="border"
+                variant="success"
+                className="stats-spinner"
+              />
+            </>
+          )}
+          {data.price && (
+            <VINftsTooltip title={`Total Price of NFTS is ${data.price} CSPR`}>
+              <span className="fz-14 text-gray-dark">-{data.price} CSPR</span>
+            </VINftsTooltip>
+          )}
         </div>
-      </VINftsTooltip>
+      </div>
     </Link>
   );
 };
