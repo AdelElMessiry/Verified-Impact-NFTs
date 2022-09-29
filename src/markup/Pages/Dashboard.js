@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Col, Row, Spinner } from 'react-bootstrap';
+import { Col, Form, Row, Spinner } from 'react-bootstrap';
 import Lightbox from 'react-image-lightbox';
 import Masonry from 'react-masonry-component';
 import Carousel from 'react-elastic-carousel';
@@ -62,6 +62,7 @@ const Dashboard = () => {
   const [displayedCampaigns, setDisplayedCampaigns] = React.useState();
   const [selectedCampaign, setSelectedCampaign] = React.useState();
   const [SDGsGoals, setSDGsGoals] = React.useState(SDGsData);
+  const [isShowSaleOnly, setIsShowSaleOnly] = React.useState(false);
   
   const getNftsList = React.useCallback(async () => {
     // const list = await profileClient
@@ -73,13 +74,6 @@ const Dashboard = () => {
 
     nftsList && setAllNfts(nftsList);
     nfts && setSelectedNFT(nftsList);
-    nfts &&
-      setCsprSum(
-        nftsList.reduce(
-          (xPrice, { price }) => Number(xPrice) + Number(price),
-          0
-        )
-      );
 
     const pluckedCampaigns =
       nftsList &&
@@ -97,51 +91,100 @@ const Dashboard = () => {
           : nftBasedCampaigns.push({ [nft.campaign]: [nft] })
       );
     nftBasedCampaigns && setDisplayedCampaigns(nftBasedCampaigns);
-   
-    const AllSDGsTagsName =
-      nfts &&
-      nfts.filter((nft)=>nft.hasOwnProperty('sdgs_ids'))
-        .map((nft) => (({ value: nft.sdgs_ids?.split(',') })))
-        .flatMap(({ value }) => (value));
-    const sdgOccur =
-      AllSDGsTagsName &&
-      AllSDGsTagsName.reduce(
-        (b, c) => (
-          (
-            b[b.findIndex((d) => d.value === c)] ||
-            b[b.push({ value: c, nftNumber: 0 }) - 1]
-          ).nftNumber++,
-          b
-        ),
-        []
-      );
-    const sdgsWithNFTCount =
-      sdgOccur &&
-      SDGsData.map((t1) => ({
-        ...t1,
-        ...sdgOccur.find((t2) => t2.value?.toString() === t1.value?.toString()),
-      }));
-    sdgsWithNFTCount &&
-      setSDGsGoals(
-        sdgsWithNFTCount.map((s) =>
-          s.nftNumber
-            ? { ...s, ['nftNumber']: s.nftNumber }
-            : { ...s, ['nftNumber']: 0 }
-        )
-      );
   }, [nfts]);
 
+  const getSDGsDetails=(nftsData)=>{
+     //get sdgs_ids and corresponding price of nfts
+     const filteredNfts= isShowSaleOnly?nftsData.filter((nft) => nft.isForSale == 'true'):nftsData
+     nfts &&
+     setCsprSum(
+       isShowSaleOnly?filteredNfts.reduce(
+         (xPrice, { price }) => Number(xPrice) + Number(price),
+         0
+       ):nftsData.reduce(
+         (xPrice, { price }) => Number(xPrice) + Number(price),
+         0
+       )
+     );
+     const AllNFTsSDGs =
+     filteredNfts &&
+     filteredNfts
+         .filter((nft) => nft.hasOwnProperty('sdgs_ids'))
+         .map((nft) => ({ sdg: nft.sdgs_ids?.split(','), price: nft.price }));
+ 
+     //flat nfts sdgs
+     const flatSdgs =
+       AllNFTsSDGs &&
+       AllNFTsSDGs?.map(({ price, sdg }) =>
+         sdg?.map((value) => ({ value, price }))
+       ).flat();
+ 
+     //get occurrence of sdgs in array
+     let sdgOccur = [];
+ 
+     flatSdgs &&
+       flatSdgs?.forEach((x) => {
+         // Checking if there is any object in arr2
+         // which contains the key value
+         if (
+           sdgOccur?.some((val) => {
+             return val['value'] == x['value'];
+           })
+         ) {
+           let price = 0;
+           // If yes! then increase the nftNumber by 1
+           sdgOccur?.forEach((k) => {
+             if (k['value'] === x['value']) {
+               k['nftNumber']++;
+               price = Number(k['price']) + Number(x['price']);
+               k['price'] = price;
+             }
+           });
+         } else {
+           // If not! Then create a new object initialize
+           // it with the present iteration key's value and
+           // set the nftNumber to 1
+           let a = {};
+           a['value'] = x['value'];
+           a['price'] = Number(x['price']);
+           a['nftNumber'] = 1;
+           sdgOccur.push(a);
+         }
+       });
+     //compare between all sdgs data and sdgs saved in nfts to retuen full data of sdg
+     const sdgsWithNFTCount =
+       sdgOccur.length > 0 &&
+       SDGsData.map((t1) => ({
+         ...t1,
+         ...sdgOccur.find((t2) => t2.value?.toString() === t1.value?.toString()),
+       }));
+ 
+     sdgsWithNFTCount &&
+       setSDGsGoals(
+         sdgsWithNFTCount.map((s) =>
+           s.nftNumber
+             ? { ...s, ['nftNumber']: s.nftNumber }
+             : { ...s, ['nftNumber']: 0 }
+         )
+       );
+  }
   //getting list of NFTs
   React.useEffect(() => {
-      ReactGA.pageview(window.location.pathname +"/");
+    ReactGA.pageview(window.location.pathname + '/');
     getNftsList();
   }, [getNftsList]);
+
   React.useEffect(() => {
     setBeneficiariesLength(beneficiaryCount);
     setCampaignsLength(campaignsCount);
     setCreatorsLength(creatorsCount);
     setCollectionLength(collectionsCount);
   }, [beneficiaryCount, campaignsCount, collectionsCount, creatorsCount]);
+
+  React.useEffect(() => {
+    nfts&&getSDGsDetails(nfts);
+  }, [isShowSaleOnly,nfts]);
+
   const setCaptions = (data) => {
     const captionsCamp = [];
     data &&
@@ -183,8 +226,23 @@ const Dashboard = () => {
                 </a>
                 <VideoPopup />
               </div>
+              <Row className='mt-4'>
+                <Col className='justify-content-center'>
+                  <Form.Check
+                    type='switch'
+                    id='custom-switch'
+                    label='Show statistics for only for sale NFTs'
+                    checked={isShowSaleOnly}
+                    className='VI-switch d-inline-block'
+                    onChange={(e) => setIsShowSaleOnly(e.target.checked)}
+                    variant='success'
+                    size={'lg'}
+                  />
+                </Col>
+              </Row>{' '}
             </div>
           </div>
+
           <div className='row stats-section'>
             <div className='col'>
               {beneficiariesLength !== undefined ? (
@@ -257,8 +315,7 @@ const Dashboard = () => {
             <div className='col'>
               {allNfts ? (
                 <>
-                  {' '}
-                  <span>{nfts?.length}</span> NFTs
+                  <span>{isShowSaleOnly?nfts.filter(({isForSale})=>isForSale=='true').length:nfts?.length}</span> NFTs
                 </>
               ) : (
                 <>

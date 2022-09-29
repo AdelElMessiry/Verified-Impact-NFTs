@@ -281,3 +281,33 @@
       display: contents !important;
     }
 }
+.fz-14{
+  font-size: 14px;
+}
+.custom-switch.VI-switch .custom-control-label::before {
+  left: -2.25rem;
+  width: 3.75rem;
+  pointer-events: all;
+  border-radius: 1.5rem;
+}
+.custom-switch.VI-switch input[type=checkbox]:checked + label:before {
+  border-width: 13px;
+}
+
+.custom-switch.VI-switch .custom-control-input:checked~.custom-control-label::before {
+  color: #fff;
+  background-color: #6cc000;
+  border-color: #6cc000;
+}
+.custom-switch.VI-switch input[type=checkbox] + label {
+  display: block;
+  padding-left: 35px !important;
+  position: relative;
+}
+.custom-switch.VI-switch input[type=checkbox]:checked + label:after {
+  font-size: 10px;
+  left: -5px;
+  top: 29%;
+}
+.custom-switch.VI-switch input[type=checkbox] + label:before {
+  height: 25px;}
