@@ -62,8 +62,13 @@ const AddBeneficiary = () => {
         '',
         `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)]  @vinfts @casper_network @devxdao `
       );
+      let s = []
+      if (beneficiaryInputs.SDGsGoals.length > 0){     
+        beneficiaryInputs.SDGsGoals.map((sdg) => (
+            s.push(`#SDG${sdg}`)
+        ))}
       await SendTweet(
-        `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
+        `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts. ${s.toString().replaceAll(',', ' ')} click here ${window.location.origin}/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
       );
       setBeneficiaryInputs({
         name: '',
