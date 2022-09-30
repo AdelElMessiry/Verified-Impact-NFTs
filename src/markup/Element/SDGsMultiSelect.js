@@ -79,6 +79,7 @@ const SDGsMultiSelect = ({
 
   return (
     <>
+    <div className="required-field">
       <Select
         defaultValue={
           defaultValues !== '' && data.length > 0
@@ -99,7 +100,11 @@ const SDGsMultiSelect = ({
         isClearable={false}
         value={selectedOptions}
       />
-     {(selectedOptions?.length<0||selectedOptions==undefined)&&<span className="text-danger">Required</span>} 
+      <span className="text-danger required-field-symbol">*</span>
+      </div>
+      {(selectedOptions?.length < 0 || selectedOptions == undefined) && (
+        <span className="text-danger">Required</span>
+      )}
     </>
   );
 };
