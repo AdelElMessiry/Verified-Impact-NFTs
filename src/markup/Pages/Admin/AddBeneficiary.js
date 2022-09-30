@@ -26,7 +26,7 @@ const AddBeneficiary = () => {
     name: '',
     description: '',
     address: '',
-    SDGsGoals:SDGsData[18]
+    SDGsGoals:[SDGsData[18].value]
   });
   
   React.useEffect(() => {
