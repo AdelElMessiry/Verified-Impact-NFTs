@@ -68,7 +68,7 @@ const ProfileForm = ({
     facebook: true,
     telegram: true,
   });
-  const [SDGsGoals, setSDGsGoals] = React.useState(SDGsData[18]);
+  const [SDGsGoals, setSDGsGoals] = React.useState([SDGsData[18].value]);
   const [mandatorySDGs, setMandatorySDGs] = React.useState(SDGsData[18].value);
 
   React.useEffect(() => {
