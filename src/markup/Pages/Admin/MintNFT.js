@@ -367,6 +367,11 @@ const MintNFT = () => {
       }
 
       try {
+        let s = []
+        if (SDGsGoals.length > 0){     
+          SDGsGoals.map((sdg) => (
+              s.push(`#SDG${sdg}`)
+          ))}
         const deployResult = await getDeployDetails(mintDeployHash);
         if (
           campaign !== '' &&
@@ -422,7 +427,7 @@ const MintNFT = () => {
             `${creator} creator has just added a new interesting #verified-impact-nfts collection. [Click here to see more interesting collections](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
           );
           await SendTweet(
-            `${creator} creator has just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections  @vinfts @casper_network @devxdao ${twitterName}`
+            `${creator} creator has just added a new interesting #verified_impact_nfts collection ${s.toString().replaceAll(',', ' ')}. Click here ${window.location.origin}/#/ to see more interesting collections  @vinfts @casper_network @devxdao ${twitterName}`
           );
         }
 
@@ -436,7 +441,7 @@ const MintNFT = () => {
         let image = encodeURI('https://vinfts.mypinata.cloud/ipfs/'+imgURL);
         await SendTweetWithImage(
           image,
-          `Great news! "${state.inputs.name}" #NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
+          `Great news! "${state.inputs.name}" #NFT  has been added to #verified_impact_nfts. ${s.toString().replaceAll(',', ' ')} click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
         );
         //  else{
         //   let image64 = 'https://dweb.link/ipfs/'+ image
