@@ -31,6 +31,12 @@ const BeneficiarySingleRow = ({ beneficiary }) => {
       );
       // beneficiary.approved state is checking on the passed beneficiary object from the parent with the old state before admin approval
       if (beneficiary?.isApproved === 'false') {
+        let sdgs = beneficiary.sdgs_ids?.split(",")
+        let s = []
+          if (sdgs){            
+            sdgs.map((sdg) => (
+              s.push(`#SDG${sdg}`)
+          ))}
         await sendDiscordMessage(
           process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
           process.env.REACT_APP_BENEFICIARIES_TOKEN,
@@ -39,7 +45,7 @@ const BeneficiarySingleRow = ({ beneficiary }) => {
           `Great news! [${beneficiary.username}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)] @vinfts @casper_network @devxdao`
         );
         await SendTweet(
-          `Great news! ${beneficiary.username} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao `
+          `Great news! ${beneficiary.username} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @casper_network @devxdao ${s.toString().replaceAll(',', ' ')}`
         );
       }
 
