@@ -654,7 +654,7 @@ const ProfileForm = ({
                     <span className='text-danger'>Please enter Valid URL </span>
                   )}
                 </>
-              ) : (
+              ) : formData && formData?.imgUrl ? (
                 <ImageUploader
                   singleImage
                   withIcon={true}
@@ -673,6 +673,19 @@ const ProfileForm = ({
                       ? uploadedProfileImageURL
                       : '',
                   ]}
+                />
+              ) : (
+                <ImageUploader
+                  singleImage
+                  withIcon={true}
+                  buttonText="Choose image"
+                  onChange={(e) => {
+                    onDrop(e, true);
+                  }}
+                  imgExtension={['.jpg', '.gif', '.png']}
+                  maxFileSize={20209230}
+                  withPreview={true}
+                  label={'Max file size: 20mb, accepted: jpg|gif|png'}
                 />
               )}
             </Col>
@@ -712,7 +725,7 @@ const ProfileForm = ({
                     <span className='text-danger'>Please enter Valid URL </span>
                   )}
                 </>
-              ) : (
+              ) : formData && formData?.nftUrl ? (
                 <ImageUploader
                   singleImage
                   withIcon={true}
@@ -732,20 +745,44 @@ const ProfileForm = ({
                       : '',
                   ]}
                 />
+              ) : (
+                <ImageUploader
+                  singleImage
+                  withIcon={true}
+                  buttonText="Choose image"
+                  onChange={(e) => {
+                    onDrop(e, false);
+                  }}
+                  imgExtension={['.jpg', '.gif', '.png']}
+                  maxFileSize={20209230}
+                  withPreview={true}
+                  label={'Max file size: 20mb, accepted: jpg|gif|png'}
+                />
               )}
             </Col>
           </Row>
         </Col>
       </Row>
       <Row className='form-group'>
-        <Col>
-          <span>Full Bio</span>
-          <textarea
+        <Col lg={6} md={6}>
+          <span>Short Bio</span>
+          {/* <textarea
             name='fullBio'
             className='form-control'
             value={state.inputs.fullBio}
             onChange={(e) => handleChange(e)}
+          /> */}
+          <input
+            type="text"
+            name="fullBio"
+            className="form-control"
+            value={state.inputs.fullBio}
+            onChange={(e) => {
+              handleChange(e);
+            }}
+            maxLength={100}
           />
+          <span>{state.inputs.fullBio.length} / 100 characters</span>
         </Col>
       </Row>
 
