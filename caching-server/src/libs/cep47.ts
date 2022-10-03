@@ -1,7 +1,8 @@
 import { CasperClient, Contracts } from 'casper-js-sdk';
+import axios from 'axios';
 
 const proxyServer = '';
-const NODE_RPC_ADDRESS = 'https://node-clarity-testnet.make.services/rpc';
+const NODE_RPC_ADDRESS = process.env.NODE_RPC_ADDRESS;
 
 const CONNECTION = {
   NODE_ADDRESS: proxyServer + NODE_RPC_ADDRESS,
@@ -33,7 +34,7 @@ const getNFTImage = async (tokenMetaUri: string) => {
       : tokenMetaUri;
     return baseIPFS + mappedUrl;
   }
-  const resp = await fetch(baseIPFS + tokenMetaUri);
+  const resp: any = await axios(baseIPFS + tokenMetaUri);
   const imgString = await resp.text();
   return imgString;
 };
@@ -82,19 +83,32 @@ class CEP47Client {
   public async getMappedTokenMeta(tokenId: string, isUpdate?: boolean) {
     const maybeValue: any = await this.getTokenMeta(tokenId);
     const jsMap: any = new Map();
-    // console.log(maybeValue.entries());
     Array.from(maybeValue.entries()).map(([key, val]: any) =>
       jsMap.set(key, val)
     );
-    // // for (const [innerKey, value] of maybeValue.entries()) {
-    // //   console.log(innerKey);
-
-    // //   jsMap.set(innerKey, value);
-    // // }
-    // console.log(jsMap);
 
     let mapObj = Object.fromEntries(jsMap);
-    // console.log(mapObj);
+
+    mapObj.beneficiary =
+      mapObj.beneficiary.includes('Account') ||
+      mapObj.beneficiary.includes('Key')
+        ? mapObj.beneficiary.includes('Account')
+          ? mapObj.beneficiary.slice(13).replace(')', '')
+          : mapObj.beneficiary.slice(10).replace(')', '')
+        : mapObj.beneficiary;
+
+    mapObj.creator =
+      mapObj.creator.includes('Account') || mapObj.creator.includes('Key')
+        ? mapObj.creator.includes('Account')
+          ? mapObj.creator.slice(13).replace(')', '')
+          : mapObj.creator.slice(10).replace(')', '')
+        : mapObj.creator;
+    mapObj.pureImageKey = mapObj.image;
+    mapObj.image = isUpdate
+      ? mapObj.image
+      : isValidHttpUrl(mapObj.image)
+      ? mapObj.image
+      : await getNFTImage(mapObj.image);
 
     return mapObj;
   }
