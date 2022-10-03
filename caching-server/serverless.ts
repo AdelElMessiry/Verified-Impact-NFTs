@@ -22,8 +22,8 @@ const serverlessConfiguration: AWS = {
       shouldStartNameWithService: true,
     },
     environment: {
-      UPSTASH_PASSWORD: 'ba50e22dbca849bcbd2cae68bdb2f6a8',
-      UPSTASH_REGION: 'us1',
+      UPSTASH_PASSWORD: 'c4e5ebfa79c64302aa4dfef0ac7e3e05',
+      UPSTASH_REGION: 'global-on-weevil',
       NODE_RPC_ADDRESS: 'https://node-clarity-testnet.make.services/rpc',
     },
     lambdaHashingVersion: '20201221',
