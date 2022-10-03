@@ -35,7 +35,9 @@ const getNFTImage = async (tokenMetaUri: string) => {
     return baseIPFS + mappedUrl;
   }
   const resp: any = await axios(baseIPFS + tokenMetaUri);
-  const imgString = await resp.text();
+  // console.log(resp);
+
+  const imgString = resp.data;
   return imgString;
 };
 
