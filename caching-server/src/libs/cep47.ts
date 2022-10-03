@@ -106,11 +106,11 @@ class CEP47Client {
           : mapObj.creator.slice(10).replace(')', '')
         : mapObj.creator;
     mapObj.pureImageKey = mapObj.image;
-    mapObj.image = isUpdate
-      ? mapObj.image
-      : isValidHttpUrl(mapObj.image)
-      ? mapObj.image
-      : await getNFTImage(mapObj.image);
+    // mapObj.image = isUpdate
+    //   ? mapObj.image
+    //   : isValidHttpUrl(mapObj.image)
+    //   ? mapObj.image
+    //   : await getNFTImage(mapObj.image);
 
     return mapObj;
   }

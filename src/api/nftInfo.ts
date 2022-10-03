@@ -1,4 +1,5 @@
 import { CLPublicKey } from 'casper-js-sdk';
+import axios from 'axios';
 
 import { cep47 } from '../lib/cep47';
 import { getRandomNumberBetween } from '../utils/calculations';
@@ -79,8 +80,30 @@ export async function getNFTsList() {
           ? nft_metadata.creator.slice(13).replace(')', '')
           : nft_metadata.creator.slice(10).replace(')', '')
         : nft_metadata.creator;
-   // nft_metadata['sdgs'] = ['19'];
+    // nft_metadata['sdgs'] = ['19'];
     nftsList.push({ ...nft_metadata, isCreatorOwner, tokenId });
+  }
+
+  return nftsList;
+}
+
+export async function getCachedNFTsList() {
+  const nfts: any = await axios.get(
+    'https://8xqw44oqd4.execute-api.us-east-1.amazonaws.com/dev/nfts'
+  );
+
+  const nftsList: any = [];
+  for (let nft of nfts) {
+    const ownerAddress = await cep47.getOwnerOf(nft.tokenId.toString());
+
+    const isCreatorOwner =
+      nft.creator.includes('Key') || nft.creator.includes('Account')
+        ? nft.creator.includes('Account')
+          ? nft.creator.slice(13).replace(')', '') === ownerAddress.slice(13)
+          : nft.creator.slice(10).replace(')', '') === ownerAddress.slice(13)
+        : ownerAddress.slice(13) === nft.creator;
+
+    nftsList.push({ ...nft, isCreatorOwner });
   }
 
   return nftsList;

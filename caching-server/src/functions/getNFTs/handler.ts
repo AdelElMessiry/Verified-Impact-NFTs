@@ -3,13 +3,12 @@ import 'source-map-support/register';
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { formatJSONResponse, apiResponses } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
-// import * as AWS from 'aws-sdk';
 import { createClient } from 'redis';
 
 import { cep47 } from '@libs/cep47';
 
 const client = createClient({
-  url: `rediss://default:${process.env.UPSTASH_PASSWORD}@${process.env.UPSTASH_REGION}-30312.upstash.io:30312`,
+  url: `rediss://default:${process.env.UPSTASH_PASSWORD}@${process.env.UPSTASH_REGION}-solid-husky-38167.upstash.io:38167`,
 });
 
 client.on('error', function (err: any) {
@@ -24,8 +23,6 @@ client.on('connect', function () {
 
 const getNFTsList = async (countFrom: number, count: number) => {
   const nftsList = [];
-  console.log(count);
-  console.log(countFrom);
 
   for (let tokenId of Array.from(Array(count).keys())) {
     tokenId = tokenId + countFrom + 1;
@@ -33,8 +30,6 @@ const getNFTsList = async (countFrom: number, count: number) => {
     const nft_metadata = await cep47.getMappedTokenMeta(tokenId.toString());
     await client.rPush('nfts', JSON.stringify({ ...nft_metadata, tokenId }));
     nftsList.push({ ...nft_metadata, tokenId });
-
-    console.log(nftsList);
   }
 
   return nftsList;
@@ -54,8 +49,6 @@ const getNFTs: APIGatewayProxyHandler = async () => {
     );
   }
 
-  console.log(result);
-
   const nftsCount: any = await cep47.totalSupply();
   const countFrom =
     result &&
@@ -63,8 +56,9 @@ const getNFTs: APIGatewayProxyHandler = async () => {
     parseInt(nftsCount) - result?.length;
 
   if (!countFrom && result?.length > 0) {
+    const mappedResult = result.map((item) => JSON.parse(item));
     return formatJSONResponse({
-      list: result,
+      list: mappedResult,
     });
   } else {
     const list = await getNFTsList(result.length, parseInt(nftsCount)).catch(

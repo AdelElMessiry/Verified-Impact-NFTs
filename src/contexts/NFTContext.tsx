@@ -1,11 +1,11 @@
 import React from 'react';
-import { CLPublicKey } from 'casper-js-sdk';
+
 import { getBeneficiariesList } from '../api/beneficiaryInfo';
 import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from '../api/campaignInfo';
 import { getCreatorsList } from '../api/creatorInfo';
 import { getUniqueCollectionsList } from '../api/collectionInfo';
-import { getNFTsList } from '../api/nftInfo';
+import { getNFTsList, getCachedNFTsList } from '../api/nftInfo';
 import { profileClient } from '../api/profileInfo';
 
 export enum NFTActionTypes {
@@ -82,8 +82,9 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
   const getList = React.useCallback(async () => {
     dispatch({ type: NFTActionTypes.LOADING });
 
-    const nftsList = await getNFTsList();
-    const beneficiaryCount = await cep47.totalBeneficiaries();
+    // const nftsList = await getNFTsList();
+    const nftsList = await getCachedNFTsList();
+    // const beneficiaryCount = await cep47.totalBeneficiaries();
     const campaignsCount = await cep47.totalCampaigns();
     const creatorsCount = await cep47.totalCreators();
     const collectionsCount = await cep47.totalCollections();
