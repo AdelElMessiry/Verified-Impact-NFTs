@@ -1,4 +1,5 @@
 import { CLPublicKey } from 'casper-js-sdk';
+import axios from 'axios';
 
 import { cep47 } from '../lib/cep47';
 import { getRandomNumberBetween } from '../utils/calculations';
@@ -10,6 +11,7 @@ import { getCreatorsList } from '../api/creatorInfo';
 import { getCollectionsList } from '../api/collectionInfo';
 import { signDeploy } from '../utils/signer';
 import { CONNECTION } from '../constants/blockchain';
+import { getNFTImage, isValidHttpUrl } from '../utils/contract-utils';
 
 export async function isIdOccupied(id: string): Promise<boolean> {
   id = String(Number(id));
@@ -79,8 +81,34 @@ export async function getNFTsList() {
           ? nft_metadata.creator.slice(13).replace(')', '')
           : nft_metadata.creator.slice(10).replace(')', '')
         : nft_metadata.creator;
-   // nft_metadata['sdgs'] = ['19'];
+    // nft_metadata['sdgs'] = ['19'];
     nftsList.push({ ...nft_metadata, isCreatorOwner, tokenId });
+  }
+
+  return nftsList;
+}
+
+export async function getCachedNFTsList() {
+  const nfts: any = await axios(
+    'https://qpmmnfnis5.execute-api.us-east-1.amazonaws.com/dev/nfts'
+  );
+  console.log(nfts.data.list);
+
+  const nftsList: any = [];
+  for (let nft of nfts.data.list) {
+    const ownerAddress = await cep47.getOwnerOf(nft.tokenId.toString());
+
+    const isCreatorOwner =
+      nft.creator.includes('Key') || nft.creator.includes('Account')
+        ? nft.creator.includes('Account')
+          ? nft.creator.slice(13).replace(')', '') === ownerAddress.slice(13)
+          : nft.creator.slice(10).replace(')', '') === ownerAddress.slice(13)
+        : ownerAddress.slice(13) === nft.creator;
+    nft.image = isValidHttpUrl(nft.image)
+      ? nft.image
+      : await getNFTImage(nft.image);
+
+    nftsList.push({ ...nft, isCreatorOwner });
   }
 
   return nftsList;
