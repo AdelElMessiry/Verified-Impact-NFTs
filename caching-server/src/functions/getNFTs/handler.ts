@@ -1,11 +1,12 @@
 import 'source-map-support/register';
 
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { formatJSONResponse, apiResponses } from '@libs/apiGateway';
+import { MessageUtil } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
 import { createClient } from 'redis';
 
 import { cep47 } from '@libs/cep47';
+import { HttpStatusCode } from '@libs/HttpStatusCode';
 
 const client = createClient({
   url: `rediss://default:${process.env.UPSTASH_PASSWORD}@${process.env.UPSTASH_REGION}-solid-husky-38167.upstash.io:38167`,
@@ -35,17 +36,17 @@ const getNFTsList = async (countFrom: number, count: number) => {
   return nftsList;
 };
 
-const getNFTs: APIGatewayProxyHandler = async () => {
+const getNFTs: APIGatewayProxyHandler = async (event) => {
+  // console.log(event);
+
   await client.connect();
   let result: any;
   try {
     result = await client.lRange('nfts', 0, -1);
   } catch (err) {
-    return formatJSONResponse(
-      {
-        error: err.message ? err.message : 'upstash Error',
-      },
-      404
+    return MessageUtil.error(
+      HttpStatusCode.INTERNAL_SERVER_ERROR,
+      err.message ? err.message : 'upstash Error'
     );
   }
 
@@ -57,20 +58,18 @@ const getNFTs: APIGatewayProxyHandler = async () => {
 
   if (!countFrom && result?.length > 0) {
     const mappedResult = result.map((item) => JSON.parse(item));
-    return formatJSONResponse({
+    return MessageUtil.success({
       list: mappedResult,
     });
   } else {
     const list = await getNFTsList(result.length, parseInt(nftsCount)).catch(
       (err) =>
-        formatJSONResponse(
-          {
-            error: err.message ? err.message : 'RPC Error',
-          },
-          err.code
+        MessageUtil.error(
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          err.message ? err.message : 'upstash Error'
         )
     );
-    return formatJSONResponse({
+    return MessageUtil.success({
       list,
     });
   }
