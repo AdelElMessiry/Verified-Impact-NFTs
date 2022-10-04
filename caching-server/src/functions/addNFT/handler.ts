@@ -1,7 +1,6 @@
 import 'source-map-support/register';
-
-import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway';
-import { formatJSONResponse } from '@libs/apiGateway';
+import { APIGatewayProxyHandler } from 'aws-lambda';
+import { MessageUtil } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
 
 import { createClient } from 'redis';
@@ -20,12 +19,12 @@ client.on('connect', function () {
   console.log('Connected!');
 });
 
-const addNFT: ValidatedEventAPIGatewayProxyEvent = async (event) => {
+const addNFT: APIGatewayProxyHandler = async (event) => {
   const nft = event.pathParameters.nft;
 
   await client.rPush('nfts', nft);
 
-  return formatJSONResponse({
+  return MessageUtil.success({
     message: `NFT saved successfully!`,
   });
 };

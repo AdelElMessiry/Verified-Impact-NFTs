@@ -5,7 +5,7 @@ export default {
   events: [
     {
       http: {
-        method: 'get',
+        method: 'GET',
         path: 'nfts',
         cors: true,
       },

@@ -1,7 +1,7 @@
 {
-  "name": "backend",
+  "name": "vi-cache-api",
   "version": "1.0.0",
-  "description": "Serverless webpack example using Typescript",
+  "description": "Serverless aws-nodejs-typescript template",
   "main": "serverless.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,26 +11,27 @@
   },
   "dependencies": {
     "@middy/core": "^1.5.2",
-    "@middy/http-json-body-parser": "^1.5.2",
+    "@middy/do-not-wait-for-empty-event-loop": "^3.5.0",
+    "@middy/http-json-body-parser": "^3.5.0",
     "axios": "^0.27.2",
     "casper-js-sdk": "^2.10.0",
     "redis": "^4.3.1",
     "serverless-dotenv-plugin": "^3.9.0",
     "serverless-offline": "^7.0.0",
-    "source-map-support": "^0.5.19"
+    "source-map-support": "^0.5.19",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
-    "@serverless/typescript": "^2.23.0",
+    "@serverless/typescript": "^3.21.0",
     "@types/aws-lambda": "^8.10.71",
     "@types/node": "^14.14.25",
     "json-schema-to-ts": "^1.5.0",
     "serverless": "^2.23.0",
     "serverless-webpack": "^5.10.0",
     "ts-loader": "^8.0.15",
-    "ts-node": "^10.9.1",
     "tsconfig-paths": "^3.9.0",
     "tsconfig-paths-webpack-plugin": "^3.3.0",
-    "typescript": "^4.1.3",
+    "typescript": "^4.8.4",
     "webpack": "^5.20.2",
     "webpack-node-externals": "^2.5.2"
   },

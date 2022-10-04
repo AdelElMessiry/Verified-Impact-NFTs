@@ -89,11 +89,11 @@ export async function getNFTsList() {
 
 export async function getCachedNFTsList() {
   const nfts: any = await axios.get(
-    'https://8xqw44oqd4.execute-api.us-east-1.amazonaws.com/dev/nfts'
+    'https://yf441ogzv7.execute-api.us-east-1.amazonaws.com/dev/nfts'
   );
 
   const nftsList: any = [];
-  for (let nft of nfts) {
+  for (let nft of JSON.parse(nfts)) {
     const ownerAddress = await cep47.getOwnerOf(nft.tokenId.toString());
 
     const isCreatorOwner =
