@@ -43,6 +43,7 @@ const getNFTs: APIGatewayProxyHandler = async (event) => {
   let result: any;
   try {
     result = await client.lRange('nfts', 0, -1);
+    client.quit();
   } catch (err) {
     return MessageUtil.error(
       HttpStatusCode.INTERNAL_SERVER_ERROR,

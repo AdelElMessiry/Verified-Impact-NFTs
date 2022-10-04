@@ -8,7 +8,7 @@ export const middyfy = (handler) => {
       doNotWaitForEmptyEventLoop({
         runOnError: true,
         runOnBefore: true,
-        runOnAfter: true,
+        runOnAfter: false,
       })
     )
     .use(middyJsonBodyParser());

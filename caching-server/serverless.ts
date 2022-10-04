@@ -3,7 +3,7 @@ import type { AWS } from '@serverless/typescript';
 import getNFTs from '@functions/getNFTs';
 import addNFT from '@functions/addNFT';
 const serverlessConfiguration: AWS = {
-  service: 'vi-cache-api',
+  service: 'caching-api',
   frameworkVersion: '2',
   custom: {
     webpack: {
