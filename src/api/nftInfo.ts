@@ -11,6 +11,7 @@ import { getCreatorsList } from '../api/creatorInfo';
 import { getCollectionsList } from '../api/collectionInfo';
 import { signDeploy } from '../utils/signer';
 import { CONNECTION } from '../constants/blockchain';
+import { getNFTImage, isValidHttpUrl } from '../utils/contract-utils';
 
 export async function isIdOccupied(id: string): Promise<boolean> {
   id = String(Number(id));
@@ -88,12 +89,13 @@ export async function getNFTsList() {
 }
 
 export async function getCachedNFTsList() {
-  const nfts: any = await axios.get(
-    'https://yf441ogzv7.execute-api.us-east-1.amazonaws.com/dev/nfts'
+  const nfts: any = await axios(
+    'https://qpmmnfnis5.execute-api.us-east-1.amazonaws.com/dev/nfts'
   );
+  console.log(nfts.data.list);
 
   const nftsList: any = [];
-  for (let nft of JSON.parse(nfts)) {
+  for (let nft of nfts.data.list) {
     const ownerAddress = await cep47.getOwnerOf(nft.tokenId.toString());
 
     const isCreatorOwner =
@@ -102,6 +104,9 @@ export async function getCachedNFTsList() {
           ? nft.creator.slice(13).replace(')', '') === ownerAddress.slice(13)
           : nft.creator.slice(10).replace(')', '') === ownerAddress.slice(13)
         : ownerAddress.slice(13) === nft.creator;
+    nft.image = isValidHttpUrl(nft.image)
+      ? nft.image
+      : await getNFTImage(nft.image);
 
     nftsList.push({ ...nft, isCreatorOwner });
   }
