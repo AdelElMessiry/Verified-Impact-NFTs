@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 import VINftsTooltip from './Tooltip';
 
-const SDGsStatsItem = ({ data }) => {
+const SDGsStatsItem = ({ data ,nftLoaded}) => {
   return (
     <Link
       to={`./SDGGoalNFTs?id=${data.value.toString()}`}
@@ -18,7 +18,7 @@ const SDGsStatsItem = ({ data }) => {
           />
         </VINftsTooltip>
         <div className="text-center">
-          {data.nftNumber !== undefined ? (
+          {(data.nftNumber !== undefined ||nftLoaded) ? (
             <VINftsTooltip title={`${data.nftNumber} NFTS`}>
               <span className="text-success fz-14">{data.nftNumber || '-'}</span>
             </VINftsTooltip>

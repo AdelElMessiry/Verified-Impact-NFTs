@@ -367,7 +367,7 @@ const Dashboard = () => {
         <Row className='mx-2 mt-4 justify-content-center dash-sdgs'>
           {SDGsGoals?.map((d)=>(
           <Col className="mb-4"  key={d.value}>
-            <SDGsStatsItem data={d}/>
+            <SDGsStatsItem data={d} nftLoaded={nfts?true:false}/>
           </Col>))}
         </Row>
         {allNfts && selectedNFT && displayedCampaigns ? (
