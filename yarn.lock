@@ -12438,7 +12438,7 @@ terser@^5.1.2, terser@^5.6.2, terser@^5.14.2:
     source-map-support "~0.5.12"
 
 terser@^5.14.2, terser@^5.7.2:
-  version "5.13.1"
+  version "5.14.2"
   resolved "https://registry.npmjs.org/terser/-/terser-5.13.1.tgz"
   integrity sha512-hn4WKOfwnwbYfe48NgrQjqNOH9jzLqRcIfbYytOXCOv46LBfWr9bDS17MQqOi+BWGD0sJK3Sj5NC/gJjiojaoA==
   dependencies:
