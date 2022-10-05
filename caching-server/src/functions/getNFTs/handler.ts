@@ -12,18 +12,18 @@ const client = createClient({
   url: `rediss://default:${process.env.UPSTASH_PASSWORD}@${process.env.UPSTASH_REGION}-solid-husky-38167.upstash.io:38167`,
 });
 
-client.on('error', function (err: any) {
-  console.log(err);
+// client.on('error', function (err: any) {
+//   console.log(err);
 
-  throw err;
-});
+//   throw err;
+// });
 
 client.on('connect', function () {
   console.log('Connected!');
 });
 
 const getNFTsList = async (countFrom: number, count: number) => {
-  const nftsList = [];
+  const nftsList: any = [];
 
   for (let tokenId of Array.from(Array(count).keys())) {
     tokenId = tokenId + countFrom + 1;
@@ -37,13 +37,10 @@ const getNFTsList = async (countFrom: number, count: number) => {
 };
 
 const getNFTs: APIGatewayProxyHandler = async (event) => {
-  // console.log(event);
-
   await client.connect();
   let result: any;
   try {
     result = await client.lRange('nfts', 0, -1);
-    client.quit();
   } catch (err) {
     return MessageUtil.error(
       HttpStatusCode.INTERNAL_SERVER_ERROR,
@@ -59,17 +56,21 @@ const getNFTs: APIGatewayProxyHandler = async (event) => {
 
   if (!countFrom && result?.length > 0) {
     const mappedResult = result.map((item) => JSON.parse(item));
+    client.quit();
     return MessageUtil.success({
       list: mappedResult,
     });
   } else {
     const list = await getNFTsList(result.length, parseInt(nftsCount)).catch(
-      (err) =>
-        MessageUtil.error(
+      (err) => {
+        client.quit();
+        return MessageUtil.error(
           HttpStatusCode.INTERNAL_SERVER_ERROR,
           err.message ? err.message : 'upstash Error'
-        )
+        );
+      }
     );
+    client.quit();
     return MessageUtil.success({
       list,
     });

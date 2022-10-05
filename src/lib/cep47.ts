@@ -11,7 +11,7 @@ import {
   CLValueParsers,
   CLByteArray,
   CLAccountHash,
-  CLListType,
+  decodeBase16,
 } from 'casper-js-sdk';
 import { concat } from '@ethersproject/bytes';
 import blake from 'blakejs';
@@ -214,6 +214,19 @@ class CEP47Client {
     return this.contractClient.queryContractData(['total_beneficiaries']);
   }
 
+  public async _balanceOf(account: string, isHash?: boolean) {
+    const result = await this.contractClient.queryContractDictionary(
+      'balances',
+      isHash
+        ? account
+        : CLPublicKey.fromHex(account).toAccountHashStr().slice(13)
+    );
+
+    const maybeValue = result.value().unwrap();
+
+    return maybeValue.value().toString();
+  }
+
   public async balanceOf(account: CLPublicKey) {
     const result = await this.contractClient.queryContractDictionary(
       'balances',
@@ -338,6 +351,29 @@ class CEP47Client {
     const maybeValue = result.value().unwrap().value();
 
     return fromCLMap(maybeValue);
+  }
+
+  public async _getTokenByIndex(
+    owner: string,
+    index: string,
+    isHash?: boolean
+  ) {
+    const mappedOwner = isHash
+      ? new CLAccountHash(decodeBase16(owner))
+      : CLPublicKey.fromHex(owner);
+
+    const hex = keyAndValueToHex(
+      CLValueBuilder.key(mappedOwner),
+      CLValueBuilder.u256(index)
+    );
+    const result = await this.contractClient.queryContractDictionary(
+      'owned_tokens_by_index',
+      hex
+    );
+
+    const maybeValue = result.value().unwrap();
+
+    return maybeValue.value().toString();
   }
 
   public async getTokenByIndex(owner: CLPublicKey, index: string) {
