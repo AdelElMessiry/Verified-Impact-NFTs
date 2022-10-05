@@ -27,6 +27,7 @@ interface NFTState {
   campaignsCount?: Number;
   creatorsCount?: Number;
   collectionsCount?: Number;
+  refreshNFTs?: () => void;
 }
 
 type NFTDispatch = (action: NFTAction) => void;
@@ -61,6 +62,7 @@ function nftReducer(state: NFTState, action: NFTAction): NFTState {
         creatorsCount: action.payload.creatorsCount,
         collectionsCount: action.payload.collectionsCount,
         vINFTsBeneficiaries: action.payload.vINFTsBeneficiaries,
+        refreshNFTs: getCachedNFTsList,
       };
     }
     default: {
