@@ -9,10 +9,7 @@ const CONNECTION = {
   CHAIN_NAME: 'casper-test',
 };
 
-const NFT_CONTRACT_HASH =
-  '2f99efaae119d1c6dbb7c8fe79267c6b829eba24ecd2d974569088df4f8ef2f3';
-const NFT_PACKAGE_HASH =
-  'd980bdc4634cc8724233fa85f2d04807d818a5c32448d1c76db6006c009e4220';
+const { NFT_CONTRACT_HASH, NFT_PACKAGE_HASH } = process.env;
 
 function isValidHttpUrl(string: string) {
   let url;
