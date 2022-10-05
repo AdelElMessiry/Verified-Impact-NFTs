@@ -92,18 +92,33 @@ export async function getCachedNFTsList() {
   const nfts: any = await axios(
     'https://qpmmnfnis5.execute-api.us-east-1.amazonaws.com/dev/nfts'
   );
-  console.log(nfts.data.list);
+
+  const pluckedCreators = nfts.data.list
+    .map(({ creator }: { creator: string }): string => creator)
+    .filter(
+      (creator: any, index: any, creators: any) =>
+        creators.indexOf(creator) === index
+    );
+
+  const idsCreatorsOwn: any = {};
+
+  for (let [i, creator] of pluckedCreators.entries()) {
+    const balance = await cep47._balanceOf(creator, true);
+    idsCreatorsOwn[creator] = [];
+    for (let ownerIndex of [...(Array(parseInt(balance)).keys() as any)]) {
+      const tokenId = await cep47._getTokenByIndex(creator, ownerIndex, true);
+
+      idsCreatorsOwn[creator].push(tokenId);
+    }
+  }
 
   const nftsList: any = [];
-  for (let nft of nfts.data.list) {
-    const ownerAddress = await cep47.getOwnerOf(nft.tokenId.toString());
 
-    const isCreatorOwner =
-      nft.creator.includes('Key') || nft.creator.includes('Account')
-        ? nft.creator.includes('Account')
-          ? nft.creator.slice(13).replace(')', '') === ownerAddress.slice(13)
-          : nft.creator.slice(10).replace(')', '') === ownerAddress.slice(13)
-        : ownerAddress.slice(13) === nft.creator;
+  for (let nft of nfts.data.list) {
+    const isCreatorOwner = idsCreatorsOwn[nft.creator].includes(
+      nft.tokenId.toString()
+    );
+
     nft.image = isValidHttpUrl(nft.image)
       ? nft.image
       : await getNFTImage(nft.image);
