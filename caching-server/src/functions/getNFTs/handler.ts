@@ -25,7 +25,7 @@ client.on('connect', function () {
 const getNFTsList = async (countFrom: number, count: number) => {
   const nftsList: any = [];
 
-  for (let tokenId of Array.from(Array(count).keys())) {
+  for (let tokenId of Array.from(Array(count - countFrom).keys())) {
     tokenId = tokenId + countFrom + 1;
 
     const nft_metadata = await cep47.getMappedTokenMeta(tokenId.toString());
@@ -44,7 +44,6 @@ const getNFTs: APIGatewayProxyHandler = async (event) => {
   let result: any;
   try {
     result = await client.lRange('nfts_dev', 0, -1);
-    console.log(result);
   } catch (err) {
     return MessageUtil.error(
       HttpStatusCode.INTERNAL_SERVER_ERROR,
@@ -58,25 +57,27 @@ const getNFTs: APIGatewayProxyHandler = async (event) => {
     parseInt(nftsCount) - result?.length > 0 &&
     parseInt(nftsCount) - result?.length;
 
+  const mappedResult = result.map((item) => JSON.parse(item));
   if (!countFrom && result?.length > 0) {
-    const mappedResult = result.map((item) => JSON.parse(item));
     client.quit();
     return MessageUtil.success({
       list: mappedResult,
     });
   } else {
-    const list = await getNFTsList(result.length, parseInt(nftsCount)).catch(
-      (err) => {
-        client.quit();
-        return MessageUtil.error(
-          HttpStatusCode.INTERNAL_SERVER_ERROR,
-          err.message ? err.message : 'upstash Error'
-        );
-      }
-    );
+    const list: any = await getNFTsList(
+      result.length,
+      parseInt(nftsCount)
+    ).catch((err) => {
+      client.quit();
+      return MessageUtil.error(
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        err.message ? err.message : 'upstash Error'
+      );
+    });
+
     client.quit();
     return MessageUtil.success({
-      list,
+      list: [...mappedResult, ...list],
     });
   }
 };
