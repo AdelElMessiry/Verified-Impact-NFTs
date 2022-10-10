@@ -11,7 +11,10 @@ import Carousel from 'react-elastic-carousel';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNFTState } from '../../contexts/NFTContext';
 import { getCreatorNftList } from '../../api/nftInfo';
-import { getMappedNftsByList } from '../../api/nftInfo';
+import {
+  getMappedNftsByList,
+  getCachedCreatorNftList,
+} from '../../api/nftInfo';
 import { CaptionCampaign } from '../Element/CaptionCampaign';
 
 import Layout from '../Layout';
@@ -50,9 +53,6 @@ const breakPoints = [
 const options = {
   buttons: { showDownloadButton: false },
 };
-
-
-const imagesLoadedOptions = { background: '.my-bg-image-el' };
 
 //handling filtration markup
 const TagLi = ({ name, handleSetTag, tagActive, type }) => {
@@ -129,28 +129,28 @@ const MyCollections = () => {
             }}
           ></i>
         </VINftsTooltip> */}
-                 { nft.isOwner && (
-              <VINftsTooltip
-                title={
-                  nft.isForSale === 'true'
-                    ? 'Unlist NFT for Sale'
-                    : 'List NFT for sale'
-                }
-              >
-                <div
-                  onClick={() => {
-                    setListForSaleNFT(nft);
-                    setShowListForSaleModal(true);
-                  }}
-                >
-                  {nft.isForSale === 'true' ? (
-                    <FontAwesomeIcon icon={faStoreAltSlash} size='2x' />
-                  ) : (
-                    <FontAwesomeIcon icon={faStoreAlt} size='2x' />
-                  )}
-                </div>
-              </VINftsTooltip>
-          )}
+        {nft.isOwner && (
+          <VINftsTooltip
+            title={
+              nft.isForSale === 'true'
+                ? 'Unlist NFT for Sale'
+                : 'List NFT for sale'
+            }
+          >
+            <div
+              onClick={() => {
+                setListForSaleNFT(nft);
+                setShowListForSaleModal(true);
+              }}
+            >
+              {nft.isForSale === 'true' ? (
+                <FontAwesomeIcon icon={faStoreAltSlash} size='2x' />
+              ) : (
+                <FontAwesomeIcon icon={faStoreAlt} size='2x' />
+              )}
+            </div>
+          </VINftsTooltip>
+        )}
       </>
     );
   };
@@ -249,7 +249,9 @@ const MyCollections = () => {
             {nft.price} {nft.currency}&nbsp;&nbsp;
           </>
         )}
-       {nft.isCreatorOwner === false && nft.isForSale === 'true' &&<IconImage nft={nft} />}
+        {nft.isCreatorOwner === false && nft.isForSale === 'true' && (
+          <IconImage nft={nft} />
+        )}
         &nbsp;&nbsp; &nbsp;&nbsp;{' '}
         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
           <NFTTwitterShare item={nft} />
@@ -274,34 +276,42 @@ const MyCollections = () => {
         />
       </p>
       <p>
-      {nft?.sdgs_ids?.length > 0 && nft?.sdgs_ids !== '0' && (
-        <div className="mt-3 px-2">
-          <a href="https://sdgs.un.org/goals" target="_blank">
-            <img
-              src={unitedNation}
-              style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
-            />
-          </a>
-          :{' '}
-          {SDGsData?.filter(({ value }) =>
-            nft?.sdgs_ids?.split(',').includes(value.toString())
-          )?.map((sdg, index) => (
-            <VINftsTooltip title={sdg.label} key={index}>
-              <label>
-                <img
-                  src={process.env.PUBLIC_URL + 'images/sdgsIcons/' + sdg.icon}
-                  style={{
-                    width: 25,
-                    pointerEvents: 'none',
-                    cursor: 'default',
-                  }}
-                />
-              </label>
-            </VINftsTooltip>
-          ))}
-        </div>
-      )}
-    </p>
+        {nft?.sdgs_ids?.length > 0 && nft?.sdgs_ids !== '0' && (
+          <div className='mt-3 px-2'>
+            <a
+              href='https://sdgs.un.org/goals'
+              target='_blank'
+              rel='noreferrer'
+            >
+              <img
+                alt='unitedNation'
+                src={unitedNation}
+                style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
+              />
+            </a>
+            :{' '}
+            {SDGsData?.filter(({ value }) =>
+              nft?.sdgs_ids?.split(',').includes(value.toString())
+            )?.map((sdg, index) => (
+              <VINftsTooltip title={sdg.label} key={index}>
+                <label>
+                  <img
+                    alt='sdgsIcon'
+                    src={
+                      process.env.PUBLIC_URL + 'images/sdgsIcons/' + sdg.icon
+                    }
+                    style={{
+                      width: 25,
+                      pointerEvents: 'none',
+                      cursor: 'default',
+                    }}
+                  />
+                </label>
+              </VINftsTooltip>
+            ))}
+          </div>
+        )}
+      </p>
     </div>
   );
 
@@ -311,6 +321,7 @@ const MyCollections = () => {
       nftsArr
         .map(({ collection }) => collection)
         .filter((id, index, ids) => ids.indexOf(id) === index);
+
     const nftBasedCollection = [];
     nftsArr &&
       nftsArr.forEach((nft) =>
@@ -358,7 +369,7 @@ const MyCollections = () => {
   const getFilteredNFTs = React.useCallback(async () => {
     const captions = [];
 
-    const nftsList = await getCreatorNftList(entityInfo.publicKey);
+    const nftsList = await getCachedCreatorNftList(entityInfo.publicKey);
     const mappedNFTsList =
       nftsList &&
       beneficiaries &&
@@ -396,7 +407,7 @@ const MyCollections = () => {
   ]);
 
   React.useEffect(() => {
-    ReactGA.pageview(window.location.pathname +"my-collections");
+    ReactGA.pageview(window.location.pathname + 'my-collections');
     entityInfo.publicKey && getFilteredNFTs();
   }, [entityInfo.publicKey, getFilteredNFTs]);
 
@@ -716,76 +727,72 @@ const MyCollections = () => {
                                 id='masonry'
                                 className='dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1'
                               >
-                                  <Carousel
-                                    itemsToShow={4}
-                                    breakPoints={breakPoints}
-                                  >
-                                    {NFts.map((item, index) => (
-                                      <React.Fragment
-                                        key={`${index}${item.tokenId}`}
-                                      >
-                                        <li className='web design card-container p-a0'>
-                                          <NFTCard
-                                            item={item}
-                                            openSlider={(
-                                              newIndex,
-                                              itemCampaign,
-                                              itemCollection
-                                            ) => {
-                                              setPhotoIndex(newIndex);
-                                              setOpenSlider(true);
-                                              itemCollection &&
-                                                setSelectedCollection(
-                                                  itemCollection
-                                                );
-                                              setCaptions(NFts);
-                                            }}
-                                            index={index}
-                                            isCreation={true}
+                                <Carousel
+                                  itemsToShow={4}
+                                  breakPoints={breakPoints}
+                                >
+                                  {NFts.map((item, index) => (
+                                    <React.Fragment
+                                      key={`${index}${item.tokenId}`}
+                                    >
+                                      <li className='web design card-container p-a0'>
+                                        <NFTCard
+                                          item={item}
+                                          openSlider={(
+                                            newIndex,
+                                            itemCampaign,
+                                            itemCollection
+                                          ) => {
+                                            setPhotoIndex(newIndex);
+                                            setOpenSlider(true);
+                                            itemCollection &&
+                                              setSelectedCollection(
+                                                itemCollection
+                                              );
+                                            setCaptions(NFts);
+                                          }}
+                                          index={index}
+                                          isCreation={true}
+                                        />
+                                      </li>
+                                      {openSlider &&
+                                        collectionsName[0] ===
+                                          selectedCollection && (
+                                          <Lightbox
+                                            mainSrc={NFts[photoIndex].image}
+                                            nextSrc={
+                                              NFts[
+                                                (photoIndex + 1) % NFts.length
+                                              ].image
+                                            }
+                                            prevSrc={
+                                              NFts[
+                                                (photoIndex + NFts.length - 1) %
+                                                  NFts.length
+                                              ].image
+                                            }
+                                            onCloseRequest={() =>
+                                              setOpenSlider(false)
+                                            }
+                                            onMovePrevRequest={() =>
+                                              setPhotoIndex(
+                                                (photoIndex + NFts.length - 1) %
+                                                  NFts.length
+                                              )
+                                            }
+                                            onMoveNextRequest={() =>
+                                              setPhotoIndex(
+                                                (photoIndex + 1) % NFts.length
+                                              )
+                                            }
+                                            imageCaption={
+                                              sliderCaptions[photoIndex]
+                                            }
                                           />
-                                        </li>
-                                        {openSlider &&
-                                          collectionsName[0] ===
-                                            selectedCollection && (
-                                            <Lightbox
-                                              mainSrc={NFts[photoIndex].image}
-                                              nextSrc={
-                                                NFts[
-                                                  (photoIndex + 1) % NFts.length
-                                                ].image
-                                              }
-                                              prevSrc={
-                                                NFts[
-                                                  (photoIndex +
-                                                    NFts.length -
-                                                    1) %
-                                                    NFts.length
-                                                ].image
-                                              }
-                                              onCloseRequest={() =>
-                                                setOpenSlider(false)
-                                              }
-                                              onMovePrevRequest={() =>
-                                                setPhotoIndex(
-                                                  (photoIndex +
-                                                    NFts.length -
-                                                    1) %
-                                                    NFts.length
-                                                )
-                                              }
-                                              onMoveNextRequest={() =>
-                                                setPhotoIndex(
-                                                  (photoIndex + 1) % NFts.length
-                                                )
-                                              }
-                                              imageCaption={
-                                                sliderCaptions[photoIndex]
-                                              }
-                                            />
-                                          )}
-                                      </React.Fragment>
-                                    ))}
-                                  </Carousel>
+                                        )}
+                                    </React.Fragment>
+                                  ))}
+                                </Carousel>
                               </ul>
                             </div>
                           </SRLWrapper>
