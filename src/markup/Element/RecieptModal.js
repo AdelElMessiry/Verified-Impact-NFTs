@@ -9,6 +9,7 @@ import {
     useNFTState,
     useNFTDispatch,
     updateNFTs,
+    NFTActionTypes,
   } from '../../contexts/NFTContext';
 
 export default function ReceiptModal({ show, handleCloseParent, data }) {
@@ -80,8 +81,11 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
             updateNFTs(nftDispatch, { ...stateList },changedNFT);
             const updatedNFTsList = await refreshNFTs();
             nftDispatch({
-              ...stateList,
-              nft: updatedNFTsList,
+              type: NFTActionTypes.SUCCESS,
+              payload: {
+                ...stateList,
+                nft: updatedNFTsList,
+              },
             });
             setLoading(false);
             setConfirmGenerateReceipt(true);

@@ -14,7 +14,7 @@ import {
   SendTweetWithImage64,
 } from '../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
-import { useNFTDispatch, useNFTState } from '../../contexts/NFTContext';
+import { NFTActionTypes, useNFTDispatch, useNFTState } from '../../contexts/NFTContext';
 const InitialInputs = () => ({
   inputs: {
     address: '',
@@ -66,8 +66,11 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
           });
           const updatedNFTsList = await refreshNFTs();
           nftDispatch({
-            ...stateList,
-            nft: updatedNFTsList,
+            type: NFTActionTypes.SUCCESS,
+            payload: {
+              ...stateList,
+              nft: updatedNFTsList,
+            },
           });
           VIToast.success('Transaction ended successfully');
           handleClose();
@@ -132,8 +135,11 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
         handleClose();
         const updatedNFTsList = await refreshNFTs();
         nftDispatch({
-          ...stateList,
-          nft: updatedNFTsList,
+          type: NFTActionTypes.SUCCESS,
+          payload: {
+            ...stateList,
+            nft: updatedNFTsList,
+          },
         });
       } else {
         VIToast.error('Error happened please try again later');
