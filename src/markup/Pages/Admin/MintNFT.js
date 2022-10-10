@@ -404,9 +404,12 @@ const MintNFT = () => {
         VIToast.success('NFT minted successfully');
         const updatedNFTsList = await refreshNFTs();
         nftDispatch({
-          ...stateList,
-          nft: updatedNFTsList,
-        })
+          type: NFTActionTypes.SUCCESS,
+          payload: {
+            ...stateList,
+            nft: updatedNFTsList,
+          },
+        });
         setState({
           inputs: {
             name: '',
@@ -492,14 +495,6 @@ const MintNFT = () => {
           label: `${creator}: ${entityInfo.publicKey} mint new NFT successfully`,
         });
         //window.location.reload();
-        const updatedNFTsList = await refreshNFTs();
-        nftDispatch({
-          type: NFTActionTypes.SUCCESS,
-          payload: {
-            ...stateList,
-            nft: updatedNFTsList,
-          },
-        });
         setIsMintClicked(false);
         setIsMintAnotherClicked(false);
       } catch (err) {

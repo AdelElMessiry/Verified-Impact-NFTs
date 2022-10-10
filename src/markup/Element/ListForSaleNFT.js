@@ -10,6 +10,7 @@ import {
   useNFTState,
   useNFTDispatch,
   updateNFTs,
+  NFTActionTypes,
 } from '../../contexts/NFTContext';
 
 //list nft for sale NFT Modal
@@ -66,8 +67,11 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
         handleClose();
         const updatedNFTsList = await refreshNFTs();
         nftDispatch({
-          ...stateList,
-          nft: updatedNFTsList,
+          type: NFTActionTypes.SUCCESS,
+          payload: {
+            ...stateList,
+            nft: updatedNFTsList,
+          },
         });
       } else {
         VIToast.error('Error happened please try again later');
