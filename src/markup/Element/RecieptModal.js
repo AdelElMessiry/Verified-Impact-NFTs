@@ -78,7 +78,11 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
             hasReceipt: "true",
           }
             updateNFTs(nftDispatch, { ...stateList },changedNFT);
-           await refreshNFTs()
+            const updatedNFTsList = await refreshNFTs();
+            nftDispatch({
+              ...stateList,
+              nft: updatedNFTsList,
+            });
             setLoading(false);
             setConfirmGenerateReceipt(true);
         }catch(error){
