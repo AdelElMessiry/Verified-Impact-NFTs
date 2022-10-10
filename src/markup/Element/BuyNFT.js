@@ -14,7 +14,7 @@ import {
   SendTweetWithImage64,
 } from '../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
-import { useNFTState } from '../../contexts/NFTContext';
+import { useNFTDispatch, useNFTState } from '../../contexts/NFTContext';
 const InitialInputs = () => ({
   inputs: {
     address: '',
@@ -29,7 +29,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
   const [isBuyClicked, setIsBuyClicked] = React.useState(false);
   const { ...stateList } = useNFTState();
   const { refreshNFTs } = stateList;
-
+  const nftDispatch = useNFTDispatch();
   //buy NFT Function
   const buyNFT = async () => {
     if (entityInfo.publicKey) {
@@ -64,7 +64,11 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
             action: 'Buy nft',
             label: `${entityInfo.publicKey}: bought a new nft id: ${nftID}`,
           });
-         await refreshNFTs();
+          const updatedNFTsList = await refreshNFTs();
+          nftDispatch({
+            ...stateList,
+            nft: updatedNFTsList,
+          });
           VIToast.success('Transaction ended successfully');
           handleClose();
           await sendDiscordMessage(
@@ -126,7 +130,11 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
       if (transferDeployHash) {
         VIToast.success('NFT transfered successfully');
         handleClose();
-       await refreshNFTs();
+        const updatedNFTsList = await refreshNFTs();
+        nftDispatch({
+          ...stateList,
+          nft: updatedNFTsList,
+        });
       } else {
         VIToast.error('Error happened please try again later');
       }
