@@ -64,7 +64,11 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
         );
         setIsListForSaleClicked(false);
         handleClose();
-       await refreshNFTs();
+        const updatedNFTsList = await refreshNFTs();
+        nftDispatch({
+          ...stateList,
+          nft: updatedNFTsList,
+        });
       } else {
         VIToast.error('Error happened please try again later');
         setIsListForSaleClicked(false);
