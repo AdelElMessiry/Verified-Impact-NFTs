@@ -286,22 +286,21 @@ const MintNFT = () => {
     // let cloudURL = uploadedImageURL;
     let imageFile;
     if (!state.inputs.isImageURL && uploadedImageBlob) {
-      console.log('Img', uploadedFile);
-      console.log('Img url', uploadedImageBlob.name);
+      // console.log('Img', uploadedFile);
+      // console.log('Img url', uploadedImageBlob.name);
       try {
-        const image = new File([uploadedImageBlob], uploadedImageBlob.name, {
-          type: uploadedImageBlob.type,
-        });
+        //   const image = new File([uploadedImageBlob], uploadedImageBlob.name, {
+        //     type: uploadedImageBlob.type,
+        //   });
         const client = new NFTStorage({ token: NFT_STORAGE_KEY });
         imageFile = await client.store({
           name: uploadedImageBlob.name,
           description: 'description',
-          image: image,
+          image: uploadedImageBlob,
         });
       } catch (err) {
         console.log(err);
         VIToast.error("Image couldn't be uploaded to cloud CDN !");
-
         return;
       }
       VIToast.success('Image uploaded to cloud CDN successfully !');
