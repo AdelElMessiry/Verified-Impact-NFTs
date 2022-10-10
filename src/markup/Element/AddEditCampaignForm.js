@@ -20,7 +20,7 @@ const AddEditCampaignForm = ({
   isFromModal = false,
   beneficiaryAddress = undefined,
 }) => {
-  const { beneficiaries,nfts } = useNFTState();
+  const { beneficiaries, nfts } = useNFTState();
   const { entityInfo } = useAuth();
   const [beneficiary, setBeneficiary] = React.useState();
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
@@ -30,6 +30,7 @@ const AddEditCampaignForm = ({
   );
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
   const [mandatorySDGs, setMandatorySDGs] = React.useState();
+  const [campaignAddress, setCampaignAddress] = React.useState(data?data.campaignAddress:'');
 
   //getting beneficiary details
   const selectedBeneficiary = React.useCallback(async () => {
@@ -55,6 +56,7 @@ const AddEditCampaignForm = ({
                 .includes(value.toString())
             )
       );
+      firstBeneficiary&& setCampaignAddress(firstBeneficiary[0]?.address)
   }, [beneficiaries]);
 
   React.useEffect(() => {
@@ -63,20 +65,23 @@ const AddEditCampaignForm = ({
 
   //getting beneficiary details
   const getSavedSDGs = React.useCallback(async () => {
-    const selectedNFTs=data&&nfts&&nfts.filter(({campaign})=>campaign==data.id);
-    if (selectedNFTs&& selectedNFTs.length>0){
-      const sdgsNFTs=  selectedNFTs.map(({sdgs_ids})=>sdgs_ids?.split(","))?.flat();
-      const campaignArray=  data?.sdgs_ids?.split(',')
-        var savedSDGs = sdgsNFTs?.filter(function(obj) { 
-          return campaignArray?.indexOf(obj) > -1; 
-        });
-        setMandatorySDGs(savedSDGs);
-      }
-  }, [data,nfts]);
+    const selectedNFTs =
+      data && nfts && nfts.filter(({ campaign }) => campaign == data.id);
+    if (selectedNFTs && selectedNFTs.length > 0) {
+      const sdgsNFTs = selectedNFTs
+        .map(({ sdgs_ids }) => sdgs_ids?.split(','))
+        ?.flat();
+      const campaignArray = data?.sdgs_ids?.split(',');
+      var savedSDGs = sdgsNFTs?.filter(function (obj) {
+        return campaignArray?.indexOf(obj) > -1;
+      });
+      setMandatorySDGs(savedSDGs);
+    }
+  }, [data, nfts]);
 
   React.useEffect(() => {
-    !mandatorySDGs &&data&& getSavedSDGs();
-  }, [mandatorySDGs,getSavedSDGs]);
+    !mandatorySDGs && data && getSavedSDGs();
+  }, [mandatorySDGs, getSavedSDGs]);
 
   //setting initial values of controls
   const [state, setState] = React.useState({
@@ -243,6 +248,21 @@ const AddEditCampaignForm = ({
                   <div className="required-field">
                     <input
                       type="text"
+                      placeholder="Campaign Address"
+                      name="campaignAddress"
+                      className="form-control"
+                      onChange={(e) => setCampaignAddress(e.target.value)}
+                      value={campaignAddress}
+                    />
+                    <span className="text-danger required-field-symbol">*</span>
+                  </div>
+                </Col>
+              </Row>
+              <Row className="mt-4">
+                <Col>
+                  <div className="required-field">
+                    <input
+                      type="text"
                       placeholder="Name"
                       name="name"
                       className="form-control"
@@ -252,8 +272,6 @@ const AddEditCampaignForm = ({
                     <span className="text-danger required-field-symbol">*</span>
                   </div>
                 </Col>
-              </Row>
-              <Row className="mt-4">
                 <Col>
                   <div className="required-field">
                     <input
@@ -282,6 +300,10 @@ const AddEditCampaignForm = ({
                       )}
                   </div>
                 </Col>
+              </Row>
+
+              <Row className="mt-4">
+                {' '}
                 <Col>
                   <input
                     type="text"
@@ -298,9 +320,7 @@ const AddEditCampaignForm = ({
                     <span className="text-danger">Please enter Valid URL</span>
                   )}
                 </Col>
-              </Row>
-              {SDGsGoalsData.length > 0 && (
-                <Row className="mt-4">
+                {SDGsGoalsData.length > 0 && (
                   <Col>
                     <SDGsMultiSelect
                       data={SDGsGoalsData}
@@ -315,8 +335,9 @@ const AddEditCampaignForm = ({
                       mandatorySDGs={mandatorySDGs}
                     />
                   </Col>
-                </Row>
-              )}
+                )}
+              </Row>
+
               <Row className="mt-4">
                 <Col>
                   <textarea
@@ -338,8 +359,8 @@ const AddEditCampaignForm = ({
                       disabled={
                         state.inputs.name == '' ||
                         state.inputs.requestedRoyalty < 0 ||
-                        state.inputs.requestedRoyalty > 100||
-                        (SDGsGoalsData?.length>0&& SDGsGoals?.length<=0)
+                        state.inputs.requestedRoyalty > 100 ||
+                        (SDGsGoalsData?.length > 0 && SDGsGoals?.length <= 0)
                       }
                     >
                       {isButtonClicked ? (
