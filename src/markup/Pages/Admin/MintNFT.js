@@ -37,8 +37,8 @@ const createOption = (label) => ({
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
   const { ...stateList } = useNFTState();
-  const dispatch = useNFTDispatch();
   const { campaigns, beneficiaries, collections, refreshNFTs } = stateList;
+  const nftDispatch = useNFTDispatch();
   const pictureElement = React.useRef(null);
   let storageData = localStorage.getItem('selectedData');
   let savedData = storageData ? JSON.parse(storageData) : null;
@@ -398,7 +398,6 @@ const MintNFT = () => {
         }
         console.log('...... Token minted successfully', deployResult);
         VIToast.success('NFT minted successfully');
-
         setState({
           inputs: {
             name: '',
@@ -485,7 +484,7 @@ const MintNFT = () => {
         });
         //window.location.reload();
         const updatedNFTsList = await refreshNFTs();
-        dispatch({
+        nftDispatch({
           ...stateList,
           nft: updatedNFTsList,
         });
