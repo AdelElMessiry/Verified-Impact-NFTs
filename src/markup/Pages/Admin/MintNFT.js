@@ -2,6 +2,7 @@ import React from 'react';
 import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import ImageUploader from 'react-images-upload';
 import { toast as VIToast } from 'react-toastify';
+import ReactGA from 'react-ga';
 import { Form } from 'react-bootstrap';
 import CreatableSelect from 'react-select/creatable';
 import validator from 'validator';
@@ -9,11 +10,7 @@ import { NFTStorage } from 'nft.storage';
 import { CLPublicKey } from 'casper-js-sdk';
 
 import { useAuth } from '../../../contexts/AuthContext';
-import {
-  useNFTState,
-  useNFTDispatch,
-  updateNFTs,
-} from '../../../contexts/NFTContext';
+import { useNFTState, useNFTDispatch } from '../../../contexts/NFTContext';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
 import { profileClient } from '../../../api/profileInfo';
@@ -26,12 +23,8 @@ import { NFT_STORAGE_KEY } from '../../../constants/blockchain';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
-import {
-  SendTweet,
-  SendTweetWithImage,
-  SendTweetWithImage64,
-} from '../../../utils/VINFTsTweets';
-import ReactGA from 'react-ga';
+import { SendTweet, SendTweetWithImage } from '../../../utils/VINFTsTweets';
+
 import SDGsMultiSelect from '../../Element/SDGsMultiSelect';
 import { SDGsData } from '../../../data/SDGsGoals';
 //handling of creating new option in creatable select control
@@ -44,9 +37,9 @@ const createOption = (label) => ({
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
   const { ...stateList } = useNFTState();
+  const dispatch = useNFTDispatch();
   const { campaigns, beneficiaries, collections, refreshNFTs } = stateList;
-  const nftDispatch = useNFTDispatch();
-  const pictureElement = useRef(null);
+  const pictureElement = React.useRef(null);
   let storageData = localStorage.getItem('selectedData');
   let savedData = storageData ? JSON.parse(storageData) : null;
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
@@ -67,7 +60,6 @@ const MintNFT = () => {
   const [creatorPercentage, setCreatorPercentage] = React.useState();
   const [uploadedImageBlob, setUploadedBlobImage] = React.useState(null);
   const [uploadedImageURL, setUploadedImage] = React.useState(null);
-  const [uploadedFile, setUploadedFile] = React.useState(null);
   const [selectedCollectionValue, setSelectedCollectionValue] = React.useState(
     {}
   );
@@ -78,7 +70,7 @@ const MintNFT = () => {
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
   const [isNewNftMinted, setIsNewNftMinted] = React.useState(false);
   const [isClearSDGs, setIsClearSDGs] = React.useState(false);
-  
+
   // const [beneficiariesList, setBeneficiariesList] = React.useState();
   const [state, setState] = React.useState({
     inputs: {
@@ -155,7 +147,7 @@ const MintNFT = () => {
 
   React.useEffect(() => {
     loadCollections();
-  }, [isNewNftMinted]);
+  }, [loadCollections, isNewNftMinted]);
 
   React.useEffect(() => {
     ReactGA.pageview(window.location.pathname + '/mint-nft');
@@ -406,7 +398,7 @@ const MintNFT = () => {
         }
         console.log('...... Token minted successfully', deployResult);
         VIToast.success('NFT minted successfully');
-        refreshNFTs();
+
         setState({
           inputs: {
             name: '',
@@ -421,11 +413,11 @@ const MintNFT = () => {
         setBeneficiary(isAnotherMint ? beneficiary : undefined);
         setCampaign(isAnotherMint ? campaign : undefined);
         pictureElement.current.clearPictures();
-        setSDGsGoals([])
-        setIsClearSDGs(true)
+        setSDGsGoals([]);
+        setIsClearSDGs(true);
         setIsNewNftMinted(!isNewNftMinted);
         let twitterName = '';
-        if (creatorTwitterLink != '') {
+        if (creatorTwitterLink !== '') {
           var n = creatorTwitterLink.lastIndexOf('/');
           twitterName = `@${creatorTwitterLink.substring(n + 1)}`;
         }
@@ -492,6 +484,11 @@ const MintNFT = () => {
           label: `${creator}: ${entityInfo.publicKey} mint new NFT successfully`,
         });
         //window.location.reload();
+        const updatedNFTsList = await refreshNFTs();
+        dispatch({
+          ...stateList,
+          nft: updatedNFTsList,
+        });
         setIsMintClicked(false);
         setIsMintAnotherClicked(false);
       } catch (err) {

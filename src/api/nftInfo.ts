@@ -141,10 +141,33 @@ export async function updateCachedNFT(nft: {}) {
 
   return updatedNFTs;
 }
+
 export async function getCreatorNftList(address: string) {
   const creator = CLPublicKey.fromHex(address).toAccountHashStr();
 
   const nftList = await getNFTsList();
+
+  for (const [index, nft] of nftList.entries()) {
+    const owner = await cep47.getOwnerOf(nft.tokenId.toString());
+    nftList[index].isOwner = owner === creator;
+  }
+
+  const creatorList = nftList.filter(
+    (nft: any) =>
+      creator.includes('hash')
+        ? nft.creator === creator.slice(13)
+        : nft.creator === address
+
+    // && nft.isOwner
+  );
+
+  return creatorList || [];
+}
+
+export async function getCachedCreatorNftList(address: string) {
+  const creator = CLPublicKey.fromHex(address).toAccountHashStr();
+
+  const nftList = await getCachedNFTsList();
 
   for (const [index, nft] of nftList.entries()) {
     const owner = await cep47.getOwnerOf(nft.tokenId.toString());
