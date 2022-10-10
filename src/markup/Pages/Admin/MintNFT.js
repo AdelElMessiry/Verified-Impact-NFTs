@@ -44,9 +44,9 @@ const createOption = (label) => ({
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
   const { ...stateList } = useNFTState();
-  const { campaigns, beneficiaries, collections } = stateList;
+  const { campaigns, beneficiaries, collections, refreshNFTs } = stateList;
   const nftDispatch = useNFTDispatch();
-
+  const pictureElement = useRef(null);
   let storageData = localStorage.getItem('selectedData');
   let savedData = storageData ? JSON.parse(storageData) : null;
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
@@ -76,19 +76,18 @@ const MintNFT = () => {
   const [creatorTwitterLink, setCreatorTwitterLink] = React.useState('');
   const [SDGsGoals, setSDGsGoals] = React.useState([]);
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
-
+  const [isNewNftMinted, setIsNewNftMinted] = React.useState(false);
+  const [isClearSDGs, setIsClearSDGs] = React.useState(false);
+  
   // const [beneficiariesList, setBeneficiariesList] = React.useState();
   const [state, setState] = React.useState({
     inputs: {
-      imageUrl: '',
       name: '',
       description: '',
       price: '',
       isForSale: false,
-      category: '',
       currency: 'CSPR',
       beneficiaryPercentage: '',
-      collection: '',
       isImageURL: false,
     },
   });
@@ -153,6 +152,10 @@ const MintNFT = () => {
     setSelectedCollectionValue,
     savedData,
   ]);
+
+  React.useEffect(() => {
+    loadCollections();
+  }, [isNewNftMinted]);
 
   React.useEffect(() => {
     ReactGA.pageview(window.location.pathname + '/mint-nft');
@@ -403,6 +406,24 @@ const MintNFT = () => {
         }
         console.log('...... Token minted successfully', deployResult);
         VIToast.success('NFT minted successfully');
+        refreshNFTs();
+        setState({
+          inputs: {
+            name: '',
+            description: '',
+            price: '',
+            isForSale: false,
+            currency: 'CSPR',
+            beneficiaryPercentage: '',
+            isImageURL: false,
+          },
+        });
+        setBeneficiary(isAnotherMint ? beneficiary : undefined);
+        setCampaign(isAnotherMint ? campaign : undefined);
+        pictureElement.current.clearPictures();
+        setSDGsGoals([])
+        setIsClearSDGs(true)
+        setIsNewNftMinted(!isNewNftMinted);
         let twitterName = '';
         if (creatorTwitterLink != '') {
           var n = creatorTwitterLink.lastIndexOf('/');
@@ -470,7 +491,7 @@ const MintNFT = () => {
           action: 'Mint',
           label: `${creator}: ${entityInfo.publicKey} mint new NFT successfully`,
         });
-        window.location.reload();
+        //window.location.reload();
         setIsMintClicked(false);
         setIsMintAnotherClicked(false);
       } catch (err) {
@@ -746,6 +767,7 @@ const MintNFT = () => {
                             ) : (
                               <ImageUploader
                                 singleImage
+                                ref={pictureElement}
                                 withIcon={true}
                                 buttonText='Choose image'
                                 onChange={onDrop}
@@ -769,6 +791,7 @@ const MintNFT = () => {
                             SDGsChanged={(selectedData) => {
                               handleSDGsChange(selectedData);
                             }}
+                            isClear={isClearSDGs}
                           />
                         </Col>
                       </Row>

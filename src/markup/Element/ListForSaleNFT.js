@@ -6,10 +6,18 @@ import { toast as VIToast } from 'react-toastify';
 
 import { setIsTokenForSale } from '../../api/nftInfo';
 import { useAuth } from '../../contexts/AuthContext';
+import {
+  useNFTState,
+  useNFTDispatch,
+  updateNFTs,
+} from '../../contexts/NFTContext';
 
 //list nft for sale NFT Modal
 const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
   const { entityInfo } = useAuth();
+  const { ...stateList } = useNFTState();
+  const { refreshNFTs } = stateList;
+  const nftDispatch = useNFTDispatch();
   const [price, setPrice] = React.useState('');
   const [showModal, setShowModal] = React.useState(show);
   const [isListForSaleClicked, setIsListForSaleClicked] = React.useState(false);
@@ -27,7 +35,28 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
         CLPublicKey.fromHex(entityInfo.publicKey),
         price
       );
+
       if (deployUpdatedNftResult) {
+        //update listed/unlisted nft to radis
+        const changedNFT={
+          tokenId: data.tokenId,
+          title: data.title,
+          description: data.description,
+          image: data.image,
+          price: data.price,
+          isForSale: data.isForSale==="true" ? "false" : "true",
+          campaign: data.campaign,
+          currency: data.currency,
+          collection: data.collection,
+          creator: data.creator,
+          creatorPercentage: data.creatorPercentage,
+          beneficiary: data.beneficiary,
+          beneficiaryPercentage: data.beneficiaryPercentage,
+          sdgs_ids: data.sdgs_ids,
+          hasReceipt: data.hasReceipt,
+        }
+        updateNFTs(nftDispatch, { ...stateList },changedNFT);
+
         VIToast.success(
           data.isForSale === 'true'
             ? 'NFT is unlisted for sale'
@@ -35,7 +64,7 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
         );
         setIsListForSaleClicked(false);
         handleClose();
-        window.location.reload();
+        refreshNFTs();
       } else {
         VIToast.error('Error happened please try again later');
         setIsListForSaleClicked(false);

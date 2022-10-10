@@ -14,6 +14,7 @@ import {
   SendTweetWithImage64,
 } from '../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
+import { useNFTState } from '../../contexts/NFTContext';
 const InitialInputs = () => ({
   inputs: {
     address: '',
@@ -26,6 +27,8 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
   const [showModal, setShowModal] = React.useState(show);
   const [state, setState] = React.useState(InitialInputs());
   const [isBuyClicked, setIsBuyClicked] = React.useState(false);
+  const { ...stateList } = useNFTState();
+  const { refreshNFTs } = stateList;
 
   //buy NFT Function
   const buyNFT = async () => {
@@ -61,6 +64,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
             action: 'Buy nft',
             label: `${entityInfo.publicKey}: bought a new nft id: ${nftID}`,
           });
+          refreshNFTs();
           VIToast.success('Transaction ended successfully');
           handleClose();
           await sendDiscordMessage(
@@ -84,8 +88,6 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
               `Exciting news! ${data.title} #NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao `
             );
           }
-
-          window.location.reload();
         } else {
           setIsBuyClicked(false);
         }
@@ -124,7 +126,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
       if (transferDeployHash) {
         VIToast.success('NFT transfered successfully');
         handleClose();
-        window.location.reload();
+        refreshNFTs();
       } else {
         VIToast.error('Error happened please try again later');
       }
