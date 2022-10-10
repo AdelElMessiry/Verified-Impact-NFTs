@@ -46,7 +46,7 @@ const MintNFT = () => {
   const { ...stateList } = useNFTState();
   const { campaigns, beneficiaries, collections, refreshNFTs } = stateList;
   const nftDispatch = useNFTDispatch();
-  const pictureElement = useRef(null);
+  const pictureElement = React.useRef(null);
   let storageData = localStorage.getItem('selectedData');
   let savedData = storageData ? JSON.parse(storageData) : null;
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
@@ -406,7 +406,7 @@ const MintNFT = () => {
         }
         console.log('...... Token minted successfully', deployResult);
         VIToast.success('NFT minted successfully');
-        refreshNFTs();
+       await refreshNFTs();
         setState({
           inputs: {
             name: '',
