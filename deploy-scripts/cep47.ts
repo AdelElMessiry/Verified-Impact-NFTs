@@ -9,6 +9,7 @@ import {
   CLValueBuilder,
   CLValueParsers,
   decodeBase16,
+  CLByteArray,
 } from 'casper-js-sdk';
 import { config } from 'dotenv';
 
@@ -150,6 +151,17 @@ class CEP47Client {
     this.isContractIHashSetup = true;
   }
 
+  public async getBeneficiariesList() {
+    const result: any = await this.contractClient.queryContractData([
+      'beneficiaries_addresses',
+    ]);
+
+    const mappedAddresses = result.map((address: any) =>
+      Buffer.from(address.data.value()).toString('hex')
+    );
+    return mappedAddresses;
+  }
+
   public async addBeneficiary(
     name: string,
     description: string,
@@ -184,7 +196,7 @@ class CEP47Client {
   }
 
   public async approveBeneficiary(
-    address: any,
+    address: CLByteArray,
     status: boolean,
     paymentAmount: string,
     deploySender: CLPublicKey,
@@ -193,6 +205,9 @@ class CEP47Client {
     const runtimeArgs = RuntimeArgs.fromMap({
       address: CLValueBuilder.key(address),
       status: CLValueBuilder.bool(status),
+      profile_contract_hash: CLValueBuilder.string(
+        `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
     });
 
     return this.contractClient.callEntrypoint(
