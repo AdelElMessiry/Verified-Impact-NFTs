@@ -10,7 +10,11 @@ import { NFTStorage } from 'nft.storage';
 import { CLPublicKey } from 'casper-js-sdk';
 
 import { useAuth } from '../../../contexts/AuthContext';
-import { useNFTState, useNFTDispatch } from '../../../contexts/NFTContext';
+import {
+  useNFTState,
+  useNFTDispatch,
+  NFTActionTypes,
+} from '../../../contexts/NFTContext';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
 import { profileClient } from '../../../api/profileInfo';
@@ -485,8 +489,11 @@ const MintNFT = () => {
         //window.location.reload();
         const updatedNFTsList = await refreshNFTs();
         nftDispatch({
-          ...stateList,
-          nft: updatedNFTsList,
+          type: NFTActionTypes.SUCCESS,
+          payload: {
+            ...stateList,
+            nft: updatedNFTsList,
+          },
         });
         setIsMintClicked(false);
         setIsMintAnotherClicked(false);
