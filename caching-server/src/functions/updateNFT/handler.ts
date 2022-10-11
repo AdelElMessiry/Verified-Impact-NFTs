@@ -17,24 +17,25 @@ client.on('connect', function () {
 
 const updateNFT: APIGatewayProxyHandler = async (event) => {
   const { nft }: any = event.body;
-  await client.connect();
 
-  let result: any;
   try {
-    result = await client.lRange('nfts_dev', 0, -1);
-    const mappedResult = result.map((item) =>
-      JSON.parse(item.replace(/'/g, '"'))
-    );
+    await client.connect();
+    let result = await client.lRange('nfts_dev', 0, -1);
 
+    const mappedResult = result
+      .map((item) => JSON.parse(item))
+      .filter(({ tokenId }) => tokenId !== nft.tokenId);
+    mappedResult.push(nft);
     const toBeDeleted = mappedResult.find(
       ({ tokenId }) => tokenId === nft.tokenId
     );
-    const updatedNFTs = (result = await client.lRange('nfts_dev', 0, -1));
+    console.log(toBeDeleted);
+
     await client.lRem('nfts_dev', 0, JSON.stringify(toBeDeleted));
     await client.rPush('nfts_dev', JSON.stringify(nft));
     client.quit();
     return MessageUtil.success({
-      nfts: updatedNFTs,
+      nfts: mappedResult,
       message: 'NFT updated Successfully',
     });
   } catch (err) {

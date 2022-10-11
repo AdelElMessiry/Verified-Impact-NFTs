@@ -139,7 +139,7 @@ export async function updateCachedNFT(nft: {}) {
     nft
   );
 
-  return updatedNFTs;
+  return updatedNFTs?.data.nfts;
 }
 
 export async function getCreatorNftList(address: string) {
