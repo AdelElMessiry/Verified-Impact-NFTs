@@ -99,8 +99,8 @@ const MintNFT = () => {
         } else {
           let list = Object.values(userProfiles)[0];
 
-          userProfiles && setCreator(list.creator.username);
-          userProfiles && setCreatorTwitterLink(list.creator.twitter);
+          userProfiles && setCreator(list?.creator?.username);
+          userProfiles && setCreatorTwitterLink(list?.creator?.twitter);
           userProfiles && setIsCreatorExist(true);
           if (list?.creator?.address !== '') {
             const _collections =
@@ -151,7 +151,7 @@ const MintNFT = () => {
 
   React.useEffect(() => {
     loadCollections();
-  }, [loadCollections, isNewNftMinted]);
+  }, [ isNewNftMinted]);
 
   React.useEffect(() => {
     ReactGA.pageview(window.location.pathname + '/mint-nft');
