@@ -41,9 +41,8 @@ type NFTAction =
   | { type: NFTActionTypes.SUCCESS; payload: any };
 
 const NFTStateContext = React.createContext<NFTState | undefined>(undefined);
-const NFTDispatchContext = React.createContext<NFTDispatch | undefined>(
-  undefined
-);
+const NFTDispatchContext =
+  React.createContext<NFTDispatch | undefined>(undefined);
 
 function nftReducer(state: NFTState, action: NFTAction): NFTState {
   switch (action.type) {
@@ -210,12 +209,12 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
 };
 
 export const updateNFTs = async (dispatch: any, state: any, nft: any) => {
-  const updatedNFTs = await updateCachedNFT(nft);
+  // const updatedNFTs = await updateCachedNFT(nft);
   dispatch({
     type: NFTActionTypes.SUCCESS,
     payload: {
       ...state,
-      nfts: updatedNFTs,
+      nfts: [],
     },
   });
 };

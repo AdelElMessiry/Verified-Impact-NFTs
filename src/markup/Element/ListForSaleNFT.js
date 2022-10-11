@@ -39,13 +39,13 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
 
       if (deployUpdatedNftResult) {
         //update listed/unlisted nft to radis
-        const changedNFT={
+        const changedNFT = {
           tokenId: data.tokenId,
           title: data.title,
           description: data.description,
           image: data.image,
           price: data.price,
-          isForSale: data.isForSale==="true" ? "false" : "true",
+          isForSale: data.isForSale === 'true' ? 'false' : 'true',
           campaign: data.campaign,
           currency: data.currency,
           collection: data.collection,
@@ -55,8 +55,8 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
           beneficiaryPercentage: data.beneficiaryPercentage,
           sdgs_ids: data.sdgs_ids,
           hasReceipt: data.hasReceipt,
-        }
-        updateNFTs(nftDispatch, { ...stateList },changedNFT);
+        };
+        await updateNFTs(nftDispatch, stateList, changedNFT);
 
         VIToast.success(
           data.isForSale === 'true'
@@ -65,7 +65,7 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
         );
         setIsListForSaleClicked(false);
         handleClose();
-        await refreshNFTs(nftDispatch,...stateList);
+        await refreshNFTs(nftDispatch, stateList);
       } else {
         VIToast.error('Error happened please try again later');
         setIsListForSaleClicked(false);
@@ -140,7 +140,7 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
           onClick={() => {
             ListNFTForSale();
           }}
-          disabled={isListForSaleClicked||(price!==''&&price<250)}
+          disabled={isListForSaleClicked || (price !== '' && price < 250)}
         >
           {isListForSaleClicked ? (
             <Spinner animation='border' variant='light' />

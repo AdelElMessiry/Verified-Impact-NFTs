@@ -22,23 +22,28 @@ const updateNFT: APIGatewayProxyHandler = async (event) => {
     await client.connect();
     let result = await client.lRange('nfts_dev', 0, -1);
 
-    const mappedResult = result
-      .map((item) => JSON.parse(item))
-      .filter(({ tokenId }) => tokenId !== nft.tokenId);
-    mappedResult.push(nft);
+    let mappedResult = result.map((item) => JSON.parse(item));
+
     const toBeDeleted = mappedResult.find(
       ({ tokenId }) => tokenId === nft.tokenId
     );
-    console.log(toBeDeleted);
+
+    mappedResult = mappedResult.filter(
+      ({ tokenId }) => tokenId !== nft.tokenId
+    );
+    mappedResult.push(nft);
 
     await client.lRem('nfts_dev', 0, JSON.stringify(toBeDeleted));
     await client.rPush('nfts_dev', JSON.stringify(nft));
+
     client.quit();
+
     return MessageUtil.success({
       nfts: mappedResult,
       message: 'NFT updated Successfully',
     });
   } catch (err) {
+    client.quit();
     return MessageUtil.error(
       HttpStatusCode.INTERNAL_SERVER_ERROR,
       err.message ? err.message : 'upstash Error'
