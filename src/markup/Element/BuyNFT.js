@@ -69,7 +69,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
             type: NFTActionTypes.SUCCESS,
             payload: {
               ...stateList,
-              nft: updatedNFTsList,
+              nfts: updatedNFTsList,
             },
           });
           VIToast.success('Transaction ended successfully');
@@ -138,7 +138,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
           type: NFTActionTypes.SUCCESS,
           payload: {
             ...stateList,
-            nft: updatedNFTsList,
+            nfts: updatedNFTsList,
           },
         });
       } else {
