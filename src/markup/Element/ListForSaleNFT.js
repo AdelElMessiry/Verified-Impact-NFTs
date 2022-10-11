@@ -70,7 +70,7 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
           type: NFTActionTypes.SUCCESS,
           payload: {
             ...stateList,
-            nft: updatedNFTsList,
+            nfts: updatedNFTsList,
           },
         });
       } else {
