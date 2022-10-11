@@ -30,7 +30,7 @@ const AddEditCampaignForm = ({
   );
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
   const [mandatorySDGs, setMandatorySDGs] = React.useState();
-  const [campaignAddress, setCampaignAddress] = React.useState(data?data.campaignAddress:'');
+  const [campaignAddress, setCampaignAddress] = React.useState(data&&data.campaignAddress?data.campaignAddress: beneficiaryAddress?beneficiaryAddress:"");
 
   //getting beneficiary details
   const selectedBeneficiary = React.useCallback(async () => {
@@ -56,7 +56,7 @@ const AddEditCampaignForm = ({
                 .includes(value.toString())
             )
       );
-      firstBeneficiary&& setCampaignAddress(firstBeneficiary[0]?.address)
+     !data&&firstBeneficiary&& setCampaignAddress( beneficiaryAddress ? beneficiaryAddress : firstBeneficiary[0]?.address)
   }, [beneficiaries]);
 
   React.useEffect(() => {
@@ -112,6 +112,9 @@ const AddEditCampaignForm = ({
           selectedBeneficiary.sdgs_ids?.split(',').includes(value.toString())
         )
       );
+      if(!data){
+        setCampaignAddress(e.target.value)
+      }
     } else {
       const { value, name, checked, type } = e.target;
       const { inputs } = state;
