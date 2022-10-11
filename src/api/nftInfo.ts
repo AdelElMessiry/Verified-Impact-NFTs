@@ -136,7 +136,7 @@ export async function updateCachedNFT(nft: {}) {
   const apiName = 'updatenft';
   const updatedNFTs = await axios.patch(
     `${REACT_APP_API_BASE_URL}/${REACT_APP_API_ENV}/${apiName}`,
-    nft
+    { nft }
   );
 
   return updatedNFTs?.data.nfts;
