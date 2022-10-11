@@ -402,14 +402,7 @@ const MintNFT = () => {
         }
         console.log('...... Token minted successfully', deployResult);
         VIToast.success('NFT minted successfully');
-        const updatedNFTsList = await refreshNFTs();
-        nftDispatch({
-          type: NFTActionTypes.SUCCESS,
-          payload: {
-            ...stateList,
-            nfts: updatedNFTsList,
-          },
-        });
+        await refreshNFTs(nftDispatch,...stateList);
         setState({
           inputs: {
             name: '',
@@ -601,8 +594,8 @@ const MintNFT = () => {
                                   ?.filter(
                                     ({ isApproved }) => isApproved === 'true'
                                   )
-                                  .map(({ username, address }) => (
-                                    <option key={address} value={address}>
+                                  .map(({ username, address },index) => (
+                                    <option key={`${address}_${index}`} value={address}>
                                       {username}
                                     </option>
                                   ))}
