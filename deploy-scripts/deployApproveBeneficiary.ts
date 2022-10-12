@@ -28,7 +28,11 @@ const publicKey: any = Keys.Ed25519.privateToPublicKey(privateKey);
 const KEYS: any = Keys.Ed25519.parseKeyPair(publicKey, privateKey);
 
 (async function deployBeneficiary() {
-  cep47.setContractHash(FACTORY_CONTRACT_HASH!, FACTORY_CONTRACT_PACKAGE_HASH);
+  // cep47.setContractHash(FACTORY_CONTRACT_HASH!, FACTORY_CONTRACT_PACKAGE_HASH);
+  cep47.setContractHash(
+    process.env.NFT_CONTRACT_HASH!,
+    process.env.NFT_CONTRACT_PACKAGE_HASH
+  );
 
   const beneficiariesList = await cep47.getBeneficiariesList();
   for (const address of beneficiariesList) {
