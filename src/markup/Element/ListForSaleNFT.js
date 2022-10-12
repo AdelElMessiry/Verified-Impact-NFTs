@@ -39,34 +39,17 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data,handleTransactionSu
 
       if (deployUpdatedNftResult) {
         //update listed/unlisted nft to radis
-        const changedNFT = {
-          tokenId: data.tokenId,
-          title: data.title,
-          description: data.description,
-          image: data.image,
-          price: data.price,
-          isForSale: data.isForSale === 'true' ? 'false' : 'true',
-          campaign: data.campaign,
-          currency: data.currency,
-          collection: data.collection,
-          creator: data.creator,
-          creatorPercentage: data.creatorPercentage,
-          beneficiary: data.beneficiary,
-          beneficiaryPercentage: data.beneficiaryPercentage,
-          sdgs_ids: data.sdgs_ids,
-          hasReceipt: data.hasReceipt,
-        };
-        await updateNFTs(nftDispatch, stateList, changedNFT);
-
+        const changedNFT = Object.assign({}, data, { isForSale: data.isForSale=='true' ? 'false' : 'true',price: data.isForSale=='true' ? '0' : price })
+         handleTransactionSuccess(changedNFT);
         VIToast.success(
           data.isForSale === 'true'
             ? 'NFT is unlisted for sale'
             : 'NFT is listed for sale'
         );
-        setIsListForSaleClicked(false);
-        handleClose();
-        await refreshNFTs(nftDispatch, stateList);
-        handleTransactionSuccess()
+  
+          await updateNFTs(nftDispatch, stateList, changedNFT);
+         await refreshNFTs(nftDispatch, stateList);      setIsListForSaleClicked(false);
+        handleClose(); 
       } else {
         VIToast.error('Error happened please try again later');
         setIsListForSaleClicked(false);
