@@ -116,6 +116,7 @@ const MyCollections = () => {
 
   const [selectedCollection, setSelectedCollection] = React.useState();
   const [isRefreshNFTList, setIsRefreshNFTList] = React.useState(false);
+  const [changedNFT, setChangedNFT] = React.useState();
 
   //function returns button of buying NFT
   const IconImage = ({ nft }) => {
@@ -411,6 +412,27 @@ const MyCollections = () => {
     ReactGA.pageview(window.location.pathname + 'my-collections');
     entityInfo.publicKey && getFilteredNFTs();
   }, [entityInfo.publicKey, getFilteredNFTs]);
+
+  React.useEffect(() => {
+    if(changedNFT){
+      let flatAll=displayedCollections.flat();
+      let finalArr=[];
+      flatAll.map((flat)=>{
+      const collectionArr=Object.values(flat);
+      finalArr=[...finalArr,...collectionArr[0]]
+    })
+    const resIndex = finalArr?.findIndex(
+      ({ tokenId }) => tokenId == changedNFT.tokenId
+    );
+    finalArr?.splice(resIndex, 1);
+    setDisplayedCollections(
+      setNFTsBasedOnCollection( [...finalArr?.slice(0, resIndex),
+      changedNFT,
+      ...finalArr?.slice(resIndex)])
+    );
+      setShowListForSaleModal(false);
+  }
+  }, [isRefreshNFTList]);
 
   const getCollectionsBasedOnTag = React.useCallback(
     (tag = 'All') => {
@@ -754,7 +776,7 @@ const MyCollections = () => {
                                           }}
                                           index={index}
                                           isCreation={true}
-                                          handleCallChangeNFTs={()=>{setIsRefreshNFTList(!isRefreshNFTList)}}
+                                          handleCallChangeNFTs={(nft)=>{setChangedNFT(nft);setIsRefreshNFTList(!isRefreshNFTList);}}
                                         />
                                       </li>
                                       {openSlider &&
