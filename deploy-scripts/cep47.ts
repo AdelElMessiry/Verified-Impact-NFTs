@@ -202,6 +202,10 @@ class CEP47Client {
     deploySender: CLPublicKey,
     keys?: Keys.AsymmetricKey[]
   ) {
+    // this.setContractHash(
+    //   process.env.NFT_CONTRACT_HASH!,
+    //   process.env.NFT_CONTRACT_PACKAGE_HASH
+    // );
     const runtimeArgs = RuntimeArgs.fromMap({
       address: CLValueBuilder.key(address),
       status: CLValueBuilder.bool(status),
