@@ -48,6 +48,43 @@ export async function getNFTDetails(tokenId: string) {
   return nft_metadata;
 }
 
+export async function mapCachedNFTs(list: any) {
+  const pluckedCreators = list
+    .map(({ creator }: { creator: string }): string => creator)
+    .filter(
+      (creator: any, index: any, creators: any) =>
+        creators.indexOf(creator) === index
+    );
+
+  const idsCreatorsOwn: any = {};
+
+  for (let [i, creator] of pluckedCreators.entries()) {
+    const balance = await cep47._balanceOf(creator, true);
+    idsCreatorsOwn[creator] = [];
+    for (let ownerIndex of [...(Array(parseInt(balance)).keys() as any)]) {
+      const tokenId = await cep47._getTokenByIndex(creator, ownerIndex, true);
+
+      idsCreatorsOwn[creator].push(tokenId);
+    }
+  }
+
+  const nftsList: any = [];
+
+  for (let nft of list) {
+    const isCreatorOwner = idsCreatorsOwn[nft.creator].includes(
+      nft.tokenId.toString()
+    );
+
+    nft.image = isValidHttpUrl(nft.image)
+      ? nft.image
+      : await getNFTImage(nft.image);
+
+    nftsList.push({ ...nft, isCreatorOwner });
+  }
+
+  return nftsList;
+}
+
 export async function getNFTsList() {
   const nftsCount: any = await cep47.totalSupply();
   // console.log(parseInt(nftsCount));
@@ -94,41 +131,41 @@ export async function getCachedNFTsList() {
   const nfts: any = await axios(
     `${REACT_APP_API_BASE_URL}/${REACT_APP_API_ENV}/${apiName}`
   );
+  const mappedNFTs = mapCachedNFTs(nfts?.data.list);
+  // const pluckedCreators = nfts?.data.list
+  //   .map(({ creator }: { creator: string }): string => creator)
+  //   .filter(
+  //     (creator: any, index: any, creators: any) =>
+  //       creators.indexOf(creator) === index
+  //   );
 
-  const pluckedCreators = nfts?.data.list
-    .map(({ creator }: { creator: string }): string => creator)
-    .filter(
-      (creator: any, index: any, creators: any) =>
-        creators.indexOf(creator) === index
-    );
+  // const idsCreatorsOwn: any = {};
 
-  const idsCreatorsOwn: any = {};
+  // for (let [i, creator] of pluckedCreators.entries()) {
+  //   const balance = await cep47._balanceOf(creator, true);
+  //   idsCreatorsOwn[creator] = [];
+  //   for (let ownerIndex of [...(Array(parseInt(balance)).keys() as any)]) {
+  //     const tokenId = await cep47._getTokenByIndex(creator, ownerIndex, true);
 
-  for (let [i, creator] of pluckedCreators.entries()) {
-    const balance = await cep47._balanceOf(creator, true);
-    idsCreatorsOwn[creator] = [];
-    for (let ownerIndex of [...(Array(parseInt(balance)).keys() as any)]) {
-      const tokenId = await cep47._getTokenByIndex(creator, ownerIndex, true);
+  //     idsCreatorsOwn[creator].push(tokenId);
+  //   }
+  // }
 
-      idsCreatorsOwn[creator].push(tokenId);
-    }
-  }
+  // const nftsList: any = [];
 
-  const nftsList: any = [];
+  // for (let nft of nfts.data.list) {
+  //   const isCreatorOwner = idsCreatorsOwn[nft.creator].includes(
+  //     nft.tokenId.toString()
+  //   );
 
-  for (let nft of nfts.data.list) {
-    const isCreatorOwner = idsCreatorsOwn[nft.creator].includes(
-      nft.tokenId.toString()
-    );
+  //   nft.image = isValidHttpUrl(nft.image)
+  //     ? nft.image
+  //     : await getNFTImage(nft.image);
 
-    nft.image = isValidHttpUrl(nft.image)
-      ? nft.image
-      : await getNFTImage(nft.image);
+  //   nftsList.push({ ...nft, isCreatorOwner });
+  // }
 
-    nftsList.push({ ...nft, isCreatorOwner });
-  }
-
-  return nftsList;
+  return mappedNFTs;
 }
 
 export async function updateCachedNFT(nft: {}) {
@@ -139,7 +176,8 @@ export async function updateCachedNFT(nft: {}) {
     { nft }
   );
 
-  return updatedNFTs?.data.nfts;
+  const mappedNFTs = mapCachedNFTs(updatedNFTs?.data.nfts);
+  return mappedNFTs;
 }
 
 export async function getCreatorNftList(address: string) {
