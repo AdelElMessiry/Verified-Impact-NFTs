@@ -13,7 +13,6 @@ import { useAuth } from '../../../contexts/AuthContext';
 import {
   useNFTState,
   useNFTDispatch,
-  NFTActionTypes,
   refreshNFTs,
 } from '../../../contexts/NFTContext';
 import { mint } from '../../../api/mint';
