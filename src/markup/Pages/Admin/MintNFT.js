@@ -402,7 +402,7 @@ const MintNFT = () => {
         }
         console.log('...... Token minted successfully', deployResult);
         VIToast.success('NFT minted successfully');
-        await refreshNFTs(nftDispatch,...stateList);
+        await refreshNFTs(nftDispatch,stateList);
         setState({
           inputs: {
             name: '',

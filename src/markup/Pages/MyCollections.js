@@ -9,7 +9,7 @@ import QRCode from 'react-qr-code';
 import Carousel from 'react-elastic-carousel';
 
 import { useAuth } from '../../contexts/AuthContext';
-import { useNFTState } from '../../contexts/NFTContext';
+import { refreshNFTs, useNFTState } from '../../contexts/NFTContext';
 import { getCreatorNftList } from '../../api/nftInfo';
 import {
   getMappedNftsByList,
@@ -115,6 +115,7 @@ const MyCollections = () => {
   const [displayedCollections, setDisplayedCollections] = React.useState();
 
   const [selectedCollection, setSelectedCollection] = React.useState();
+  const [isRefreshNFTList, setIsRefreshNFTList] = React.useState(false);
 
   //function returns button of buying NFT
   const IconImage = ({ nft }) => {
@@ -753,6 +754,7 @@ const MyCollections = () => {
                                           }}
                                           index={index}
                                           isCreation={true}
+                                          handleCallChangeNFTs={()=>{setIsRefreshNFTList(!isRefreshNFTList)}}
                                         />
                                       </li>
                                       {openSlider &&
