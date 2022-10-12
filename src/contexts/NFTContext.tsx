@@ -41,8 +41,9 @@ type NFTAction =
   | { type: NFTActionTypes.SUCCESS; payload: any };
 
 const NFTStateContext = React.createContext<NFTState | undefined>(undefined);
-const NFTDispatchContext =
-  React.createContext<NFTDispatch | undefined>(undefined);
+const NFTDispatchContext = React.createContext<NFTDispatch | undefined>(
+  undefined
+);
 
 function nftReducer(state: NFTState, action: NFTAction): NFTState {
   switch (action.type) {
@@ -209,12 +210,26 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
 };
 
 export const updateNFTs = async (dispatch: any, state: any, nft: any) => {
-  // const updatedNFTs = await updateCachedNFT(nft);
+  const updatedNFTs = await updateCachedNFT(nft);
+  const { campaigns, creators, beneficiaries, collections } = state;
+
   dispatch({
     type: NFTActionTypes.SUCCESS,
     payload: {
       ...state,
-      nfts: [],
+      nfts: updatedNFTs?.map((nft: any) => ({
+        ...nft,
+        campaignName:
+          campaigns.find(({ id }: any) => nft.campaign === id)?.name || '',
+        creatorName:
+          creators.find(({ address }: any) => nft.creator === address)?.name ||
+          '',
+        beneficiaryName:
+          beneficiaries.find(({ address }: any) => nft.beneficiary === address)
+            ?.username || '',
+        collectionName:
+          collections.find(({ id }: any) => nft.collection === id)?.name || '',
+      })),
     },
   });
 };
@@ -238,9 +253,7 @@ export const refreshNFTs = async (dispatch: any, state: any) => {
           beneficiaries.find(({ address }: any) => nft.beneficiary === address)
             ?.username || '',
         collectionName:
-          collections.collectionsList.find(
-            ({ id }: any) => nft.collection === id
-          )?.name || '',
+          collections.find(({ id }: any) => nft.collection === id)?.name || '',
       })),
     },
   });
