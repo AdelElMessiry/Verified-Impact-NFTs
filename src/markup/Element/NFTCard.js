@@ -157,7 +157,7 @@ const NFTCard = ({
             handleCloseParent={() => {
               setShowListForSaleModal(false);
             }}
-            handleTransactionSuccess={()=>{handleCallChangeNFTs()}}
+            handleTransactionSuccess={(nft)=>{handleCallChangeNFTs(nft)}}
             data={item}
           />
         )}
