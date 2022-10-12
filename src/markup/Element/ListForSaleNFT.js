@@ -14,7 +14,7 @@ import {
 } from '../../contexts/NFTContext';
 
 //list nft for sale NFT Modal
-const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
+const ListForSaleNFTModal = ({ show, handleCloseParent, data,handleTransactionSuccess=()=>{} }) => {
   const { entityInfo } = useAuth();
   const { ...stateList } = useNFTState();
   const { refreshNFTs } = stateList;
@@ -66,6 +66,7 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
         setIsListForSaleClicked(false);
         handleClose();
         await refreshNFTs(nftDispatch, stateList);
+        handleTransactionSuccess()
       } else {
         VIToast.error('Error happened please try again later');
         setIsListForSaleClicked(false);

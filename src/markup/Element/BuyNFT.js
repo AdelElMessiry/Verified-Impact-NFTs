@@ -64,7 +64,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
             action: 'Buy nft',
             label: `${entityInfo.publicKey}: bought a new nft id: ${nftID}`,
           });
-          await refreshNFTs(nftDispatch,...stateList);
+          await refreshNFTs(nftDispatch,stateList);
           VIToast.success('Transaction ended successfully');
           handleClose();
           await sendDiscordMessage(
@@ -126,7 +126,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
       if (transferDeployHash) {
         VIToast.success('NFT transfered successfully');
         handleClose();
-        await refreshNFTs(nftDispatch,...stateList);
+        await refreshNFTs(nftDispatch,stateList);
       } else {
         VIToast.error('Error happened please try again later');
       }
