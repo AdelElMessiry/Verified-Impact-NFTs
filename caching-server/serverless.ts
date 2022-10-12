@@ -2,6 +2,8 @@ import type { AWS } from '@serverless/typescript';
 
 import getNFTs from '@functions/getNFTs';
 import addNFT from '@functions/addNFT';
+import updateNFT from '@functions/updateNFT';
+
 const serverlessConfiguration: AWS = {
   service: 'caching-api',
   frameworkVersion: '2',
@@ -37,6 +39,7 @@ const serverlessConfiguration: AWS = {
   functions: {
     addNFT,
     getNFTs,
+    updateNFT,
   },
 };
 
