@@ -14,6 +14,7 @@ import {
   useNFTState,
   useNFTDispatch,
   NFTActionTypes,
+  refreshNFTs,
 } from '../../../contexts/NFTContext';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
@@ -41,7 +42,7 @@ const createOption = (label) => ({
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
   const { ...stateList } = useNFTState();
-  const { campaigns, beneficiaries, collections, refreshNFTs } = stateList;
+  const { campaigns, beneficiaries, collections } = stateList;
   const nftDispatch = useNFTDispatch();
   const pictureElement = React.useRef(null);
   let storageData = localStorage.getItem('selectedData');
@@ -151,7 +152,7 @@ const MintNFT = () => {
 
   React.useEffect(() => {
     loadCollections();
-  }, [ isNewNftMinted]);
+  }, [isNewNftMinted]);
 
   React.useEffect(() => {
     ReactGA.pageview(window.location.pathname + '/mint-nft');
@@ -402,7 +403,7 @@ const MintNFT = () => {
         }
         console.log('...... Token minted successfully', deployResult);
         VIToast.success('NFT minted successfully');
-        await refreshNFTs(nftDispatch,stateList);
+        await refreshNFTs(nftDispatch, stateList);
         setState({
           inputs: {
             name: '',
@@ -594,8 +595,11 @@ const MintNFT = () => {
                                   ?.filter(
                                     ({ isApproved }) => isApproved === 'true'
                                   )
-                                  .map(({ username, address },index) => (
-                                    <option key={`${address}_${index}`} value={address}>
+                                  .map(({ username, address }, index) => (
+                                    <option
+                                      key={`${address}_${index}`}
+                                      value={address}
+                                    >
                                       {username}
                                     </option>
                                   ))}
