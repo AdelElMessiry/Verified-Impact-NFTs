@@ -60,26 +60,6 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
                 data.tokenId,
                 CLPublicKey.fromHex(entityInfo.publicKey)
             )
-               //update listed/unlisted nft to radis
-        const changedNFT={
-            tokenId: data.tokenId,
-            title: data.title,
-            description: data.description,
-            image: data.image,
-            price: data.price,
-            isForSale: data.isForSale,
-            campaign: data.campaign,
-            currency: data.currency,
-            collection: data.collection,
-            creator: data.creator,
-            creatorPercentage: data.creatorPercentage,
-            beneficiary: data.beneficiary,
-            beneficiaryPercentage: data.beneficiaryPercentage,
-            sdgs_ids: data.sdgs_ids,
-            hasReceipt: "true",
-          }
-            updateNFTs(nftDispatch, { ...stateList },changedNFT);
-            await refreshNFTs(nftDispatch,stateList);
             setLoading(false);
             setConfirmGenerateReceipt(true);
         }catch(error){

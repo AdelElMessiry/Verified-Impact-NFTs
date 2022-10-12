@@ -14,7 +14,7 @@ import {
   SendTweetWithImage64,
 } from '../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
-import { NFTActionTypes, useNFTDispatch, useNFTState } from '../../contexts/NFTContext';
+import {useNFTDispatch, useNFTState,refreshNFTs } from '../../contexts/NFTContext';
 const InitialInputs = () => ({
   inputs: {
     address: '',
@@ -28,7 +28,6 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
   const [state, setState] = React.useState(InitialInputs());
   const [isBuyClicked, setIsBuyClicked] = React.useState(false);
   const { ...stateList } = useNFTState();
-  const { refreshNFTs } = stateList;
   const nftDispatch = useNFTDispatch();
   //buy NFT Function
   const buyNFT = async () => {
