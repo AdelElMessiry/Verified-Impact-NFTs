@@ -125,45 +125,29 @@ export async function getNFTsList() {
   return nftsList;
 }
 
-export async function getCachedNFTsList() {
+export async function getCachedNFTsList(oldNFTsState?: any) {
   const { REACT_APP_API_BASE_URL, REACT_APP_API_ENV } = process.env;
   const apiName = 'nfts';
   const nfts: any = await axios(
     `${REACT_APP_API_BASE_URL}/${REACT_APP_API_ENV}/${apiName}`
   );
-  const mappedNFTs = mapCachedNFTs(nfts?.data.list);
-  // const pluckedCreators = nfts?.data.list
-  //   .map(({ creator }: { creator: string }): string => creator)
-  //   .filter(
-  //     (creator: any, index: any, creators: any) =>
-  //       creators.indexOf(creator) === index
-  //   );
 
-  // const idsCreatorsOwn: any = {};
+  const newNFTs =
+    oldNFTsState &&
+    nfts?.data.list.filter(
+      (newNFT: any) =>
+        !oldNFTsState.some((oldNFT: any) => newNFT.tokenId === oldNFT.tokenId)
+    );
 
-  // for (let [i, creator] of pluckedCreators.entries()) {
-  //   const balance = await cep47._balanceOf(creator, true);
-  //   idsCreatorsOwn[creator] = [];
-  //   for (let ownerIndex of [...(Array(parseInt(balance)).keys() as any)]) {
-  //     const tokenId = await cep47._getTokenByIndex(creator, ownerIndex, true);
-
-  //     idsCreatorsOwn[creator].push(tokenId);
-  //   }
-  // }
-
-  // const nftsList: any = [];
-
-  // for (let nft of nfts.data.list) {
-  //   const isCreatorOwner = idsCreatorsOwn[nft.creator].includes(
-  //     nft.tokenId.toString()
-  //   );
-
-  //   nft.image = isValidHttpUrl(nft.image)
-  //     ? nft.image
-  //     : await getNFTImage(nft.image);
-
-  //   nftsList.push({ ...nft, isCreatorOwner });
-  // }
+  let mappedNFTs;
+  if (newNFTs?.length > 0) {
+    const newMappedNFTs = await mapCachedNFTs(newNFTs);
+    mappedNFTs = oldNFTsState.concat(newMappedNFTs);
+  } else if (oldNFTsState?.length) {
+    mappedNFTs = oldNFTsState;
+  } else {
+    mappedNFTs = await mapCachedNFTs(nfts?.data.list);
+  }
 
   return mappedNFTs;
 }
@@ -176,7 +160,7 @@ export async function updateCachedNFT(nft: {}) {
     { nft }
   );
 
-  const mappedNFTs = mapCachedNFTs(updatedNFTs?.data.nfts);
+  const mappedNFTs = await mapCachedNFTs(updatedNFTs?.data.nfts);
   return mappedNFTs;
 }
 
