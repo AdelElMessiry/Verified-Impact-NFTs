@@ -166,7 +166,11 @@ fn create_profile() {
     );
 
     if mode.clone() == "ADD" {
-        Factory::default().create_profile(address, profile);
+        if Factory::default().is_existent_profile(address) {
+            Factory::default().update_profile(address, profile);
+        } else {
+            Factory::default().create_profile(address, profile);
+        }
     } else {
         Factory::default().update_profile(address, profile);
     }
