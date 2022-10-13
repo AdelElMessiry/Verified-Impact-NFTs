@@ -5,7 +5,11 @@ import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from '../api/campaignInfo';
 import { getCreatorsList } from '../api/creatorInfo';
 import { getUniqueCollectionsList } from '../api/collectionInfo';
-import { getNFTsList, getCachedNFTsList } from '../api/nftInfo';
+import {
+  getNFTsList,
+  getCachedNFTsList,
+  updateCachedNFT,
+} from '../api/nftInfo';
 import { profileClient } from '../api/profileInfo';
 
 export enum NFTActionTypes {
@@ -204,6 +208,17 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
   );
 };
 
+export const updateNFTs = async (dispatch: any, state: any, nft: any) => {
+  const updatedNFTs = await updateCachedNFT(nft);
+  dispatch({
+    type: NFTActionTypes.SUCCESS,
+    payload: {
+      ...state,
+      nft: updatedNFTs,
+    },
+  });
+};
+
 export const useNFTState = () => {
   const nftStateContext = React.useContext(NFTStateContext);
   if (nftStateContext === undefined) {
@@ -213,7 +228,7 @@ export const useNFTState = () => {
 };
 
 export const useNFTDispatch = () => {
-  const nftDispatchContext = React.useContext(NFTStateContext);
+  const nftDispatchContext = React.useContext(NFTDispatchContext);
   if (nftDispatchContext === undefined) {
     throw new Error('useNFTDispatch must be used within a NFTProvider');
   }

@@ -89,11 +89,13 @@ export async function getNFTsList() {
 }
 
 export async function getCachedNFTsList() {
+  const { REACT_APP_API_BASE_URL, REACT_APP_API_ENV } = process.env;
+  const apiName = 'nfts';
   const nfts: any = await axios(
-    'https://qpmmnfnis5.execute-api.us-east-1.amazonaws.com/dev/nfts'
+    `${REACT_APP_API_BASE_URL}/${REACT_APP_API_ENV}/${apiName}`
   );
 
-  const pluckedCreators = nfts.data.list
+  const pluckedCreators = nfts?.data.list
     .map(({ creator }: { creator: string }): string => creator)
     .filter(
       (creator: any, index: any, creators: any) =>
@@ -129,6 +131,16 @@ export async function getCachedNFTsList() {
   return nftsList;
 }
 
+export async function updateCachedNFT(nft: {}) {
+  const { REACT_APP_API_BASE_URL, REACT_APP_API_ENV } = process.env;
+  const apiName = 'updatenft';
+  const updatedNFTs = await axios.patch(
+    `${REACT_APP_API_BASE_URL}/${REACT_APP_API_ENV}/${apiName}`,
+    nft
+  );
+
+  return updatedNFTs;
+}
 export async function getCreatorNftList(address: string) {
   const creator = CLPublicKey.fromHex(address).toAccountHashStr();
 

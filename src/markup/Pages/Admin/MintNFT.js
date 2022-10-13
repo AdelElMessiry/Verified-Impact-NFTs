@@ -9,8 +9,11 @@ import { NFTStorage } from 'nft.storage';
 import { CLPublicKey } from 'casper-js-sdk';
 
 import { useAuth } from '../../../contexts/AuthContext';
-import { useNFTState } from '../../../contexts/NFTContext';
-import { uploadImg } from '../../../api/imageCDN';
+import {
+  useNFTState,
+  useNFTDispatch,
+  updateNFTs,
+} from '../../../contexts/NFTContext';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
 import { profileClient } from '../../../api/profileInfo';
@@ -40,7 +43,10 @@ const createOption = (label) => ({
 //minting new nft page
 const MintNFT = () => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
-  const { campaigns, beneficiaries, collections } = useNFTState();
+  const { ...stateList } = useNFTState();
+  const { campaigns, beneficiaries, collections } = stateList;
+  const nftDispatch = useNFTDispatch();
+
   let storageData = localStorage.getItem('selectedData');
   let savedData = storageData ? JSON.parse(storageData) : null;
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
@@ -273,6 +279,7 @@ const MintNFT = () => {
 
   //handling minting new NFT
   async function mintNFT(isAnotherMint) {
+    // updateNFTs(nftDispatch, { ...stateList });
     if (!uploadedImageBlob) {
       return VIToast.error('Please upload image.');
     }
@@ -307,7 +314,7 @@ const MintNFT = () => {
     }
     let fineHref = imageFile?.data?.image?.pathname?.slice(2);
     //https://dweb.link/ipfs/
-   // imageFile = 'https://vinfts.mypinata.cloud/ipfs' + fineHref;
+    // imageFile = 'https://vinfts.mypinata.cloud/ipfs' + fineHref;
     mintNewNFT(fineHref, isAnotherMint);
   }
 
@@ -366,11 +373,10 @@ const MintNFT = () => {
       }
 
       try {
-        let s = []
-        if (SDGsGoals.length > 0){     
-          SDGsGoals.map((sdg) => (
-              s.push(`#SDG${sdg}`)
-          ))}
+        let s = [];
+        if (SDGsGoals.length > 0) {
+          SDGsGoals.map((sdg) => s.push(`#SDG${sdg}`));
+        }
         const deployResult = await getDeployDetails(mintDeployHash);
         if (
           campaign !== '' &&
@@ -426,7 +432,11 @@ const MintNFT = () => {
             `${creator} creator has just added a new interesting #verified-impact-nfts collection. [Click here to see more interesting collections](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
           );
           await SendTweet(
-            `${creator} creator has just added a new interesting #verified_impact_nfts collection ${s.toString().replaceAll(',', ' ')}. Click here ${window.location.origin}/#/ to see more interesting collections  @vinfts @casper_network @devxdao ${twitterName}`
+            `${creator} creator has just added a new interesting #verified_impact_nfts collection ${s
+              .toString()
+              .replaceAll(',', ' ')}. Click here ${
+              window.location.origin
+            }/#/ to see more interesting collections  @vinfts @casper_network @devxdao ${twitterName}`
           );
         }
 
@@ -437,10 +447,16 @@ const MintNFT = () => {
           '',
           `Great news! [${state.inputs.name}] #NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
         );
-        let image = encodeURI('https://vinfts.mypinata.cloud/ipfs/'+imgURL);
+        let image = encodeURI('https://vinfts.mypinata.cloud/ipfs/' + imgURL);
         await SendTweetWithImage(
           image,
-          `Great news! "${state.inputs.name}" #NFT  has been added to #verified_impact_nfts. ${s.toString().replaceAll(',', ' ')} click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
+          `Great news! "${
+            state.inputs.name
+          }" #NFT  has been added to #verified_impact_nfts. ${s
+            .toString()
+            .replaceAll(',', ' ')} click here ${
+            window.location.origin
+          }/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
         );
         //  else{
         //   let image64 = 'https://dweb.link/ipfs/'+ image
@@ -852,8 +868,9 @@ const MintNFT = () => {
                                 (state.inputs.price === '' ||
                                   state.inputs.price < 250)) ||
                               isMintClicked ||
-                              isMintAnotherClicked||
-                             (SDGsGoalsData.length>0&& SDGsGoals.length<=0)
+                              isMintAnotherClicked ||
+                              (SDGsGoalsData.length > 0 &&
+                                SDGsGoals.length <= 0)
                             }
                           >
                             {isMintClicked ? (
@@ -881,8 +898,9 @@ const MintNFT = () => {
                                 (state.inputs.price === '' ||
                                   state.inputs.price < 250)) ||
                               isMintAnotherClicked ||
-                              isMintClicked||
-                              (SDGsGoalsData.length>0&& SDGsGoals.length<=0)
+                              isMintClicked ||
+                              (SDGsGoalsData.length > 0 &&
+                                SDGsGoals.length <= 0)
                             }
                           >
                             {isMintAnotherClicked ? (
