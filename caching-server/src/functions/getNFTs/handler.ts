@@ -30,7 +30,7 @@ const getNFTsList = async (countFrom: number, count: number) => {
 
     const nft_metadata = await cep47.getMappedTokenMeta(tokenId.toString());
     await client.rPush(
-      'nfts_dev',
+      'l_nfts_dev',
       JSON.stringify({ ...nft_metadata, tokenId })
     );
     nftsList.push({ ...nft_metadata, tokenId });
@@ -43,7 +43,7 @@ const getNFTs: APIGatewayProxyHandler = async (event) => {
   await client.connect();
   let result: any;
   try {
-    result = await client.lRange('nfts_dev', 0, -1);
+    result = await client.lRange('l_nfts_dev', 0, -1);
   } catch (err) {
     return MessageUtil.error(
       HttpStatusCode.INTERNAL_SERVER_ERROR,

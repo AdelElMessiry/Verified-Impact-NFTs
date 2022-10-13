@@ -22,7 +22,7 @@ client.on('connect', function () {
 const addNFT: APIGatewayProxyHandler = async (event) => {
   const nft = event.pathParameters.nft;
 
-  await client.rPush('nfts', nft);
+  await client.rPush('l_nfts_dev', nft);
 
   return MessageUtil.success({
     message: `NFT saved successfully!`,
