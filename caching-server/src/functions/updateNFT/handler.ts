@@ -20,7 +20,7 @@ const updateNFT: APIGatewayProxyHandler = async (event) => {
 
   try {
     await client.connect();
-    let result = await client.lRange('nfts_dev', 0, -1);
+    let result = await client.lRange('l_nfts_dev', 0, -1);
 
     let mappedResult = result.map((item) => JSON.parse(item));
 
@@ -33,8 +33,8 @@ const updateNFT: APIGatewayProxyHandler = async (event) => {
     );
     mappedResult.push(nft);
 
-    await client.lRem('nfts_dev', 0, JSON.stringify(toBeDeleted));
-    await client.rPush('nfts_dev', JSON.stringify(nft));
+    await client.lRem('l_nfts_dev', 0, JSON.stringify(toBeDeleted));
+    await client.rPush('l_nfts_dev', JSON.stringify(nft));
 
     client.quit();
 
