@@ -170,12 +170,12 @@ const MintNFT = () => {
       !campaignsList &&
       campaigns?.length &&
       campaigns.filter(
-        ({ wallet_address }) =>
+        ({ beneficiary_address }) =>
           (savedData
             ? savedData.beneficiary
             : beneficiaries?.filter(
                 ({ isApproved }) => isApproved === 'true'
-              )[0]?.address) === wallet_address
+              )[0]?.address) === beneficiary_address
       );
     filteredCampaigns?.length && setCampaignsList(filteredCampaigns);
 
@@ -241,7 +241,7 @@ const MintNFT = () => {
         ?.filter(({ isApproved }) => isApproved === 'true')
         .find(({ address }) => address === value);
       const filteredCampaigns = allCampaignsList?.filter(
-        ({ wallet_address }) => selectedBeneficiary.address === wallet_address
+        ({ beneficiary_address }) => selectedBeneficiary.address === beneficiary_address
       );
       setCampaignsList(filteredCampaigns);
       filteredCampaigns?.length > 0

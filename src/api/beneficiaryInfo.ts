@@ -68,7 +68,7 @@ export async function getBeneficiariesCampaignsList() {
   const mappedBeneficiariesList: any = [];
 
   const pluckedCampaigns = campaignsList
-    .map(({ wallet_address }: any) => wallet_address)
+    .map(({ beneficiary_address }: any) => beneficiary_address)
     .filter(
       (creator: any, index: any, creators: any) =>
         creators.indexOf(creator) === index
@@ -80,7 +80,7 @@ export async function getBeneficiariesCampaignsList() {
           ...beneficiary,
           campaigns: campaignsList.filter(
             (campaign: any, index: any, campaigns: any) =>
-              campaign.wallet_address === beneficiary.address
+              campaign.beneficiary_address === beneficiary.address
             // &&
             // index ===
             //   collections.findIndex(
@@ -108,7 +108,7 @@ export async function _getBeneficiariesCampaignsList(
   const mappedBeneficiariesList: any = [];
 
   const pluckedCampaigns = campaignsList
-    .map(({ wallet_address }: any) => wallet_address)
+    .map(({ beneficiary_address }: any) => beneficiary_address)
     .filter(
       (creator: any, index: any, creators: any) =>
         creators.indexOf(creator) === index
@@ -120,10 +120,10 @@ export async function _getBeneficiariesCampaignsList(
           ...beneficiary,
           campaigns: campaignsList.filter(
             (campaign: any, index: any, campaigns: any) =>
-              campaign.wallet_address.includes('Key')
-                ? campaign.wallet_address.slice(10).replace(')', '') ===
+              campaign.beneficiary_address.includes('Key')
+                ? campaign.beneficiary_address.slice(10).replace(')', '') ===
                   beneficiary.address
-                : campaign.wallet_address === beneficiary.address
+                : campaign.beneficiary_address === beneficiary.address
             // &&
             // index ===
             //   collections.findIndex(
