@@ -29,9 +29,9 @@ const serverlessConfiguration: AWS = {
       UPSTASH_REGION: 'us1',
       NODE_RPC_ADDRESS: 'https://node-clarity-testnet.make.services/rpc',
       NFT_CONTRACT_HASH:
-        '188d500514e1098514e28b00ce5bd1bba33d0a41561d9bd16e3f483e407ec27f',
+        '2d6842ba80bbc66bc88d1ccfa8c3a923bc5a786b5f2194ac74b47f4a4e3e5917',
       NFT_PACKAGE_HASH:
-        '8b3ca965ef2632a08a44a5ec326c79e8e7b333464974f242bd0f65e060e2842e',
+        'fc4aca70bfc4fc084ecb22ef1c3602323e1b5fdb1bc3f409da8415c59fbbced7',
     },
     lambdaHashingVersion: '20201221',
   },

@@ -189,10 +189,11 @@ export async function getCreatorNftList(address: string) {
   return creatorList || [];
 }
 
-export async function getCachedCreatorNftList(address: string) {
+export async function getCachedCreatorNftList(nfts: any, address: string) {
   const creator = CLPublicKey.fromHex(address).toAccountHashStr();
 
-  const nftList = await getCachedNFTsList();
+  // const nftList = await getCachedNFTsList();
+  const nftList = nfts;
 
   for (const [index, nft] of nftList.entries()) {
     const owner = await cep47.getOwnerOf(nft.tokenId.toString());
