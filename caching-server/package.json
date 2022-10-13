@@ -17,7 +17,7 @@
     "casper-js-sdk": "^2.10.0",
     "redis": "^4.3.1",
     "serverless-dotenv-plugin": "^3.9.0",
-    "serverless-offline": "^7.0.0",
+    "serverless-offline": "^8.5.0",
     "source-map-support": "^0.5.19",
     "ts-node": "^10.9.1"
   },
