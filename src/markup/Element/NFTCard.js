@@ -21,7 +21,8 @@ const NFTCard = ({
   openSlider,
   isTransfer = false,
   isCreation = false,
-  isMyNft = false
+  isMyNft = false,
+  handleCallChangeNFTs=()=>{}
 }) => {
   const { beneficiaries } =  useNFTState()
 
@@ -156,6 +157,7 @@ const NFTCard = ({
             handleCloseParent={() => {
               setShowListForSaleModal(false);
             }}
+            handleTransactionSuccess={(nft)=>{handleCallChangeNFTs(nft)}}
             data={item}
           />
         )}
