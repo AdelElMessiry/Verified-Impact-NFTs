@@ -152,16 +152,19 @@ export async function getCachedNFTsList(oldNFTsState?: any) {
   return mappedNFTs;
 }
 
-export async function updateCachedNFT(nft: {}) {
+export async function updateCachedNFT(nft: any, nfts: any) {
   const { REACT_APP_API_BASE_URL, REACT_APP_API_ENV } = process.env;
   const apiName = 'updatenft';
-  const updatedNFTs = await axios.patch(
+
+  await axios.patch(
     `${REACT_APP_API_BASE_URL}/${REACT_APP_API_ENV}/${apiName}`,
     { nft }
   );
 
-  const mappedNFTs = await mapCachedNFTs(updatedNFTs?.data.nfts);
-  return mappedNFTs;
+  nfts[nfts.findIndex(({ tokenId }: any) => tokenId === nft.tokenId)] = nft;
+
+  // const mappedNFTs = await mapCachedNFTs(updatedNFTs?.data.nfts);
+  return nfts;
 }
 
 export async function getCreatorNftList(address: string) {
