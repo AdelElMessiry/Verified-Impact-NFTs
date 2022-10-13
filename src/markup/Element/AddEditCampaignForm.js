@@ -30,8 +30,8 @@ const AddEditCampaignForm = ({
   );
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
   const [mandatorySDGs, setMandatorySDGs] = React.useState();
-  const [campaignAddress, setCampaignAddress] = React.useState(data&&data.campaignAddress?data.campaignAddress: beneficiaryAddress?beneficiaryAddress:"");
-
+  const [campaignAddress, setCampaignAddress] = React.useState(data&&data.wallet_address?data.wallet_address: beneficiaryAddress?beneficiaryAddress:"");
+debugger;
   //getting beneficiary details
   const selectedBeneficiary = React.useCallback(async () => {
     const firstBeneficiary = beneficiaries?.filter(
@@ -141,13 +141,14 @@ const AddEditCampaignForm = ({
       const savedCampaign = await createCampaign(
         state.inputs.name,
         state.inputs.description,
-        beneficiaryAddress ? beneficiaryAddress : beneficiary,
+        campaignAddress ,
         state.inputs.campaignUrl,
         state.inputs.requestedRoyalty,
         CLPublicKey.fromHex(entityInfo.publicKey),
         SDGsGoals,
         data ? 'UPDATE' : 'ADD',
-        data ? data.id : undefined
+        data ? data.id : undefined,
+        beneficiaryAddress ? beneficiaryAddress : beneficiary
       );
       ReactGA.event({
         category: 'Success',
