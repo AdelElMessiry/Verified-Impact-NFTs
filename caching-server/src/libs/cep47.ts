@@ -53,8 +53,8 @@ class CEP47Client {
     this.contractClient = new Contract(this.casperClient);
     this.networkName = CHAIN_NAME;
     this.contractClient.setContractHash(
-      `hash-${NFT_CONTRACT_HASH as string}`,
-      `hash-${NFT_PACKAGE_HASH}`
+      `hash-2d6842ba80bbc66bc88d1ccfa8c3a923bc5a786b5f2194ac74b47f4a4e3e5917`,
+      `hash-fc4aca70bfc4fc084ecb22ef1c3602323e1b5fdb1bc3f409da8415c59fbbced7`
     );
     this.isContractIHashSetup = true;
   }
