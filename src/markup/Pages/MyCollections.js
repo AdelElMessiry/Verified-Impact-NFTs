@@ -89,7 +89,8 @@ const TagLi = ({ name, handleSetTag, tagActive, type }) => {
 
 const MyCollections = () => {
   const { isLoggedIn, entityInfo } = useAuth();
-  const { beneficiaries, campaigns, collections, creators } = useNFTState();
+  const { nfts, beneficiaries, campaigns, collections, creators } =
+    useNFTState();
 
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
@@ -371,7 +372,7 @@ const MyCollections = () => {
   const getFilteredNFTs = React.useCallback(async () => {
     const captions = [];
 
-    const nftsList = await getCachedCreatorNftList(entityInfo.publicKey);
+    const nftsList = await getCachedCreatorNftList(nfts, entityInfo.publicKey);
     const mappedNFTsList =
       nftsList &&
       beneficiaries &&
@@ -406,6 +407,7 @@ const MyCollections = () => {
     filterCollectionByTag,
     filterCampaignByTag,
     filterCreatorByTag,
+    nfts,
   ]);
 
   React.useEffect(() => {
@@ -414,24 +416,26 @@ const MyCollections = () => {
   }, [entityInfo.publicKey, getFilteredNFTs]);
 
   React.useEffect(() => {
-    if(changedNFT){
-      let flatAll=displayedCollections.flat();
-      let finalArr=[];
-      flatAll.map((flat)=>{
-      const collectionArr=Object.values(flat);
-      finalArr=[...finalArr,...collectionArr[0]]
-    })
-    const resIndex = finalArr?.findIndex(
-      ({ tokenId }) => tokenId == changedNFT.tokenId
-    );
-    finalArr?.splice(resIndex, 1);
-    setDisplayedCollections(
-      setNFTsBasedOnCollection( [...finalArr?.slice(0, resIndex),
-      changedNFT,
-      ...finalArr?.slice(resIndex)])
-    );
+    if (changedNFT) {
+      let flatAll = displayedCollections.flat();
+      let finalArr = [];
+      flatAll.map((flat) => {
+        const collectionArr = Object.values(flat);
+        finalArr = [...finalArr, ...collectionArr[0]];
+      });
+      const resIndex = finalArr?.findIndex(
+        ({ tokenId }) => tokenId == changedNFT.tokenId
+      );
+      finalArr?.splice(resIndex, 1);
+      setDisplayedCollections(
+        setNFTsBasedOnCollection([
+          ...finalArr?.slice(0, resIndex),
+          changedNFT,
+          ...finalArr?.slice(resIndex),
+        ])
+      );
       setShowListForSaleModal(false);
-  }
+    }
   }, [isRefreshNFTList]);
 
   const getCollectionsBasedOnTag = React.useCallback(
@@ -776,7 +780,12 @@ const MyCollections = () => {
                                           }}
                                           index={index}
                                           isCreation={true}
-                                          handleCallChangeNFTs={(nft)=>{setChangedNFT(nft);setIsRefreshNFTList(!isRefreshNFTList);}}
+                                          handleCallChangeNFTs={(nft) => {
+                                            setChangedNFT(nft);
+                                            setIsRefreshNFTList(
+                                              !isRefreshNFTList
+                                            );
+                                          }}
                                         />
                                       </li>
                                       {openSlider &&
