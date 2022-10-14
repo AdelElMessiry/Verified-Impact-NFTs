@@ -143,7 +143,8 @@ const SDGGoalNFTs = () => {
   const [showViewModal, setShowViewModal] = React.useState(false);
   const [selectedViewProfile, setSelectedViewProfile] = React.useState();
   const [SDGsGoals, setSDGsGoals] = React.useState([]);
-
+  const [isRefreshNFTList, setIsRefreshNFTList] = React.useState(false);
+  const [changedNFT, setChangedNFT] = React.useState();
   //getting beneficiary details
   const getSDGsData = React.useCallback(async () => {
     const setSelectedSDG =
@@ -287,6 +288,22 @@ const SDGGoalNFTs = () => {
   React.useEffect(() => {
     getFilteredNFTs();
   }, [getFilteredNFTs]);
+
+  React.useEffect(() => {
+    if (changedNFT) {
+      const resIndex = filteredNFTs?.findIndex(
+        ({ tokenId }) => tokenId == changedNFT.tokenId
+      );
+      filteredNFTs?.splice(resIndex, 1);
+      setFilteredNFTs([
+          ...filteredNFTs?.slice(0, resIndex),
+          changedNFT,
+          ...filteredNFTs?.slice(resIndex),
+        ]
+      );
+      setShowBuyModal(false);
+    }
+  }, [isRefreshNFTList]);
 
   const getCollectionsBasedOnTag = React.useCallback(
     (tag = { name: 'All', id: '', creator: '' }) => {
@@ -741,6 +758,12 @@ const SDGGoalNFTs = () => {
                               openSlider={(newIndex) => {
                                 setPhotoIndex(newIndex);
                                 setOpenSlider(true);
+                              }}
+                              handleCallChangeBuyNFTs={(nft) => {
+                                setChangedNFT(nft);
+                                setIsRefreshNFTList(
+                                  !isRefreshNFTList
+                                );
                               }}
                             />
                           </li>
