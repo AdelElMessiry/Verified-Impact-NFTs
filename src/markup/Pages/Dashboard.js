@@ -63,7 +63,27 @@ const Dashboard = () => {
   const [selectedCampaign, setSelectedCampaign] = React.useState();
   const [SDGsGoals, setSDGsGoals] = React.useState(SDGsData);
   const [isShowSaleOnly, setIsShowSaleOnly] = React.useState(false);
-  
+  const [isRefreshNFTList, setIsRefreshNFTList] = React.useState(false);
+  const [changedNFT, setChangedNFT] = React.useState();
+  const setNFTsBasedOnCampaign = (nftsArr) => {
+    const pluckedCampaigns =
+      nftsArr &&
+      nftsArr
+        .map(({ campaign }) => campaign)
+        .filter((id, index, ids) => ids.indexOf(id) === index);
+    const nftBasedCampaigns = [];
+    nftsArr &&
+      nftsArr.forEach((nft) =>
+        pluckedCampaigns.includes(nft.campaign) &&
+        !!nftBasedCampaigns[pluckedCampaigns.indexOf(nft.campaign)]
+          ? nftBasedCampaigns[pluckedCampaigns.indexOf(nft.campaign)][
+              nft.campaign
+            ].push(nft)
+          : nftBasedCampaigns.push({ [nft.campaign]: [nft] })
+      );
+    return nftBasedCampaigns;
+  };
+
   const getNftsList = React.useCallback(async () => {
     // const list = await profileClient
     //   .profilesList
@@ -75,22 +95,7 @@ const Dashboard = () => {
     nftsList && setAllNfts(nftsList);
     nfts && setSelectedNFT(nftsList);
 
-    const pluckedCampaigns =
-      nftsList &&
-      nftsList
-        .map(({ campaign }) => campaign)
-        .filter((id, index, ids) => ids.indexOf(id) === index);
-    const nftBasedCampaigns = [];
-    nftsList &&
-      nftsList.forEach((nft) =>
-        pluckedCampaigns.includes(nft.campaign) &&
-        !!nftBasedCampaigns[pluckedCampaigns.indexOf(nft.campaign)]
-          ? nftBasedCampaigns[pluckedCampaigns.indexOf(nft.campaign)][
-              nft.campaign
-            ].push(nft)
-          : nftBasedCampaigns.push({ [nft.campaign]: [nft] })
-      );
-    nftBasedCampaigns && setDisplayedCampaigns(nftBasedCampaigns);
+    nftsList && setDisplayedCampaigns(setNFTsBasedOnCampaign(nftsList));
   }, [nfts]);
 
   const getSDGsDetails=(nftsData)=>{
@@ -182,8 +187,25 @@ const Dashboard = () => {
   }, [beneficiaryCount, campaignsCount, collectionsCount, creatorsCount]);
 
   React.useEffect(() => {
-    nfts&&getSDGsDetails(nfts);
-  }, [isShowSaleOnly,nfts]);
+    nfts && getSDGsDetails(nfts);
+  }, [isShowSaleOnly, nfts]);
+
+  React.useEffect(() => {
+      if (changedNFT) {
+        let flatAll = displayedCampaigns.flat();
+        let finalArr = [];
+        flatAll.map((flat) => {
+          const campaignArr = Object.values(flat);
+          finalArr = [...finalArr, ...campaignArr[0]];
+        });
+        const resIndex = finalArr?.findIndex(
+          ({ tokenId }) => tokenId == changedNFT.tokenId
+        );
+        finalArr?.splice(resIndex, 1);
+        setDisplayedCampaigns(setDisplayedCampaigns(finalArr));
+        setShowBuyModal(false);
+    }
+  }, [isRefreshNFTList]);
 
   const setCaptions = (data) => {
     const captionsCamp = [];
@@ -431,6 +453,10 @@ const Dashboard = () => {
                                         setCaptions(NFts.slice(0, 5));
                                       }}
                                       index={index}
+                                      handleCallChangeBuyNFTs={(nft) => {
+                                        setChangedNFT(nft);
+                                        setIsRefreshNFTList(!isRefreshNFTList);
+                                      }}
                                     />
                                   </li>
                                   {openSliderCamp &&

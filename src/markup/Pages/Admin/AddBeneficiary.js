@@ -33,7 +33,8 @@ const AddBeneficiary = () => {
     ReactGA.pageview(window.location.pathname + '/admin_beneficiary');
   }, []);
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
-
+  const [isClearSDGs, setIsClearSDGs] = React.useState(false);
+  
   // },[])
   //saving new beneficiary function
   const saveBeneficiary = async () => {
@@ -74,7 +75,9 @@ const AddBeneficiary = () => {
         name: '',
         description: '',
         address: '',
+        SDGsGoals:[SDGsData[18].value]
       });
+      setIsClearSDGs(!isClearSDGs)
       setIsButtonClicked(false);
     } catch (err) {
       if (err.message.includes('User Cancelled')) {
@@ -174,7 +177,7 @@ const AddBeneficiary = () => {
                       </Row>
                       <Row className='mt-4'>
                         <Col>
-                        <SDGsMultiSelect data={SDGsData} SDGsChanged={(selectedData)=>{handleSDGsChange(selectedData)}} isAddBeneficiary={true}/>
+                        <SDGsMultiSelect data={SDGsData} SDGsChanged={(selectedData)=>{handleSDGsChange(selectedData)}} isAddBeneficiary={true} isClear={isClearSDGs}/>
                         </Col>
                       </Row>
                       <Row className='mt-4'>

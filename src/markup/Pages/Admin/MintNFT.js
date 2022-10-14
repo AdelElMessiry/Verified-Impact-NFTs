@@ -50,12 +50,8 @@ const MintNFT = () => {
   const [isMintClicked, setIsMintClicked] = React.useState(false);
   const [isMintAnotherClicked, setIsMintAnotherClicked] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [beneficiary, setBeneficiary] = React.useState(
-    savedData ? savedData.beneficiary : undefined
-  );
-  const [campaign, setCampaign] = React.useState(
-    savedData ? savedData.campaign : undefined
-  );
+  const [beneficiary, setBeneficiary] = React.useState();
+  const [campaign, setCampaign] = React.useState();
   const [collectionsList, setCollectionsList] = React.useState();
   const [campaignsList, setCampaignsList] = React.useState();
   const [allCampaignsList, setAllCampaignsList] = React.useState();
@@ -155,23 +151,26 @@ const MintNFT = () => {
 
   React.useEffect(() => {
     ReactGA.pageview(window.location.pathname + '/mint-nft');
+    const allowedBeneAddress= beneficiaries?.filter(({ isApproved }) => isApproved === 'true').map(({ address }) => address);
+
     beneficiaries?.length &&
       !beneficiary &&
-      setBeneficiary(
+      setBeneficiary(savedData&& allowedBeneAddress.includes(savedData.beneficiary)
+      ? savedData.beneficiary:
         beneficiaries?.filter(({ isApproved }) => isApproved === 'true')[0]
           ?.address
       );
-
     // campaigns?.length &&
     //   !campaign &&
     //   setCampaign(savedData ? savedData.campaign : campaigns[0]?.id);
+
 
     const filteredCampaigns =
       !campaignsList &&
       campaigns?.length &&
       campaigns.filter(
         ({ wallet_address }) =>
-          (savedData
+          (savedData&& allowedBeneAddress.includes(savedData.beneficiary)
             ? savedData.beneficiary
             : beneficiaries?.filter(
                 ({ isApproved }) => isApproved === 'true'
@@ -804,6 +803,7 @@ const MintNFT = () => {
                           onChange={(e) => handleChange(e)}
                           value={state.inputs.isForSale}
                           name='isForSale'
+                          checked={state.inputs.isForSale}
                         />
                       </Col>
                     </Row>

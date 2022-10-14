@@ -301,15 +301,10 @@ const ProfileForm = ({
         }
         VIToast.success('Profile Saved successfully');
         //NOTE: every channel has a special keys and tokens sorted on .env file
-        if (
-          formName !== ProfileFormsEnum.BeneficiaryProfile ||
-          (formName !== ProfileFormsEnum.BeneficiaryProfile && isProfileExist)
-        ) {
-          setTimeout(() => {
-            window.location.reload();
-            setIsSaveButtonClicked(false);
-          }, 50);
-        }
+        setTimeout(() => {
+          window.location.reload();
+          setIsSaveButtonClicked(false);
+        }, 50);
       } catch (err) {
         if (err.message.includes('1024')) {
           VIToast.error(
