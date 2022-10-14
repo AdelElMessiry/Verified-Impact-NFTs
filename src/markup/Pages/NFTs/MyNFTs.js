@@ -97,7 +97,8 @@ const MyNFTs = () => {
   const [creatorTags, setCreatorTags] = React.useState([]);
   const [allNFTs, setAllNFTs] = React.useState();
   const [filteredNFTs, setFilteredNFTs] = React.useState();
-
+  const [isRefreshNFTList, setIsRefreshNFTList] = React.useState(false);
+  const [changedNFT, setChangedNFT] = React.useState();
   const filterCollectionByTag = React.useCallback((tag, filteredNFTs) => {
     const collectionsTagsName =
       filteredNFTs &&
@@ -168,6 +169,17 @@ const MyNFTs = () => {
     ReactGA.pageview(window.location.pathname +"MyNfts");
     entityInfo.publicKey && getFilteredNFTs();
   }, [entityInfo.publicKey, getFilteredNFTs]);
+
+  React.useEffect(() => {
+    if (changedNFT) {
+      const resIndex = filteredNFTs?.findIndex(
+        ({ tokenId }) => tokenId == changedNFT.tokenId
+      );
+      filteredNFTs?.splice(resIndex, 1);
+      setFilteredNFTs(filteredNFTs);
+      setShowBuyModal(false);
+    }
+  }, [isRefreshNFTList]);
 
   const getCollectionsBasedOnTag = React.useCallback(
     (tag = 'All') => {
@@ -561,6 +573,12 @@ const MyNFTs = () => {
                                 }}
                                 isTransfer={true}
                                 isMyNft={true}
+                                handleCallChangeBuyNFTs={(nft) => {
+                                  setChangedNFT(nft);
+                                  setIsRefreshNFTList(
+                                    !isRefreshNFTList
+                                  );
+                                }}
                               />
                             </li>
                           ))}

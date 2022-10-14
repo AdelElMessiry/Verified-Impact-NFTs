@@ -22,7 +22,8 @@ const NFTCard = ({
   isTransfer = false,
   isCreation = false,
   isMyNft = false,
-  handleCallChangeNFTs=()=>{}
+  handleCallChangeNFTs=()=>{},
+  handleCallChangeBuyNFTs=()=>{}
 }) => {
   const { beneficiaries } =  useNFTState()
 
@@ -140,6 +141,7 @@ const NFTCard = ({
             }}
             data={item}
             isTransfer={isTransfer}
+            handleTransactionBuySuccess={(nft)=>{handleCallChangeBuyNFTs(nft)}}
           />
         )}
         {showReceiptModal && (
