@@ -270,7 +270,7 @@ const MintNFT = () => {
     if (picture.length > 0) {
       setUploadedBlobImage(picture[0]);
     } else {
-      // setUploadedImage(null);
+      setUploadedBlobImage(null);
       // setUploadedFile(null);
     }
   };
@@ -891,6 +891,7 @@ const MintNFT = () => {
                                   state.inputs.price < 250)) ||
                               isMintClicked ||
                               isMintAnotherClicked ||
+                              !uploadedImageBlob||
                               (SDGsGoalsData.length > 0 &&
                                 SDGsGoals.length <= 0)
                             }
@@ -920,6 +921,7 @@ const MintNFT = () => {
                                 (state.inputs.price === '' ||
                                   state.inputs.price < 250)) ||
                               isMintAnotherClicked ||
+                              !uploadedImageBlob||
                               isMintClicked ||
                               (SDGsGoalsData.length > 0 &&
                                 SDGsGoals.length <= 0)
