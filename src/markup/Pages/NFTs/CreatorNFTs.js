@@ -144,7 +144,8 @@ const CreatorNFTs = () => {
   const [SDGsGoals, setSDGsGoals] = React.useState([]);
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
   const [isClearSDGs, setIsClearSDGs] = React.useState(false);
-
+  const [isRefreshNFTList, setIsRefreshNFTList] = React.useState(false);
+  const [changedNFT, setChangedNFT] = React.useState();
   //getting Collections details
   const getCollections = React.useCallback(async () => {
     const setSelectedCollection =
@@ -158,6 +159,22 @@ const CreatorNFTs = () => {
     ReactGA.pageview(window.location.href);
     (!collectionName || collection) && getCollections();
   }, [collectionName, getCollections, collection]);
+
+  React.useEffect(() => {
+    if (changedNFT) {
+      const resIndex = filteredNFTs?.findIndex(
+        ({ tokenId }) => tokenId == changedNFT.tokenId
+      );
+      filteredNFTs?.splice(resIndex, 1);
+      setFilteredNFTs([
+          ...filteredNFTs?.slice(0, resIndex),
+          changedNFT,
+          ...filteredNFTs?.slice(resIndex),
+        ]
+      );
+      setShowBuyModal(false);
+    }
+  }, [isRefreshNFTList]);
 
   //getting Creator details
   const getCreators = React.useCallback(async () => {
@@ -905,6 +922,12 @@ const CreatorNFTs = () => {
                               openSlider={(newIndex) => {
                                 setPhotoIndex(newIndex);
                                 setOpenSlider(true);
+                              }}
+                              handleCallChangeBuyNFTs={(nft) => {
+                                setChangedNFT(nft);
+                                setIsRefreshNFTList(
+                                  !isRefreshNFTList
+                                );
                               }}
                             />
                           </li>

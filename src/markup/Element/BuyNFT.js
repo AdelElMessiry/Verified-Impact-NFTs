@@ -14,7 +14,7 @@ import {
   SendTweetWithImage64,
 } from '../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
-import {useNFTDispatch, useNFTState,refreshNFTs } from '../../contexts/NFTContext';
+import {useNFTDispatch, useNFTState,refreshNFTs,updateNFTs, } from '../../contexts/NFTContext';
 const InitialInputs = () => ({
   inputs: {
     address: '',
@@ -22,7 +22,7 @@ const InitialInputs = () => ({
 });
 
 //buying NFT Modal
-const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
+const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false,handleTransactionBuySuccess = () => {} }) => {
   const { entityInfo } = useAuth();
   const [showModal, setShowModal] = React.useState(show);
   const [state, setState] = React.useState(InitialInputs());
@@ -63,8 +63,14 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
             action: 'Buy nft',
             label: `${entityInfo.publicKey}: bought a new nft id: ${nftID}`,
           });
-          await refreshNFTs(nftDispatch,stateList);
+          const changedNFT = Object.assign({}, data, {
+            isForSale: 'false',
+            isCreatorOwner: false ,
+          });
+          await updateNFTs(nftDispatch, stateList, changedNFT);
+          handleTransactionBuySuccess(changedNFT);
           VIToast.success('Transaction ended successfully');
+          await refreshNFTs(nftDispatch,stateList);
           handleClose();
           await sendDiscordMessage(
             process.env.REACT_APP_NFT_WEBHOOK_ID,
@@ -123,9 +129,15 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
         nftID
       );
       if (transferDeployHash) {
+        const changedNFT = Object.assign({}, data, {
+          isForSale: 'false',
+          isCreatorOwner: false ,
+        });
+        await updateNFTs(nftDispatch, stateList, changedNFT);
+        handleTransactionBuySuccess(changedNFT);
         VIToast.success('NFT transfered successfully');
-        handleClose();
         await refreshNFTs(nftDispatch,stateList);
+        handleClose();
       } else {
         VIToast.error('Error happened please try again later');
       }

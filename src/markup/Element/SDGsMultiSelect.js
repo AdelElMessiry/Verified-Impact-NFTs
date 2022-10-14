@@ -24,6 +24,9 @@ const SDGsMultiSelect = ({
   }, [data]);
   useEffect(() => {
     isClear && selectInputRef.current.clearValue();
+    if(isAddBeneficiary){
+      setSelectedOptions(data[18]);
+    }
   }, [isClear]);
 
   const IconOption = (props) => {
