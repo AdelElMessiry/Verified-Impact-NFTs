@@ -133,7 +133,6 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false,handleT
           isForSale: 'false',
           isCreatorOwner: false ,
         });
-        await updateNFTs(nftDispatch, stateList, changedNFT);
         handleTransactionBuySuccess(changedNFT);
         VIToast.success('NFT transfered successfully');
         await refreshNFTs(nftDispatch,stateList);

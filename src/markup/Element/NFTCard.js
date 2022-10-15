@@ -300,14 +300,9 @@ const NFTCard = ({
             item?.sdgs_ids?.split(',').includes(value.toString())
           )?.map((sdg, index) => (
             <VINftsTooltip title={sdg.label} key={index}>
-              <label>
+              <label className="sdgs-icon">
                 <img
                   src={process.env.PUBLIC_URL + 'images/sdgsIcons/' + sdg.icon}
-                  style={{
-                    width: 25,
-                    pointerEvents: 'none',
-                    cursor: 'default',
-                  }}
                 />
               </label>
             </VINftsTooltip>
