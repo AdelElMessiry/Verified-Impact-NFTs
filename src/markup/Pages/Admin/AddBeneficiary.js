@@ -71,12 +71,13 @@ const AddBeneficiary = () => {
       await SendTweet(
         `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts. ${s.toString().replaceAll(',', ' ')} click here ${window.location.origin}/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
       );
-      setBeneficiaryInputs({
-        name: '',
-        description: '',
-        address: '',
-        SDGsGoals:[SDGsData[18].value]
-      });
+      window.location.reload()
+      // setBeneficiaryInputs({
+      //   name: '',
+      //   description: '',
+      //   address: '',
+      //   SDGsGoals:[SDGsData[18].value]
+      // });
       setIsClearSDGs(!isClearSDGs)
       setIsButtonClicked(false);
     } catch (err) {
