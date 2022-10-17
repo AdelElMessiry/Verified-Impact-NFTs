@@ -149,7 +149,11 @@ fn create_profile() {
         is_approved = false;
         profile.insert(
             format!("{}_sdgs_ids", profile_type),
-            sdgs_ids.iter().map(ToString::to_string).collect::<Vec<String>>().join(","),
+            sdgs_ids
+                .iter()
+                .map(ToString::to_string)
+                .collect::<Vec<String>>()
+                .join(","),
         );
         profile.insert(
             format!("{}_has_receipt", profile_type),
@@ -166,7 +170,11 @@ fn create_profile() {
     );
 
     if mode.clone() == "ADD" {
-        Factory::default().create_profile(address, profile);
+        if Factory::default().is_existent_profile() {
+            Factory::default().update_profile(address, profile);
+        } else {
+            Factory::default().create_profile(address, profile);
+        }
     } else {
         Factory::default().update_profile(address, profile);
     }

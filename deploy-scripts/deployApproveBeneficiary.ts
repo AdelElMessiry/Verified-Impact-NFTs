@@ -28,24 +28,27 @@ const publicKey: any = Keys.Ed25519.privateToPublicKey(privateKey);
 const KEYS: any = Keys.Ed25519.parseKeyPair(publicKey, privateKey);
 
 (async function deployBeneficiary() {
-  cep47.setContractHash(FACTORY_CONTRACT_HASH!, FACTORY_CONTRACT_PACKAGE_HASH);
-
-  const beneficiaryDeploy = await cep47.approveBeneficiary(
-    CLValueBuilder.byteArray(
-      CLPublicKey.fromHex(
-        '01001e5a4bc0e8b925f5f94fd56efa7991c84dd0c1bf20e23219176ddff0b3c83f'
-      ).toAccountHash()
-    ),
-    true,
-    MINT_ONE_PAYMENT_AMOUNT!,
-    CLPublicKey.fromHex(FACTORY_ADMIN!),
-    [KEYS]
+  // cep47.setContractHash(FACTORY_CONTRACT_HASH!, FACTORY_CONTRACT_PACKAGE_HASH);
+  cep47.setContractHash(
+    process.env.NFT_CONTRACT_HASH!,
+    process.env.NFT_CONTRACT_PACKAGE_HASH
   );
 
-  const beneficiaryDeployHash = await beneficiaryDeploy.send(NODE_ADDRESS!);
+  const beneficiariesList = await cep47.getBeneficiariesList();
+  for (const address of beneficiariesList) {
+    const beneficiaryDeploy = await cep47.approveBeneficiary(
+      CLValueBuilder.byteArray(Buffer.from(address, 'hex')),
+      true,
+      MINT_ONE_PAYMENT_AMOUNT!,
+      CLPublicKey.fromHex(FACTORY_ADMIN!),
+      [KEYS]
+    );
 
-  console.log('...... beneficiary deploy hash: ', beneficiaryDeployHash);
+    const beneficiaryDeployHash = await beneficiaryDeploy.send(NODE_ADDRESS!);
 
-  await getDeploy(NODE_ADDRESS!, beneficiaryDeployHash);
-  console.log('...... Beneficiary saved successfully');
+    console.log('...... beneficiary deploy hash: ', beneficiaryDeployHash);
+
+    await getDeploy(NODE_ADDRESS!, beneficiaryDeployHash);
+    console.log('...... Beneficiary saved successfully');
+  }
 })();

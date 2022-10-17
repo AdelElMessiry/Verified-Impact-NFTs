@@ -25,14 +25,19 @@ export async function createCampaign(
   deploySender: CLPublicKey,
   sdgs_ids: number[],
   mode?: string,
-  campaign_id?: string
+  campaign_id?: string,
+  beneficiary_address?: string
 ) {
+  if ((mode && mode === 'ADD') || !beneficiary_address) {
+    beneficiary_address = wallet_address;
+  }
   const campaignDeploy = await cep47.createCampaign(
     campaign_id ? campaign_id : '0',
     mode ? mode : 'ADD',
     name,
     description,
     CLValueBuilder.byteArray(Buffer.from(wallet_address, 'hex')),
+    CLValueBuilder.byteArray(Buffer.from(beneficiary_address!, 'hex')),
     url,
     requested_royalty,
     sdgs_ids,
