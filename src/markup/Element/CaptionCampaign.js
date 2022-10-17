@@ -110,7 +110,7 @@ export const CaptionCampaign = (data, IconImage) => (
       />
       &nbsp;&nbsp;{' '}
       <CopyCode
-        link={`<iframe src='https://dev.verifiedimpactnfts.com/#/nft-card?id=${data.tokenId}'></iframe>`}
+        link={`<iframe src='${window.location.origin}/#/nft-card?id=${data.tokenId}'></iframe>`}
       />
     </p>
     <p>
