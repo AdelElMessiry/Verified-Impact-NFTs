@@ -1,4 +1,7 @@
+import { CLPublicKey } from 'casper-js-sdk';
+
 import { cep47 } from '../lib/cep47';
+import { createCampaign } from './createCampaign';
 
 export async function getCampaignDetails(campaignId: string) {
   // console.log(campaignId);
@@ -35,8 +38,32 @@ export async function getCampaignsList() {
               ? parsedCampaigns.wallet_address.slice(13).replace(')', '')
               : parsedCampaigns.wallet_address.slice(10).replace(')', '')
             : parsedCampaigns.wallet_address;
-           // parsedCampaigns["sdgs"]=["19"]
+        // parsedCampaigns["sdgs"]=["19"]
         campaignsList.push(parsedCampaigns);
+        // const {
+        //   sdgs_ids,
+        //   description,
+        //   id,
+        //   name,
+        //   requested_royalty,
+        //   url,
+        //   wallet_address,
+        // } = parsedCampaigns;
+
+        // await createCampaign(
+        //   name,
+        //   description,
+        //   wallet_address,
+        //   url,
+        //   requested_royalty,
+        //   CLPublicKey.fromHex(
+        //     '0131561311ded2e4c2bbb6d2497e231ae554afc86e7b6b9a083a84330830b8cfc5'
+        //   ),
+        //   sdgs_ids || ['19'],
+        //   'UPDATE',
+        //   id,
+        //   wallet_address
+        // );
       })
       .catch((err) => {
         console.log(err);

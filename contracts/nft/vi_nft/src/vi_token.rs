@@ -172,13 +172,13 @@ impl ViToken {
 
                 if mode.clone() == "UPDATE" {
                     campaign =
-                        CollectionControl::get_collection(self, campaign_id).unwrap_or_default();
+                    ViToken::default().beneficiary_campaign(self, campaign_id).unwrap_or_default();
                     campaign.insert(format!("id: "), campaign_id.to_string());
                 } else if mode.clone() == "ADD" {
                     new_campaign_count = campaign_data::total_campaigns()
                         .checked_add(U256::one())
                         .unwrap();
-                    campaign = CollectionControl::get_collection(self, new_campaign_count)
+                    campaign = ViToken::default().beneficiary_campaign(self, new_campaign_count)
                         .unwrap_or_default();
                     campaign.insert(format!("id: "), new_campaign_count.to_string());
                 }

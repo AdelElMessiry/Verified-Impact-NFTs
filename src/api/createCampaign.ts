@@ -28,7 +28,7 @@ export async function createCampaign(
   campaign_id?: string,
   beneficiary_address?: string
 ) {
-  if (mode && mode === 'ADD') {
+  if ((mode && mode === 'ADD') || !beneficiary_address) {
     beneficiary_address = wallet_address;
   }
   const campaignDeploy = await cep47.createCampaign(
