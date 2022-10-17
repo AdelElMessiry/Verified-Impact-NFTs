@@ -1,7 +1,6 @@
 import { CLPublicKey } from 'casper-js-sdk';
 
 import { cep47 } from '../lib/cep47';
-import { createCampaign } from './createCampaign';
 
 export async function getCampaignDetails(campaignId: string) {
   // console.log(campaignId);
@@ -38,8 +37,17 @@ export async function getCampaignsList() {
               ? parsedCampaigns.wallet_address.slice(13).replace(')', '')
               : parsedCampaigns.wallet_address.slice(10).replace(')', '')
             : parsedCampaigns.wallet_address;
+
+        parsedCampaigns.beneficiary_address =
+          parsedCampaigns.beneficiary_address.includes('Account') ||
+          parsedCampaigns.beneficiary_address.includes('Key')
+            ? parsedCampaigns.beneficiary_address.includes('Account')
+              ? parsedCampaigns.beneficiary_address.slice(13).replace(')', '')
+              : parsedCampaigns.beneficiary_address.slice(10).replace(')', '')
+            : parsedCampaigns.beneficiary_address;
         // parsedCampaigns["sdgs"]=["19"]
         campaignsList.push(parsedCampaigns);
+
         // const {
         //   sdgs_ids,
         //   description,
@@ -50,7 +58,7 @@ export async function getCampaignsList() {
         //   wallet_address,
         // } = parsedCampaigns;
 
-        // await createCampaign(
+        // const savedCampaign = await createCampaign(
         //   name,
         //   description,
         //   wallet_address,
@@ -59,11 +67,13 @@ export async function getCampaignsList() {
         //   CLPublicKey.fromHex(
         //     '0131561311ded2e4c2bbb6d2497e231ae554afc86e7b6b9a083a84330830b8cfc5'
         //   ),
-        //   sdgs_ids || ['19'],
+        //   sdgs_ids.split(','),
         //   'UPDATE',
         //   id,
         //   wallet_address
         // );
+        // const deployResult = await getDeployDetails(savedCampaign);
+        // console.log('...... Campaign saved successfully', deployResult);
       })
       .catch((err) => {
         console.log(err);
