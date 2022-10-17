@@ -171,14 +171,16 @@ impl ViToken {
                 let mut new_campaign_count = U256::zero();
 
                 if mode.clone() == "UPDATE" {
-                    campaign =
-                    ViToken::default().beneficiary_campaign(self, campaign_id).unwrap_or_default();
+                    campaign = ViToken::default()
+                        .beneficiary_campaign(campaign_id)
+                        .unwrap_or_default();
                     campaign.insert(format!("id: "), campaign_id.to_string());
                 } else if mode.clone() == "ADD" {
                     new_campaign_count = campaign_data::total_campaigns()
                         .checked_add(U256::one())
                         .unwrap();
-                    campaign = ViToken::default().beneficiary_campaign(self, new_campaign_count)
+                    campaign = ViToken::default()
+                        .beneficiary_campaign(new_campaign_count)
                         .unwrap_or_default();
                     campaign.insert(format!("id: "), new_campaign_count.to_string());
                 }

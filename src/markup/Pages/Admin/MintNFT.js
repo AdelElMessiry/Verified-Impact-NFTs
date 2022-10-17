@@ -6,7 +6,8 @@ import ReactGA from 'react-ga';
 import { Form } from 'react-bootstrap';
 import CreatableSelect from 'react-select/creatable';
 import validator from 'validator';
-import { NFTStorage } from 'nft.storage';
+// import { NFTStorage } from 'nft.storage';
+import { NFTStorage } from 'nft.storage/dist/bundle.esm.min.js';
 import { CLPublicKey } from 'casper-js-sdk';
 
 import { useAuth } from '../../../contexts/AuthContext';
@@ -241,7 +242,8 @@ const MintNFT = () => {
         ?.filter(({ isApproved }) => isApproved === 'true')
         .find(({ address }) => address === value);
       const filteredCampaigns = allCampaignsList?.filter(
-        ({ beneficiary_address }) => selectedBeneficiary.address === beneficiary_address
+        ({ beneficiary_address }) =>
+          selectedBeneficiary.address === beneficiary_address
       );
       setCampaignsList(filteredCampaigns);
       filteredCampaigns?.length > 0
