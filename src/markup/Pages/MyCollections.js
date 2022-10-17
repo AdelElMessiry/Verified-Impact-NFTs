@@ -253,7 +253,7 @@ const MyCollections = () => {
           </>
         )}
         {nft.isCreatorOwner === false && nft.isForSale === 'true' && (
-          <IconImage nft={nft} />
+         <> <IconImage nft={nft} />cc{nft.isCreatorOwner}</>
         )}
         &nbsp;&nbsp; &nbsp;&nbsp;{' '}
         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
@@ -434,6 +434,14 @@ const MyCollections = () => {
           ...finalArr?.slice(resIndex),
         ])
       );
+      //from Expand
+      const captions = [];
+      [
+        ...finalArr?.slice(0, resIndex),
+        changedNFT,
+        ...finalArr?.slice(resIndex),
+      ].forEach((nft) => captions.push(CaptionCampaign(nft, IconImage)));
+       captions.length && setSliderCaptions(captions);
       setShowListForSaleModal(false);
     }
   }, [isRefreshNFTList]);
@@ -858,6 +866,10 @@ const MyCollections = () => {
           }}
           data={selectedNFT}
           isTransfer={true}
+          handleTransactionBuySuccess={(nft)=>{ setChangedNFT(nft);
+            setIsRefreshNFTList(
+              !isRefreshNFTList
+            );}}
         />
       )}
       {showListForSaleModal && (
@@ -867,6 +879,10 @@ const MyCollections = () => {
             setShowListForSaleModal(false);
           }}
           data={listForSaleNFT}
+          handleTransactionSuccess={(nft)=>{  setChangedNFT(nft);
+            setIsRefreshNFTList(
+              !isRefreshNFTList
+            );}}
         />
       )}
     </Layout>

@@ -611,6 +611,10 @@ const MyNFTs = () => {
           }}
           data={selectedNFT}
           isTransfer={true}
+          handleTransactionBuySuccess={(nft)=>{ setChangedNFT(nft);
+            setIsRefreshNFTList(
+              !isRefreshNFTList
+            );}}
         />
       )}
     </Layout>
