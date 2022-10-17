@@ -110,7 +110,7 @@ const NFTCard = ({
           )}
           <li className=' mr-1 align-items-center'>
             <CopyCode
-              link={`<iframe src='https://dev.verifiedimpactnfts.com/#/nft-card?id=${item.tokenId}'></iframe>`}
+              link={`<iframe src='${window.location.origin}/#/nft-card?id=${item.tokenId}'></iframe>`}
             />
           </li>
         {(isMyNft &&beneficiaryData?.has_receipt==="true") &&(
