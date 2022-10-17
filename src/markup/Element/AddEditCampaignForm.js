@@ -20,7 +20,7 @@ const AddEditCampaignForm = ({
   isFromModal = false,
   beneficiaryAddress = undefined,
 }) => {
-  const { beneficiaries,nfts } = useNFTState();
+  const { beneficiaries, nfts } = useNFTState();
   const { entityInfo } = useAuth();
   const [beneficiary, setBeneficiary] = React.useState();
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
@@ -30,6 +30,13 @@ const AddEditCampaignForm = ({
   );
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
   const [mandatorySDGs, setMandatorySDGs] = React.useState();
+  const [campaignAddress, setCampaignAddress] = React.useState(
+    data && data.wallet_address
+      ? data.wallet_address
+      : beneficiaryAddress
+      ? beneficiaryAddress
+      : ''
+  );
 
   //getting beneficiary details
   const selectedBeneficiary = React.useCallback(async () => {
@@ -55,7 +62,12 @@ const AddEditCampaignForm = ({
                 .includes(value.toString())
             )
       );
-  }, [beneficiaries]);
+    !data &&
+      firstBeneficiary &&
+      setCampaignAddress(
+        beneficiaryAddress ? beneficiaryAddress : firstBeneficiary[0]?.address
+      );
+  }, [beneficiaries, beneficiaryAddress, data]);
 
   React.useEffect(() => {
     !beneficiary && selectedBeneficiary();
@@ -63,20 +75,23 @@ const AddEditCampaignForm = ({
 
   //getting beneficiary details
   const getSavedSDGs = React.useCallback(async () => {
-    const selectedNFTs=data&&nfts&&nfts.filter(({campaign})=>campaign==data.id);
-    if (selectedNFTs&& selectedNFTs.length>0){
-      const sdgsNFTs=  selectedNFTs.map(({sdgs_ids})=>sdgs_ids?.split(","))?.flat();
-      const campaignArray=  data?.sdgs_ids?.split(',')
-        var savedSDGs = sdgsNFTs?.filter(function(obj) { 
-          return campaignArray?.indexOf(obj) > -1; 
-        });
-        setMandatorySDGs(savedSDGs);
-      }
-  }, [data,nfts]);
+    const selectedNFTs =
+      data && nfts && nfts.filter(({ campaign }) => campaign == data.id);
+    if (selectedNFTs && selectedNFTs.length > 0) {
+      const sdgsNFTs = selectedNFTs
+        .map(({ sdgs_ids }) => sdgs_ids?.split(','))
+        ?.flat();
+      const campaignArray = data?.sdgs_ids?.split(',');
+      var savedSDGs = sdgsNFTs?.filter(function (obj) {
+        return campaignArray?.indexOf(obj) > -1;
+      });
+      setMandatorySDGs(savedSDGs);
+    }
+  }, [data, nfts]);
 
   React.useEffect(() => {
-    !mandatorySDGs &&data&& getSavedSDGs();
-  }, [mandatorySDGs,getSavedSDGs]);
+    !mandatorySDGs && data && getSavedSDGs();
+  }, [mandatorySDGs, getSavedSDGs, data]);
 
   //setting initial values of controls
   const [state, setState] = React.useState({
@@ -107,6 +122,9 @@ const AddEditCampaignForm = ({
           selectedBeneficiary.sdgs_ids?.split(',').includes(value.toString())
         )
       );
+      if (!data) {
+        setCampaignAddress(e.target.value);
+      }
     } else {
       const { value, name, checked, type } = e.target;
       const { inputs } = state;
@@ -133,13 +151,14 @@ const AddEditCampaignForm = ({
       const savedCampaign = await createCampaign(
         state.inputs.name,
         state.inputs.description,
-        beneficiaryAddress ? beneficiaryAddress : beneficiary,
+        campaignAddress,
         state.inputs.campaignUrl,
         state.inputs.requestedRoyalty,
         CLPublicKey.fromHex(entityInfo.publicKey),
         SDGsGoals,
         data ? 'UPDATE' : 'ADD',
-        data ? data.id : undefined
+        data ? data.id : undefined,
+        beneficiaryAddress ? beneficiaryAddress : beneficiary
       );
       ReactGA.event({
         category: 'Success',
@@ -193,21 +212,21 @@ const AddEditCampaignForm = ({
   };
 
   return (
-    <div className="section-full content-inner shop-account">
+    <div className='section-full content-inner shop-account'>
       {/* <!-- Product --> */}
-      <div className="container">
+      <div className='container'>
         <div>
-          <div className=" m-auto m-b30">
+          <div className=' m-auto m-b30'>
             <Container>
               <Row>
                 {!isFromModal && (
                   <Col>
-                    <div className="required-field vinft-bg-gray">
+                    <div className='required-field vinft-bg-gray'>
                       {beneficiaries ? (
                         <select
-                          name="Beneficiary"
-                          placeholder="Beneficiary"
-                          className="form-control"
+                          name='Beneficiary'
+                          placeholder='Beneficiary'
+                          className='form-control'
                           onChange={(e) => handleChange(e, true)}
                           value={
                             beneficiary
@@ -228,66 +247,83 @@ const AddEditCampaignForm = ({
                         </select>
                       ) : (
                         <Spinner
-                          animation="border"
-                          variant="dark"
-                          className="my-1"
+                          animation='border'
+                          variant='dark'
+                          className='my-1'
                         />
                       )}
-                      <span className="text-danger required-field-symbol">
+                      <span className='text-danger required-field-symbol'>
                         *
                       </span>
                     </div>
                   </Col>
                 )}
                 <Col>
-                  <div className="required-field">
+                  <div className='required-field'>
                     <input
-                      type="text"
-                      placeholder="Name"
-                      name="name"
-                      className="form-control"
-                      onChange={(e) => handleChange(e)}
-                      value={state.inputs.name}
-                    />{' '}
-                    <span className="text-danger required-field-symbol">*</span>
+                      type='text'
+                      placeholder='Campaign Address'
+                      name='campaignAddress'
+                      className='form-control'
+                      onChange={(e) => setCampaignAddress(e.target.value)}
+                      value={campaignAddress}
+                    />
+                    <span className='text-danger required-field-symbol'>*</span>
                   </div>
                 </Col>
               </Row>
-              <Row className="mt-4">
+              <Row className='mt-4'>
                 <Col>
-                  <div className="required-field">
+                  <div className='required-field'>
                     <input
-                      type="number"
-                      placeholder="Requested Royalty"
-                      name="requestedRoyalty"
-                      className="form-control"
+                      type='text'
+                      placeholder='Name'
+                      name='name'
+                      className='form-control'
+                      onChange={(e) => handleChange(e)}
+                      value={state.inputs.name}
+                    />{' '}
+                    <span className='text-danger required-field-symbol'>*</span>
+                  </div>
+                </Col>
+                <Col>
+                  <div className='required-field'>
+                    <input
+                      type='number'
+                      placeholder='Requested Royalty'
+                      name='requestedRoyalty'
+                      className='form-control'
                       value={state.inputs.requestedRoyalty}
                       onChange={(e) => handleChange(e)}
                       min={0}
                     />{' '}
-                    <span className="text-danger required-field-symbol">*</span>
+                    <span className='text-danger required-field-symbol'>*</span>
                     {(state.inputs.requestedRoyalty < 0 ||
                       state.inputs.requestedRoyalty > 100) && (
-                      <span className="text-danger">
+                      <span className='text-danger'>
                         Requested Royalty value must be more than 0 and less
                         than 100
                       </span>
                     )}
-                    {state.inputs.requestedRoyalty == 0 &&
-                      state.inputs.requestedRoyalty != '' && (
-                        <span className="text-danger">
+                    {state.inputs.requestedRoyalty === 0 &&
+                      state.inputs.requestedRoyalty !== '' && (
+                        <span className='text-danger'>
                           Requested Royalty equal to 0 means your beneficiary
                           will not have any proportion
                         </span>
                       )}
                   </div>
                 </Col>
+              </Row>
+
+              <Row className='mt-4'>
+                {' '}
                 <Col>
                   <input
-                    type="text"
-                    placeholder="URL"
-                    name="campaignUrl"
-                    className="form-control"
+                    type='text'
+                    placeholder='URL'
+                    name='campaignUrl'
+                    className='form-control'
                     value={state.inputs.campaignUrl}
                     onChange={(e) => {
                       handleChange(e);
@@ -295,12 +331,10 @@ const AddEditCampaignForm = ({
                     }}
                   />
                   {showURLErrorMsg && (
-                    <span className="text-danger">Please enter Valid URL</span>
+                    <span className='text-danger'>Please enter Valid URL</span>
                   )}
                 </Col>
-              </Row>
-              {SDGsGoalsData.length > 0 && (
-                <Row className="mt-4">
+                {SDGsGoalsData.length > 0 && (
                   <Col>
                     <SDGsMultiSelect
                       data={SDGsGoalsData}
@@ -315,35 +349,36 @@ const AddEditCampaignForm = ({
                       mandatorySDGs={mandatorySDGs}
                     />
                   </Col>
-                </Row>
-              )}
-              <Row className="mt-4">
+                )}
+              </Row>
+
+              <Row className='mt-4'>
                 <Col>
                   <textarea
                     rows={4}
-                    name="description"
-                    placeholder="Description"
-                    className="form-control"
+                    name='description'
+                    placeholder='Description'
+                    className='form-control'
                     onChange={(e) => handleChange(e)}
                     value={state.inputs.description}
                   ></textarea>
                 </Col>
               </Row>
-              <Row className="mt-4">
+              <Row className='mt-4'>
                 <Col>
-                  <p className="form-submit">
+                  <p className='form-submit'>
                     <button
-                      className="btn btn-success"
+                      className='btn btn-success'
                       onClick={saveCampaign}
                       disabled={
-                        state.inputs.name == '' ||
+                        state.inputs.name === '' ||
                         state.inputs.requestedRoyalty < 0 ||
-                        state.inputs.requestedRoyalty > 100||
-                        (SDGsGoalsData?.length>0&& SDGsGoals?.length<=0)
+                        state.inputs.requestedRoyalty > 100 ||
+                        (SDGsGoalsData?.length > 0 && SDGsGoals?.length <= 0)
                       }
                     >
                       {isButtonClicked ? (
-                        <Spinner animation="border" variant="light" />
+                        <Spinner animation='border' variant='light' />
                       ) : data ? (
                         'Update'
                       ) : (

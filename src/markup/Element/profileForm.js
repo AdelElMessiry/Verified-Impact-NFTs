@@ -98,7 +98,7 @@ const ProfileForm = ({
     setUploadedNFTImage(formData ? formData?.nftUrl : null);
     setSDGsGoals(formData ? formData?.sdgs_ids?.split(",") : SDGsGoals);
    if (formName==ProfileFormsEnum.BeneficiaryProfile&&formData){
-    const beneficiaryCampaigns=campaigns.filter(({wallet_address})=>wallet_address==formData.address);
+    const beneficiaryCampaigns=campaigns.filter(({beneficiary_address})=>beneficiary_address==formData.address);
   if (beneficiaryCampaigns&& beneficiaryCampaigns.length>0){
   const sdgsCampaigns=  beneficiaryCampaigns.map(({sdgs_ids})=>sdgs_ids?.split(",")).flat();
   const beneficiaryArray=  formData?.sdgs_ids?.split(',')

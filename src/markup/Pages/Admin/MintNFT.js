@@ -6,7 +6,8 @@ import ReactGA from 'react-ga';
 import { Form } from 'react-bootstrap';
 import CreatableSelect from 'react-select/creatable';
 import validator from 'validator';
-import { NFTStorage } from 'nft.storage';
+// import { NFTStorage } from 'nft.storage';
+import { NFTStorage } from 'nft.storage/dist/bundle.esm.min.js';
 import { CLPublicKey } from 'casper-js-sdk';
 
 import { useAuth } from '../../../contexts/AuthContext';
@@ -151,30 +152,32 @@ const MintNFT = () => {
 
   React.useEffect(() => {
     ReactGA.pageview(window.location.pathname + '/mint-nft');
-    const allowedBeneAddress= beneficiaries?.filter(({ isApproved }) => isApproved === 'true').map(({ address }) => address);
+    const allowedBeneAddress = beneficiaries
+      ?.filter(({ isApproved }) => isApproved === 'true')
+      .map(({ address }) => address);
 
     beneficiaries?.length &&
       !beneficiary &&
-      setBeneficiary(savedData&& allowedBeneAddress.includes(savedData.beneficiary)
-      ? savedData.beneficiary:
-        beneficiaries?.filter(({ isApproved }) => isApproved === 'true')[0]
-          ?.address
+      setBeneficiary(
+        savedData && allowedBeneAddress.includes(savedData.beneficiary)
+          ? savedData.beneficiary
+          : beneficiaries?.filter(({ isApproved }) => isApproved === 'true')[0]
+              ?.address
       );
     // campaigns?.length &&
     //   !campaign &&
     //   setCampaign(savedData ? savedData.campaign : campaigns[0]?.id);
 
-
     const filteredCampaigns =
       !campaignsList &&
       campaigns?.length &&
       campaigns.filter(
-        ({ wallet_address }) =>
-          (savedData&& allowedBeneAddress.includes(savedData.beneficiary)
+        ({ beneficiary_address }) =>
+          (savedData
             ? savedData.beneficiary
             : beneficiaries?.filter(
                 ({ isApproved }) => isApproved === 'true'
-              )[0]?.address) === wallet_address
+              )[0]?.address) === beneficiary_address
       );
     filteredCampaigns?.length && setCampaignsList(filteredCampaigns);
 
@@ -240,7 +243,8 @@ const MintNFT = () => {
         ?.filter(({ isApproved }) => isApproved === 'true')
         .find(({ address }) => address === value);
       const filteredCampaigns = allCampaignsList?.filter(
-        ({ wallet_address }) => selectedBeneficiary.address === wallet_address
+        ({ beneficiary_address }) =>
+          selectedBeneficiary.address === beneficiary_address
       );
       setCampaignsList(filteredCampaigns);
       filteredCampaigns?.length > 0
@@ -891,7 +895,7 @@ const MintNFT = () => {
                                   state.inputs.price < 250)) ||
                               isMintClicked ||
                               isMintAnotherClicked ||
-                              !uploadedImageBlob||
+                              !uploadedImageBlob ||
                               (SDGsGoalsData.length > 0 &&
                                 SDGsGoals.length <= 0)
                             }
@@ -921,7 +925,7 @@ const MintNFT = () => {
                                 (state.inputs.price === '' ||
                                   state.inputs.price < 250)) ||
                               isMintAnotherClicked ||
-                              !uploadedImageBlob||
+                              !uploadedImageBlob ||
                               isMintClicked ||
                               (SDGsGoalsData.length > 0 &&
                                 SDGsGoals.length <= 0)

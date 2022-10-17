@@ -157,6 +157,7 @@ impl ViToken {
         name: String,
         description: String,
         wallet_address: Key,
+        beneficiary_address: Key,
         url: String,
         requested_royalty: String,
         sdgs_ids: Vec<U256>,
@@ -170,14 +171,16 @@ impl ViToken {
                 let mut new_campaign_count = U256::zero();
 
                 if mode.clone() == "UPDATE" {
-                    campaign =
-                        CollectionControl::get_collection(self, campaign_id).unwrap_or_default();
+                    campaign = ViToken::default()
+                        .beneficiary_campaign(campaign_id)
+                        .unwrap_or_default();
                     campaign.insert(format!("id: "), campaign_id.to_string());
                 } else if mode.clone() == "ADD" {
                     new_campaign_count = campaign_data::total_campaigns()
                         .checked_add(U256::one())
                         .unwrap();
-                    campaign = CollectionControl::get_collection(self, new_campaign_count)
+                    campaign = ViToken::default()
+                        .beneficiary_campaign(new_campaign_count)
                         .unwrap_or_default();
                     campaign.insert(format!("id: "), new_campaign_count.to_string());
                 }
@@ -191,19 +194,32 @@ impl ViToken {
                 );
                 campaign.insert(
                     format!("sdgs_ids: "),
-                    sdgs_ids.iter().map(ToString::to_string).collect::<Vec<String>>().join(","),
+                    sdgs_ids
+                        .iter()
+                        .map(ToString::to_string)
+                        .collect::<Vec<String>>()
+                        .join(","),
                 );
                 campaign.insert(format!("requested_royalty: "), requested_royalty);
 
                 if ViToken::default().is_beneficiary(wallet_address) {
                     if ViToken::default().is_admin(caller) {
                         campaign.insert(format!("wallet_address: "), wallet_address.to_string());
+                        campaign.insert(
+                            format!("beneficiary_address: "),
+                            beneficiary_address.to_string(),
+                        );
                     } else {
                         campaign.insert(format!("wallet_address: "), caller.to_string());
+                        campaign.insert(format!("beneficiary_address: "), caller.to_string());
                     }
                 } else {
                     if ViToken::default().is_admin(caller) {
                         campaign.insert(format!("wallet_address: "), wallet_address.to_string());
+                        campaign.insert(
+                            format!("beneficiary_address: "),
+                            beneficiary_address.to_string(),
+                        );
                     } else {
                         revert(ApiError::User(20));
                     }
@@ -255,7 +271,11 @@ impl ViToken {
                 beneficiary.insert(format!("isApproved: "), is_approved.to_string());
                 beneficiary.insert(
                     format!("sdgs_ids: "),
-                    sdgs_ids.iter().map(ToString::to_string).collect::<Vec<String>>().join(","),
+                    sdgs_ids
+                        .iter()
+                        .map(ToString::to_string)
+                        .collect::<Vec<String>>()
+                        .join(","),
                 );
 
                 BeneficiaryControl::add_beneficiary(self, address, beneficiary);
@@ -452,7 +472,11 @@ impl ViToken {
         mapped_meta.insert(format!("beneficiaryPercentage"), beneficiary_percentage);
         mapped_meta.insert(
             format!("sdgs_ids"),
-            sdgs_ids.iter().map(ToString::to_string).collect::<Vec<String>>().join(","),
+            sdgs_ids
+                .iter()
+                .map(ToString::to_string)
+                .collect::<Vec<String>>()
+                .join(","),
         );
 
         let confirmed_token_ids =
@@ -532,6 +556,7 @@ impl ViToken {
         name: String,
         description: String,
         wallet_address: Key,
+        beneficiary_address: Key,
         url: String,
         requested_royalty: String,
         sdgs_ids: Vec<U256>,
@@ -549,6 +574,7 @@ impl ViToken {
             name,
             description,
             wallet_address,
+            beneficiary_address,
             url,
             requested_royalty,
             sdgs_ids,
@@ -595,6 +621,23 @@ impl ViToken {
 
         if !ViToken::default().is_admin(caller) {
             revert(ApiError::User(20));
+        }
+
+        if status {
+            let mut approved_beneficiaries: Vec<Key> =
+                beneficiaries_control::get_approved_beneficiaries();
+            approved_beneficiaries.push(address);
+            beneficiaries_control::set_approved_beneficiaries(approved_beneficiaries);
+        } else {
+            let mut approved_beneficiaries: Vec<Key> =
+                beneficiaries_control::get_approved_beneficiaries();
+
+            let index = approved_beneficiaries
+                .iter()
+                .position(|x| *x == address)
+                .unwrap();
+            approved_beneficiaries.remove(index);
+            beneficiaries_control::set_approved_beneficiaries(approved_beneficiaries);
         }
 
         if !ViToken::default().is_existent_beneficiary(address) {
@@ -848,6 +891,7 @@ fn create_campaign() {
     let name = runtime::get_named_arg::<String>("name");
     let description = runtime::get_named_arg::<String>("description");
     let wallet_address = runtime::get_named_arg::<Key>("wallet_address");
+    let beneficiary_address = runtime::get_named_arg::<Key>("beneficiary_address");
     let url = runtime::get_named_arg::<String>("url");
     let requested_royalty = runtime::get_named_arg::<String>("requested_royalty");
     ViToken::default()
@@ -858,6 +902,7 @@ fn create_campaign() {
             name,
             description,
             wallet_address,
+            beneficiary_address,
             url,
             requested_royalty,
             sdgs_ids,
@@ -1481,6 +1526,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
             Parameter::new("wallet_address", Key::cl_type()),
+            Parameter::new("beneficiary_address", Key::cl_type()),
             Parameter::new("url", String::cl_type()),
             Parameter::new("requested_royalty", String::cl_type()),
             Parameter::new("sdgs_ids", CLType::List(Box::new(U256::cl_type()))),
