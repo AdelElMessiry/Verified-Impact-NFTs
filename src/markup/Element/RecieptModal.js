@@ -177,7 +177,7 @@ export default function ReceiptModal({ show, handleCloseParent, data }) {
                     <center>
                         <h3>Donation Information</h3>
                     </center>
-                    <div>Thank you for your donation with a value of  ${data.price}, made to the above-mentioned 501(c)(3) Non-Profit Organization.
+                    <div>Thank you for your donation with a value of  {data.price} CSPR, made to the above-mentioned 501(c)(3) Non-Profit Organization.
                         <br /> Donation Description:<br />
                         I, the undersigned representative, declare (or certify, verify, or state) under penalty of perjury
                         under the laws of the United States of America that there were no goods or services provided as
