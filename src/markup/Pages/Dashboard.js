@@ -532,6 +532,10 @@ const Dashboard = () => {
           }}
           data={selectedNFT}
           isTransfer={false}
+          handleTransactionBuySuccess={(nft)=>{ setChangedNFT(nft);
+            setIsRefreshNFTList(
+              !isRefreshNFTList
+            );}}
         />
       )}
     </Layout>

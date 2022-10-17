@@ -194,13 +194,13 @@ export async function getCachedCreatorNftList(nfts: any, address: string) {
 
   // const nftList = await getCachedNFTsList();
   const nftList = nfts;
-
-  for (const [index, nft] of nftList.entries()) {
-    const owner = await cep47.getOwnerOf(nft.tokenId.toString());
-    nftList[index].isOwner = owner === creator;
-  }
-
-  const creatorList = nftList.filter(
+  if(nftList){
+     for (const [index, nft] of nftList?.entries()) {
+     const owner = await cep47.getOwnerOf(nft.tokenId.toString());
+     nftList[index].isOwner = owner === creator;
+    }
+}
+  const creatorList = nftList?.filter(
     (nft: any) =>
       creator.includes('hash')
         ? nft.creator === creator.slice(13)
