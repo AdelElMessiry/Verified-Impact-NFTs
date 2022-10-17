@@ -403,7 +403,7 @@ const MyNFTs = () => {
         />
         &nbsp;&nbsp;{' '}
         <CopyCode
-          link={`<iframe src='https://dev.verifiedimpactnfts.com/#/nft-card?id=${nft.tokenId}'></iframe>`}
+          link={`<iframe src='${window.location.origin}/#/nft-card?id=${nft.tokenId}'></iframe>`}
         />
       </p>
       <p>
