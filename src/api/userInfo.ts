@@ -42,8 +42,17 @@ export async function getNFTsOwned(publicKeyHex: string): Promise<any[]> {
   const nfts: any[] = [];
   for (let idx = 0; idx < numOfNFTs; idx++) {
     const nftID = await cep47.getTokenByIndex(publicKeyCLValue, String(idx));
-
+    const ownerAddress = await cep47.getOwnerOf(nftID.toString());
     const rawNFT = await cep47.getMappedTokenMeta(nftID);
+    rawNFT.isCreatorOwner =
+      rawNFT.creator.includes('Key') ||
+        rawNFT.creator.includes('Account')
+        ? rawNFT.creator.includes('Account')
+          ? rawNFT.creator.slice(13).replace(')', '') ===
+          ownerAddress.slice(13)
+          : rawNFT.creator.slice(10).replace(')', '') ===
+          ownerAddress.slice(13)
+        : ownerAddress.slice(13) === rawNFT.creator;
     nfts.push({ ...rawNFT, tokenId: nftID });
   }
 
