@@ -283,3 +283,7 @@ export function isValidHttpUrl(string: string) {
 
   return url.protocol === 'http:' || url.protocol === 'https:';
 }
+
+export function isValidWallet(publicKey: string) {
+  return CLPublicKey.fromHex(publicKey).isCLValue;
+}
