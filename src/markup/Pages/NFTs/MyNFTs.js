@@ -560,27 +560,29 @@ const MyNFTs = () => {
                           imagesLoadedOptions={imagesLoadedOptions} // default {}
                         >
                           {filteredNFTs.map((item, index) => (
-                            <li
-                              className='web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0'
-                              key={index}
-                            >
-                              <NFTCard
-                                item={item}
-                                index={index}
-                                openSlider={(newIndex) => {
-                                  setPhotoIndex(newIndex);
-                                  setOpenSlider(true);
-                                }}
-                                isTransfer={true}
-                                isMyNft={true}
-                                handleCallChangeBuyNFTs={(nft) => {
-                                  setChangedNFT(nft);
-                                  setIsRefreshNFTList(
-                                    !isRefreshNFTList
-                                  );
-                                }}
-                              />
-                            </li>
+                            !item.isCreatorOwner && (
+                              <li
+                                className='web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0'
+                                key={index}
+                              >
+                                <NFTCard
+                                  item={item}
+                                  index={index}
+                                  openSlider={(newIndex) => {
+                                    setPhotoIndex(newIndex);
+                                    setOpenSlider(true);
+                                  }}
+                                  isTransfer={true}
+                                  isMyNft={true}
+                                  handleCallChangeBuyNFTs={(nft) => {
+                                    setChangedNFT(nft);
+                                    setIsRefreshNFTList(
+                                      !isRefreshNFTList
+                                    );
+                                  }}
+                                />
+                              </li>
+                            )                                                       
                           ))}
                         </Masonry>
                       </ul>
