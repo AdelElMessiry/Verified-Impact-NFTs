@@ -106,6 +106,7 @@ fn create_profile() {
     let is_approved;
     let mode = runtime::get_named_arg::<String>("mode");
     let address = runtime::get_named_arg::<Key>("address");
+    let address_pk = runtime::get_named_arg::<String>("address_pk");
     let username = runtime::get_named_arg::<String>("username");
     let tagline = runtime::get_named_arg::<String>("tagline");
     let img_url = runtime::get_named_arg::<String>("imgUrl");
@@ -160,6 +161,7 @@ fn create_profile() {
             has_receipt.to_string(),
         );
         profile.insert(format!("{}_ein", profile_type), ein);
+        profile.insert(format!("{}_address_pk", profile_type), address_pk);
     } else {
         is_approved = true;
     }
@@ -263,6 +265,7 @@ fn get_entry_points() -> EntryPoints {
         vec![
             Parameter::new("mode", String::cl_type()),
             Parameter::new("address", Key::cl_type()),
+            Parameter::new("address_pk", String::cl_type()),
             Parameter::new("username", String::cl_type()),
             Parameter::new("tagline", String::cl_type()),
             Parameter::new("imgUrl", String::cl_type()),
