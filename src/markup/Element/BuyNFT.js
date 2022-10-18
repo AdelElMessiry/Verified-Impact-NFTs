@@ -129,10 +129,31 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false,handleT
         nftID
       );
       if (transferDeployHash) {
-        const changedNFT = Object.assign({}, data, {
-          isForSale: 'false',
-          isCreatorOwner: false ,
-        });
+        const changedNFT =  {
+          beneficiary: data.beneficiary,
+          beneficiaryPercentage: data.beneficiaryPercentage,
+          campaign:data.campaign,
+          collection:data.collection,
+          creator:data.creator,
+          creatorPercentage:data.creatorPercentage,
+          currency: data.currency,
+          description: data.description,
+          hasReceipt:data.hasReceipt,
+          image: data.image,
+          isForSale:"false",
+          price: data.price,
+          sdgs_ids:data.sdgs_ids ,
+          title: data.title,
+          pureImageKey: data.pureImageKey,
+          tokenId:Number(data.tokenId),
+          isCreatorOwner:false ,
+          campaignName:data.campaignName ,
+          creatorName:data.creatorName ,
+          beneficiaryName: data.beneficiaryName,
+          collectionName: data.collectionName,
+          isOwner:false
+      }
+        await updateNFTs(nftDispatch, stateList, changedNFT);
         handleTransactionBuySuccess(changedNFT);
         VIToast.success('NFT transfered successfully');
         await refreshNFTs(nftDispatch,stateList);
