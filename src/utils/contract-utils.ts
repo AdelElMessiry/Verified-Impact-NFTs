@@ -285,5 +285,9 @@ export function isValidHttpUrl(string: string) {
 }
 
 export function isValidWallet(publicKey: string) {
-  return CLPublicKey.fromHex(publicKey).isCLValue;
+  try {
+    return CLPublicKey.fromHex(publicKey) instanceof CLPublicKey;
+  } catch (error) {
+    return false;
+  }
 }
