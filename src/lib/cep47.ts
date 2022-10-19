@@ -670,6 +670,7 @@ class CEP47Client {
     name: string,
     description: string,
     wallet_address: CLAccountHash,
+    wallet_address_pk: string,
     beneficiary_address: CLAccountHash,
     url: string,
     requested_royalty: string,
@@ -685,6 +686,7 @@ class CEP47Client {
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       wallet_address: CLValueBuilder.key(wallet_address),
+      wallet_address_pk: CLValueBuilder.string(wallet_address_pk),
       beneficiary_address: CLValueBuilder.key(beneficiary_address),
       url: CLValueBuilder.string(url),
       // recipient: CLValueBuilder.key(CLPublicKey.fromHex(wallet_address)),
@@ -711,6 +713,7 @@ class CEP47Client {
     name: string,
     description: string,
     address: CLByteArray,
+    address_pk: string,
     mode: string,
     sdgs_ids: number[],
     paymentAmount: string,
@@ -722,6 +725,7 @@ class CEP47Client {
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       address: CLValueBuilder.key(address),
+      address_pk: CLValueBuilder.string(address_pk),
       profile_contract_hash: CLValueBuilder.string(
         `contract-${PROFILE_CONTRACT_HASH!}`
       ),

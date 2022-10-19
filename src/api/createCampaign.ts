@@ -37,6 +37,7 @@ export async function createCampaign(
     name,
     description,
     CLValueBuilder.byteArray(Buffer.from(wallet_address, 'hex')),
+    wallet_address,
     CLValueBuilder.byteArray(Buffer.from(beneficiary_address!, 'hex')),
     url,
     requested_royalty,
