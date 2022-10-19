@@ -976,6 +976,7 @@ fn mint() {
         let method: &str = "create_profile";
         let args: RuntimeArgs = runtime_args! {"mode" => "ADD".clone(),
             "address" => creator.clone(),
+            "address_pk" => "".to_string(),
             "username" => creator_name.clone(),
             "tagline" => "".to_string(),
             "imgUrl" => "".to_string(),
@@ -1199,6 +1200,7 @@ fn add_creator() {
     let method: &str = "create_profile";
     let args: RuntimeArgs = runtime_args! {"mode" => mode.clone(),
         "address" => address.clone(),
+        "address_pk" =>  "".to_string(),
         "username" => name.clone(),
         "tagline" => "".to_string(),
         "imgUrl" => "".to_string(),
