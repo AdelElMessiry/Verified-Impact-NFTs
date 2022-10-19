@@ -34,21 +34,51 @@ const KEYS: any = Keys.Ed25519.parseKeyPair(publicKey, privateKey);
     process.env.NFT_CONTRACT_PACKAGE_HASH
   );
 
-  const beneficiariesList = await cep47.getBeneficiariesList();
-  for (const address of beneficiariesList) {
-    const beneficiaryDeploy = await cep47.approveBeneficiary(
-      CLValueBuilder.byteArray(Buffer.from(address, 'hex')),
-      true,
-      MINT_ONE_PAYMENT_AMOUNT!,
-      CLPublicKey.fromHex(FACTORY_ADMIN!),
-      [KEYS]
-    );
+  const beneficiary_address =
+    '01501b4037bdeffd70849a86698922f6f3ed2ff52dad5235b2472b09ae66e48e8c';
+  const campaignDeploy = await cep47.createCampaign(
+    '1',
+    'UPDATE',
+    'Stand With Ukraine',
+    'Stand with Ukraine people in their time of need',
+    CLValueBuilder.byteArray(
+      Buffer.from(
+        '01501b4037bdeffd70849a86698922f6f3ed2ff52dad5235b2472b09ae66e48e8c',
+        'hex'
+      )
+    ),
+    '01501b4037bdeffd70849a86698922f6f3ed2ff52dad5235b2472b09ae66e48e8c',
+    CLValueBuilder.byteArray(Buffer.from(beneficiary_address!, 'hex')),
+    'https://thedigital.gov.ua/',
+    '100',
+    [1, 2, 19],
+    MINT_ONE_PAYMENT_AMOUNT!,
+    CLPublicKey.fromHex(FACTORY_ADMIN!)
+  );
+  console.log(campaignDeploy);
 
-    const beneficiaryDeployHash = await beneficiaryDeploy.send(NODE_ADDRESS!);
+  // const beneficiaryDeployHash = await campaignDeploy.send(NODE_ADDRESS!);
 
-    console.log('...... beneficiary deploy hash: ', beneficiaryDeployHash);
+  // console.log('...... beneficiary deploy hash: ', beneficiaryDeployHash);
 
-    await getDeploy(NODE_ADDRESS!, beneficiaryDeployHash);
-    console.log('...... Beneficiary saved successfully');
-  }
+  // await getDeploy(NODE_ADDRESS!, beneficiaryDeployHash);
+  // console.log('...... Beneficiary saved successfully');
+
+  // const beneficiariesList = await cep47.getBeneficiariesList();
+  // for (const address of beneficiariesList) {
+  //   const beneficiaryDeploy = await cep47.approveBeneficiary(
+  //     CLValueBuilder.byteArray(Buffer.from(address, 'hex')),
+  //     true,
+  //     MINT_ONE_PAYMENT_AMOUNT!,
+  //     CLPublicKey.fromHex(FACTORY_ADMIN!),
+  //     [KEYS]
+  //   );
+
+  //   const beneficiaryDeployHash = await beneficiaryDeploy.send(NODE_ADDRESS!);
+
+  //   console.log('...... beneficiary deploy hash: ', beneficiaryDeployHash);
+
+  //   await getDeploy(NODE_ADDRESS!, beneficiaryDeployHash);
+  //   console.log('...... Beneficiary saved successfully');
+  // }
 })();
