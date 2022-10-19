@@ -743,12 +743,14 @@ class CEP47Client {
 
   public async approveBeneficiary(
     address: CLByteArray,
+    address_pk: string,
     status: boolean,
     paymentAmount: string,
     deploySender: CLPublicKey
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       address: CLValueBuilder.key(address),
+      address_pk: CLValueBuilder.string(address_pk),
       status: CLValueBuilder.bool(status),
       profile_contract_hash: CLValueBuilder.string(
         `contract-${PROFILE_CONTRACT_HASH!}`

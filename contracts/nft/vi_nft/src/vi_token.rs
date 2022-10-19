@@ -624,6 +624,7 @@ impl ViToken {
     fn approve_beneficiary(
         &mut self,
         address: Key,
+        address_pk: String,
         status: bool,
         profile_contract: String,
     ) -> Result<(), Error> {
@@ -661,6 +662,7 @@ impl ViToken {
             beneficiary.insert(format!("name: "), "".to_string());
             beneficiary.insert(format!("description: "), "".to_string());
             beneficiary.insert(format!("address: "), address.to_string());
+            beneficiary.insert(format!("address_pk: "), address_pk);
             beneficiary.insert(format!("isApproved: "), status.to_string());
 
             BeneficiaryControl::add_beneficiary(self, address, beneficiary);
@@ -1161,11 +1163,12 @@ fn add_beneficiary() {
 #[no_mangle]
 fn approve_beneficiary() {
     let address = runtime::get_named_arg::<Key>("address");
+    let address_pk = runtime::get_named_arg::<String>("address_pk");
     let status = runtime::get_named_arg::<bool>("status");
     let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
 
     ViToken::default()
-        .approve_beneficiary(address, status, profile_contract_string)
+        .approve_beneficiary(address, address_pk, status, profile_contract_string)
         .unwrap_or_revert();
 }
 
@@ -1707,6 +1710,7 @@ fn get_entry_points() -> EntryPoints {
         "approve_beneficiary",
         vec![
             Parameter::new("address", Key::cl_type()),
+            Parameter::new("address_pk", String::cl_type()),
             Parameter::new("status", bool::cl_type()),
             Parameter::new("profile_contract_hash", String::cl_type()),
         ],

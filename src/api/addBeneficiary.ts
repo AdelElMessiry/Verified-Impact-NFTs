@@ -48,6 +48,7 @@ export async function approveBeneficiary(
 ) {
   const beneficiaryDeploy = await cep47.approveBeneficiary(
     CLValueBuilder.byteArray(Buffer.from(address, 'hex')),
+    address,
     status,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     deploySender
