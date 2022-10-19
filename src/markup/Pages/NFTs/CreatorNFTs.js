@@ -595,7 +595,7 @@ const CreatorNFTs = () => {
   const CaptionItem = (nft) => (
     <div className='text-white text-left port-box'>
       <h5>
-        {nft.name}&nbsp;&nbsp;{' '}
+        {nft.title}&nbsp;&nbsp;{' '}
         {nft.isCreatorOwner === false && nft.isForSale === 'false' && (
           <img src={soldIcon} width='40px' alt='soldIcon' />
         )}
