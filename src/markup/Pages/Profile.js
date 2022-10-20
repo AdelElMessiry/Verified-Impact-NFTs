@@ -349,6 +349,9 @@ const Profile = () => {
                                           beneficiaryAddress={
                                             beneficiaryProfile.address
                                           }
+                                          beneficiaryPKAddress={
+                                            entityInfo.publicKey
+                                          }
                                         />
                                       ) : (
                                         <h4 className='text-muted text-center my-5'>

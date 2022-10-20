@@ -244,7 +244,7 @@ const ProfileForm = ({
       try {
         saveDeployHash = await profileClient.addUpdateProfile(
           CLPublicKey.fromHex(entityInfo.publicKey),
-          // entityInfo.publicKey,
+          entityInfo.publicKey,
           state.inputs.userName,
           state.inputs.shortTagLine,
           ProfileImgURL,
@@ -610,6 +610,7 @@ const ProfileForm = ({
                   defaultValues={formData? formData?.sdgs_ids:""}
                   mandatorySDGs={mandatorySDGs}
                   isAddBeneficiary={formData?false:true}
+                  isClear={undefined}
                 />
               </Col>
             </Row>
