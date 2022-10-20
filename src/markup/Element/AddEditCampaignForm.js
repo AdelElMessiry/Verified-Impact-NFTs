@@ -12,6 +12,7 @@ import { useNFTState } from '../../contexts/NFTContext';
 import ReactGA from 'react-ga';
 import SDGsMultiSelect from './SDGsMultiSelect';
 import { SDGsData } from '../../data/SDGsGoals/index';
+import { isValidWallet } from '../../utils/contract-utils';
 
 //adding new campaign page
 const AddEditCampaignForm = ({
@@ -19,6 +20,7 @@ const AddEditCampaignForm = ({
   closeModal = undefined,
   isFromModal = false,
   beneficiaryAddress = undefined,
+  beneficiaryPKAddress = undefined,
 }) => {
   const { beneficiaries, nfts } = useNFTState();
   const { entityInfo } = useAuth();
@@ -31,10 +33,10 @@ const AddEditCampaignForm = ({
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
   const [mandatorySDGs, setMandatorySDGs] = React.useState();
   const [campaignAddress, setCampaignAddress] = React.useState(
-    data && data.wallet_address
-      ? data.wallet_address
-      : beneficiaryAddress
-      ? beneficiaryAddress
+    (data && data.w_pk)
+      ? data.w_pk
+      : beneficiaryPKAddress
+      ? beneficiaryPKAddress
       : ''
   );
 
@@ -65,9 +67,9 @@ const AddEditCampaignForm = ({
     !data &&
       firstBeneficiary &&
       setCampaignAddress(
-        beneficiaryAddress ? beneficiaryAddress : firstBeneficiary[0]?.address
+        beneficiaryPKAddress ? beneficiaryPKAddress : firstBeneficiary[0]?.address_pk
       );
-  }, [beneficiaries, beneficiaryAddress, data]);
+  }, [beneficiaries, beneficiaryPKAddress, data]);
 
   React.useEffect(() => {
     !beneficiary && selectedBeneficiary();
@@ -151,11 +153,14 @@ const AddEditCampaignForm = ({
       const savedCampaign = await createCampaign(
         state.inputs.name,
         state.inputs.description,
+        CLPublicKey.fromHex(campaignAddress).toAccountHashStr().slice(13),
         campaignAddress,
         state.inputs.campaignUrl,
         state.inputs.requestedRoyalty,
         CLPublicKey.fromHex(entityInfo.publicKey),
-        SDGsGoals,
+        SDGsGoals.map(str => {
+          return Number(str);
+        }),
         data ? 'UPDATE' : 'ADD',
         data ? data.id : undefined,
         beneficiaryAddress ? beneficiaryAddress : beneficiary
@@ -233,13 +238,13 @@ const AddEditCampaignForm = ({
                               ? beneficiary
                               : beneficiaries?.filter(
                                   ({ isApproved }) => isApproved === 'true'
-                                )[0]?.address
+                                )[0]?.address_pk
                           }
                         >
                           {beneficiaries
                             ?.filter(({ isApproved }) => isApproved === 'true')
-                            .map(({ username, address }) => (
-                              <option key={address} value={address}>
+                            .map(({ username, address, address_pk}) => (
+                              <option key={address} value={address_pk}>
                                 {' '}
                                 {username}
                               </option>
@@ -269,6 +274,12 @@ const AddEditCampaignForm = ({
                       value={campaignAddress}
                     />
                     <span className='text-danger required-field-symbol'>*</span>
+                    {campaignAddress !== '' &&
+                      !isValidWallet(campaignAddress) && (
+                        <span className="text-danger">
+                          Please Enter Valid Public Address
+                        </span>
+                      )}
                   </div>
                 </Col>
               </Row>
@@ -347,6 +358,7 @@ const AddEditCampaignForm = ({
                           : ''
                       }
                       mandatorySDGs={mandatorySDGs}
+                      isClear={undefined}
                     />
                   </Col>
                 )}
@@ -374,7 +386,8 @@ const AddEditCampaignForm = ({
                         state.inputs.name === '' ||
                         state.inputs.requestedRoyalty < 0 ||
                         state.inputs.requestedRoyalty > 100 ||
-                        (SDGsGoalsData?.length > 0 && SDGsGoals?.length <= 0)
+                        (SDGsGoalsData?.length > 0 && SDGsGoals?.length <= 0) ||
+                        !isValidWallet(campaignAddress)
                       }
                     >
                       {isButtonClicked ? (

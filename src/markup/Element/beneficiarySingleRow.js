@@ -19,6 +19,7 @@ const BeneficiarySingleRow = ({ beneficiary }) => {
     try {
       const approveBeneficiaryOut = await approveBeneficiary(
         beneficiary.address,
+        beneficiary.address_pk,
         beneficiary?.isApproved === 'true' ? false : true,
         CLPublicKey.fromHex(entityInfo.publicKey)
       );
@@ -80,7 +81,7 @@ const BeneficiarySingleRow = ({ beneficiary }) => {
         </button>
       </th>
       <td>{beneficiary.username}</td>
-      <td>{beneficiary.address}</td>
+      <td>{beneficiary.address_pk}</td>
     </tr>
   );
 };
