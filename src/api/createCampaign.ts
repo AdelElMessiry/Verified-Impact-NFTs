@@ -19,14 +19,15 @@ export interface ICampaignOptions {
 export async function createCampaign(
   name: string,
   description: string,
-  wallet_address: string,
+  wallet_address: string, //hash
+  wallet_pk: string, //pk
   url: string,
   requested_royalty: string,
   deploySender: CLPublicKey,
   sdgs_ids: number[],
   mode?: string,
   campaign_id?: string,
-  beneficiary_address?: string
+  beneficiary_address?: string //hash
 ) {
   if ((mode && mode === 'ADD') || !beneficiary_address) {
     beneficiary_address = wallet_address;
@@ -37,7 +38,7 @@ export async function createCampaign(
     name,
     description,
     CLValueBuilder.byteArray(Buffer.from(wallet_address, 'hex')),
-    wallet_address,
+    wallet_pk,
     CLValueBuilder.byteArray(Buffer.from(beneficiary_address!, 'hex')),
     url,
     requested_royalty,
