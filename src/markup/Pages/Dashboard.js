@@ -7,7 +7,7 @@ import Carousel from 'react-elastic-carousel';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper } from 'simple-react-lightbox';
 import QRCode from 'react-qr-code';
-import { CLPublicKey, CLValueBuilder, CLAccountHash } from 'casper-js-sdk';
+//import { CLPublicKey, CLValueBuilder, CLAccountHash } from 'casper-js-sdk';
 import { useNFTState } from '../../contexts/NFTContext';
 // import { profileClient } from '../../api/profileInfo';
 
@@ -90,13 +90,7 @@ const Dashboard = () => {
     //   // '0127271ea03f8cb24e0e3100d18e4d29fc860b35a2c9eb86ae4cca280a8fc40e1f'
     //   ();
     // console.log(list);
-    console.log(
-      CLPublicKey.fromHex(
-        '013ecbb43e7fe4bbe7511e5ecd26fc1a09bdd74de3b60048e80454573d6a2ee36a'
-      )
-        .toAccountHashStr()
-        .slice(13)
-    );
+
     const nftsList = nfts && nfts.filter((nft) => nft.isForSale === 'true');
 
     nftsList && setAllNfts(nftsList);
