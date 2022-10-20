@@ -10,6 +10,7 @@ import {
   CLValueParsers,
   decodeBase16,
   CLByteArray,
+  CLAccountHash,
 } from 'casper-js-sdk';
 import { config } from 'dotenv';
 
@@ -187,6 +188,50 @@ class CEP47Client {
 
     return this.contractClient.callEntrypoint(
       'add_beneficiary',
+      runtimeArgs,
+      deploySender,
+      this.networkName,
+      paymentAmount,
+      keys
+    );
+  }
+
+  public async createCampaign(
+    campaign_id: string,
+    mode: string,
+    name: string,
+    description: string,
+    wallet_address: CLAccountHash,
+    wallet_address_pk: string,
+    beneficiary_address: CLAccountHash,
+    url: string,
+    requested_royalty: string,
+    sdgs_ids: number[],
+    paymentAmount: string,
+    deploySender: CLPublicKey,
+    keys?: Keys.AsymmetricKey[]
+  ) {
+    const runtimeArgs = RuntimeArgs.fromMap({
+      campaign_id: CLValueBuilder.u256(campaign_id),
+      collection_ids: CLValueBuilder.list([CLValueBuilder.u256(0)]),
+      mode: CLValueBuilder.string(mode),
+      name: CLValueBuilder.string(name),
+      description: CLValueBuilder.string(description),
+      wallet_address: CLValueBuilder.key(wallet_address),
+      wallet_address_pk: CLValueBuilder.string(wallet_address_pk),
+      beneficiary_address: CLValueBuilder.key(beneficiary_address),
+      url: CLValueBuilder.string(url),
+      // recipient: CLValueBuilder.key(CLPublicKey.fromHex(wallet_address)),
+      requested_royalty: CLValueBuilder.string(requested_royalty),
+      sdgs_ids: CLValueBuilder.list(
+        sdgs_ids?.length
+          ? sdgs_ids.map((id) => CLValueBuilder.u256(id))
+          : [CLValueBuilder.u256(0)]
+      ),
+    });
+
+    return this.contractClient.callEntrypoint(
+      'create_campaign',
       runtimeArgs,
       deploySender,
       this.networkName,

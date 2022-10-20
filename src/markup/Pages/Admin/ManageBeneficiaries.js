@@ -80,10 +80,10 @@ const ManageBeneficiaries = () => {
                             </thead>
                             <tbody>
                               {beneficiaries.length > 0 ? (
-                                beneficiaries?.map((beneficiary) => (
+                                beneficiaries?.map((beneficiary,index) => (
                                   <BeneficiarySingleRow
                                     beneficiary={beneficiary}
-                                    key={beneficiary.address}
+                                    key={`${beneficiary.address}_${index}`}
                                   />
                                 ))
                               ) : (
