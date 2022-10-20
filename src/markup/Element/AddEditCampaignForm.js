@@ -33,8 +33,8 @@ const AddEditCampaignForm = ({
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
   const [mandatorySDGs, setMandatorySDGs] = React.useState();
   const [campaignAddress, setCampaignAddress] = React.useState(
-    data && data.wallet_address
-      ? data.wallet_address
+    (data && data.w_pk)
+      ? data.w_pk
       : beneficiaryPKAddress
       ? beneficiaryPKAddress
       : ''
@@ -47,7 +47,7 @@ const AddEditCampaignForm = ({
     );
     firstBeneficiary &&
       setBeneficiary(
-        beneficiaryAddress ? beneficiaryAddress : firstBeneficiary[0]?.address_pk
+        beneficiaryAddress ? beneficiaryAddress : firstBeneficiary[0]?.address
       );
     firstBeneficiary &&
       setSDGsGoalsData(
@@ -67,9 +67,9 @@ const AddEditCampaignForm = ({
     !data &&
       firstBeneficiary &&
       setCampaignAddress(
-        beneficiaryAddress ? beneficiaryAddress : firstBeneficiary[0]?.address_pk
+        beneficiaryPKAddress ? beneficiaryPKAddress : firstBeneficiary[0]?.address_pk
       );
-  }, [beneficiaries, beneficiaryAddress, data]);
+  }, [beneficiaries, beneficiaryPKAddress, data]);
 
   React.useEffect(() => {
     !beneficiary && selectedBeneficiary();
@@ -154,6 +154,7 @@ const AddEditCampaignForm = ({
       const savedCampaign = await createCampaign(
         state.inputs.name,
         state.inputs.description,
+        CLPublicKey.fromHex(campaignAddress).toAccountHashStr().slice(13),
         campaignAddress,
         state.inputs.campaignUrl,
         state.inputs.requestedRoyalty,
@@ -163,7 +164,7 @@ const AddEditCampaignForm = ({
         }),
         data ? 'UPDATE' : 'ADD',
         data ? data.id : undefined,
-        beneficiaryPKAddress ? beneficiaryPKAddress : beneficiary
+        beneficiaryAddress ? beneficiaryAddress : beneficiary
       );
       ReactGA.event({
         category: 'Success',
