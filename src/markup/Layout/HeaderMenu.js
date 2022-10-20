@@ -74,6 +74,11 @@ const HeaderMenu = () => {
                 Signup As Beneficiary
               </Link>
             </li>
+            <li>
+              <Link to={`./BeneficiariesMarket`} className='dez-page'>
+                Explore Beneficiaries
+              </Link>
+            </li>
           </ul>
         </li>
         <li>
@@ -103,6 +108,11 @@ const HeaderMenu = () => {
                 </ul>
               </li>
             ))}
+            <li>
+              <Link to={`./signup-as-beneficiary`} className='dez-page'>
+                Explore Creators
+              </Link>
+            </li>
           </ul>
         </li>
         <li>
