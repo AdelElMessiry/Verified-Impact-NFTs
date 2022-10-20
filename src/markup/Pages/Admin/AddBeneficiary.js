@@ -44,10 +44,12 @@ const AddBeneficiary = () => {
       const savedBeneficiary = await addBeneficiary(
         beneficiaryInputs.name,
         beneficiaryInputs.description,
+        CLPublicKey.fromHex(beneficiaryInputs.address).toAccountHashStr().slice(13),
         beneficiaryInputs.address,
-        beneficiaryInputs.SDGsGoals,
+        beneficiaryInputs.SDGsGoals.map(str => {
+          return Number(str);
+        }),
         CLPublicKey.fromHex(entityInfo.publicKey)
-        // 'UPDATE'
       );
       const deployResult = await getDeployDetails(savedBeneficiary);
       console.log('...... Beneficiary saved successfully', deployResult);
