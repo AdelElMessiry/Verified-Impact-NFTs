@@ -9,7 +9,7 @@ import AddEditCampaignsModal from '../Element/AddEditCampaignsModal';
 import { CLPublicKey } from 'casper-js-sdk';
 
 //Manage Beneficiaries page
-const ManageCampaigns = ({ beneficiaryAddress }) => {
+const ManageCampaigns = ({ beneficiaryAddress,beneficiaryPKAddress }) => {
   const { campaigns } = useNFTState();
   const { entityInfo } = useAuth();
   const [showAddEditCampaignModal, setShowAddEditCampaignModal] =
@@ -54,6 +54,7 @@ const ManageCampaigns = ({ beneficiaryAddress }) => {
                 }}
                 data={undefined}
                 beneficiaryAddress={beneficiaryAddress}
+                beneficiaryPKAddress={beneficiaryPKAddress}
               />
             )}
           </Col>
@@ -76,6 +77,7 @@ const ManageCampaigns = ({ beneficiaryAddress }) => {
                       campaign={campaign}
                       key={campaign.id}
                       beneficiaryAddress={beneficiaryAddress}
+                      beneficiaryPKAddress={beneficiaryPKAddress}
                     />
                   ))}
                 </tbody>
