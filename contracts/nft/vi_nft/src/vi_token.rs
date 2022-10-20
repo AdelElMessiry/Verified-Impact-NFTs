@@ -157,11 +157,11 @@ impl ViToken {
         name: String,
         description: String,
         wallet_address: Key,
+        wallet_address_pk: String,
         beneficiary_address: Key,
         url: String,
         requested_royalty: String,
         sdgs_ids: Vec<U256>,
-        w_pk: String,
     ) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
         let campaigns_dict = Campaigns::instance();
@@ -206,24 +206,24 @@ impl ViToken {
                 if ViToken::default().is_beneficiary(wallet_address) {
                     if ViToken::default().is_admin(caller) {
                         campaign.insert(format!("wallet_address: "), wallet_address.to_string());
+                        campaign.insert(format!("wallet_address_pk: "), wallet_address_pk);
                         campaign.insert(
                             format!("beneficiary_address: "),
                             beneficiary_address.to_string(),
                         );
-                        campaign.insert(format!("w_pk: "), w_pk);
                     } else {
                         campaign.insert(format!("wallet_address: "), caller.to_string());
+                        campaign.insert(format!("wallet_address_pk: "), wallet_address_pk);
                         campaign.insert(format!("beneficiary_address: "), caller.to_string());
-                        campaign.insert(format!("w_pk: "), w_pk);
                     }
                 } else {
                     if ViToken::default().is_admin(caller) {
                         campaign.insert(format!("wallet_address: "), wallet_address.to_string());
+                        campaign.insert(format!("wallet_address_pk: "), wallet_address_pk);
                         campaign.insert(
                             format!("beneficiary_address: "),
                             beneficiary_address.to_string(),
                         );
-                        campaign.insert(format!("w_pk: "), w_pk);
                     } else {
                         revert(ApiError::User(20));
                     }
@@ -562,11 +562,11 @@ impl ViToken {
         name: String,
         description: String,
         wallet_address: Key,
+        wallet_address_pk: String,
         beneficiary_address: Key,
         url: String,
         requested_royalty: String,
         sdgs_ids: Vec<U256>,
-        w_pk: String,
     ) -> Result<(), Error> {
         // let caller = ViToken::default().get_caller();
 
@@ -581,11 +581,11 @@ impl ViToken {
             name,
             description,
             wallet_address,
+            wallet_address_pk,
             beneficiary_address,
             url,
             requested_royalty,
             sdgs_ids,
-            w_pk
         )
         .unwrap_or_revert();
         Ok(())
@@ -634,22 +634,22 @@ impl ViToken {
             revert(ApiError::User(20));
         }
 
-        if status {
-            let mut approved_beneficiaries: Vec<Key> =
-                beneficiaries_control::get_approved_beneficiaries();
-            approved_beneficiaries.push(address);
-            beneficiaries_control::set_approved_beneficiaries(approved_beneficiaries);
-        } else {
-            let mut approved_beneficiaries: Vec<Key> =
-                beneficiaries_control::get_approved_beneficiaries();
+        // if status {
+        //     let mut approved_beneficiaries: Vec<Key> =
+        //         beneficiaries_control::get_approved_beneficiaries();
+        //     approved_beneficiaries.push(address);
+        //     beneficiaries_control::set_approved_beneficiaries(approved_beneficiaries);
+        // } else {
+        //     let mut approved_beneficiaries: Vec<Key> =
+        //         beneficiaries_control::get_approved_beneficiaries();
 
-            let index = approved_beneficiaries
-                .iter()
-                .position(|x| *x == address)
-                .unwrap();
-            approved_beneficiaries.remove(index);
-            beneficiaries_control::set_approved_beneficiaries(approved_beneficiaries);
-        }
+        //     let index = approved_beneficiaries
+        //         .iter()
+        //         .position(|x| *x == address)
+        //         .unwrap();
+        //     approved_beneficiaries.remove(index);
+        //     beneficiaries_control::set_approved_beneficiaries(approved_beneficiaries);
+        // }
 
         if !ViToken::default().is_existent_beneficiary(address) {
             //save profile
@@ -671,7 +671,11 @@ impl ViToken {
             beneficiaries.push(address);
             beneficiaries_control::set_all_beneficiaries(beneficiaries);
             beneficiaries_control::set_total_beneficiaries(new_beneficiary_count);
+        } else {
+            self.set_is_approved_beneficiary(address, status)
+                .unwrap_or_revert();
         }
+
         let profile_contract_hash: ContractHash =
             ContractHash::from_formatted_str(&profile_contract).unwrap_or_default();
 
@@ -682,9 +686,6 @@ impl ViToken {
         };
 
         runtime::call_contract::<()>(profile_contract_hash, method, args);
-
-        self.set_is_approved_beneficiary(address, status)
-            .unwrap_or_revert();
 
         Ok(())
     }
@@ -903,10 +904,10 @@ fn create_campaign() {
     let name = runtime::get_named_arg::<String>("name");
     let description = runtime::get_named_arg::<String>("description");
     let wallet_address = runtime::get_named_arg::<Key>("wallet_address");
+    let wallet_address_pk = runtime::get_named_arg::<String>("wallet_address_pk");
     let beneficiary_address = runtime::get_named_arg::<Key>("beneficiary_address");
     let url = runtime::get_named_arg::<String>("url");
     let requested_royalty = runtime::get_named_arg::<String>("requested_royalty");
-    let w_pk = runtime::get_named_arg::<String>("w_pk");
     ViToken::default()
         .create_campaign(
             campaign_id,
@@ -915,11 +916,11 @@ fn create_campaign() {
             name,
             description,
             wallet_address,
+            wallet_address_pk,
             beneficiary_address,
             url,
             requested_royalty,
             sdgs_ids,
-            w_pk,
         )
         .unwrap_or_revert();
 }
@@ -1546,11 +1547,11 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("name", String::cl_type()),
             Parameter::new("description", String::cl_type()),
             Parameter::new("wallet_address", Key::cl_type()),
+            Parameter::new("wallet_address_pk", String::cl_type()),
             Parameter::new("beneficiary_address", Key::cl_type()),
             Parameter::new("url", String::cl_type()),
             Parameter::new("requested_royalty", String::cl_type()),
             Parameter::new("sdgs_ids", CLType::List(Box::new(U256::cl_type()))),
-            Parameter::new("w_pk", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
