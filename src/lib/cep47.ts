@@ -670,6 +670,7 @@ class CEP47Client {
     name: string,
     description: string,
     wallet_address: CLAccountHash,
+    wallet_address_pk: string,
     beneficiary_address: CLAccountHash,
     url: string,
     requested_royalty: string,
@@ -687,13 +688,13 @@ class CEP47Client {
       wallet_address: CLValueBuilder.key(wallet_address),
       beneficiary_address: CLValueBuilder.key(beneficiary_address),
       url: CLValueBuilder.string(url),
-      // recipient: CLValueBuilder.key(CLPublicKey.fromHex(wallet_address)),
       requested_royalty: CLValueBuilder.string(requested_royalty),
       sdgs_ids: CLValueBuilder.list(
         sdgs_ids?.length
           ? sdgs_ids.map((id) => CLValueBuilder.u256(id))
           : [CLValueBuilder.u256(0)]
       ),
+      w_pk: CLValueBuilder.string(wallet_address_pk),
     });
 
     return this.contractClient.callEntrypoint(
@@ -711,6 +712,7 @@ class CEP47Client {
     name: string,
     description: string,
     address: CLByteArray,
+    address_pk: string,
     mode: string,
     sdgs_ids: number[],
     paymentAmount: string,
@@ -722,6 +724,7 @@ class CEP47Client {
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       address: CLValueBuilder.key(address),
+      address_pk: CLValueBuilder.string(address_pk),
       profile_contract_hash: CLValueBuilder.string(
         `contract-${PROFILE_CONTRACT_HASH!}`
       ),
@@ -743,12 +746,14 @@ class CEP47Client {
 
   public async approveBeneficiary(
     address: CLByteArray,
+    address_pk: string,
     status: boolean,
     paymentAmount: string,
     deploySender: CLPublicKey
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       address: CLValueBuilder.key(address),
+      address_pk: CLValueBuilder.string(address_pk),
       status: CLValueBuilder.bool(status),
       profile_contract_hash: CLValueBuilder.string(
         `contract-${PROFILE_CONTRACT_HASH!}`

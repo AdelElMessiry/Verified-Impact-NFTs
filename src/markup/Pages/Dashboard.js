@@ -7,7 +7,7 @@ import Carousel from 'react-elastic-carousel';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper } from 'simple-react-lightbox';
 import QRCode from 'react-qr-code';
-
+//import { CLPublicKey, CLValueBuilder, CLAccountHash } from 'casper-js-sdk';
 import { useNFTState } from '../../contexts/NFTContext';
 // import { profileClient } from '../../api/profileInfo';
 
@@ -90,6 +90,7 @@ const Dashboard = () => {
     //   // '0127271ea03f8cb24e0e3100d18e4d29fc860b35a2c9eb86ae4cca280a8fc40e1f'
     //   ();
     // console.log(list);
+
     const nftsList = nfts && nfts.filter((nft) => nft.isForSale === 'true');
 
     nftsList && setAllNfts(nftsList);
@@ -98,81 +99,85 @@ const Dashboard = () => {
     nftsList && setDisplayedCampaigns(setNFTsBasedOnCampaign(nftsList));
   }, [nfts]);
 
-  const getSDGsDetails=(nftsData)=>{
-     //get sdgs_ids and corresponding price of nfts
-     const filteredNfts= isShowSaleOnly?nftsData.filter((nft) => nft.isForSale == 'true'):nftsData
-     nfts &&
-     setCsprSum(
-       isShowSaleOnly?filteredNfts.reduce(
-         (xPrice, { price }) => Number(xPrice) + Number(price),
-         0
-       ):nftsData.reduce(
-         (xPrice, { price }) => Number(xPrice) + Number(price),
-         0
-       )
-     );
-     const AllNFTsSDGs =
-     filteredNfts &&
-     filteredNfts
-         .filter((nft) => nft.hasOwnProperty('sdgs_ids'))
-         .map((nft) => ({ sdg: nft.sdgs_ids?.split(','), price: nft.price }));
- 
-     //flat nfts sdgs
-     const flatSdgs =
-       AllNFTsSDGs &&
-       AllNFTsSDGs?.map(({ price, sdg }) =>
-         sdg?.map((value) => ({ value, price }))
-       ).flat();
- 
-     //get occurrence of sdgs in array
-     let sdgOccur = [];
- 
-     flatSdgs &&
-       flatSdgs?.forEach((x) => {
-         // Checking if there is any object in arr2
-         // which contains the key value
-         if (
-           sdgOccur?.some((val) => {
-             return val['value'] == x['value'];
-           })
-         ) {
-           let price = 0;
-           // If yes! then increase the nftNumber by 1
-           sdgOccur?.forEach((k) => {
-             if (k['value'] === x['value']) {
-               k['nftNumber']++;
-               price = Number(k['price']) + Number(x['price']);
-               k['price'] = price;
-             }
-           });
-         } else {
-           // If not! Then create a new object initialize
-           // it with the present iteration key's value and
-           // set the nftNumber to 1
-           let a = {};
-           a['value'] = x['value'];
-           a['price'] = Number(x['price']);
-           a['nftNumber'] = 1;
-           sdgOccur.push(a);
-         }
-       });
-     //compare between all sdgs data and sdgs saved in nfts to retuen full data of sdg
-     const sdgsWithNFTCount =
-       sdgOccur.length > 0 &&
-       SDGsData.map((t1) => ({
-         ...t1,
-         ...sdgOccur.find((t2) => t2.value?.toString() === t1.value?.toString()),
-       }));
- 
-     sdgsWithNFTCount &&
-       setSDGsGoals(
-         sdgsWithNFTCount.map((s) =>
-           s.nftNumber
-             ? { ...s, ['nftNumber']: s.nftNumber }
-             : { ...s, ['nftNumber']: 0 }
-         )
-       );
-  }
+  const getSDGsDetails = (nftsData) => {
+    //get sdgs_ids and corresponding price of nfts
+    const filteredNfts = isShowSaleOnly
+      ? nftsData.filter((nft) => nft.isForSale == 'true')
+      : nftsData;
+    nfts &&
+      setCsprSum(
+        isShowSaleOnly
+          ? filteredNfts.reduce(
+              (xPrice, { price }) => Number(xPrice) + Number(price),
+              0
+            )
+          : nftsData.reduce(
+              (xPrice, { price }) => Number(xPrice) + Number(price),
+              0
+            )
+      );
+    const AllNFTsSDGs =
+      filteredNfts &&
+      filteredNfts
+        .filter((nft) => nft.hasOwnProperty('sdgs_ids'))
+        .map((nft) => ({ sdg: nft.sdgs_ids?.split(','), price: nft.price }));
+
+    //flat nfts sdgs
+    const flatSdgs =
+      AllNFTsSDGs &&
+      AllNFTsSDGs?.map(({ price, sdg }) =>
+        sdg?.map((value) => ({ value, price }))
+      ).flat();
+
+    //get occurrence of sdgs in array
+    let sdgOccur = [];
+
+    flatSdgs &&
+      flatSdgs?.forEach((x) => {
+        // Checking if there is any object in arr2
+        // which contains the key value
+        if (
+          sdgOccur?.some((val) => {
+            return val['value'] == x['value'];
+          })
+        ) {
+          let price = 0;
+          // If yes! then increase the nftNumber by 1
+          sdgOccur?.forEach((k) => {
+            if (k['value'] === x['value']) {
+              k['nftNumber']++;
+              price = Number(k['price']) + Number(x['price']);
+              k['price'] = price;
+            }
+          });
+        } else {
+          // If not! Then create a new object initialize
+          // it with the present iteration key's value and
+          // set the nftNumber to 1
+          let a = {};
+          a['value'] = x['value'];
+          a['price'] = Number(x['price']);
+          a['nftNumber'] = 1;
+          sdgOccur.push(a);
+        }
+      });
+    //compare between all sdgs data and sdgs saved in nfts to retuen full data of sdg
+    const sdgsWithNFTCount =
+      sdgOccur.length > 0 &&
+      SDGsData.map((t1) => ({
+        ...t1,
+        ...sdgOccur.find((t2) => t2.value?.toString() === t1.value?.toString()),
+      }));
+
+    sdgsWithNFTCount &&
+      setSDGsGoals(
+        sdgsWithNFTCount.map((s) =>
+          s.nftNumber
+            ? { ...s, nftNumber: s.nftNumber }
+            : { ...s, nftNumber: 0 }
+        )
+      );
+  };
   //getting list of NFTs
   React.useEffect(() => {
     ReactGA.pageview(window.location.pathname + '/');
@@ -191,19 +196,19 @@ const Dashboard = () => {
   }, [isShowSaleOnly, nfts]);
 
   React.useEffect(() => {
-      if (changedNFT) {
-        let flatAll = displayedCampaigns.flat();
-        let finalArr = [];
-        flatAll.map((flat) => {
-          const campaignArr = Object.values(flat);
-          finalArr = [...finalArr, ...campaignArr[0]];
-        });
-        const resIndex = finalArr?.findIndex(
-          ({ tokenId }) => tokenId == changedNFT.tokenId
-        );
-        finalArr?.splice(resIndex, 1);
-        setDisplayedCampaigns(setDisplayedCampaigns(finalArr));
-        setShowBuyModal(false);
+    if (changedNFT) {
+      let flatAll = displayedCampaigns.flat();
+      let finalArr = [];
+      flatAll.map((flat) => {
+        const campaignArr = Object.values(flat);
+        finalArr = [...finalArr, ...campaignArr[0]];
+      });
+      const resIndex = finalArr?.findIndex(
+        ({ tokenId }) => tokenId == changedNFT.tokenId
+      );
+      finalArr?.splice(resIndex, 1);
+      setDisplayedCampaigns(setDisplayedCampaigns(finalArr));
+      setShowBuyModal(false);
     }
   }, [isRefreshNFTList]);
 
@@ -243,7 +248,12 @@ const Dashboard = () => {
               <h4 className='dz-title'>Verified Impact NFTs</h4>
               <h2 className='sub-title'>Making a Verified Impact</h2>
               <div className='home-bnr-btns'>
-                <a href={process.env.REACT_APP_MEDUIM_ACCOUNT_LINK} target="_blank" rel="noopener noreferrer" className='site-button white btn-icon'>
+                <a
+                  href={process.env.REACT_APP_MEDUIM_ACCOUNT_LINK}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='site-button white btn-icon'
+                >
                   Read more <i className='fa fa-angle-double-right'></i>
                 </a>
                 <VideoPopup />
@@ -337,7 +347,13 @@ const Dashboard = () => {
             <div className='col'>
               {allNfts ? (
                 <>
-                  <span>{isShowSaleOnly?nfts.filter(({isForSale})=>isForSale=='true').length:nfts?.length}</span> NFTs
+                  <span>
+                    {isShowSaleOnly
+                      ? nfts.filter(({ isForSale }) => isForSale == 'true')
+                          .length
+                      : nfts?.length}
+                  </span>{' '}
+                  NFTs
                 </>
               ) : (
                 <>
@@ -387,10 +403,11 @@ const Dashboard = () => {
           </div>
         </div>
         <Row className='mx-2 mt-4 justify-content-center dash-sdgs'>
-          {SDGsGoals?.map((d)=>(
-          <Col className="mb-4"  key={d.value}>
-            <SDGsStatsItem data={d} nftLoaded={nfts?true:false}/>
-          </Col>))}
+          {SDGsGoals?.map((d) => (
+            <Col className='mb-4' key={d.value}>
+              <SDGsStatsItem data={d} nftLoaded={nfts ? true : false} />
+            </Col>
+          ))}
         </Row>
         {allNfts && selectedNFT && displayedCampaigns ? (
           displayedCampaigns.length ? (
@@ -532,10 +549,10 @@ const Dashboard = () => {
           }}
           data={selectedNFT}
           isTransfer={false}
-          handleTransactionBuySuccess={(nft)=>{ setChangedNFT(nft);
-            setIsRefreshNFTList(
-              !isRefreshNFTList
-            );}}
+          handleTransactionBuySuccess={(nft) => {
+            setChangedNFT(nft);
+            setIsRefreshNFTList(!isRefreshNFTList);
+          }}
         />
       )}
     </Layout>
