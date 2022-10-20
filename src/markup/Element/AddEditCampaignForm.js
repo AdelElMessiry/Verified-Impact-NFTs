@@ -150,7 +150,6 @@ const AddEditCampaignForm = ({
       return;
     }
     try {
-      debugger;
       const savedCampaign = await createCampaign(
         state.inputs.name,
         state.inputs.description,
