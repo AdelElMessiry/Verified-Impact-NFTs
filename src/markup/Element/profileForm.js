@@ -610,6 +610,7 @@ const ProfileForm = ({
                   defaultValues={formData? formData?.sdgs_ids:""}
                   mandatorySDGs={mandatorySDGs}
                   isAddBeneficiary={formData?false:true}
+                  isClear={undefined}
                 />
               </Col>
             </Row>

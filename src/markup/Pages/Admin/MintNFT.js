@@ -421,7 +421,7 @@ const MintNFT = () => {
         setCampaign(isAnotherMint ? campaign : undefined);
         pictureElement.current.clearPictures();
         setSDGsGoals([]);
-        setIsClearSDGs(true);
+        setIsClearSDGs(!isClearSDGs);
         setIsNewNftMinted(!isNewNftMinted);
         let twitterName = '';
         if (creatorTwitterLink !== '') {

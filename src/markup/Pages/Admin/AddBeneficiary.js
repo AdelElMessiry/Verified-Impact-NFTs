@@ -17,6 +17,7 @@ import { SendTweet } from '../../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
 import { SDGsData } from '../../../data/SDGsGoals/index';
 import SDGsMultiSelect from '../../Element/SDGsMultiSelect';
+import { isValidWallet } from '../../../utils/contract-utils';
 
 //add new beneficiary page
 const AddBeneficiary = () => {
@@ -26,7 +27,7 @@ const AddBeneficiary = () => {
     name: '',
     description: '',
     address: '',
-    SDGsGoals:[SDGsData[18].value]
+    SDGsGoals: [SDGsData[18].value],
   });
   
   React.useEffect(() => {
@@ -45,7 +46,7 @@ const AddBeneficiary = () => {
         beneficiaryInputs.description,
         beneficiaryInputs.address,
         beneficiaryInputs.SDGsGoals,
-        CLPublicKey.fromHex(entityInfo.publicKey),
+        CLPublicKey.fromHex(entityInfo.publicKey)
         // 'UPDATE'
       );
       const deployResult = await getDeployDetails(savedBeneficiary);
@@ -71,14 +72,14 @@ const AddBeneficiary = () => {
       await SendTweet(
         `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts. ${s.toString().replaceAll(',', ' ')} click here ${window.location.origin}/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
       );
-      window.location.reload()
+      window.location.reload();
       // setBeneficiaryInputs({
       //   name: '',
       //   description: '',
       //   address: '',
       //   SDGsGoals:[SDGsData[18].value]
       // });
-      setIsClearSDGs(!isClearSDGs)
+      setIsClearSDGs(!isClearSDGs);
       setIsButtonClicked(false);
     } catch (err) {
       if (err.message.includes('User Cancelled')) {
@@ -104,8 +105,8 @@ const AddBeneficiary = () => {
   const handleSDGsChange = (data) => {
     setBeneficiaryInputs({
       ...beneficiaryInputs,
-      SDGsGoals:data,
-    })
+      SDGsGoals: data,
+    });
   };
 
   return (
@@ -174,6 +175,12 @@ const AddBeneficiary = () => {
                               *
                             </span>
                           </div>{' '}
+                          {beneficiaryInputs.address !== '' &&
+                            !isValidWallet(beneficiaryInputs.address) && (
+                              <span className="text-danger">
+                                Please Enter Valid Public Address
+                              </span>
+                            )}
                         </Col>
                       </Row>
                       <Row className='mt-4'>
@@ -207,7 +214,9 @@ const AddBeneficiary = () => {
                             disabled={
                               beneficiaryInputs.name == '' ||
                               beneficiaryInputs.address == '' ||
-                              isButtonClicked||beneficiaryInputs.SDGsGoals.length<=0
+                              isButtonClicked ||
+                              beneficiaryInputs.SDGsGoals.length <= 0 ||
+                              !isValidWallet(beneficiaryInputs.address)
                             }
                           >
                             {isButtonClicked ? (
