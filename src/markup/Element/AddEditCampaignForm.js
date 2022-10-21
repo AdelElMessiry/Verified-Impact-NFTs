@@ -125,7 +125,7 @@ const AddEditCampaignForm = ({
         )
       );
       if (!data) {
-        setCampaignAddress(e.target.value);
+        setCampaignAddress(selectedBeneficiary.address_pk);
       }
     } else {
       const { value, name, checked, type } = e.target;
@@ -238,13 +238,13 @@ const AddEditCampaignForm = ({
                               ? beneficiary
                               : beneficiaries?.filter(
                                   ({ isApproved }) => isApproved === 'true'
-                                )[0]?.address_pk
+                                )[0]?.address
                           }
                         >
                           {beneficiaries
                             ?.filter(({ isApproved }) => isApproved === 'true')
-                            .map(({ username, address, address_pk}) => (
-                              <option key={address} value={address_pk}>
+                            .map(({ username, address,index}) => (
+                              <option key={`${address}_${index}`} value={address}>
                                 {' '}
                                 {username}
                               </option>
