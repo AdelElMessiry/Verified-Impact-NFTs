@@ -11,6 +11,7 @@ import {
   CLValueParsers,
   CLByteArray,
   CLAccountHash,
+  decodeBase16,
 } from 'casper-js-sdk';
 import { concat } from '@ethersproject/bytes';
 import blake from 'blakejs';
@@ -27,6 +28,8 @@ import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import {
   getAccountInfo,
   getAccountNamedKeyValue,
+  getNFTImage,
+  isValidHttpUrl,
 } from '../utils/contract-utils';
 
 const { NODE_ADDRESS, CHAIN_NAME, CONTRACT_NAME } = CONNECTION;
@@ -211,6 +214,19 @@ class CEP47Client {
     return this.contractClient.queryContractData(['total_beneficiaries']);
   }
 
+  public async _balanceOf(account: string, isHash?: boolean) {
+    const result = await this.contractClient.queryContractDictionary(
+      'balances',
+      isHash
+        ? account
+        : CLPublicKey.fromHex(account).toAccountHashStr().slice(13)
+    );
+
+    const maybeValue = result.value().unwrap();
+
+    return maybeValue.value().toString();
+  }
+
   public async balanceOf(account: CLPublicKey) {
     const result = await this.contractClient.queryContractDictionary(
       'balances',
@@ -248,7 +264,7 @@ class CEP47Client {
     return fromCLMap(maybeValue);
   }
 
-  public async getMappedTokenMeta(tokenId: string) {
+  public async getMappedTokenMeta(tokenId: string, isUpdate?: boolean) {
     const maybeValue: any = await this.getTokenMeta(tokenId);
     const jsMap: any = new Map();
 
@@ -256,7 +272,27 @@ class CEP47Client {
       jsMap.set(innerKey, value);
     }
     let mapObj = Object.fromEntries(jsMap);
-    mapObj.beneficiary = mapObj.beneficiary.slice(10).replace(')', '');
+    mapObj.beneficiary =
+      mapObj.beneficiary.includes('Account') ||
+      mapObj.beneficiary.includes('Key')
+        ? mapObj.beneficiary.includes('Account')
+          ? mapObj.beneficiary.slice(13).replace(')', '')
+          : mapObj.beneficiary.slice(10).replace(')', '')
+        : mapObj.beneficiary;
+
+    mapObj.creator =
+      mapObj.creator.includes('Account') || mapObj.creator.includes('Key')
+        ? mapObj.creator.includes('Account')
+          ? mapObj.creator.slice(13).replace(')', '')
+          : mapObj.creator.slice(10).replace(')', '')
+        : mapObj.creator;
+    mapObj.pureImageKey = mapObj.image;
+    mapObj.image = isUpdate
+      ? mapObj.image
+      : isValidHttpUrl(mapObj.image)
+      ? mapObj.image
+      : await getNFTImage(mapObj.image);
+
     return mapObj;
   }
 
@@ -315,6 +351,29 @@ class CEP47Client {
     const maybeValue = result.value().unwrap().value();
 
     return fromCLMap(maybeValue);
+  }
+
+  public async _getTokenByIndex(
+    owner: string,
+    index: string,
+    isHash?: boolean
+  ) {
+    const mappedOwner = isHash
+      ? new CLAccountHash(decodeBase16(owner))
+      : CLPublicKey.fromHex(owner);
+
+    const hex = keyAndValueToHex(
+      CLValueBuilder.key(mappedOwner),
+      CLValueBuilder.u256(index)
+    );
+    const result = await this.contractClient.queryContractDictionary(
+      'owned_tokens_by_index',
+      hex
+    );
+
+    const maybeValue = result.value().unwrap();
+
+    return maybeValue.value().toString();
   }
 
   public async getTokenByIndex(owner: CLPublicKey, index: string) {
@@ -408,6 +467,8 @@ class CEP47Client {
       collectionName,
       beneficiary,
       beneficiaryPercentage,
+      sdgs_ids,
+      hasReceipt,
     } = metas;
 
     const runtimeArgs = RuntimeArgs.fromMap({
@@ -418,9 +479,12 @@ class CEP47Client {
       image: CLValueBuilder.string(image),
       price: CLValueBuilder.string(price),
       isForSale: CLValueBuilder.bool(isForSale),
+      hasReceipt: CLValueBuilder.bool(hasReceipt),
       currency: CLValueBuilder.string(currency),
       campaign: CLValueBuilder.string(campaign),
-      creator: CLValueBuilder.string(creator),
+      creator: CLValueBuilder.key(
+        CLValueBuilder.byteArray(CLPublicKey.fromHex(creator).toAccountHash())
+      ),
       creatorPercentage: CLValueBuilder.string(creatorPercentage),
       collection: CLValueBuilder.u256(collection),
       collectionName: CLValueBuilder.string(collectionName || ''),
@@ -428,6 +492,14 @@ class CEP47Client {
         CLValueBuilder.byteArray(Buffer.from(beneficiary, 'hex'))
       ),
       beneficiaryPercentage: CLValueBuilder.string(beneficiaryPercentage),
+      profile_contract_hash: CLValueBuilder.string(
+        `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
+      sdgs_ids: CLValueBuilder.list(
+        sdgs_ids?.length
+          ? sdgs_ids.map((id: number) => CLValueBuilder.u256(id))
+          : [CLValueBuilder.u256(0)]
+      ),
     });
 
     return this.contractClient.callEntrypoint(
@@ -598,8 +670,11 @@ class CEP47Client {
     name: string,
     description: string,
     wallet_address: CLAccountHash,
+    wallet_address_pk: string,
+    beneficiary_address: CLAccountHash,
     url: string,
     requested_royalty: string,
+    sdgs_ids: number[],
     paymentAmount: string,
     deploySender: CLPublicKey,
     keys?: Keys.AsymmetricKey[]
@@ -611,9 +686,15 @@ class CEP47Client {
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       wallet_address: CLValueBuilder.key(wallet_address),
+      beneficiary_address: CLValueBuilder.key(beneficiary_address),
       url: CLValueBuilder.string(url),
-      // recipient: CLValueBuilder.key(CLPublicKey.fromHex(wallet_address)),
       requested_royalty: CLValueBuilder.string(requested_royalty),
+      sdgs_ids: CLValueBuilder.list(
+        sdgs_ids?.length
+          ? sdgs_ids.map((id) => CLValueBuilder.u256(id))
+          : [CLValueBuilder.u256(0)]
+      ),
+      wallet_address_pk: CLValueBuilder.string(wallet_address_pk),
     });
 
     return this.contractClient.callEntrypoint(
@@ -631,7 +712,9 @@ class CEP47Client {
     name: string,
     description: string,
     address: CLByteArray,
+    address_pk: string,
     mode: string,
+    sdgs_ids: number[],
     paymentAmount: string,
     deploySender: CLPublicKey
   ) {
@@ -641,8 +724,14 @@ class CEP47Client {
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       address: CLValueBuilder.key(address),
+      address_pk: CLValueBuilder.string(address_pk),
       profile_contract_hash: CLValueBuilder.string(
         `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
+      sdgs_ids: CLValueBuilder.list(
+        sdgs_ids?.length
+          ? sdgs_ids.map((id) => CLValueBuilder.u256(id))
+          : [CLValueBuilder.u256(0)]
       ),
     });
 
@@ -657,12 +746,14 @@ class CEP47Client {
 
   public async approveBeneficiary(
     address: CLByteArray,
+    address_pk: string,
     status: boolean,
     paymentAmount: string,
     deploySender: CLPublicKey
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       address: CLValueBuilder.key(address),
+      address_pk: CLValueBuilder.string(address_pk),
       status: CLValueBuilder.bool(status),
       profile_contract_hash: CLValueBuilder.string(
         `contract-${PROFILE_CONTRACT_HASH!}`
@@ -694,7 +785,9 @@ class CEP47Client {
       mode: CLValueBuilder.string(mode),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
-      creator: CLValueBuilder.string(creator),
+      creator: CLValueBuilder.key(
+        CLValueBuilder.byteArray(CLPublicKey.fromHex(creator).toAccountHash())
+      ),
       url: CLValueBuilder.string(url),
     });
 
@@ -719,8 +812,13 @@ class CEP47Client {
       mode: CLValueBuilder.string('ADD'),
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
-      address: CLValueBuilder.string(address),
+      address: CLValueBuilder.key(
+        CLValueBuilder.byteArray(CLPublicKey.fromHex(address).toAccountHash())
+      ),
       url: CLValueBuilder.string(url),
+      profile_contract_hash: CLValueBuilder.string(
+        `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
     });
 
     return this.contractClient.callEntrypoint(

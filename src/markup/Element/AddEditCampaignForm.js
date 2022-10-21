@@ -9,6 +9,10 @@ import { getDeployDetails } from '../../api/universal';
 import { createCampaign } from '../../api/createCampaign';
 
 import { useNFTState } from '../../contexts/NFTContext';
+import ReactGA from 'react-ga';
+import SDGsMultiSelect from './SDGsMultiSelect';
+import { SDGsData } from '../../data/SDGsGoals/index';
+import { isValidWallet } from '../../utils/contract-utils';
 
 //adding new campaign page
 const AddEditCampaignForm = ({
@@ -16,24 +20,85 @@ const AddEditCampaignForm = ({
   closeModal = undefined,
   isFromModal = false,
   beneficiaryAddress = undefined,
+  beneficiaryPKAddress = undefined,
 }) => {
-  const { beneficiaries } = useNFTState();
-  const { entityInfo, isLoggedIn } = useAuth();
+  const { beneficiaries, nfts } = useNFTState();
+  const { entityInfo } = useAuth();
   const [beneficiary, setBeneficiary] = React.useState();
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
+  const [SDGsGoals, setSDGsGoals] = React.useState(
+    data ? data.sdgs_ids?.split(',') : []
+  );
+  const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
+  const [mandatorySDGs, setMandatorySDGs] = React.useState();
+  const [campaignAddress, setCampaignAddress] = React.useState(
+    data && (data.wallet_address_pk || data.w_pk)
+      ? data.wallet_address_pk
+        ? data.wallet_address_pk
+        : data.w_pk
+      : beneficiaryPKAddress
+      ? beneficiaryPKAddress
+      : ''
+  );
 
   //getting beneficiary details
   const selectedBeneficiary = React.useCallback(async () => {
     const firstBeneficiary = beneficiaries?.filter(
-      ({ approved }) => approved === 'true'
+      ({ isApproved }) => isApproved === 'true'
     );
-    firstBeneficiary && setBeneficiary(firstBeneficiary[0]?.address);
-  }, [beneficiary, beneficiaries]);
+    firstBeneficiary &&
+      setBeneficiary(
+        beneficiaryAddress ? beneficiaryAddress : firstBeneficiary[0]?.address
+      );
+    firstBeneficiary &&
+      setSDGsGoalsData(
+        beneficiaryAddress
+          ? SDGsData.filter(({ value }) =>
+              beneficiaries
+                .find((b) => b.address === beneficiaryAddress)
+                ?.sdgs_ids?.split(',')
+                .includes(value.toString())
+            )
+          : SDGsData.filter(({ value }) =>
+              firstBeneficiary[0]?.sdgs_ids
+                ?.split(',')
+                .includes(value.toString())
+            )
+      );
+    !data &&
+      firstBeneficiary &&
+      setCampaignAddress(
+        beneficiaryPKAddress
+          ? beneficiaryPKAddress
+          : firstBeneficiary[0]?.address_pk
+      );
+  }, [beneficiaries, beneficiaryPKAddress, beneficiaryAddress, data]);
 
   React.useEffect(() => {
     !beneficiary && selectedBeneficiary();
   }, [beneficiary, selectedBeneficiary]);
+
+  //getting beneficiary details
+  const getSavedSDGs = React.useCallback(async () => {
+    const selectedNFTs =
+      data && nfts && nfts.filter(({ campaign }) => campaign == data.id);
+    if (selectedNFTs && selectedNFTs.length > 0) {
+      const sdgsNFTs = selectedNFTs
+        .map(({ sdgs_ids }) => sdgs_ids?.split(','))
+        ?.flat();
+      const campaignArray = data?.sdgs_ids?.split(',');
+      var savedSDGs = sdgsNFTs?.filter(function (obj) {
+        return campaignArray?.indexOf(obj) > -1;
+      });
+      setMandatorySDGs(savedSDGs);
+    }
+  }, [data, nfts]);
+
+  React.useEffect(() => {
+    !mandatorySDGs && data && getSavedSDGs();
+  }, [mandatorySDGs, getSavedSDGs, data]);
+
   //setting initial values of controls
   const [state, setState] = React.useState({
     inputs: {
@@ -55,6 +120,17 @@ const AddEditCampaignForm = ({
   const handleChange = (e, isBeneficiary = false) => {
     if (isBeneficiary) {
       setBeneficiary(e.target.value);
+      let selectedBeneficiary = beneficiaries.find(
+        ({ address }) => address === e.target.value
+      );
+      setSDGsGoalsData(
+        SDGsData.filter(({ value }) =>
+          selectedBeneficiary.sdgs_ids?.split(',').includes(value.toString())
+        )
+      );
+      if (!data) {
+        setCampaignAddress(selectedBeneficiary.address_pk);
+      }
     } else {
       const { value, name, checked, type } = e.target;
       const { inputs } = state;
@@ -67,6 +143,10 @@ const AddEditCampaignForm = ({
     }
   };
 
+  const handleSDGsChange = (data) => {
+    setSDGsGoals(data);
+  };
+
   //saving new campaign related to beneficiary function
   const saveCampaign = async () => {
     setIsButtonClicked(true);
@@ -77,14 +157,23 @@ const AddEditCampaignForm = ({
       const savedCampaign = await createCampaign(
         state.inputs.name,
         state.inputs.description,
-        beneficiaryAddress ? beneficiaryAddress : beneficiary,
+        CLPublicKey.fromHex(campaignAddress).toAccountHashStr().slice(13),
+        campaignAddress,
         state.inputs.campaignUrl,
         state.inputs.requestedRoyalty,
         CLPublicKey.fromHex(entityInfo.publicKey),
+        SDGsGoals.map((str) => {
+          return Number(str);
+        }),
         data ? 'UPDATE' : 'ADD',
-        data ? data.id : undefined
+        data ? data.id : undefined,
+        beneficiaryAddress ? beneficiaryAddress : beneficiary
       );
-
+      ReactGA.event({
+        category: 'Success',
+        action: 'Add campaign',
+        label: `${entityInfo.publicKey}: added new campaign ${state.inputs.name}`,
+      });
       const deployResult = await getDeployDetails(savedCampaign);
       console.log('...... Campaign saved successfully', deployResult);
       VIToast.success('Campaign saved successfully');
@@ -113,8 +202,18 @@ const AddEditCampaignForm = ({
     } catch (err) {
       if (err.message.includes('User Cancelled')) {
         VIToast.error('User Cancelled Signing');
+        ReactGA.event({
+          category: 'User Cancelation',
+          action: 'Add campaign',
+          label: `${entityInfo.publicKey}: Cancelled Signing`,
+        });
       } else {
         VIToast.error(err.message);
+        ReactGA.event({
+          category: 'Error',
+          action: 'Add campaign',
+          label: `${entityInfo.publicKey}: ${err.message}`,
+        });
       }
       setIsButtonClicked(false);
       return;
@@ -142,14 +241,17 @@ const AddEditCampaignForm = ({
                             beneficiary
                               ? beneficiary
                               : beneficiaries?.filter(
-                                  ({ approved }) => approved === 'true'
+                                  ({ isApproved }) => isApproved === 'true'
                                 )[0]?.address
                           }
                         >
                           {beneficiaries
-                            ?.filter(({ approved }) => approved === 'true')
-                            .map(({ username, address }) => (
-                              <option key={address} value={address}>
+                            ?.filter(({ isApproved }) => isApproved === 'true')
+                            .map(({ username, address, index }) => (
+                              <option
+                                key={`${address}_${index}`}
+                                value={address}
+                              >
                                 {' '}
                                 {username}
                               </option>
@@ -172,6 +274,27 @@ const AddEditCampaignForm = ({
                   <div className='required-field'>
                     <input
                       type='text'
+                      placeholder='Campaign Address'
+                      name='campaignAddress'
+                      className='form-control'
+                      onChange={(e) => setCampaignAddress(e.target.value)}
+                      value={campaignAddress}
+                    />
+                    <span className='text-danger required-field-symbol'>*</span>
+                    {campaignAddress !== '' &&
+                      !isValidWallet(campaignAddress) && (
+                        <span className='text-danger'>
+                          Please Enter Valid Public Address
+                        </span>
+                      )}
+                  </div>
+                </Col>
+              </Row>
+              <Row className='mt-4'>
+                <Col>
+                  <div className='required-field'>
+                    <input
+                      type='text'
                       placeholder='Name'
                       name='name'
                       className='form-control'
@@ -181,8 +304,6 @@ const AddEditCampaignForm = ({
                     <span className='text-danger required-field-symbol'>*</span>
                   </div>
                 </Col>
-              </Row>
-              <Row className='mt-4'>
                 <Col>
                   <div className='required-field'>
                     <input
@@ -202,8 +323,19 @@ const AddEditCampaignForm = ({
                         than 100
                       </span>
                     )}
+                    {state.inputs.requestedRoyalty === 0 &&
+                      state.inputs.requestedRoyalty !== '' && (
+                        <span className='text-danger'>
+                          Requested Royalty equal to 0 means your beneficiary
+                          will not have any proportion
+                        </span>
+                      )}
                   </div>
                 </Col>
+              </Row>
+
+              <Row className='mt-4'>
+                {' '}
                 <Col>
                   <input
                     type='text'
@@ -211,13 +343,34 @@ const AddEditCampaignForm = ({
                     name='campaignUrl'
                     className='form-control'
                     value={state.inputs.campaignUrl}
-                    onChange={(e) => {handleChange(e);checkURLValidation(e.target.value)}}
+                    onChange={(e) => {
+                      handleChange(e);
+                      checkURLValidation(e.target.value);
+                    }}
                   />
                   {showURLErrorMsg && (
                     <span className='text-danger'>Please enter Valid URL</span>
                   )}
                 </Col>
+                {SDGsGoalsData.length > 0 && (
+                  <Col>
+                    <SDGsMultiSelect
+                      data={SDGsGoalsData}
+                      SDGsChanged={(selectedData) => {
+                        handleSDGsChange(selectedData);
+                      }}
+                      defaultValues={
+                        SDGsGoalsData.length > 0 && data?.sdgs_ids !== ''
+                          ? data?.sdgs_ids
+                          : ''
+                      }
+                      mandatorySDGs={mandatorySDGs}
+                      isClear={undefined}
+                    />
+                  </Col>
+                )}
               </Row>
+
               <Row className='mt-4'>
                 <Col>
                   <textarea
@@ -237,9 +390,11 @@ const AddEditCampaignForm = ({
                       className='btn btn-success'
                       onClick={saveCampaign}
                       disabled={
-                        state.inputs.name == '' ||
+                        state.inputs.name === '' ||
                         state.inputs.requestedRoyalty < 0 ||
-                        state.inputs.requestedRoyalty > 100
+                        state.inputs.requestedRoyalty > 100 ||
+                        (SDGsGoalsData?.length > 0 && SDGsGoals?.length <= 0) ||
+                        !isValidWallet(campaignAddress)
                       }
                     >
                       {isButtonClicked ? (
