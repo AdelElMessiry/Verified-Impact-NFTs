@@ -11,9 +11,9 @@ const NFTTwitterShare = ({ item, isWithoutText = false }) => {
         <span>Let other people know about it &nbsp;&nbsp; </span>
       )}{' '}
       <TwitterShareButton
-        className='twitter-icon mfp-link portfolio-fullscreen'
+        className='twitter-icon mfp-link'
         url={`${window.location.origin}/#/nft-detail?id=${item.tokenId}`}
-        title={`I like "${item.title}" #NFT from "${item.collectionName}" collection By "${item.creatorName}"! ${item.beneficiaryPercentage}% of the proceeds go to the "${item.beneficiaryName}" in support of the "${item.campaignName}" campaign!`}
+        title={`I like "${item.title}" #NFT from "${item.collectionName}" collection By "${item.creatorName}"! ${item.beneficiaryPercentage}% of the proceeds go to the "${item.beneficiaryName}" in support of the "${item.campaignName}" campaign!\n @vinfts @Casper_Network @DEVXDAO`}
       >
         <TwitterIcon
           size={32}

@@ -9,6 +9,8 @@ import {
   CLValueBuilder,
   CLValueParsers,
   decodeBase16,
+  CLByteArray,
+  CLAccountHash,
 } from 'casper-js-sdk';
 import { config } from 'dotenv';
 
@@ -150,6 +152,17 @@ class CEP47Client {
     this.isContractIHashSetup = true;
   }
 
+  public async getBeneficiariesList() {
+    const result: any = await this.contractClient.queryContractData([
+      'beneficiaries_addresses',
+    ]);
+
+    const mappedAddresses = result.map((address: any) =>
+      Buffer.from(address.data.value()).toString('hex')
+    );
+    return mappedAddresses;
+  }
+
   public async addBeneficiary(
     name: string,
     description: string,
@@ -183,16 +196,67 @@ class CEP47Client {
     );
   }
 
-  public async approveBeneficiary(
-    address: any,
-    status: boolean,
+  public async createCampaign(
+    campaign_id: string,
+    mode: string,
+    name: string,
+    description: string,
+    wallet_address: CLAccountHash,
+    wallet_address_pk: string,
+    beneficiary_address: CLAccountHash,
+    url: string,
+    requested_royalty: string,
+    sdgs_ids: number[],
     paymentAmount: string,
     deploySender: CLPublicKey,
     keys?: Keys.AsymmetricKey[]
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
+      campaign_id: CLValueBuilder.u256(campaign_id),
+      collection_ids: CLValueBuilder.list([CLValueBuilder.u256(0)]),
+      mode: CLValueBuilder.string(mode),
+      name: CLValueBuilder.string(name),
+      description: CLValueBuilder.string(description),
+      wallet_address: CLValueBuilder.key(wallet_address),
+      wallet_address_pk: CLValueBuilder.string(wallet_address_pk),
+      beneficiary_address: CLValueBuilder.key(beneficiary_address),
+      url: CLValueBuilder.string(url),
+      // recipient: CLValueBuilder.key(CLPublicKey.fromHex(wallet_address)),
+      requested_royalty: CLValueBuilder.string(requested_royalty),
+      sdgs_ids: CLValueBuilder.list(
+        sdgs_ids?.length
+          ? sdgs_ids.map((id) => CLValueBuilder.u256(id))
+          : [CLValueBuilder.u256(0)]
+      ),
+    });
+
+    return this.contractClient.callEntrypoint(
+      'create_campaign',
+      runtimeArgs,
+      deploySender,
+      this.networkName,
+      paymentAmount,
+      keys
+    );
+  }
+
+  public async approveBeneficiary(
+    address: CLByteArray,
+    status: boolean,
+    paymentAmount: string,
+    deploySender: CLPublicKey,
+    keys?: Keys.AsymmetricKey[]
+  ) {
+    // this.setContractHash(
+    //   process.env.NFT_CONTRACT_HASH!,
+    //   process.env.NFT_CONTRACT_PACKAGE_HASH
+    // );
+    const runtimeArgs = RuntimeArgs.fromMap({
       address: CLValueBuilder.key(address),
       status: CLValueBuilder.bool(status),
+      profile_contract_hash: CLValueBuilder.string(
+        `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
     });
 
     return this.contractClient.callEntrypoint(

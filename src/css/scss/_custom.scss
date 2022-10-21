@@ -146,6 +146,7 @@
   -o-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
   transform: rotate(90deg);
+  display: inline-block;
 }
 
 .stats-spinner {
@@ -221,9 +222,110 @@
     right: 20px;
   }
 }
-.vinft-bg-gray{
+
+.vinft-bg-gray {
   background: #efefef none repeat scroll 0 0;
   border: 0 none;
   box-shadow: 2px 2px 4px 0 rgb(0 0 0 / 5%);
   font-size: 14px;
+}
+
+.nftcard-parent {
+  // border:1px solid rgb(79, 78, 78);
+  border-radius: 5px;
+}
+
+.sdgs-goals-card {
+  text-align: justify;
+  //width: [width of img];
+
+  img {
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+.dash-sdgs {
+  col {
+    padding-left: 1px !important;
+    padding-right: 1px !important;
+  }
+
+  img {
+    max-width: 50px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .home-banner {
+    height: 130vh;
+  }
+
+  .home-bnr-inner {
+    align-items: start !important;
+    margin-top: 150px;
+  }
+}
+
+@media screen and (max-width: 468px) {
+  .menu-parent-link {
+    color: #000;
+  }
+}
+
+.VI-text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+
+  a {
+    display: contents !important;
+  }
+}
+
+.fz-14 {
+  font-size: 14px;
+}
+
+.custom-switch.VI-switch .custom-control-label::before {
+  left: -2.25rem;
+  width: 3.75rem;
+  pointer-events: all;
+  border-radius: 1.5rem;
+}
+
+.custom-switch.VI-switch input[type=checkbox]:checked+label:before {
+  border-width: 13px;
+}
+
+.custom-switch.VI-switch .custom-control-input:checked~.custom-control-label::before {
+  color: #fff;
+  background-color: #6cc000;
+  border-color: #6cc000;
+}
+
+.custom-switch.VI-switch input[type=checkbox]+label {
+  display: block;
+  padding-left: 35px !important;
+  position: relative;
+}
+
+.custom-switch.VI-switch input[type=checkbox]:checked+label:after {
+  font-size: 10px;
+  left: -5px;
+  top: 29%;
+}
+
+.custom-switch.VI-switch input[type=checkbox]+label:before {
+  height: 25px;
+}
+
+.sdgs-icon {
+  img{
+  width: 25px;
+  pointer-events: none;
+  cursor: default;
+  }
+  margin-right: 2px;
 }

@@ -1,11 +1,14 @@
 import React from 'react';
-// import { CLPublicKey } from 'casper-js-sdk';
 import { getBeneficiariesList } from '../api/beneficiaryInfo';
 import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from '../api/campaignInfo';
 import { getCreatorsList } from '../api/creatorInfo';
 import { getUniqueCollectionsList } from '../api/collectionInfo';
-import { getNFTsList } from '../api/nftInfo';
+import {
+  getNFTsList,
+  getCachedNFTsList,
+  updateCachedNFT,
+} from '../api/nftInfo';
 import { profileClient } from '../api/profileInfo';
 
 export enum NFTActionTypes {
@@ -27,6 +30,7 @@ interface NFTState {
   campaignsCount?: Number;
   creatorsCount?: Number;
   collectionsCount?: Number;
+  // refreshNFTs?: () => void;
 }
 
 type NFTDispatch = (action: NFTAction) => void;
@@ -61,6 +65,7 @@ function nftReducer(state: NFTState, action: NFTAction): NFTState {
         creatorsCount: action.payload.creatorsCount,
         collectionsCount: action.payload.collectionsCount,
         vINFTsBeneficiaries: action.payload.vINFTsBeneficiaries,
+        // refreshNFTs: getCachedNFTsList,
       };
     }
     default: {
@@ -82,8 +87,9 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
   const getList = React.useCallback(async () => {
     dispatch({ type: NFTActionTypes.LOADING });
 
-    const nftsList = await getNFTsList();
-    const beneficiaryCount = await cep47.totalBeneficiaries();
+    // const nftsList = await getNFTsList();
+    const nftsList = await getCachedNFTsList();
+    // const beneficiaryCount = await cep47.totalBeneficiaries();
     const campaignsCount = await cep47.totalCampaigns();
     const creatorsCount = await cep47.totalCreators();
     const collectionsCount = await cep47.totalCollections();
@@ -116,11 +122,11 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
           selectedList.push(lists.beneficiary);
       });
     const beneficiariesList = profiles && selectedList;
-    const beneficiariesCount = beneficiariesList.filter(
-      ({ approved }: any) => approved === 'true'
-    )?.length;
 
     const beneficiariesVINFTsList = await getBeneficiariesList();
+    const beneficiariesCount = beneficiariesVINFTsList?.filter(
+      ({ isApproved }: any) => isApproved === 'true'
+    )?.length;
 
     // beneficiariesList && setBeneficiaries(beneficiariesList);
 
@@ -201,6 +207,56 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
   );
 };
 
+export const updateNFTs = async (dispatch: any, state: any, nft: any) => {
+  const updatedNFTs = await updateCachedNFT(nft, state.nfts);
+  const { campaigns, creators, beneficiaries, collections } = state;
+
+  dispatch({
+    type: NFTActionTypes.SUCCESS,
+    payload: {
+      ...state,
+      nfts: updatedNFTs?.map((nft: any) => ({
+        ...nft,
+        campaignName:
+          campaigns.find(({ id }: any) => nft.campaign === id)?.name || '',
+        creatorName:
+          creators.find(({ address }: any) => nft.creator === address)?.name ||
+          '',
+        beneficiaryName:
+          beneficiaries.find(({ address }: any) => nft.beneficiary === address)
+            ?.username || '',
+        collectionName:
+          collections.find(({ id }: any) => nft.collection === id)?.name || '',
+      })),
+    },
+  });
+};
+
+export const refreshNFTs = async (dispatch: any, state: any) => {
+  const cachedNFTs = await getCachedNFTsList(state.nfts);
+  const { campaigns, creators, beneficiaries, collections } = state;
+
+  dispatch({
+    type: NFTActionTypes.SUCCESS,
+    payload: {
+      ...state,
+      nfts: cachedNFTs?.map((nft: any) => ({
+        ...nft,
+        campaignName:
+          campaigns.find(({ id }: any) => nft.campaign === id)?.name || '',
+        creatorName:
+          creators.find(({ address }: any) => nft.creator === address)?.name ||
+          '',
+        beneficiaryName:
+          beneficiaries.find(({ address }: any) => nft.beneficiary === address)
+            ?.username || '',
+        collectionName:
+          collections.find(({ id }: any) => nft.collection === id)?.name || '',
+      })),
+    },
+  });
+};
+
 export const useNFTState = () => {
   const nftStateContext = React.useContext(NFTStateContext);
   if (nftStateContext === undefined) {
@@ -210,7 +266,7 @@ export const useNFTState = () => {
 };
 
 export const useNFTDispatch = () => {
-  const nftDispatchContext = React.useContext(NFTStateContext);
+  const nftDispatchContext = React.useContext(NFTDispatchContext);
   if (nftDispatchContext === undefined) {
     throw new Error('useNFTDispatch must be used within a NFTProvider');
   }

@@ -1,4 +1,5 @@
 export const proxyServer = process.env.REACT_APP_PROXY_SERVER || '';
+export const NFT_STORAGE_KEY = process.env.REACT_APP_NFT_STORAGE_KEY;
 export const NODE_RPC_ADDRESS =
   process.env.REACT_APP_NODE_RPC_ADDRESS ||
   'https://node-clarity-testnet.make.services/rpc';

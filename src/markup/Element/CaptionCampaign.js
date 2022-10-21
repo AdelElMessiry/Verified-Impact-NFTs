@@ -6,6 +6,9 @@ import VINftsTooltip from '../Element/Tooltip';
 import CopyText from './copyText';
 
 import soldIcon from '../../images/icon/sold.png';
+import CopyCode from './copyCode';
+import unitedNation from '../../images/icon/unitedNation.png';
+import { SDGsData } from '../../data/SDGsGoals';
 
 export const CaptionCampaign = (data, IconImage) => (
   <div className="text-white text-left port-box">
@@ -87,7 +90,7 @@ export const CaptionCampaign = (data, IconImage) => (
           {data.price} {data.currency}
         </>
       )}
-      &nbsp;&nbsp; {data.isForSale === 'true' && <IconImage nft={data} />}
+      &nbsp;&nbsp; <IconImage nft={data} />
       {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
         <NFTTwitterShare item={data} />
       )}
@@ -105,6 +108,39 @@ export const CaptionCampaign = (data, IconImage) => (
       <CopyText
         link={`${window.location.origin}/#/nft-detail?id=${data.tokenId}`}
       />
+      &nbsp;&nbsp;{' '}
+      <CopyCode
+        link={`<iframe src='${window.location.origin}/#/nft-card?id=${data.tokenId}'></iframe>`}
+      />
+    </p>
+    <p>
+      {data?.sdgs_ids?.length > 0 && data?.sdgs_ids !== '0' && (
+        <div className='mt-3 px-2'>
+          <a href='https://sdgs.un.org/goals' target='_blank'>
+            <img
+              src={unitedNation}
+              style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
+            />
+          </a>
+          :{' '}
+          {SDGsData?.filter(({ value }) =>
+            data?.sdgs_ids?.split(',').includes(value.toString())
+          )?.map((sdg, index) => (
+            <VINftsTooltip title={sdg.label} key={index}>
+              <label>
+                <img
+                  src={process.env.PUBLIC_URL + 'images/sdgsIcons/' + sdg.icon}
+                  style={{
+                    width: 25,
+                    pointerEvents: 'none',
+                    cursor: 'default',
+                  }}
+                />
+              </label>
+            </VINftsTooltip>
+          ))}
+        </div>
+      )}
     </p>
   </div>
 );

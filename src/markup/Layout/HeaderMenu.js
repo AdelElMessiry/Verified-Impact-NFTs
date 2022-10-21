@@ -12,15 +12,17 @@ const HeaderMenu = () => {
   const { beneficiaries, campaigns, collections, creators } = useNFTState();
 
   const [creatorsList, setCreatorsList] = React.useState();
-  const [beneficiariesList, setBeneficiariesList] = React.useState()
-
+  const [beneficiariesList, setBeneficiariesList] = React.useState();
 
   const loadSubMenu = React.useCallback(async () => {
     const beneficiaryList =
-    beneficiaries &&
-    campaigns &&
-    (await _getBeneficiariesCampaignsList(beneficiaries?.filter(({approved})=>approved==='true'), campaigns));
-  beneficiaryList && setBeneficiariesList(beneficiaryList);
+      beneficiaries &&
+      campaigns &&
+      (await _getBeneficiariesCampaignsList(
+        beneficiaries?.filter(({ isApproved }) => isApproved === 'true'),
+        campaigns
+      ));
+    beneficiaryList && setBeneficiariesList(beneficiaryList);
     const creatorList =
       creators &&
       collections &&
@@ -69,7 +71,7 @@ const HeaderMenu = () => {
             ))}
             <li>
               <Link to={`./signup-as-beneficiary`} className='dez-page'>
-              Signup As Beneficiary
+                Signup As Beneficiary
               </Link>
             </li>
           </ul>

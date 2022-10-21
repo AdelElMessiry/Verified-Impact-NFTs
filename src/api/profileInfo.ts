@@ -4,7 +4,6 @@ import {
   CasperClient,
   Contracts,
   CLValueBuilder,
-  CLAccountHash,
 } from 'casper-js-sdk';
 
 import { signDeploy } from '../utils/signer';
@@ -88,7 +87,7 @@ class ProfileClient {
         Object.entries(mapObj)
           .filter(([key]) => key.includes('beneficiary'))
           ?.map((profileKey: any) => [
-            profileKey[0].split('_').pop(),
+            profileKey[0].split('_').slice(1).join('_'),
             profileKey[0].split('_').pop() === 'address'
               ? profileKey[1].slice(10).replace(')', '')
               : profileKey[1],
@@ -108,7 +107,22 @@ class ProfileClient {
       return {
         [address]: {
           normal: { ...filteredNormalAccount },
-          beneficiary: { ...filteredBeneficiaryAccount },
+          beneficiary:
+            // Object.keys(filteredBeneficiaryAccount).length !== 0?(  filteredBeneficiaryAccount?.username?.toLowerCase() ===
+            //   'usa for ukraine'
+            //     ? {
+            //         ...filteredBeneficiaryAccount,
+            //         sdgs: ['19'],
+            //         donationReceipt: true,
+            //         ein: '624230',
+            //       }
+            //     : {
+            //         ...filteredBeneficiaryAccount,
+            //         sdgs: ['19'],
+            //         donationReceipt: false,
+            //         ein: '',
+            //       }):
+            { ...filteredBeneficiaryAccount },
           creator: { ...filteredCreatorAccount },
         },
       };
@@ -122,6 +136,7 @@ class ProfileClient {
 
   public async addUpdateProfile(
     address: CLPublicKey,
+    address_pk: string,
     username: string,
     tagline: string,
     imgUrl: string,
@@ -139,16 +154,17 @@ class ProfileClient {
     mail: string,
     profileType: string,
     deploySender: CLPublicKey,
-    mode?: string
+    mode?: string,
+    sdgs_ids?: number[],
+    has_receipt?: boolean,
+    ein?: string
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       mode: CLValueBuilder.string(mode ? mode : 'ADD'),
       address: CLValueBuilder.key(
         CLValueBuilder.byteArray(address.toAccountHash())
       ),
-      // address: CLValueBuilder.string(
-      //   CLPublicKey.fromHex(address).toAccountHashStr()
-      // ),
+      address_pk: CLValueBuilder.string(address_pk),
       username: CLValueBuilder.string(username),
       tagline: CLValueBuilder.string(tagline),
       imgUrl: CLValueBuilder.string(imgUrl),
@@ -165,6 +181,11 @@ class ProfileClient {
       telegram: CLValueBuilder.string(telegram),
       mail: CLValueBuilder.string(mail),
       profileType: CLValueBuilder.string(profileType),
+      sdgs_ids: sdgs_ids?.length
+        ? CLValueBuilder.list(sdgs_ids.map((id) => CLValueBuilder.u256(id)))
+        : CLValueBuilder.list([CLValueBuilder.u256(0)]),
+      has_receipt: CLValueBuilder.bool(!!has_receipt),
+      ein: CLValueBuilder.string(ein || ''),
     });
 
     const profileDeploy = this.contractClient.callEntrypoint(

@@ -258,3 +258,36 @@ export const transferFees = async (buyer: string, tokenId: string) => {
   //   return e;
   // }
 };
+
+export const getNFTImage = async (tokenMetaUri: string) => {
+  const baseIPFS = 'https://vinfts.mypinata.cloud/ipfs/';
+  if (tokenMetaUri.includes('/')) {
+    const mappedUrl = tokenMetaUri.includes('ipfs/')
+      ? tokenMetaUri.split('ipfs/').pop()
+      : tokenMetaUri;
+    return baseIPFS + mappedUrl;
+  }
+  const resp = await fetch(baseIPFS + tokenMetaUri);
+  const imgString = await resp.text();
+  return imgString;
+};
+
+export function isValidHttpUrl(string: string) {
+  let url;
+
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === 'http:' || url.protocol === 'https:';
+}
+
+export function isValidWallet(publicKey: string) {
+  try {
+    return CLPublicKey.fromHex(publicKey) instanceof CLPublicKey;
+  } catch (error) {
+    return false;
+  }
+}

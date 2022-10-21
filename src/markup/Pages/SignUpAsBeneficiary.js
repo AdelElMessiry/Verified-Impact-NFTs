@@ -11,11 +11,14 @@ import ProfileForm from '../Element/profileForm';
 import { ProfileFormsEnum } from '../../Enums/index';
 
 import bnr1 from '../../images/banner/bnr1.jpg';
+import ReactGA from 'react-ga';
 
 //add new beneficiary page
 const SignUpAsBeneficiary = () => {
   const { isLoggedIn } = useAuth();
-
+React.useEffect(()=>{
+  ReactGA.pageview(window.location.pathname +"signup-as-beneficiary");
+},[])
   return (
     <>
       <Layout>
@@ -32,9 +35,6 @@ const SignUpAsBeneficiary = () => {
           </div>
           {/* <!-- inner page banner END --> */}
           {/* <!-- contact area --> */}
-          {!isLoggedIn ? (
-            <PromptLogin />
-          ) : (
             <div className='section-full content-inner shop-account'>
               {/* <!-- Product --> */}
               <div className='container'>
@@ -45,6 +45,7 @@ const SignUpAsBeneficiary = () => {
                         formName={ProfileFormsEnum.BeneficiaryProfile}
                         isProfileExist={false}
                         formData={ null }
+                        isSignUpBeneficiary={true}
                       />
                     </Container>
                   </div>
@@ -52,7 +53,6 @@ const SignUpAsBeneficiary = () => {
               </div>
               {/* <!-- Product END --> */}
             </div>
-          )}
           {/* <!-- contact area  END --> */}
         </div>
       </Layout>

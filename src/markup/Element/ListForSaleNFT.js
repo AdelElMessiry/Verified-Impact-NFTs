@@ -6,10 +6,23 @@ import { toast as VIToast } from 'react-toastify';
 
 import { setIsTokenForSale } from '../../api/nftInfo';
 import { useAuth } from '../../contexts/AuthContext';
+import {
+  useNFTState,
+  useNFTDispatch,
+  updateNFTs,
+  refreshNFTs,
+} from '../../contexts/NFTContext';
 
 //list nft for sale NFT Modal
-const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
+const ListForSaleNFTModal = ({
+  show,
+  handleCloseParent,
+  data,
+  handleTransactionSuccess = () => {},
+}) => {
   const { entityInfo } = useAuth();
+  const { ...stateList } = useNFTState();
+  const nftDispatch = useNFTDispatch();
   const [price, setPrice] = React.useState('');
   const [showModal, setShowModal] = React.useState(show);
   const [isListForSaleClicked, setIsListForSaleClicked] = React.useState(false);
@@ -27,15 +40,23 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
         CLPublicKey.fromHex(entityInfo.publicKey),
         price
       );
+
       if (deployUpdatedNftResult) {
+        //update listed/unlisted nft to radis
+        const changedNFT = Object.assign({}, data, {
+          isForSale: data.isForSale == 'true' ? 'false' : 'true',
+          price: data.isForSale == 'true' ? '0' : price,
+        });
+        await updateNFTs(nftDispatch, stateList, changedNFT);
+        handleTransactionSuccess(changedNFT);
         VIToast.success(
           data.isForSale === 'true'
-            ? 'NFT is unlisted for sale'
-            : 'NFT is listed for sale'
-        );
-        setIsListForSaleClicked(false);
-        handleClose();
-        window.location.reload();
+          ? 'NFT is unlisted for sale'
+          : 'NFT is listed for sale'
+          );
+          await refreshNFTs(nftDispatch, stateList);
+          setIsListForSaleClicked(false);
+          handleClose();
       } else {
         VIToast.error('Error happened please try again later');
         setIsListForSaleClicked(false);
@@ -110,7 +131,7 @@ const ListForSaleNFTModal = ({ show, handleCloseParent, data }) => {
           onClick={() => {
             ListNFTForSale();
           }}
-          disabled={isListForSaleClicked||(price!==''&&price<250)}
+          disabled={isListForSaleClicked || (price !== '' && price < 250)}
         >
           {isListForSaleClicked ? (
             <Spinner animation='border' variant='light' />
