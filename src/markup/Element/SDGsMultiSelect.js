@@ -8,7 +8,7 @@ const SDGsMultiSelect = ({
   data,
   SDGsChanged,
   defaultValues,
-  isClear = false,
+  isClear ,
   mandatorySDGs = [],
   isAddBeneficiary=false
 }) => {
