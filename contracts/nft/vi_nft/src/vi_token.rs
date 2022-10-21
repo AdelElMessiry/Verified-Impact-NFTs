@@ -203,30 +203,15 @@ impl ViToken {
                 );
                 campaign.insert(format!("requested_royalty: "), requested_royalty);
 
-                if ViToken::default().is_beneficiary(wallet_address) {
-                    if ViToken::default().is_admin(caller) {
-                        campaign.insert(format!("wallet_address: "), wallet_address.to_string());
-                        campaign.insert(format!("wallet_address_pk: "), wallet_address_pk);
-                        campaign.insert(
-                            format!("beneficiary_address: "),
-                            beneficiary_address.to_string(),
-                        );
-                    } else {
-                        campaign.insert(format!("wallet_address: "), caller.to_string());
-                        campaign.insert(format!("wallet_address_pk: "), wallet_address_pk);
-                        campaign.insert(format!("beneficiary_address: "), caller.to_string());
-                    }
+                if ViToken::default().is_beneficiary(caller) | ViToken::default().is_admin(caller) {
+                    campaign.insert(format!("wallet_address: "), wallet_address.to_string());
+                    campaign.insert(format!("wallet_address_pk: "), wallet_address_pk);
+                    campaign.insert(
+                        format!("beneficiary_address: "),
+                        beneficiary_address.to_string(),
+                    );
                 } else {
-                    if ViToken::default().is_admin(caller) {
-                        campaign.insert(format!("wallet_address: "), wallet_address.to_string());
-                        campaign.insert(format!("wallet_address_pk: "), wallet_address_pk);
-                        campaign.insert(
-                            format!("beneficiary_address: "),
-                            beneficiary_address.to_string(),
-                        );
-                    } else {
-                        revert(ApiError::User(20));
-                    }
+                    revert(ApiError::User(20));
                 }
 
                 if mode.clone() == "ADD" {
