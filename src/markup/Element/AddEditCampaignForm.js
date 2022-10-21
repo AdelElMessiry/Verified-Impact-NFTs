@@ -33,8 +33,10 @@ const AddEditCampaignForm = ({
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
   const [mandatorySDGs, setMandatorySDGs] = React.useState();
   const [campaignAddress, setCampaignAddress] = React.useState(
-    (data && data.w_pk)
-      ? data.w_pk
+    data && (data.wallet_address_pk || data.w_pk)
+      ? data.wallet_address_pk
+        ? data.wallet_address_pk
+        : data.w_pk
       : beneficiaryPKAddress
       ? beneficiaryPKAddress
       : ''
@@ -67,9 +69,11 @@ const AddEditCampaignForm = ({
     !data &&
       firstBeneficiary &&
       setCampaignAddress(
-        beneficiaryPKAddress ? beneficiaryPKAddress : firstBeneficiary[0]?.address_pk
+        beneficiaryPKAddress
+          ? beneficiaryPKAddress
+          : firstBeneficiary[0]?.address_pk
       );
-  }, [beneficiaries, beneficiaryPKAddress, data]);
+  }, [beneficiaries, beneficiaryPKAddress, beneficiaryAddress, data]);
 
   React.useEffect(() => {
     !beneficiary && selectedBeneficiary();
@@ -158,7 +162,7 @@ const AddEditCampaignForm = ({
         state.inputs.campaignUrl,
         state.inputs.requestedRoyalty,
         CLPublicKey.fromHex(entityInfo.publicKey),
-        SDGsGoals.map(str => {
+        SDGsGoals.map((str) => {
           return Number(str);
         }),
         data ? 'UPDATE' : 'ADD',
@@ -243,8 +247,11 @@ const AddEditCampaignForm = ({
                         >
                           {beneficiaries
                             ?.filter(({ isApproved }) => isApproved === 'true')
-                            .map(({ username, address,index}) => (
-                              <option key={`${address}_${index}`} value={address}>
+                            .map(({ username, address, index }) => (
+                              <option
+                                key={`${address}_${index}`}
+                                value={address}
+                              >
                                 {' '}
                                 {username}
                               </option>
@@ -276,7 +283,7 @@ const AddEditCampaignForm = ({
                     <span className='text-danger required-field-symbol'>*</span>
                     {campaignAddress !== '' &&
                       !isValidWallet(campaignAddress) && (
-                        <span className="text-danger">
+                        <span className='text-danger'>
                           Please Enter Valid Public Address
                         </span>
                       )}
