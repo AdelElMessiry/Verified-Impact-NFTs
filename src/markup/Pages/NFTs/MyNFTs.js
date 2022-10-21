@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Lightbox from 'react-image-lightbox';
 import { Link } from 'react-router-dom';
 import QRCode from 'react-qr-code';
+import { CLPublicKey } from 'casper-js-sdk';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNFTState } from '../../../contexts/NFTContext';
@@ -560,27 +561,33 @@ const MyNFTs = () => {
                           imagesLoadedOptions={imagesLoadedOptions} // default {}
                         >
                           {filteredNFTs.map((item, index) => (
-                            <li
-                              className='web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0'
-                              key={index}
-                            >
-                              <NFTCard
-                                item={item}
-                                index={index}
-                                openSlider={(newIndex) => {
-                                  setPhotoIndex(newIndex);
-                                  setOpenSlider(true);
-                                }}
-                                isTransfer={true}
-                                isMyNft={true}
-                                handleCallChangeBuyNFTs={(nft) => {
-                                  setChangedNFT(nft);
-                                  setIsRefreshNFTList(
-                                    !isRefreshNFTList
-                                  );
-                                }}
-                              />
-                            </li>
+                            item.creator != `${CLPublicKey.fromHex(
+                              entityInfo.publicKey
+                            )
+                              .toAccountHashStr()
+                              .slice(13)}`&& (
+                              <li
+                                className='web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0'
+                                key={index}
+                              >
+                                <NFTCard
+                                  item={item}
+                                  index={index}
+                                  openSlider={(newIndex) => {
+                                    setPhotoIndex(newIndex);
+                                    setOpenSlider(true);
+                                  }}
+                                  isTransfer={true}
+                                  isMyNft={true}
+                                  handleCallChangeBuyNFTs={(nft) => {
+                                    setChangedNFT(nft);
+                                    setIsRefreshNFTList(
+                                      !isRefreshNFTList
+                                    );
+                                  }}
+                                />
+                              </li>
+                            )                                                       
                           ))}
                         </Masonry>
                       </ul>
