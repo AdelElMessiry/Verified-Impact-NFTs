@@ -694,7 +694,7 @@ class CEP47Client {
           ? sdgs_ids.map((id) => CLValueBuilder.u256(id))
           : [CLValueBuilder.u256(0)]
       ),
-      w_pk: CLValueBuilder.string(wallet_address_pk),
+      wallet_address_pk: CLValueBuilder.string(wallet_address_pk),
     });
 
     return this.contractClient.callEntrypoint(
