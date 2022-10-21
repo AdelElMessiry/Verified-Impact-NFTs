@@ -8,7 +8,8 @@ import { CONNECTION } from '../constants/blockchain';
 export async function addBeneficiary(
   name: string,
   description: string,
-  address: string,
+  address_hash: string,
+  address_pk: string,
   sdgs_ids: number[],
   deploySender: CLPublicKey,
   mode?: string,
@@ -18,8 +19,9 @@ export async function addBeneficiary(
     beneficiaryId ? beneficiaryId : '0',
     name,
     description,
-    // `account-hash-${CLPublicKey.fromHex(address).toAccountHashStr().slice(13)}`,
-    CLValueBuilder.byteArray(CLPublicKey.fromHex(address).toAccountHash()),
+    CLValueBuilder.byteArray(Buffer.from(address_hash, 'hex')),
+    // CLValueBuilder.byteArray(CLPublicKey.fromHex(address_hash).toAccountHash()),
+    address_pk,
     mode ? mode : 'ADD',
     sdgs_ids,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
@@ -42,12 +44,14 @@ export async function addBeneficiary(
 }
 
 export async function approveBeneficiary(
-  address: string,
+  address_hash: string,
+  address_pk: string,
   status: boolean,
   deploySender: CLPublicKey
 ) {
   const beneficiaryDeploy = await cep47.approveBeneficiary(
-    CLValueBuilder.byteArray(Buffer.from(address, 'hex')),
+    CLValueBuilder.byteArray(Buffer.from(address_hash, 'hex')),
+    address_pk,
     status,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     deploySender

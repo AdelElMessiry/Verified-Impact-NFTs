@@ -108,21 +108,21 @@ class ProfileClient {
         [address]: {
           normal: { ...filteredNormalAccount },
           beneficiary:
-          // Object.keys(filteredBeneficiaryAccount).length !== 0?(  filteredBeneficiaryAccount?.username?.toLowerCase() ===
-          //   'usa for ukraine'
-          //     ? {
-          //         ...filteredBeneficiaryAccount,
-          //         sdgs: ['19'],
-          //         donationReceipt: true,
-          //         ein: '624230',
-          //       }
-          //     : {
-          //         ...filteredBeneficiaryAccount,
-          //         sdgs: ['19'],
-          //         donationReceipt: false,
-          //         ein: '',
-          //       }):
-                {...filteredBeneficiaryAccount},
+            // Object.keys(filteredBeneficiaryAccount).length !== 0?(  filteredBeneficiaryAccount?.username?.toLowerCase() ===
+            //   'usa for ukraine'
+            //     ? {
+            //         ...filteredBeneficiaryAccount,
+            //         sdgs: ['19'],
+            //         donationReceipt: true,
+            //         ein: '624230',
+            //       }
+            //     : {
+            //         ...filteredBeneficiaryAccount,
+            //         sdgs: ['19'],
+            //         donationReceipt: false,
+            //         ein: '',
+            //       }):
+            { ...filteredBeneficiaryAccount },
           creator: { ...filteredCreatorAccount },
         },
       };
@@ -136,6 +136,7 @@ class ProfileClient {
 
   public async addUpdateProfile(
     address: CLPublicKey,
+    address_pk: string,
     username: string,
     tagline: string,
     imgUrl: string,
@@ -163,9 +164,7 @@ class ProfileClient {
       address: CLValueBuilder.key(
         CLValueBuilder.byteArray(address.toAccountHash())
       ),
-      // address: CLValueBuilder.string(
-      //   CLPublicKey.fromHex(address).toAccountHashStr()
-      // ),
+      address_pk: CLValueBuilder.string(address_pk),
       username: CLValueBuilder.string(username),
       tagline: CLValueBuilder.string(tagline),
       imgUrl: CLValueBuilder.string(imgUrl),

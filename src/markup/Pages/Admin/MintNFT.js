@@ -422,7 +422,7 @@ const MintNFT = () => {
         setUploadedBlobImage(null)
         pictureElement.current.clearPictures();
         setSDGsGoals([]);
-        setIsClearSDGs(true);
+        setIsClearSDGs(!isClearSDGs);
         setIsNewNftMinted(!isNewNftMinted);
         let twitterName = '';
         if (creatorTwitterLink !== '') {
