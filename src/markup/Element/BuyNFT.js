@@ -128,11 +128,14 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false,handleT
         CLPublicKey.fromHex(state.inputs.address),
         nftID
       );
-      if (transferDeployHash) {
-        const changedNFT = Object.assign({}, data, {
+      const deployTransferResult = await getDeployDetails(transferDeployHash);
+      if (deployTransferResult) {
+         const changedNFT = Object.assign({}, data, {
           isForSale: 'false',
           isCreatorOwner: false ,
-        });
+          tokenId:parseInt(data.tokenId),
+          });
+        await updateNFTs(nftDispatch, stateList, changedNFT);
         handleTransactionBuySuccess(changedNFT);
         VIToast.success('NFT transfered successfully');
         await refreshNFTs(nftDispatch,stateList);

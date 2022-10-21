@@ -419,6 +419,7 @@ const MintNFT = () => {
         });
         setBeneficiary(isAnotherMint ? beneficiary : undefined);
         setCampaign(isAnotherMint ? campaign : undefined);
+        setUploadedBlobImage(null)
         pictureElement.current.clearPictures();
         setSDGsGoals([]);
         setIsClearSDGs(!isClearSDGs);
