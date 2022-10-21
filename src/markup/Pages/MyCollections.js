@@ -580,7 +580,7 @@ const MyCollections = () => {
             <div className='dlab-bnr-inr-entry'>
               <h1 className='text-white d-flex align-items-center'>
                 <span className='mr-1'>
-                  My Collections{' '}
+                My Minted Collections{' '}
                   <VINftsTooltip title={`Add New Collection`}>
                     <Link to={'./add-collection?id=0'}>
                       <img
