@@ -1,5 +1,3 @@
-import React, { useState } from 'react';
-import { Col, Container, Row, Form, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -10,17 +8,14 @@ import {
 
 } from '@fortawesome/free-brands-svg-icons';
 import { faEye, faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import { useAuth } from '../../contexts/AuthContext';
 import VINftsTooltip from './Tooltip';
 //marketplace single row
-const MarketPlaceSingleRow = ({ item }) => {
+const MarketPlaceSingleRow = ({ item , type="beneficiary" }) => {
 
-    const { isLoggedIn, entityInfo } = useAuth();
-    const [isApproveClicked, setIsApproveClicked] = useState(false);
     const noData = "No Data Provided"
     const sendMail = (email) => {
         if (email != "") {
-            const mailto = `mailto:${email}?subject=New Beneficiary &body=`;
+            const mailto = `mailto:${email}?subject=New ${type} &body=`;
             window.location.href = mailto;
         } else {
 
@@ -100,11 +95,11 @@ const MarketPlaceSingleRow = ({ item }) => {
             <td>
                 <VINftsTooltip
                     title={`${item.address == "" ? noData
-                        : "Visit beneficiary page"
+                        : `Visit ${type} page`
                         } `}
                 >
                     <Link
-                        to={`./BeneficiaryNFTs?beneficiary=${item.address}`}
+                        to={type == "beneficiary"? `./BeneficiaryNFTs?beneficiary=${item.address}`: `./CreatorNFTs?creator=${item.address}`}
                         className='dez-page'
                     >
                         <FontAwesomeIcon icon={faEye} size="2x" />

@@ -7,11 +7,32 @@ import Layout from '../Layout';
 import PromptLogin from './PromptLogin';
 import bnr1 from './../../images/banner/bnr1.jpg';
 import MarketPlaceSingleRow from '../Element/marketPlaceSingleRow';
-
+import { profileClient } from '../../api/profileInfo';
  const CreatorsMarketPlace = () => {
   const { isLoggedIn } = useAuth();
   const { creators } = useNFTState();
-  console.log(creators);
+  const [profileDetails, setProfileDetails] = React.useState([]);
+
+  const getProfile = React.useCallback(() => {
+    creators?.map(async(creator)=>{
+      let userProfiles = await profileClient.getProfile(creator.address, true);
+      if (userProfiles) {
+        if (userProfiles.err === 'Address Not Found') {
+          setProfileDetails(null);
+        } else {
+          let list = Object.values(userProfiles)[0];
+          //setMyArray(oldArray => [...oldArray, newElement]);
+          userProfiles &&
+            setProfileDetails(profileDetails => [...profileDetails, list.creator]);
+        }
+      }
+    })
+    console.log(profileDetails , "profileDetails ");
+  }, [creators]);
+  React.useEffect(()=>{
+    console.log(creators , "creators creators")
+   creators&& getProfile()
+  },[creators])
   return (
     <Layout>
     <div className='page-content bg-white'>
@@ -52,7 +73,7 @@ import MarketPlaceSingleRow from '../Element/marketPlaceSingleRow';
                 <Container>
                   <Row>
                     <Col>
-                      {creators  ? (
+                      {profileDetails && creators ? (
                         <table className='table'>
                           <thead>
                             <tr>
@@ -62,9 +83,10 @@ import MarketPlaceSingleRow from '../Element/marketPlaceSingleRow';
                             </tr>
                           </thead>
                           <tbody>
-                            {creators.length > 0 ? (
-                              creators?.map((creator) => (
+                            {profileDetails.length > 0 ? (
+                              profileDetails?.map((creator) => (
                                 <MarketPlaceSingleRow
+                                  type={"creators"}
                                   item={creator}
                                   key={creator.address}
                                 />

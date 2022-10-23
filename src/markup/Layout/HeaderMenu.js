@@ -109,7 +109,7 @@ const HeaderMenu = () => {
               </li>
             ))}
             <li>
-              <Link to={`./signup-as-beneficiary`} className='dez-page'>
+              <Link to={`./CreatorsMarketPlace`} className='dez-page'>
                 Explore Creators
               </Link>
             </li>
