@@ -1,15 +1,32 @@
 import { CasperClient, Contracts } from 'casper-js-sdk';
 import axios from 'axios';
 
+const {
+  STAGE,
+  NODE_RPC_MAINNET_ADDRESS,
+  NODE_RPC_TESTNET_ADDRESS,
+  NFT_CONTRACT_HASH_DEV,
+  NFT_CONTRACT_HASH_PROD,
+  NFT_PACKAGE_HASH_PROD,
+  NFT_PACKAGE_HASH_DEV,
+} = process.env;
+
 const proxyServer = '';
-const NODE_RPC_ADDRESS = process.env.NODE_RPC_ADDRESS;
+
+const NODE_RPC_ADDRESS =
+  process.env.STAGE === 'prod'
+    ? NODE_RPC_MAINNET_ADDRESS
+    : NODE_RPC_TESTNET_ADDRESS;
 
 const CONNECTION = {
   NODE_ADDRESS: proxyServer + NODE_RPC_ADDRESS,
-  CHAIN_NAME: 'casper-test',
+  CHAIN_NAME: STAGE === 'prod' ? 'casper' : 'casper-test',
 };
 
-const { NFT_CONTRACT_HASH, NFT_PACKAGE_HASH } = process.env;
+const CONTRACT_HASH =
+  STAGE === 'prod' ? NFT_CONTRACT_HASH_PROD : NFT_CONTRACT_HASH_DEV;
+const CONTRACT_PACKAGE_HASH =
+  STAGE === 'prod' ? NFT_PACKAGE_HASH_PROD : NFT_PACKAGE_HASH_DEV;
 
 function isValidHttpUrl(string: string) {
   let url;
@@ -53,8 +70,8 @@ class CEP47Client {
     this.contractClient = new Contract(this.casperClient);
     this.networkName = CHAIN_NAME;
     this.contractClient.setContractHash(
-      `hash-2d6842ba80bbc66bc88d1ccfa8c3a923bc5a786b5f2194ac74b47f4a4e3e5917`,
-      `hash-fc4aca70bfc4fc084ecb22ef1c3602323e1b5fdb1bc3f409da8415c59fbbced7`
+      `hash-${CONTRACT_HASH}`,
+      `hash-${CONTRACT_PACKAGE_HASH}`
     );
     this.isContractIHashSetup = true;
   }

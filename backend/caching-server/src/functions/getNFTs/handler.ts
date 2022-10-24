@@ -8,15 +8,16 @@ import { createClient } from 'redis';
 import { cep47 } from '@libs/cep47';
 import { HttpStatusCode } from '@libs/HttpStatusCode';
 
+const REDIS_KEY =
+  process.env.STAGE === 'prod' || process.env.STAGE === 'dev'
+    ? process.env.REDIS_SAVED_KEY
+    : `${process.env.REDIS_SAVED_KEY.split(process.env.STAGE)[0]}dev_`;
+
+console.log(REDIS_KEY);
+
 const client = createClient({
   url: `rediss://default:${process.env.UPSTASH_PASSWORD}@${process.env.UPSTASH_REGION}-solid-husky-38167.upstash.io:38167`,
 });
-
-// client.on('error', function (err: any) {
-//   console.log(err);
-
-//   throw err;
-// });
 
 client.on('connect', function () {
   console.log('Connected!');
@@ -29,10 +30,7 @@ const getNFTsList = async (countFrom: number, count: number) => {
     tokenId = tokenId + countFrom + 1;
 
     const nft_metadata = await cep47.getMappedTokenMeta(tokenId.toString());
-    await client.rPush(
-      'l_nfts_dev',
-      JSON.stringify({ ...nft_metadata, tokenId })
-    );
+    await client.rPush(REDIS_KEY, JSON.stringify({ ...nft_metadata, tokenId }));
     nftsList.push({ ...nft_metadata, tokenId });
   }
 
@@ -43,7 +41,7 @@ const getNFTs: APIGatewayProxyHandler = async (event) => {
   await client.connect();
   let result: any;
   try {
-    result = await client.lRange('l_nfts_dev', 0, -1);
+    result = await client.lRange(REDIS_KEY, 0, -1);
   } catch (err) {
     return MessageUtil.error(
       HttpStatusCode.INTERNAL_SERVER_ERROR,
