@@ -2,14 +2,15 @@ import { CasperClient, Contracts } from 'casper-js-sdk';
 import axios from 'axios';
 
 const proxyServer = '';
-const NODE_RPC_ADDRESS = process.env.NODE_RPC_ADDRESS;
+const NODE_RPC_ADDRESS =
+  process.env.STAGE === 'prod'
+    ? process.env.NODE_RPC_MAINNET_ADDRESS
+    : process.env.NODE_RPC_TESTNET_ADDRESS;
 
 const CONNECTION = {
   NODE_ADDRESS: proxyServer + NODE_RPC_ADDRESS,
   CHAIN_NAME: 'casper-test',
 };
-
-const { NFT_CONTRACT_HASH, NFT_PACKAGE_HASH } = process.env;
 
 function isValidHttpUrl(string: string) {
   let url;

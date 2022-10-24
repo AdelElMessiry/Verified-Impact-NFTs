@@ -1,11 +1,9 @@
 import type { AWS } from '@serverless/typescript';
 
-import getNFTs from '@functions/getNFTs';
-import addNFT from '@functions/addNFT';
-import updateNFT from '@functions/updateNFT';
+import tweetImage from '@functions/tweetImage';
 
 const serverlessConfiguration: AWS = {
-  service: 'caching-api',
+  service: 'twitter-bot-api',
   frameworkVersion: '2',
   custom: {
     webpack: {
@@ -25,21 +23,17 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      UPSTASH_PASSWORD: 'a5502b15d64d42e4b08c29d81e5b0a44',
-      UPSTASH_REGION: 'us1',
-      NODE_RPC_ADDRESS: 'https://node-clarity-testnet.make.services/rpc',
-      NFT_CONTRACT_HASH:
-        '2d6842ba80bbc66bc88d1ccfa8c3a923bc5a786b5f2194ac74b47f4a4e3e5917',
-      NFT_PACKAGE_HASH:
-        'fc4aca70bfc4fc084ecb22ef1c3602323e1b5fdb1bc3f409da8415c59fbbced7',
+      TWITTER_API_KEY: 'QKROMDiLhTxpxFEabmmKZzVqa',
+      TWITTER_API_SECRET: 'XajhDY2fPi1ALvLOFVFOJl7Fbp05118ORXjpsfBtb2cJq9mE5H',
+      TWITTER_ACCESS_TOKEN:
+        '1532370513527459842-tqnNwy0Zf9tzrPOIIkEbbb22kmI1zy',
+      TWITTER_ACCESS_SECRET: '2EcG3IP1eU936ED6jLlYPoV9WqvgNryLpwMvwyGioB4vx',
     },
     lambdaHashingVersion: '20201221',
   },
   // import the function via paths
   functions: {
-    addNFT,
-    getNFTs,
-    updateNFT,
+    tweetImage,
   },
 };
 
