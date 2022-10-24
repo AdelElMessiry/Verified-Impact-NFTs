@@ -103,9 +103,20 @@ export async function _getBeneficiariesCampaignsList(
   beneficiariesList: any,
   campaignsList: any
 ) {
-  // const beneficiariesList = await getBeneficiariesList();
-  // const campaignsList = await getCampaignsList();
   const mappedBeneficiariesList: any = [];
+
+  beneficiariesList = beneficiariesList.filter(
+    (beneficiary: any, index: any, beneficiaries: any) =>
+      index ===
+      beneficiaries.findIndex(
+        (idx: any) => idx.username === beneficiary.username
+      )
+  );
+
+  campaignsList = campaignsList.filter(
+    (campaign: any, index: any, campaigns: any) =>
+      index === campaigns.findIndex((idx: any) => idx.name === campaign.name)
+  );
 
   const pluckedCampaigns = campaignsList
     .map(({ beneficiary_address }: any) => beneficiary_address)
