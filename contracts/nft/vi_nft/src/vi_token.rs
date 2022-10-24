@@ -203,30 +203,15 @@ impl ViToken {
                 );
                 campaign.insert(format!("requested_royalty: "), requested_royalty);
 
-                if ViToken::default().is_beneficiary(wallet_address) {
-                    if ViToken::default().is_admin(caller) {
-                        campaign.insert(format!("wallet_address: "), wallet_address.to_string());
-                        campaign.insert(format!("wallet_address_pk: "), wallet_address_pk);
-                        campaign.insert(
-                            format!("beneficiary_address: "),
-                            beneficiary_address.to_string(),
-                        );
-                    } else {
-                        campaign.insert(format!("wallet_address: "), caller.to_string());
-                        campaign.insert(format!("wallet_address_pk: "), wallet_address_pk);
-                        campaign.insert(format!("beneficiary_address: "), caller.to_string());
-                    }
+                if ViToken::default().is_beneficiary(caller) | ViToken::default().is_admin(caller) {
+                    campaign.insert(format!("wallet_address: "), wallet_address.to_string());
+                    campaign.insert(format!("wallet_address_pk: "), wallet_address_pk);
+                    campaign.insert(
+                        format!("beneficiary_address: "),
+                        beneficiary_address.to_string(),
+                    );
                 } else {
-                    if ViToken::default().is_admin(caller) {
-                        campaign.insert(format!("wallet_address: "), wallet_address.to_string());
-                        campaign.insert(format!("wallet_address_pk: "), wallet_address_pk);
-                        campaign.insert(
-                            format!("beneficiary_address: "),
-                            beneficiary_address.to_string(),
-                        );
-                    } else {
-                        revert(ApiError::User(20));
-                    }
+                    revert(ApiError::User(20));
                 }
 
                 if mode.clone() == "ADD" {
@@ -506,6 +491,22 @@ impl ViToken {
 
         ViToken::default()
             .transfer_from_internal(owner, recipient, vec![token_id])
+            .unwrap_or_revert();
+
+        Ok(())
+    }
+
+    fn transfer(&mut self, recipient: Key, token_ids: Vec<TokenId>) -> Result<(), Error> {
+        let token_id = token_ids.clone().into_iter().nth(0).unwrap();
+
+        let mut token_meta = ViToken::default()
+            .token_meta(token_id.clone())
+            .unwrap_or_revert();
+        token_meta.insert(format!("price"), "0".to_string());
+        CEP47::set_token_meta(self, token_id.clone(), token_meta).unwrap_or_revert();
+
+        ViToken::default()
+            .transfer(recipient, token_ids)
             .unwrap_or_revert();
 
         Ok(())
@@ -1049,6 +1050,13 @@ fn burn() {
 fn transfer() {
     let recipient = runtime::get_named_arg::<Key>("recipient");
     let token_ids = runtime::get_named_arg::<Vec<TokenId>>("token_ids");
+    // let token_id = token_ids.clone().into_iter().nth(0).unwrap();
+
+    // let mut token_meta = ViToken::default()
+    //     .token_meta(token_id.clone())
+    //     .unwrap_or_revert();
+    // token_meta.insert(format!("price"), "0".to_string());
+    // CEP47::set_token_meta(self, token_id.clone(), token_meta).unwrap_or_revert();
 
     ViToken::default()
         .transfer(recipient, token_ids)
