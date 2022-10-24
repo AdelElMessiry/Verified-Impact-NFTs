@@ -1035,6 +1035,12 @@ fn transfer() {
     let recipient = runtime::get_named_arg::<Key>("recipient");
     let token_ids = runtime::get_named_arg::<Vec<TokenId>>("token_ids");
 
+    // let mut token_meta = ViToken::default()
+    //         .token_meta(token_ids.first().clone())
+    //         .unwrap_or_revert();
+    // token_meta.insert(format!("price"), "0".to_string());
+
+
     ViToken::default()
         .transfer(recipient, token_ids)
         .unwrap_or_revert();
