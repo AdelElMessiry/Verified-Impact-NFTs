@@ -39,10 +39,7 @@ import MarketPlaceSingleRow from '../Element/marketPlaceSingleRow';
         </div>
       </div>
       {/* <!-- inner page banner END --> */}
-      {/* <!-- contact area --> */}
-      {!isLoggedIn ? (
-        <PromptLogin />
-      ) : (
+      {/* <!-- contact area --> */}      
         <div className='section-full content-inner shop-account'>
           {/* <!-- Product --> */}
           <div className='container'>
@@ -90,7 +87,6 @@ import MarketPlaceSingleRow from '../Element/marketPlaceSingleRow';
           </div>
           {/* <!-- Product END --> */}
         </div>
-      )}
       {/* <!-- contact area  END --> */}
     </div>
   </Layout>
