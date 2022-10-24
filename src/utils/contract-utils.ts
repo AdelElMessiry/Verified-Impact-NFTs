@@ -220,15 +220,22 @@ export const transferFees = async (buyer: string, tokenId: string) => {
   const deployer = DEPLOYER_ACC;
 
   let { beneficiary, price, campaign } = tokenDetails;
-  beneficiary = await hashToURef(`account-hash-${beneficiary}`);
+  // beneficiary = await hashToURef(`account-hash-${beneficiary}`);
 
   const campaignDetails: any = await getCampaignDetails(campaign);
   const parsedCampaigns: any = parseCampaign(campaignDetails);
 
   const beneficiaryPercentage = parseInt(parsedCampaigns.requested_royalty);
-  beneficiary = await hashToURef(
-    `account-hash-${parsedCampaigns.wallet_address}`
-  );
+  const mappedWalletAdd = (parsedCampaigns.wallet_address =
+    parsedCampaigns.wallet_address.includes('Account') ||
+    parsedCampaigns.wallet_address.includes('Key')
+      ? parsedCampaigns.wallet_address.includes('Account')
+        ? parsedCampaigns.wallet_address.slice(13).replace(')', '')
+        : parsedCampaigns.wallet_address.slice(10).replace(')', '')
+      : parsedCampaigns.wallet_address);
+
+  beneficiary = await hashToURef(`account-hash-${mappedWalletAdd}`);
+  console.log(beneficiary);
   const creatorPercentage = 100 - beneficiaryPercentage;
 
   const portalFees = (price / 100) * 2;
