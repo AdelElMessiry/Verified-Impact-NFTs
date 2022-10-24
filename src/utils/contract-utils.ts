@@ -226,6 +226,9 @@ export const transferFees = async (buyer: string, tokenId: string) => {
   const parsedCampaigns: any = parseCampaign(campaignDetails);
 
   const beneficiaryPercentage = parseInt(parsedCampaigns.requested_royalty);
+  beneficiary = await hashToURef(
+    `account-hash-${parsedCampaigns.wallet_address}`
+  );
   const creatorPercentage = 100 - beneficiaryPercentage;
 
   const portalFees = (price / 100) * 2;
