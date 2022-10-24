@@ -786,14 +786,14 @@ const ProfileForm = ({
         <Col>
           <button
             className='btn btn-success'
-            disabled={
-              state.inputs.userName == '' || 
-              isSaveButtonClicked || 
-              !uploadedProfileImageURL || 
-              !uploadedNFTImageURL ||
-              (state.inputs.donationReceipt &&  state.inputs.ein == "")||
-              (formName === ProfileFormsEnum.BeneficiaryProfile&&SDGsGoals?.length<=0||SDGsGoals==undefined)
-            }
+             disabled={
+               state.inputs.userName == '' || 
+               isSaveButtonClicked || 
+               !uploadedProfileImageURL || 
+               !uploadedNFTImageURL ||
+               (state.inputs.donationReceipt &&  state.inputs.ein == "")||
+               ((formName === ProfileFormsEnum.BeneficiaryProfile&&SDGsGoals?.length<=0)||(formName === ProfileFormsEnum.BeneficiaryProfile&&SDGsGoals==undefined))
+             }
             onClick={(e) => {
               handleSave(e);
             }}
