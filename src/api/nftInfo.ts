@@ -126,10 +126,10 @@ export async function getNFTsList() {
 }
 
 export async function getCachedNFTsList(oldNFTsState?: any) {
-  const { REACT_APP_API_BASE_URL, REACT_APP_API_ENV } = process.env;
+  const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
   const apiName = 'nfts';
   const nfts: any = await axios(
-    `${REACT_APP_API_BASE_URL}/${REACT_APP_API_ENV}/${apiName}`
+    `${REACT_APP_NFT_API_BASE_URL}/${REACT_APP_NFT_API_ENV}/${apiName}`
   );
 
   const newNFTs =
@@ -153,11 +153,11 @@ export async function getCachedNFTsList(oldNFTsState?: any) {
 }
 
 export async function updateCachedNFT(nft: any, nfts: any) {
-  const { REACT_APP_API_BASE_URL, REACT_APP_API_ENV } = process.env;
+  const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
   const apiName = 'updatenft';
 
   await axios.patch(
-    `${REACT_APP_API_BASE_URL}/${REACT_APP_API_ENV}/${apiName}`,
+    `${REACT_APP_NFT_API_BASE_URL}/${REACT_APP_NFT_API_ENV}/${apiName}`,
     { nft }
   );
 
@@ -194,12 +194,12 @@ export async function getCachedCreatorNftList(nfts: any, address: string) {
 
   // const nftList = await getCachedNFTsList();
   const nftList = nfts;
-  if(nftList){
-     for (const [index, nft] of nftList?.entries()) {
-     const owner = await cep47.getOwnerOf(nft.tokenId.toString());
-     nftList[index].isOwner = owner === creator;
+  if (nftList) {
+    for (const [index, nft] of nftList?.entries()) {
+      const owner = await cep47.getOwnerOf(nft.tokenId.toString());
+      nftList[index].isOwner = owner === creator;
     }
-}
+  }
   const creatorList = nftList?.filter(
     (nft: any) =>
       creator.includes('hash')
