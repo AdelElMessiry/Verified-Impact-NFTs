@@ -71,6 +71,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false,handleT
           handleTransactionBuySuccess(changedNFT);
           VIToast.success('Transaction ended successfully');
           await refreshNFTs(nftDispatch,stateList);
+          setIsBuyClicked(false);
           handleClose();
           await sendDiscordMessage(
             process.env.REACT_APP_NFT_WEBHOOK_ID,
