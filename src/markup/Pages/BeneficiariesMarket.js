@@ -25,34 +25,18 @@ const imagesLoadedOptions = { background: '.my-bg-image-el' };
 const BeneficiariesMarket = () => {
   const { beneficiaries } = useNFTState();
   const [SDGsGoals, setSDGsGoals] = React.useState([]);
-  const [selectedFilteredBeneficiaries, setSelectedFilteredBeneficiaries] =
-    React.useState();
 
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
   const [isClearSDGs, setIsClearSDGs] = React.useState(false);
   const [displayedBenficiaries, setDisplayedBenficiaries] = React.useState([]);
 
-  React.useEffect(() => {
-      beneficiaries &&
-      setSelectedFilteredBeneficiaries(
-        beneficiaries?.filter((beneficiary) => beneficiary.isApproved == 'true')
-          .filter(
-            (ele, ind) =>
-              ind ===
-              beneficiaries.findIndex(
-                (elem) => elem.address === ele.address
-              )
-          )
-      );
-  }, [beneficiaries]);
-
   const filterSDGByTag = React.useCallback((tag, filteredBeneficiaries) => {
     const AllSDGsTagsName =
-      filteredBeneficiaries &&
-      filteredBeneficiaries
+    filteredBeneficiaries &&
+    filteredBeneficiaries
         .map((nft) => ({ value: nft.sdgs_ids?.split(',') }))
         .flatMap(({ value }) => value);
-    debugger;
+        debugger;
     let sdgsTagsName = AllSDGsTagsName.filter(function (item, pos) {
       return AllSDGsTagsName.indexOf(item) == pos;
     });
@@ -63,15 +47,11 @@ const BeneficiariesMarket = () => {
   }, []);
 
   const getFilteredBeneficiaries = React.useCallback(async () => {
-    beneficiaries &&
-      filterSDGByTag(
-        { name: 'All', id: '' },
-        selectedFilteredBeneficiaries
-      );
-    beneficiaries &&
-      setDisplayedBenficiaries(
-        selectedFilteredBeneficiaries
-      );
+    const filtBeneficiaries=beneficiaries && beneficiaries.filter(
+      (beneficiary) => beneficiary.isApproved == 'true'
+    ).filter( (ele, ind) => ind === beneficiaries.findIndex( elem => elem.address === ele.address))
+    beneficiaries && filterSDGByTag({ name: 'All', id: '' },filtBeneficiaries);
+    beneficiaries && setDisplayedBenficiaries(filtBeneficiaries);
   }, [beneficiaries, filterSDGByTag]);
 
   React.useEffect(() => {
@@ -84,30 +64,25 @@ const BeneficiariesMarket = () => {
       for (let index = 0; index < selectedData.length; index++) {
         const selectedNfts =
           beneficiaries &&
-          selectedFilteredBeneficiaries
-            .filter(({ sdgs_ids }) =>
-              sdgs_ids?.split(',').includes(selectedData[index].toString())
-            );
-        debugger;
+          beneficiaries.filter(
+            (beneficiary) => beneficiary.isApproved == 'true'
+          ).filter(({ sdgs_ids }) =>
+            sdgs_ids?.split(',').includes(selectedData[index].toString())
+          );
+          debugger;
         allFilteredBeneficiaries = [
           ...allFilteredBeneficiaries,
           ...selectedNfts,
         ];
       }
       allFilteredBeneficiaries.length > 0
-        ? setDisplayedBenficiaries(
-            allFilteredBeneficiaries.filter(
-              (ele, ind) =>
-                ind ===
-                allFilteredBeneficiaries.findIndex(
-                  (elem) => elem.address === ele.address
-                )
-            )
-          )
-        : setDisplayedBenficiaries(beneficiaries);
+        ? setDisplayedBenficiaries(allFilteredBeneficiaries.filter( (ele, ind) => ind === allFilteredBeneficiaries.findIndex( elem => elem.address === ele.address)))
+        : setDisplayedBenficiaries(beneficiaries.filter(
+          (beneficiary) => beneficiary.isApproved == 'true'
+        ).filter( (ele, ind) => ind === beneficiaries.findIndex( elem => elem.address === ele.address)));
     },
 
-    [setDisplayedBenficiaries, beneficiaries]
+    [setDisplayedBenficiaries,beneficiaries]
   );
 
   const handleSDGsChange = (data) => {
@@ -175,6 +150,9 @@ const BeneficiariesMarket = () => {
                           imagesLoadedOptions={imagesLoadedOptions} // default {}
                         >
                           {displayedBenficiaries
+                            .filter(
+                              (beneficiary) => beneficiary.isApproved == 'true'
+                            )
                             .map((item, index) => (
                               <React.Fragment key={`${index}${item.address}`}>
                                 <li className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0 ">
