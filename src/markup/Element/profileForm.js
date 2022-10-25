@@ -374,7 +374,6 @@ const ProfileForm = ({
   };
 
 const getSavedData=(bio)=>{
-  debugger;
   setProfileBio(bio)
 }
 
@@ -823,7 +822,7 @@ const getSavedData=(bio)=>{
               setShowBioModal(true);
             }}
           >
-              Add
+              Edit
           </button>
         </Col>        
       </Row></>}
@@ -835,6 +834,7 @@ const getSavedData=(bio)=>{
             }}
             type={formName}
             handleDataSaved={(bio)=>{getSavedData(bio)}}
+            existingBio={profileBio}
           />
         )}
     </div>
