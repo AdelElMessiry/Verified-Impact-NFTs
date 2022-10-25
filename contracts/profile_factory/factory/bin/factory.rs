@@ -113,7 +113,7 @@ fn create_profile() {
     let nft_url = runtime::get_named_arg::<String>("nftUrl");
     let first_name = runtime::get_named_arg::<String>("firstName");
     let last_name = runtime::get_named_arg::<String>("lastName");
-    let bio = runtime::get_named_arg::<String>("bio");
+    // let bio = runtime::get_named_arg::<String>("bio");
     let external_link = runtime::get_named_arg::<String>("externalLink");
     let phone = runtime::get_named_arg::<String>("phone");
     let twitter = runtime::get_named_arg::<String>("twitter");
@@ -136,7 +136,7 @@ fn create_profile() {
     profile.insert(format!("{}_nftUrl", profile_type), nft_url);
     profile.insert(format!("{}_firstName", profile_type), first_name);
     profile.insert(format!("{}_lastName", profile_type), last_name);
-    profile.insert(format!("{}_bio", profile_type), bio);
+    // profile.insert(format!("{}_bio", profile_type), bio);
     profile.insert(format!("{}_externalLink", profile_type), external_link);
     profile.insert(format!("{}_phone", profile_type), phone);
     profile.insert(format!("{}_twitter", profile_type), twitter);
@@ -146,30 +146,34 @@ fn create_profile() {
     profile.insert(format!("{}_telegram", profile_type), telegram);
     profile.insert(format!("{}_mail", profile_type), mail);
 
-    if profile_type == "beneficiary" {
-        is_approved = false;
+    if mode != "UPDATE" {
+        if profile_type == "beneficiary" {
+            is_approved = false;
+            profile.insert(
+                format!("{}_sdgs_ids", profile_type),
+                sdgs_ids
+                    .iter()
+                    .map(ToString::to_string)
+                    .collect::<Vec<String>>()
+                    .join(","),
+            );
+            profile.insert(
+                format!("{}_has_receipt", profile_type),
+                has_receipt.to_string(),
+            );
+            profile.insert(format!("{}_ein", profile_type), ein);
+            profile.insert(format!("{}_address_pk", profile_type), address_pk);
+        } else {
+            is_approved = true;
+        }
         profile.insert(
-            format!("{}_sdgs_ids", profile_type),
-            sdgs_ids
-                .iter()
-                .map(ToString::to_string)
-                .collect::<Vec<String>>()
-                .join(","),
+            format!("{}_isApproved", profile_type),
+            is_approved.to_string(),
         );
-        profile.insert(
-            format!("{}_has_receipt", profile_type),
-            has_receipt.to_string(),
-        );
-        profile.insert(format!("{}_ein", profile_type), ein);
-        profile.insert(format!("{}_address_pk", profile_type), address_pk);
-    } else {
-        is_approved = true;
     }
+    
 
-    profile.insert(
-        format!("{}_isApproved", profile_type),
-        is_approved.to_string(),
-    );
+    
 
     if mode.clone() == "ADD" {
         if Factory::default().is_existent_profile() {
@@ -180,6 +184,18 @@ fn create_profile() {
     } else {
         Factory::default().update_profile(address, profile);
     }
+}
+
+#[no_mangle]
+fn update_profile_bio() {
+    let address = runtime::get_named_arg::<Key>("address");
+    let bio = runtime::get_named_arg::<String>("bio");
+    let profile_type = runtime::get_named_arg::<String>("profile_type");
+
+    let mut profile = Factory::default().get_profile(address).unwrap_or_default();
+
+    profile.insert(format!("{}_bio", profile_type), bio);
+    Factory::default().update_profile(address, profile);
 }
 
 /// This function is to return the the profile against tokens provided by user. If profile not found it will return hash-0000000000000000000000000000000000000000000000000000000000000000
@@ -282,10 +298,20 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("telegram", String::cl_type()),
             Parameter::new("mail", String::cl_type()),
             Parameter::new("profileType", String::cl_type()),
-            Parameter::new("profileType", String::cl_type()),
             Parameter::new("sdgs_ids", CLType::List(Box::new(U256::cl_type()))),
             Parameter::new("has_receipt", bool::cl_type()),
             Parameter::new("ein", String::cl_type()),
+        ],
+        <()>::cl_type(),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "update_profile_bio",
+        vec![
+            Parameter::new("address", Key::cl_type()),
+            Parameter::new("bio", String::cl_type()),
+            Parameter::new("profileType", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
