@@ -15,18 +15,17 @@ const InitialInputs = () => ({
 });
 
 //buying NFT Modal
-const ProfileBioModal = ({ show, handleCloseParent, type,handleDataSaved = () => {} }) => {
+const ProfileBioModal = ({ show, handleCloseParent, type,handleDataSaved = () => {},existingBio }) => {
   const { entityInfo } = useAuth();
   const [showModal, setShowModal] = React.useState(show);
   const [state, setState] = React.useState(InitialInputs());
   const [isSaveClicked, setIsSaveClicked] = React.useState(false);
-  const [profileBio, setProfileBio] = React.useState();
+  const [profileBio, setProfileBio] = React.useState(existingBio?existingBio:'');
 
   //transfer nft Function
   const SaveBio = async () => {
     setIsSaveClicked(true);
     try {
-      debugger;
       const saveDeployHash = await profileClient.updateProfileBio(
         CLPublicKey.fromHex(entityInfo.publicKey),
         profileBio,
@@ -37,7 +36,6 @@ const ProfileBioModal = ({ show, handleCloseParent, type,handleDataSaved = () =>
         : 'creator',
         CLPublicKey.fromHex(entityInfo.publicKey)
       );
-      debugger;
       const deploySaveResult = await getDeployDetails(saveDeployHash);
       if (deploySaveResult) {
         handleDataSaved(profileBio)
@@ -47,7 +45,6 @@ const ProfileBioModal = ({ show, handleCloseParent, type,handleDataSaved = () =>
         VIToast.error('Error happened please try again later');
       }
     } catch (err) {
-      debugger
       console.log('Save Err ' + err);
       handleClose();
       VIToast.error('Error happened please try again later');
