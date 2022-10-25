@@ -59,7 +59,7 @@ const NFTCard = ({
           </li>
           <li className='mr-1'>
             {(isTransfer && isCreation && item.isOwner) ||
-            (isTransfer && !isCreation && item.isForSale === 'true') ? (
+            (isTransfer && !isCreation) ? (
               <i
                 className='ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x'
                 onClick={() => {
