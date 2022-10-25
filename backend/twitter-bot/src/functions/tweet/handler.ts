@@ -1,40 +1,29 @@
 import 'source-map-support/register';
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import Axios, { AxiosResponse } from 'axios';
-import { MediaUpload } from 'twitter-api-client';
 
 import { MessageUtil } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
 import { HttpStatusCode } from '@libs/HttpStatusCode';
 import { twitterClient } from '@utils/twitterApiClient';
 
-const tweetImage: APIGatewayProxyHandler = async (_event) => {
-  const { status, img }: any = _event.body;
+const tweet: APIGatewayProxyHandler = async (_event) => {
+  const { status }: any = _event.body;
   let tweet: string = '';
 
-  if (!status || !img) {
+  if (!status) {
     return MessageUtil.error(
       HttpStatusCode.INTERNAL_SERVER_ERROR,
-      'status or img are missed'
+      'status is missed'
     );
   }
 
   try {
     //get status
     tweet = status;
-    const image: AxiosResponse = await Axios.get(img, {
-      responseType: 'arraybuffer',
-    });
-
-    //Upload media to twitter
-    const media: MediaUpload = await twitterClient.media.mediaUpload({
-      media: Buffer.from(image.data, 'binary').toString('base64'),
-    });
 
     //Send a tweet with status and media
     await twitterClient.tweets.statusesUpdate({
       status: tweet,
-      media_ids: media.media_id_string,
     });
 
     return MessageUtil.success({
@@ -50,4 +39,4 @@ const tweetImage: APIGatewayProxyHandler = async (_event) => {
   }
 };
 
-export const main = middyfy(tweetImage);
+export const main = middyfy(tweet);

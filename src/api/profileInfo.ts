@@ -143,7 +143,7 @@ class ProfileClient {
     nftUrl: string,
     firstName: string,
     lastName: string,
-    bio: string,
+    // bio: string,
     externalLink: string,
     phone: string,
     twitter: string,
@@ -171,7 +171,7 @@ class ProfileClient {
       nftUrl: CLValueBuilder.string(nftUrl),
       firstName: CLValueBuilder.string(firstName),
       lastName: CLValueBuilder.string(lastName),
-      bio: CLValueBuilder.string(bio),
+      // bio: CLValueBuilder.string(bio),
       externalLink: CLValueBuilder.string(externalLink),
       phone: CLValueBuilder.string(phone),
       twitter: CLValueBuilder.string(twitter),
@@ -191,6 +191,38 @@ class ProfileClient {
     const profileDeploy = this.contractClient.callEntrypoint(
       // 'add_profile',
       'create_profile',
+      runtimeArgs,
+      deploySender,
+      this.networkName,
+      PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT
+    );
+
+    const signedProfileDeploy = await signDeploy(profileDeploy, deploySender);
+    console.log('Signed Profile deploy:', signedProfileDeploy);
+
+    const profileDeployHash = await signedProfileDeploy.send(
+      CONNECTION.NODE_ADDRESS
+    );
+    console.log('Deploy hash', profileDeployHash);
+    return profileDeployHash;
+  }
+
+  public async updateProfileBio(
+    address: CLPublicKey,
+    bio: string,
+    profileType: string,
+    deploySender: CLPublicKey
+  ) {
+    const runtimeArgs = RuntimeArgs.fromMap({
+      address: CLValueBuilder.key(
+        CLValueBuilder.byteArray(address.toAccountHash())
+      ),
+      bio: CLValueBuilder.string(bio),
+      profileType: CLValueBuilder.string(profileType),
+    });
+
+    const profileDeploy = this.contractClient.callEntrypoint(
+      'update_profile_bio',
       runtimeArgs,
       deploySender,
       this.networkName,

@@ -1,6 +1,7 @@
 import type { AWS } from '@serverless/typescript';
 
 import tweetImage from '@functions/tweetImage';
+import tweet from '@functions/tweet';
 
 const serverlessConfiguration: AWS = {
   service: 'twitter-bot-api',
@@ -23,17 +24,18 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      TWITTER_API_KEY: 'QKROMDiLhTxpxFEabmmKZzVqa',
-      TWITTER_API_SECRET: 'XajhDY2fPi1ALvLOFVFOJl7Fbp05118ORXjpsfBtb2cJq9mE5H',
+      TWITTER_API_KEY: 'M0BzKefRS2dvmUwWmy5coH5qM',
+      TWITTER_API_SECRET: '34Nsv7mhPDuGlaJ0TF6He9y0WRNi2bqI0Dmeh4KO8J0up4FdUl',
       TWITTER_ACCESS_TOKEN:
-        '1532370513527459842-tqnNwy0Zf9tzrPOIIkEbbb22kmI1zy',
-      TWITTER_ACCESS_SECRET: '2EcG3IP1eU936ED6jLlYPoV9WqvgNryLpwMvwyGioB4vx',
+        '1532370513527459842-ylXX94U8u6ejIeLAZZHtt0MxcfUPZy',
+      TWITTER_ACCESS_SECRET: 'O5gxUUYghPWnS7gczXkqUPrVYvVHaua95me6NFXduiLR1',
     },
     lambdaHashingVersion: '20201221',
   },
   // import the function via paths
   functions: {
     tweetImage,
+    tweet,
   },
 };
 
