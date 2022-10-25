@@ -171,9 +171,6 @@ fn create_profile() {
             is_approved.to_string(),
         );
     }
-    
-
-    
 
     if mode.clone() == "ADD" {
         if Factory::default().is_existent_profile() {
@@ -190,7 +187,7 @@ fn create_profile() {
 fn update_profile_bio() {
     let address = runtime::get_named_arg::<Key>("address");
     let bio = runtime::get_named_arg::<String>("bio");
-    let profile_type = runtime::get_named_arg::<String>("profile_type");
+    let profile_type = runtime::get_named_arg::<String>("profileType");
 
     let mut profile = Factory::default().get_profile(address).unwrap_or_default();
 

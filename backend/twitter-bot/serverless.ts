@@ -24,11 +24,11 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      TWITTER_API_KEY: 'M0BzKefRS2dvmUwWmy5coH5qM',
-      TWITTER_API_SECRET: '34Nsv7mhPDuGlaJ0TF6He9y0WRNi2bqI0Dmeh4KO8J0up4FdUl',
+      TWITTER_API_KEY: '57FWoqGipnwc6T0Rrd2iblpCT',
+      TWITTER_API_SECRET: 'aB2LvyANGJUI8nAqiy1cvVOvmt4k7meJxFe5ItRDOy7xLxyjpo',
       TWITTER_ACCESS_TOKEN:
-        '1532370513527459842-ylXX94U8u6ejIeLAZZHtt0MxcfUPZy',
-      TWITTER_ACCESS_SECRET: 'O5gxUUYghPWnS7gczXkqUPrVYvVHaua95me6NFXduiLR1',
+        '271113077-raK4AOs4nDCHJxuQ6Eo6H0oZdKa8yApydGfDdSpA',
+      TWITTER_ACCESS_SECRET: 'KrVzI33GhwzHwFgHwq1iadZzQxoKe44YzwTXPkopJCNYy',
     },
     lambdaHashingVersion: '20201221',
   },
