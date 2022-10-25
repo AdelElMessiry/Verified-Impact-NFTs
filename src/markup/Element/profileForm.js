@@ -773,7 +773,7 @@ const getSavedData=(bio)=>{
         </Col>
       </Row>
 
-      <Row className='form-group'>
+      <Row className='form-group mt-3'>
         <Col>
           <button
             className='btn btn-success'
