@@ -14,6 +14,7 @@ import { SocialLinks } from 'social-links';
 import SDGsMultiSelect from './SDGsMultiSelect';
 import { SDGsData } from '../../data/SDGsGoals';
 import { useNFTState } from '../../contexts/NFTContext';
+import ProfileBioModal from './ProfileBioModal';
 const ProfileForm = ({
   formName,
   isProfileExist,
@@ -30,7 +31,7 @@ const ProfileForm = ({
       shortTagLine: '',
       firstName: '',
       lastName: '',
-      fullBio: '',
+      //fullBio: '',
       externalSiteLink: '',
       phone: '',
       twitter: '',
@@ -70,7 +71,9 @@ const ProfileForm = ({
   });
   const [SDGsGoals, setSDGsGoals] = React.useState([SDGsData[18].value]);
   const [mandatorySDGs, setMandatorySDGs] = React.useState([SDGsData[18].value]);
-
+  const [showBioModal, setShowBioModal] = React.useState(false);
+  const [profileBio, setProfileBio] = React.useState();
+  
   React.useEffect(() => {
     setState({
       inputs: {
@@ -78,7 +81,7 @@ const ProfileForm = ({
         shortTagLine: formData ? formData.tagline : '',
         firstName: formData ? formData.firstName : '',
         lastName: formData ? formData.lastName : '',
-        fullBio: formData ? formData.bio : '',
+       // fullBio: formData ? formData.bio : '',
         externalSiteLink: formData ? formData.externalLink : '',
         phone: formData ? formData.phone : '',
         twitter: formData ? formData.twitter : '',
@@ -94,6 +97,7 @@ const ProfileForm = ({
         donationReceipt: formData ? formData.has_receipt==="true"?true:false : false
       },
     });
+    setProfileBio(formData ? formData.bio : '')
     setUploadedProfileImage(formData ? formData?.imgUrl : null);
     setUploadedNFTImage(formData ? formData?.nftUrl : null);
     setSDGsGoals(formData ? formData?.sdgs_ids?.split(",") : SDGsGoals);
@@ -251,7 +255,7 @@ const ProfileForm = ({
           NFTImgURL,
           state.inputs.firstName,
           state.inputs.lastName,
-          state.inputs.fullBio,
+          //state.inputs.fullBio,
           state.inputs.externalSiteLink,
           state.inputs.phone,
           state.inputs.twitter,
@@ -369,8 +373,18 @@ const ProfileForm = ({
       });
   };
 
+const getSavedData=(bio)=>{
+  debugger;
+  setProfileBio(bio)
+}
+
   return (
     <div className='shop-account '>
+        <Row>
+        <Col>
+        <h4 className='text-dark'>Main Info</h4>
+        </Col>
+      </Row>
       <Row>
         <Col>
           <Row className='form-group'>
@@ -759,28 +773,6 @@ const ProfileForm = ({
           </Row>
         </Col>
       </Row>
-      <Row className='form-group'>
-        <Col lg={6} md={6}>
-          <span>Short Bio</span>
-          {/* <textarea
-            name='fullBio'
-            className='form-control'
-            value={state.inputs.fullBio}
-            onChange={(e) => handleChange(e)}
-          /> */}
-          <input
-            type="text"
-            name="fullBio"
-            className="form-control"
-            value={state.inputs.fullBio}
-            onChange={(e) => {
-              handleChange(e);
-            }}
-            maxLength={100}
-          />
-          <span>{state.inputs.fullBio.length} / 100 characters</span>
-        </Col>
-      </Row>
 
       <Row className='form-group'>
         <Col>
@@ -806,6 +798,45 @@ const ProfileForm = ({
           </button>
         </Col>        
       </Row>
+      <hr/>
+      <Row>
+        <Col>
+        <h4  className='text-dark'>Full Bio</h4>{!formData&&<span>Please add Profile First</span>}
+        </Col>
+      </Row>
+     {formData&& <>
+      <Row className='form-group'>
+        
+        <Col lg={6} md={6}>
+          <div>
+            {profileBio}
+          </div>
+      
+          {/* <span>{state.inputs.fullBio.length} / 100 characters</span> */}
+        </Col>
+      </Row>
+      <Row className='form-group'>
+        <Col>
+          <button
+            className='btn btn-success'
+            onClick={() => {
+              setShowBioModal(true);
+            }}
+          >
+              Add
+          </button>
+        </Col>        
+      </Row></>}
+      {showBioModal && (
+          <ProfileBioModal
+            show={showBioModal}
+            handleCloseParent={() => {
+              setShowBioModal(false);
+            }}
+            type={formName}
+            handleDataSaved={(bio)=>{getSavedData(bio)}}
+          />
+        )}
     </div>
   );
 };
