@@ -603,13 +603,13 @@ class CEP47Client {
 
   public async transfer(
     recipient: CLKeyParameters,
-    ids: string[],
+    id: string,
     deploySender: CLPublicKey,
     keys?: Keys.AsymmetricKey[]
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       recipient: CLValueBuilder.key(recipient),
-      token_ids: CLValueBuilder.list(ids.map((id) => CLValueBuilder.u256(id))),
+      token_id: CLValueBuilder.u256(id),
     });
 
     return this.contractClient.callEntrypoint(

@@ -496,18 +496,14 @@ impl ViToken {
         Ok(())
     }
 
-    fn transfer(&mut self, recipient: Key, token_ids: Vec<TokenId>) -> Result<(), Error> {
-        let token_id = token_ids.clone().into_iter().nth(0).unwrap();
-
+    fn transfer(&mut self, recipient: Key, token_id: TokenId) -> Result<(), Error> {
         let mut token_meta = ViToken::default()
             .token_meta(token_id.clone())
             .unwrap_or_revert();
         token_meta.insert(format!("price"), "0".to_string());
-        CEP47::set_token_meta(self, token_id.clone(), token_meta).unwrap_or_revert();
+        CEP47::set_token_meta(self, token_id, token_meta).unwrap_or_revert();
 
-        ViToken::default()
-            .transfer(recipient, token_ids)
-            .unwrap_or_revert();
+        CEP47::transfer(self, recipient, vec![token_id]).unwrap_or_revert();
 
         Ok(())
     }
@@ -1049,17 +1045,10 @@ fn burn() {
 #[no_mangle]
 fn transfer() {
     let recipient = runtime::get_named_arg::<Key>("recipient");
-    let token_ids = runtime::get_named_arg::<Vec<TokenId>>("token_ids");
-    // let token_id = token_ids.clone().into_iter().nth(0).unwrap();
-
-    // let mut token_meta = ViToken::default()
-    //     .token_meta(token_id.clone())
-    //     .unwrap_or_revert();
-    // token_meta.insert(format!("price"), "0".to_string());
-    // CEP47::set_token_meta(self, token_id.clone(), token_meta).unwrap_or_revert();
+    let token_id = runtime::get_named_arg::<TokenId>("token_id");
 
     ViToken::default()
-        .transfer(recipient, token_ids)
+        .transfer(recipient, token_id)
         .unwrap_or_revert();
 }
 
@@ -1659,7 +1648,7 @@ fn get_entry_points() -> EntryPoints {
         "transfer",
         vec![
             Parameter::new("recipient", Key::cl_type()),
-            Parameter::new("token_ids", CLType::List(Box::new(TokenId::cl_type()))),
+            Parameter::new("token_id", TokenId::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
