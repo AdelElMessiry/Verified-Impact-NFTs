@@ -6,7 +6,7 @@ export default {
     {
       http: {
         method: 'patch',
-        path: 'updateBeneficiary',
+        path: 'updateCollection',
         cors: true,
       },
     },

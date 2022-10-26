@@ -6,7 +6,7 @@ export default {
     {
       http: {
         method: 'patch',
-        path: 'updatenft',
+        path: 'updateCreator',
         cors: true,
       },
     },

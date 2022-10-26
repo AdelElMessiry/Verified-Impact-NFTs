@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import { cep47 } from '../lib/cep47';
 
 export async function getCollectionDetails(collectionId: string) {
@@ -73,4 +75,33 @@ export async function getCollectionsList() {
   }
 
   return collectionsList;
+}
+
+export async function getCachedCollectionsList() {
+  const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
+  const apiName = 'collections';
+  const collections: any = await axios(
+    `${REACT_APP_NFT_API_BASE_URL}/${REACT_APP_NFT_API_ENV}/${apiName}`
+  );
+
+  return collections?.data.list;
+}
+
+export async function updateCachedCollection(
+  collection: any,
+  collections: any
+) {
+  const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
+  const apiName = 'updateCollection';
+
+  await axios.patch(
+    `${REACT_APP_NFT_API_BASE_URL}/${REACT_APP_NFT_API_ENV}/${apiName}`,
+    { collection }
+  );
+
+  collections[
+    collections.findIndex(({ creator }: any) => creator === collection.creator)
+  ] = collection;
+
+  return collections;
 }

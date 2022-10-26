@@ -1,8 +1,20 @@
 import type { AWS } from '@serverless/typescript';
 
 import getNFTs from '@functions/getNFTs';
-import addNFT from '@functions/addNFT';
+import getBeneficiaries from '@functions/getBeneficiaries';
+import getCampaigns from '@functions/getCampaigns';
+import getCollections from '@functions/getCollections';
+import getCreators from '@functions/getCreators';
+import getProfiles from '@functions/getProfiles';
+
 import updateNFT from '@functions/updateNFT';
+import updateBeneficiary from '@functions/updateBeneficiary';
+import updateCampaign from '@functions/updateCampaign';
+import updateCollection from '@functions/updateCollection';
+import updateCreator from '@functions/updateCreator';
+import updateProfile from '@functions/updateProfile';
+
+import addNFT from '@functions/addNFT';
 
 const serverlessConfiguration: AWS = {
   service: 'caching-api',
@@ -30,11 +42,20 @@ const serverlessConfiguration: AWS = {
         'https://node-clarity-testnet.make.services/rpc',
       NODE_RPC_MAINNET_ADDRESS:
         'https://gstiugzrmk.execute-api.us-east-1.amazonaws.com/dev/?url=https://node-clarity-mainnet.make.services/rpc',
-      NFT_CONTRACT_HASH:
-        '2d6842ba80bbc66bc88d1ccfa8c3a923bc5a786b5f2194ac74b47f4a4e3e5917',
-      NFT_PACKAGE_HASH:
+      NFT_CONTRACT_HASH_DEV:
+        'f07b1a56289f86b45c8ce49d0b43ebb4cbef660a32c2ca79f0b2f3c3ed78fe2a',
+      NFT_PACKAGE_HASH_DEV:
         'fc4aca70bfc4fc084ecb22ef1c3602323e1b5fdb1bc3f409da8415c59fbbced7',
-      REDIS_SAVED_KEY: 'l_nfts_${opt:stage}',
+      NFT_CONTRACT_HASH_PROD:
+        '2a1b76bd94b0fc0e68cceb504952294e3706a76ec191cd02960af825a0786a1e',
+      NFT_PACKAGE_HASH_PROD:
+        '656bd7e7c2c00aebbea182d63a15f49577e2a1d34d176ef83086cbe678b43963',
+      REDIS_NFT_SAVED_KEY: 'l_nfts_${opt:stage}',
+      REDIS_BENEFICIARY_SAVED_KEY: 'l_beneficiaries_${opt:stage}',
+      REDIS_COLLECTION_SAVED_KEY: 'l_collections_${opt:stage}',
+      REDIS_CAMPAIGN_SAVED_KEY: 'l_campaigns_${opt:stage}',
+      REDIS_CREATOR_SAVED_KEY: 'l_creators_${opt:stage}',
+      REDIS_PROFILE_SAVED_KEY: 'l_profiles_${opt:stage}',
       STAGE: '${opt:stage}',
     },
     lambdaHashingVersion: '20201221',
@@ -43,6 +64,16 @@ const serverlessConfiguration: AWS = {
   functions: {
     addNFT,
     getNFTs,
+    getBeneficiaries,
+    getCampaigns,
+    getCollections,
+    getCreators,
+    getProfiles,
+    updateBeneficiary,
+    updateCampaign,
+    updateCollection,
+    updateCreator,
+    updateProfile,
     updateNFT,
   },
 };
