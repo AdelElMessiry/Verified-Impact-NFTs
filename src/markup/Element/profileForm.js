@@ -44,7 +44,9 @@ const ProfileForm = ({
       isNFTImageURL: '',
       address: '',
       donationReceipt: false,
-      ein: ""
+      ein: "",
+      acceptPolicies: false,
+      authorizeArtist: false
     },
   });
 
@@ -588,6 +590,46 @@ const getSavedData=(bio)=>{
                   />
                 </Col>
               </Row>
+              {isSignUpBeneficiary && (
+                <>
+                  <Row className='form-group pt-1'>
+                    <Col>
+                      <Form.Check
+                        type={'checkbox'}
+                        id={`acceptPolicies`}
+                        label={
+                          <span>
+                            By signing up I accept the
+                            {" "}
+                            <a href={`${window.location.origin}/#/privacy`} target="_blank" rel="noopener noreferrer">
+                              Terms of Service  and Privacy
+                            </a>
+                          </span>
+                        }
+                        onChange={(e) => handleChange(e)}
+                        value={state.inputs.acceptPolicies}
+                        name='acceptPolicies'
+                        className='float-left'
+                        checked={state.inputs.acceptPolicies}
+                      />
+                    </Col>
+                  </Row>
+                  <Row className='form-group'>
+                    <Col>
+                      <Form.Check
+                        type={'checkbox'}
+                        id={`authorizeArtist`}
+                        label={`I authorize artists and creators to list NFTs for the benefit of my campaigns`}
+                        onChange={(e) => handleChange(e)}
+                        value={state.inputs.authorizeArtist}
+                        name='authorizeArtist'
+                        className='float-left'
+                        checked={state.inputs.authorizeArtist}
+                      />
+                    </Col>
+                  </Row>
+                </>
+              )}
               {state.inputs.donationReceipt && (
                 <Row className='form-group'>
                 <Col>
@@ -777,14 +819,16 @@ const getSavedData=(bio)=>{
         <Col>
           <button
             className='btn btn-success'
-             disabled={
-               state.inputs.userName == '' || 
-               isSaveButtonClicked || 
-               !uploadedProfileImageURL || 
-               !uploadedNFTImageURL ||
-               (state.inputs.donationReceipt &&  state.inputs.ein == "")||
-               ((formName === ProfileFormsEnum.BeneficiaryProfile&&SDGsGoals?.length<=0)||(formName === ProfileFormsEnum.BeneficiaryProfile&&SDGsGoals==undefined))
-             }
+            disabled={
+              state.inputs.userName == '' ||
+              isSaveButtonClicked ||
+              !uploadedProfileImageURL ||
+              !uploadedNFTImageURL ||
+              (state.inputs.donationReceipt && state.inputs.ein == "") ||
+              ((formName === ProfileFormsEnum.BeneficiaryProfile && SDGsGoals?.length <= 0) || (formName === ProfileFormsEnum.BeneficiaryProfile && SDGsGoals == undefined))||
+              !state.inputs.authorizeArtist ||
+              !state.inputs.acceptPolicies
+            }
             onClick={(e) => {
               handleSave(e);
             }}
@@ -795,7 +839,7 @@ const getSavedData=(bio)=>{
               'Save'
             )}
           </button>
-        </Col>        
+        </Col>
       </Row>
       <hr/>
       <Row>
