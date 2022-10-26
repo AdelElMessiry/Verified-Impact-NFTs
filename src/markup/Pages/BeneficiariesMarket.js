@@ -36,7 +36,6 @@ const BeneficiariesMarket = () => {
     filteredBeneficiaries
         .map((nft) => ({ value: nft.sdgs_ids?.split(',') }))
         .flatMap(({ value }) => value);
-        debugger;
     let sdgsTagsName = AllSDGsTagsName.filter(function (item, pos) {
       return AllSDGsTagsName.indexOf(item) == pos;
     });
@@ -69,7 +68,6 @@ const BeneficiariesMarket = () => {
           ).filter(({ sdgs_ids }) =>
             sdgs_ids?.split(',').includes(selectedData[index].toString())
           );
-          debugger;
         allFilteredBeneficiaries = [
           ...allFilteredBeneficiaries,
           ...selectedNfts,
@@ -86,7 +84,6 @@ const BeneficiariesMarket = () => {
   );
 
   const handleSDGsChange = (data) => {
-    debugger;
     setSDGsGoals(data);
     getSDGsBasedOnTag(data);
   };
@@ -135,6 +132,30 @@ const BeneficiariesMarket = () => {
                 </div>
               )}
               {beneficiaries ? (
+                //   <table className='table'>
+                //   <thead>
+                //     <tr>
+                //       <th scope='col'></th>
+                //       <th scope='col'>Name</th>
+                //       <th scope='col'>Address</th>
+                //     </tr>
+                //   </thead>
+                //   <tbody>
+                //     {beneficiaries.length > 0 ? (
+                //       beneficiaries?.map((beneficiary) => (
+                //         beneficiary.isApproved == "true" &&
+                //         <MarketPlaceSingleRow
+                //           item={beneficiary}
+                //           key={beneficiary.address}
+                //         />
+                //       ))
+                //     ) : (
+                //       <h4 className='text-muted text-center my-5'>
+                //         No Beneficiaries registered yet
+                //       </h4>
+                //     )}
+                //   </tbody>
+                // </table>
                 <SimpleReactLightbox>
                   <SRLWrapper options={options}>
                     <div className="clearfix">
