@@ -6,7 +6,7 @@ export default {
     {
       http: {
         method: 'GET',
-        path: 'beneficiaries',
+        path: 'profiles',
         cors: true,
       },
     },

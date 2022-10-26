@@ -27,38 +27,41 @@ const parseBeneficiary = (maybeValue: any) => {
 };
 
 const getBeneficiariesList = async (beneficiariesAddList) => {
-  // const list: any = await cep47.getBeneficiariesList();
-
   const _beneficiariesList: any = [];
   for (const address of beneficiariesAddList) {
-    await cep47
-      .getBeneficiary(address.toString(), true)
-      .then(async (rawBeneficiary: any) => {
-        const parsedBeneficiary = parseBeneficiary(rawBeneficiary);
-        parsedBeneficiary.address =
-          parsedBeneficiary.address.includes('Account') ||
-          parsedBeneficiary.address.includes('Key')
-            ? parsedBeneficiary.address.includes('Account')
-              ? parsedBeneficiary.address.slice(13).replace(')', '')
-              : parsedBeneficiary.address.slice(10).replace(')', '')
-            : parsedBeneficiary.address;
+    try {
+      const rawBeneficiary = await cep47.getBeneficiary(
+        address.toString(),
+        true
+      );
+      const parsedBeneficiary = parseBeneficiary(rawBeneficiary);
+      parsedBeneficiary.address =
+        parsedBeneficiary.address.includes('Account') ||
+        parsedBeneficiary.address.includes('Key')
+          ? parsedBeneficiary.address.includes('Account')
+            ? parsedBeneficiary.address.slice(13).replace(')', '')
+            : parsedBeneficiary.address.slice(10).replace(')', '')
+          : parsedBeneficiary.address;
 
-        await client.rPush(
-          REDIS_BENEFICIARY_KEY,
-          JSON.stringify(parsedBeneficiary)
-        );
-        _beneficiariesList.push(parsedBeneficiary);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      console.log(parsedBeneficiary.address);
+
+      await client.rPush(
+        REDIS_BENEFICIARY_KEY,
+        JSON.stringify(parsedBeneficiary)
+      );
+      _beneficiariesList.push(parsedBeneficiary);
+    } catch (err) {
+      return { err };
+    }
   }
+  console.log(_beneficiariesList.length);
 
   return _beneficiariesList;
 };
 
 const getBeneficiaries: APIGatewayProxyHandler = async () => {
   await client.connect();
+  // await client.del(REDIS_BENEFICIARY_KEY);
   let cachedBeneficiary: any;
   try {
     cachedBeneficiary = await client.lRange(REDIS_BENEFICIARY_KEY, 0, -1);
@@ -69,33 +72,37 @@ const getBeneficiaries: APIGatewayProxyHandler = async () => {
     );
   }
 
-  const beneficiariesCount: any = await cep47.totalBeneficiaries();
+  let beneficiariesCount: any = await cep47.totalBeneficiaries();
+  beneficiariesCount = parseInt(beneficiariesCount);
 
   const countFrom =
     cachedBeneficiary &&
-    parseInt(beneficiariesCount) - cachedBeneficiary?.length > 0 &&
-    parseInt(beneficiariesCount) - cachedBeneficiary?.length;
+    beneficiariesCount - cachedBeneficiary?.length > 0 &&
+    beneficiariesCount - cachedBeneficiary?.length;
 
   let beneficiariesAddList = await cep47.getBeneficiariesAddList();
-  beneficiariesAddList = beneficiariesAddList[countFrom];
+
+  beneficiariesAddList = beneficiariesAddList.slice(
+    cachedBeneficiary?.length,
+    beneficiariesCount
+  );
 
   const mappedResult = cachedBeneficiary.map((item) => JSON.parse(item));
+
   if (!countFrom && cachedBeneficiary?.length > 0) {
     client.quit();
     return MessageUtil.success({
       list: mappedResult,
     });
   } else {
-    const list: any = await getBeneficiariesList(beneficiariesAddList).catch(
-      (err) => {
-        client.quit();
-        return MessageUtil.error(
-          HttpStatusCode.INTERNAL_SERVER_ERROR,
-          err.message ? err.message : 'upstash Error'
-        );
-      }
-    );
-
+    const list: any = await getBeneficiariesList(beneficiariesAddList);
+    if (list.err) {
+      client.quit();
+      return MessageUtil.error(
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        list.err.message ? list.err.message : 'upstash Error'
+      );
+    }
     client.quit();
     return MessageUtil.success({
       list: [...mappedResult, ...list],

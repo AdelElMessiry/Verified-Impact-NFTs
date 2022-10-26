@@ -27,26 +27,25 @@ const parseCreator = (maybeValue: any) => {
 const getCreatorsList = async (countFrom: number, count: number) => {
   const creatorsList: any = [];
   for (let id of Array.from(Array(count - countFrom).keys())) {
-    id = id + countFrom + 1;
+    try {
+      id = id + countFrom + 1;
 
-    await cep47
-      .getCreator((id + 1).toString())
-      .then(async (rawCreator: any) => {
-        const parsedCreator = parseCreator(rawCreator);
-        parsedCreator.address =
-          parsedCreator.address.includes('Account') ||
-          parsedCreator.address.includes('Key')
-            ? parsedCreator.address.includes('Account')
-              ? parsedCreator.address.slice(13).replace(')', '')
-              : parsedCreator.address.slice(10).replace(')', '')
-            : parsedCreator.address;
+      const rawCreator = await cep47.getCreator(id.toString());
 
-        await client.rPush(REDIS_CREATOR_KEY, JSON.stringify(parsedCreator));
-        creatorsList.push(parsedCreator);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      const parsedCreator = parseCreator(rawCreator);
+      parsedCreator.address =
+        parsedCreator.address.includes('Account') ||
+        parsedCreator.address.includes('Key')
+          ? parsedCreator.address.includes('Account')
+            ? parsedCreator.address.slice(13).replace(')', '')
+            : parsedCreator.address.slice(10).replace(')', '')
+          : parsedCreator.address;
+
+      await client.rPush(REDIS_CREATOR_KEY, JSON.stringify(parsedCreator));
+      creatorsList.push(parsedCreator);
+    } catch (err) {
+      return { err };
+    }
   }
 
   return creatorsList;
@@ -70,6 +69,10 @@ const getCreators: APIGatewayProxyHandler = async () => {
     parseInt(creatorsCount) - result?.length > 0 &&
     parseInt(creatorsCount) - result?.length;
 
+  console.log(result.length);
+  console.log(parseInt(creatorsCount));
+  console.log(countFrom);
+
   const mappedResult = result.map((item) => JSON.parse(item));
   if (!countFrom && result?.length > 0) {
     client.quit();
@@ -80,13 +83,14 @@ const getCreators: APIGatewayProxyHandler = async () => {
     const list: any = await getCreatorsList(
       result.length,
       parseInt(creatorsCount)
-    ).catch((err) => {
+    );
+    if (list.err) {
       client.quit();
       return MessageUtil.error(
         HttpStatusCode.INTERNAL_SERVER_ERROR,
-        err.message ? err.message : 'upstash Error'
+        list.err.message ? list.err.message : 'upstash Error'
       );
-    });
+    }
 
     client.quit();
     return MessageUtil.success({

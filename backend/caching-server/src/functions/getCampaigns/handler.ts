@@ -29,33 +29,33 @@ const getCampaignsList = async (countFrom: number, count: number) => {
 
   const campaignsList: any = [];
   for (let id of Array.from(Array(count - countFrom).keys())) {
-    id = id + countFrom + 1;
-    await cep47
-      .getCampaign((id + 1).toString())
-      .then(async (rawCampaign: any) => {
-        const parsedCampaigns = parseCampaign(rawCampaign);
-        parsedCampaigns.wallet_address =
-          parsedCampaigns.wallet_address.includes('Account') ||
-          parsedCampaigns.wallet_address.includes('Key')
-            ? parsedCampaigns.wallet_address.includes('Account')
-              ? parsedCampaigns.wallet_address.slice(13).replace(')', '')
-              : parsedCampaigns.wallet_address.slice(10).replace(')', '')
-            : parsedCampaigns.wallet_address;
+    try {
+      id = id + countFrom + 1;
+      const rawCampaign = await cep47.getCampaign(id.toString());
 
-        parsedCampaigns.beneficiary_address =
-          parsedCampaigns.beneficiary_address.includes('Account') ||
-          parsedCampaigns.beneficiary_address.includes('Key')
-            ? parsedCampaigns.beneficiary_address.includes('Account')
-              ? parsedCampaigns.beneficiary_address.slice(13).replace(')', '')
-              : parsedCampaigns.beneficiary_address.slice(10).replace(')', '')
-            : parsedCampaigns.beneficiary_address;
+      const parsedCampaigns = parseCampaign(rawCampaign);
 
-        await client.rPush(REDIS_CAMPAIGN_KEY, JSON.stringify(parsedCampaigns));
-        campaignsList.push(parsedCampaigns);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      parsedCampaigns.wallet_address =
+        parsedCampaigns.wallet_address.includes('Account') ||
+        parsedCampaigns.wallet_address.includes('Key')
+          ? parsedCampaigns.wallet_address.includes('Account')
+            ? parsedCampaigns.wallet_address.slice(13).replace(')', '')
+            : parsedCampaigns.wallet_address.slice(10).replace(')', '')
+          : parsedCampaigns.wallet_address;
+
+      parsedCampaigns.beneficiary_address =
+        parsedCampaigns.beneficiary_address.includes('Account') ||
+        parsedCampaigns.beneficiary_address.includes('Key')
+          ? parsedCampaigns.beneficiary_address.includes('Account')
+            ? parsedCampaigns.beneficiary_address.slice(13).replace(')', '')
+            : parsedCampaigns.beneficiary_address.slice(10).replace(')', '')
+          : parsedCampaigns.beneficiary_address;
+
+      await client.rPush(REDIS_CAMPAIGN_KEY, JSON.stringify(parsedCampaigns));
+      campaignsList.push(parsedCampaigns);
+    } catch (err) {
+      return { err };
+    }
   }
 
   return campaignsList;
@@ -64,6 +64,7 @@ const getCampaignsList = async (countFrom: number, count: number) => {
 const getCampaigns: APIGatewayProxyHandler = async () => {
   await client.connect();
   let result: any;
+  // await client.del(REDIS_CAMPAIGN_KEY);
   try {
     result = await client.lRange(REDIS_CAMPAIGN_KEY, 0, -1);
   } catch (err) {
@@ -74,13 +75,12 @@ const getCampaigns: APIGatewayProxyHandler = async () => {
   }
 
   const campaignCount: any = await cep47.totalCampaigns();
-
+  const mappedResult = result.map((item) => JSON.parse(item));
   const countFrom =
     result &&
     parseInt(campaignCount) - result?.length > 0 &&
     parseInt(campaignCount) - result?.length;
 
-  const mappedResult = result.map((item) => JSON.parse(item));
   if (!countFrom && result?.length > 0) {
     client.quit();
     return MessageUtil.success({
@@ -90,13 +90,14 @@ const getCampaigns: APIGatewayProxyHandler = async () => {
     const list: any = await getCampaignsList(
       result.length,
       parseInt(campaignCount)
-    ).catch((err) => {
+    );
+    if (list.err) {
       client.quit();
       return MessageUtil.error(
         HttpStatusCode.INTERNAL_SERVER_ERROR,
-        err.message ? err.message : 'upstash Error'
+        list.err.message ? list.err.message : 'upstash Error'
       );
-    });
+    }
 
     client.quit();
     return MessageUtil.success({

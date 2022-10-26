@@ -16,9 +16,13 @@ const REDIS_PROFILE_KEY =
 const getProfilesList = async (profilesAddList) => {
   const mappedProfiles: any = [];
   for (const address of profilesAddList) {
-    const profile: any = await profileClient.getProfile(address, true);
-    await client.rPush(REDIS_PROFILE_KEY, JSON.stringify(profile));
-    mappedProfiles.push(profile);
+    try {
+      const profile: any = await profileClient.getProfile(address, true);
+      await client.rPush(REDIS_PROFILE_KEY, JSON.stringify(profile));
+      mappedProfiles.push(profile);
+    } catch (err) {
+      return { err };
+    }
   }
 
   return mappedProfiles;
@@ -44,7 +48,8 @@ const getProfiles: APIGatewayProxyHandler = async () => {
     parseInt(profilesCount) - cachedProfile?.length;
 
   let profilesAddList = await profileClient.profilesAddList();
-  profilesAddList = profilesAddList[countFrom];
+
+  profilesAddList = profilesAddList.slice(cachedProfile?.length, profilesCount);
 
   const mappedResult = cachedProfile.map((item) => JSON.parse(item));
   if (!countFrom && cachedProfile?.length > 0) {
@@ -53,13 +58,14 @@ const getProfiles: APIGatewayProxyHandler = async () => {
       list: mappedResult,
     });
   } else {
-    const list: any = await getProfilesList(profilesAddList).catch((err) => {
+    const list: any = await getProfilesList(profilesAddList);
+    if (list.err) {
       client.quit();
       return MessageUtil.error(
         HttpStatusCode.INTERNAL_SERVER_ERROR,
-        err.message ? err.message : 'upstash Error'
+        list.err.message ? list.err.message : 'upstash Error'
       );
-    });
+    }
 
     client.quit();
     return MessageUtil.success({

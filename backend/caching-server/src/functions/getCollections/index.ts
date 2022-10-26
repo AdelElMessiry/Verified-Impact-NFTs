@@ -5,8 +5,8 @@ export default {
   events: [
     {
       http: {
-        method: 'patch',
-        path: 'updateBeneficiary',
+        method: 'GET',
+        path: 'collections',
         cors: true,
       },
     },
