@@ -150,11 +150,14 @@ const AddEditCampaignForm = ({
 
   //saving new campaign related to beneficiary function
   const saveCampaign = async () => {
+    
     setIsButtonClicked(true);
     if (state.inputs.campaignUrl !== '' && showURLErrorMsg) {
       return;
     }
     try {
+      console.log(state.inputs , "test")
+      debugger
       const savedCampaign = await createCampaign(
         state.inputs.name,
         state.inputs.description,
@@ -166,6 +169,7 @@ const AddEditCampaignForm = ({
         SDGsGoals.map((str) => {
           return Number(str);
         }),
+        state.inputs.resaleRoyalty,
         data ? 'UPDATE' : 'ADD',
         data ? data.id : undefined,
         beneficiaryAddress ? beneficiaryAddress : beneficiary
