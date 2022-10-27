@@ -15,6 +15,7 @@ const REDIS_PROFILE_KEY =
 
 const getProfilesList = async (profilesAddList) => {
   const mappedProfiles: any = [];
+
   for (const address of profilesAddList) {
     try {
       const profile: any = await profileClient.getProfile(address, true);
@@ -40,14 +41,15 @@ const getProfiles: APIGatewayProxyHandler = async () => {
     );
   }
 
-  const profilesCount: any = await profileClient.totalProfiles();
+  let profilesAddList = await profileClient.profilesAddList();
+  const profilesCount: any = profilesAddList.length;
 
   const countFrom =
     cachedProfile &&
     parseInt(profilesCount) - cachedProfile?.length > 0 &&
     parseInt(profilesCount) - cachedProfile?.length;
 
-  let profilesAddList = await profileClient.profilesAddList();
+  // let profilesAddList = await profileClient.profilesAddList();
 
   profilesAddList = profilesAddList.slice(cachedProfile?.length, profilesCount);
 
