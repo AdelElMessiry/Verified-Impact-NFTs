@@ -1,121 +1,200 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Col, Container, Row, Spinner } from 'react-bootstrap';
-import { useAuth } from '../../contexts/AuthContext'
+import { Col, Row, Spinner } from 'react-bootstrap';
+import Masonry from 'react-masonry-component';
+import SimpleReactLightbox from 'simple-react-lightbox';
+import { SRLWrapper } from 'simple-react-lightbox';
 import { useNFTState } from '../../contexts/NFTContext';
 import Layout from '../Layout';
-import PromptLogin from './PromptLogin';
 import bnr1 from './../../images/banner/bnr1.jpg';
-import MarketPlaceSingleRow from '../Element/marketPlaceSingleRow';
-import { profileClient } from '../../api/profileInfo';
- const CreatorsMarketPlace = () => {
-  const { isLoggedIn } = useAuth();
-  const { creators } = useNFTState();
-  const [profileDetails, setProfileDetails] = React.useState([]);
+import UserCard from '../Element/userCard';
+import SDGsMultiSelect from '../Element/SDGsMultiSelect';
+import { SDGsData } from '../../data/SDGsGoals';
 
-  const getProfile = React.useCallback(() => {
-    creators?.map(async(creator)=>{
-      let userProfiles = await profileClient.getProfile(creator.address, true);
-      if (userProfiles) {
-        if (userProfiles.err === 'Address Not Found') {
-          setProfileDetails(null);
-        } else {
-          let list = Object.values(userProfiles)[0];
-          //setMyArray(oldArray => [...oldArray, newElement]);
-          userProfiles &&
-            setProfileDetails(profileDetails => [...profileDetails, list.creator]);
-        }
+// Masonry section
+const masonryOptions = {
+  transitionDuration: 0,
+};
+
+const options = {
+  buttons: { showDownloadButton: false },
+};
+
+const imagesLoadedOptions = { background: '.my-bg-image-el' };
+const CreatorsMarketPlace = () => {
+  const { profileCreators, nfts } = useNFTState();
+  const [SDGsGoals, setSDGsGoals] = React.useState([]);
+
+  const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
+  const [isClearSDGs, setIsClearSDGs] = React.useState(false);
+  const [displayedProfileCreators, setDisplayedProfileCreators] =
+    React.useState([]);
+
+  const filterSDGByTag = React.useCallback((tag, filteredCreators) => {
+    const AllSDGsTagsName =
+      filteredCreators &&
+      filteredCreators
+        .map((el) => ({ value: el.sdgs_ids?.split(',') }))
+        .flatMap(({ value }) => value);
+    let sdgsTagsName = AllSDGsTagsName.filter(function (item, pos) {
+      return AllSDGsTagsName.indexOf(item) == pos;
+    });
+    sdgsTagsName &&
+      setSDGsGoalsData(
+        SDGsData.filter(({ value }) => sdgsTagsName.includes(value.toString()))
+      );
+  }, []);
+  const getFinalCreatorList = () => {
+    let CreatorList = [];
+    const selectedProfileCreator = profileCreators.filter(
+      (ele, ind) =>
+        ind ===
+        profileCreators.findIndex((elem) => elem.address === ele.address)
+    );
+    selectedProfileCreator.forEach((eleCreator) => {
+      const CreatorSDGs = nfts
+        .filter(({ creator }) => eleCreator.address == creator)
+        .map(({ sdgs_ids }) => sdgs_ids.split(','));
+      const allSDGS = Object.values(CreatorSDGs)
+        .flat()
+        .filter((val, id, array) => {
+          return array.indexOf(val) == id;
+        });
+      eleCreator['sdgs_ids'] = allSDGS.join(',');
+      CreatorList.push(eleCreator);
+    });
+    return CreatorList;
+  };
+  const getFilteredCreators = React.useCallback(async () => {
+    if (nfts && profileCreators) {
+      const CreatorList = getFinalCreatorList();
+      console.log(CreatorList);
+      profileCreators && filterSDGByTag({ name: 'All', id: '' }, CreatorList);
+      profileCreators && setDisplayedProfileCreators(CreatorList);
+    }
+  }, [profileCreators, filterSDGByTag, nfts]);
+
+  React.useEffect(() => {
+    getFilteredCreators();
+  }, [getFilteredCreators]);
+
+  const getSDGsBasedOnTag = React.useCallback(
+    (selectedData = []) => {
+      console.log(displayedProfileCreators);
+      const CreatorList = getFinalCreatorList();
+      let allFilteredCreators = [];
+      for (let index = 0; index < selectedData.length; index++) {
+        const selectedNfts =
+          profileCreators &&
+          CreatorList?.filter(({ sdgs_ids }) =>
+            sdgs_ids?.split(',').includes(selectedData[index].toString())
+          );
+        allFilteredCreators = [...allFilteredCreators, ...selectedNfts];
       }
-    })
-    console.log(profileDetails , "profileDetails ");
-  }, [creators]);
-  React.useEffect(()=>{
-    console.log(creators , "creators creators")
-   creators&& getProfile()
-  },[creators])
+      allFilteredCreators.length > 0
+        ? setDisplayedProfileCreators(
+            allFilteredCreators.filter(
+              (ele, ind) =>
+                ind ===
+                allFilteredCreators.findIndex(
+                  (elem) => elem.address === ele.address
+                )
+            )
+          )
+        : setDisplayedProfileCreators(CreatorList);
+    },
+
+    [setDisplayedProfileCreators, profileCreators]
+  );
+
+  const handleSDGsChange = (data) => {
+    setSDGsGoals(data);
+    getSDGsBasedOnTag(data);
+  };
+
   return (
     <Layout>
-    <div className='page-content bg-white'>
-      {/* <!-- inner page banner --> */}
-      <div
-        className='dlab-bnr-inr overlay-primary bg-pt'
-        style={{ backgroundImage: 'url(' + bnr1 + ')' }}
-      >
-        <div className='container'>
-          <div className='dlab-bnr-inr-entry'>
-            <h1 className='text-white d-flex align-items-center'>
-              <span className='mr-1'>
-                Discover Creators{' '}
-              </span>
-            </h1>
-
-            <div className='breadcrumb-row'>
-              <ul className='list-inline'>
-                <li>
-                  <Link to={'#'}>Home</Link>
-                </li>
-                <li className='ml-1'>Discover Creators</li>
-              </ul>
+      <div className="page-content bg-white">
+        {/* <!-- inner page banner --> */}
+        <div
+          className="dlab-bnr-inr overlay-primary bg-pt"
+          style={{ backgroundImage: 'url(' + bnr1 + ')' }}
+        >
+          <div className="container">
+            <div className="dlab-bnr-inr-entry">
+              <h1 className="text-white d-flex align-items-center">
+                <span className="mr-1">Discover Creators </span>
+              </h1>
+              <div className="breadcrumb-row">
+                <ul className="list-inline">
+                  <li>
+                    <Link to={'#'}>Home</Link>
+                  </li>
+                  <li className="ml-1">Discover Creators</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      {/* <!-- inner page banner END --> */}
-      {/* <!-- contact area --> */}
-      {!isLoggedIn ? (
-        <PromptLogin />
-      ) : (
-        <div className='section-full content-inner shop-account'>
+        {/* <!-- inner page banner END --> */}
+        {/* <!-- contact area --> */}
+        <div className="section-full content-inner shop-account">
           {/* <!-- Product --> */}
-          <div className='container'>
+          <div>
             <div>
-              <div className=' m-auto m-b30'>
-                <Container>
-                  <Row>
-                    <Col>
-                      {profileDetails && creators ? (
-                        <table className='table'>
-                          <thead>
-                            <tr>
-                              <th scope='col'></th>
-                              <th scope='col'>Name</th>
-                              <th scope='col'>Address</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {profileDetails.length > 0 ? (
-                              profileDetails?.map((creator) => (
-                                <MarketPlaceSingleRow
-                                  type={"creators"}
-                                  item={creator}
-                                  key={creator.address}
-                                />
-                              ))
-                            ) : (
-                              <h4 className='text-muted text-center my-5'>
-                                No Creators registered yet
-                              </h4>
-                            )}
-                          </tbody>
-                        </table>
-                      ) : (
-                        <div className='vinft-section-loader text-center my-5'>
-                          <Spinner animation='border' variant='success' />
-                          <p>Fetching Creators Please wait...</p>
-                        </div>
-                      )}
-                    </Col>
-                  </Row>
-                </Container>
-              </div>
+              {SDGsGoalsData.length > 0 && (
+                <div className="site-filters clearfix  left mx-5   m-b40">
+                  SDGs Goals:{' '}
+                  <SDGsMultiSelect
+                    data={SDGsGoalsData}
+                    SDGsChanged={(selectedData) => {
+                      handleSDGsChange(selectedData);
+                    }}
+                    isClear={isClearSDGs}
+                  />
+                </div>
+              )}
+              {profileCreators ? (
+                <SimpleReactLightbox>
+                  <SRLWrapper options={options}>
+                    <div className="clearfix">
+                      <ul
+                        id="masonry"
+                        className="dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1"
+                      >
+                        <Masonry
+                          className={'my-gallery-class'} // default ''
+                          options={masonryOptions} // default {}
+                          disableImagesLoaded={false} // default false
+                          updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
+                          imagesLoadedOptions={imagesLoadedOptions} // default {}
+                        >
+                          {profileCreators &&
+                            displayedProfileCreators.map((item, index) => (
+                              <React.Fragment key={`${index}${item.address}`}>
+                                <li className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0 ">
+                                  <UserCard item={item} />
+                                </li>
+                              </React.Fragment>
+                            ))}
+                        </Masonry>
+                      </ul>
+                    </div>
+                  </SRLWrapper>
+                </SimpleReactLightbox>
+              ) : (
+                <div className="vinft-section-loader text-center my-5">
+                  <Spinner animation="border" variant="success" />
+                  <p>Fetching Creators Please wait...</p>
+                </div>
+              )}
             </div>
           </div>
           {/* <!-- Product END --> */}
         </div>
-      )}
-      {/* <!-- contact area  END --> */}
-    </div>
-  </Layout>
-  )
-}
-export default CreatorsMarketPlace
+        {/* <!-- contact area  END --> */}
+      </div>
+    </Layout>
+  );
+};
+export default CreatorsMarketPlace;
