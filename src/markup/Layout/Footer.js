@@ -11,7 +11,8 @@ import {Link} from "react-router-dom";
 import VINftsTooltip from '../Element/Tooltip';
 class Footer extends React.Component {
    sendMail = () => {
-    const mailto = `mailto:verifiedimpactnfts@gmail.com ?subject=New &body=`;
+    let email = process.env.REACT_APP_CONTACT_US_EMAIL
+    const mailto = `mailto:${email} ?subject=New &body=`;
     window.open(mailto, '_blank');
   }
   render() {
@@ -63,7 +64,7 @@ class Footer extends React.Component {
                       </a>
                     </li>
                     <li className='mr-3'>
-                      <a href={process.env.REACT_APP_MEDUIM_ACCOUNT_LINK} target="_blank">
+                      <a href={process.env.REACT_APP_TELEGRAM_LINK} target="_blank">
                         <FontAwesomeIcon icon={faTelegram} size="2x" />
                       </a>
                     </li>
