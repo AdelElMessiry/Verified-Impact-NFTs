@@ -50,6 +50,16 @@ const serverlessConfiguration: AWS = {
         '2a1b76bd94b0fc0e68cceb504952294e3706a76ec191cd02960af825a0786a1e',
       NFT_PACKAGE_HASH_PROD:
         '656bd7e7c2c00aebbea182d63a15f49577e2a1d34d176ef83086cbe678b43963',
+
+      PROFILE_CONTRACT_HASH_PROD:
+        '51609eb410f1a6d1485968521ec125231ea99f752fbde32fc317ff412e139572',
+      PROFILE_CONTRACT_HASH_DEV:
+        'd96ba1e0a7e687367aca8dd6a2ec6bee8ca2bb7f14199b950b8603277e0d8391',
+      PROFILE_PACKAGE_HASH_PROD:
+        '49c52cb907c89e984af930bae087decefe0484704e89e3f9924f0c6007fe5cd5',
+      PROFILE_PACKAGE_HASH_DEV:
+        '85da8631b49e116681695832167663ac03da7e540f025a97616609948f0c7626',
+
       REDIS_NFT_SAVED_KEY: 'l_nfts_${opt:stage}',
       REDIS_BENEFICIARY_SAVED_KEY: 'l_beneficiaries_${opt:stage}',
       REDIS_COLLECTION_SAVED_KEY: 'l_collections_${opt:stage}',
