@@ -149,15 +149,12 @@ const AddEditCampaignForm = ({
   };
 
   //saving new campaign related to beneficiary function
-  const saveCampaign = async () => {
-    
+  const saveCampaign = async () => {    
     setIsButtonClicked(true);
     if (state.inputs.campaignUrl !== '' && showURLErrorMsg) {
       return;
     }
     try {
-      console.log(state.inputs , "test")
-      debugger
       const savedCampaign = await createCampaign(
         state.inputs.name,
         state.inputs.description,
