@@ -479,13 +479,6 @@ const MintNFT = () => {
             window.location.origin
           }/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
         );
-        //  else{
-        //   let image64 = 'https://dweb.link/ipfs/'+ image
-        //   await SendTweetWithImage64(
-        //     image64,
-        //     `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
-        //   )
-        // }
         ReactGA.event({
           category: 'Success',
           action: 'Mint',
