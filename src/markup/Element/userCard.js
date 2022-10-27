@@ -13,7 +13,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SDGsData } from '../../data/SDGsGoals';
 import VINftsTooltip from './Tooltip'
 import unitedNation from '../../images/icon/unitedNation.png';
-import artist from "../../images/icon/artist.png"
+import Creator from "../../images/icon/Creator.png"
+import Beneficiary from "../../images/icon/Beneficiary.png"
 export default function UserCard({ item, type = 'beneficiary' }) {
     const history = useHistory();
     const noData = "No Data Provided"
@@ -121,7 +122,7 @@ export default function UserCard({ item, type = 'beneficiary' }) {
             <div className='mb-3 nftcard-parent m-3'  onClick={()=>visitPage(item)}>
                 <div className='dlab-box dlab-gallery-box'>
                     <div className='dlab-media dlab-img-overlay1 position-relative dlab-img-effect'>
-                        <img src={item.imgUrl != "" ? item.imgUrl : artist} className="img img-fluid fit-img fit-img-cover" />
+                        <img src={item.imgUrl != "" ? item.imgUrl : type == "beneficiary"? Beneficiary: Creator} className="img img-fluid fit-img fit-img-cover" />
                         <div className='overlay-bx'>
                             <div className='overlay-icon align-b text-white text-left'>
                                 <div className='text-white text-left port-box'>
