@@ -46,9 +46,10 @@ const BeneficiariesMarket = () => {
   }, []);
 
   const getFilteredBeneficiaries = React.useCallback(async () => {
-    const filtBeneficiaries=beneficiaries && beneficiaries.filter(
+    const approvedBen=beneficiaries?.filter(
       (beneficiary) => beneficiary.isApproved == 'true'
-    ).filter( (ele, ind) => ind === beneficiaries.findIndex( elem => elem.address === ele.address))
+    )
+    const filtBeneficiaries=beneficiaries && approvedBen.filter( (ele, ind) => ind === approvedBen.findIndex( elem => elem.address === ele.address))
     beneficiaries && filterSDGByTag({ name: 'All', id: '' },filtBeneficiaries);
     beneficiaries && setDisplayedBenficiaries(filtBeneficiaries);
   }, [beneficiaries, filterSDGByTag]);
@@ -73,11 +74,12 @@ const BeneficiariesMarket = () => {
           ...selectedNfts,
         ];
       }
+      const approvedBen=beneficiaries.filter(
+        (beneficiary) => beneficiary.isApproved == 'true'
+      )
       allFilteredBeneficiaries.length > 0
         ? setDisplayedBenficiaries(allFilteredBeneficiaries.filter( (ele, ind) => ind === allFilteredBeneficiaries.findIndex( elem => elem.address === ele.address)))
-        : setDisplayedBenficiaries(beneficiaries.filter(
-          (beneficiary) => beneficiary.isApproved == 'true'
-        ).filter( (ele, ind) => ind === beneficiaries.findIndex( elem => elem.address === ele.address)));
+        : setDisplayedBenficiaries(approvedBen.filter( (ele, ind) => ind === approvedBen.findIndex( elem => elem.address === ele.address)));
     },
 
     [setDisplayedBenficiaries,beneficiaries]
