@@ -43,7 +43,7 @@ const serverlessConfiguration: AWS = {
       NODE_RPC_MAINNET_ADDRESS:
         'https://gstiugzrmk.execute-api.us-east-1.amazonaws.com/dev/?url=https://node-clarity-mainnet.make.services/rpc',
       NFT_CONTRACT_HASH_DEV:
-        'f07b1a56289f86b45c8ce49d0b43ebb4cbef660a32c2ca79f0b2f3c3ed78fe2a',
+        '344737ec7175f105ca6dcd5e9eaff886f5a684e5492c168d0fd418c9c754c3ab',
       NFT_PACKAGE_HASH_DEV:
         'fc4aca70bfc4fc084ecb22ef1c3602323e1b5fdb1bc3f409da8415c59fbbced7',
       NFT_CONTRACT_HASH_PROD:
