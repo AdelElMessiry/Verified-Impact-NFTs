@@ -21,7 +21,7 @@ export default function UserCard({ item, type = 'beneficiary' }) {
     const sendMail = (email) => {
         if (email != "") {
             const mailto = `mailto:${email}?subject=New ${type} &body=`;
-            window.location.href = mailto;
+            window.open(mailto, '_blank');
         } else {
 
         }
