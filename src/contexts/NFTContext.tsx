@@ -112,8 +112,8 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
     });
 
     let selectedList: any = [];
-    // let profiles = await profileClient.getProfilesList();
-    let profiles = await profileClient.getCachedProfilesList();
+    let profiles = await profileClient.getProfilesList();
+    // let profiles = await profileClient.getCachedProfilesList();
 
     profiles &&
       profiles.forEach((data: any) => {
@@ -149,9 +149,8 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
           ({ address }: any) => nft.beneficiary === address
         )?.username || '',
       collectionName:
-        collectionsList.collectionsList.find(
-          ({ id }: any) => nft.collection === id
-        )?.name || '',
+        collectionsList.find(({ id }: any) => nft.collection === id)?.name ||
+        '',
     }));
 
     mappedNFTS &&
