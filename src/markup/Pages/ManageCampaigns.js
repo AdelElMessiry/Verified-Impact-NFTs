@@ -15,6 +15,8 @@ const ManageCampaigns = ({ beneficiaryAddress,beneficiaryPKAddress }) => {
   const [showAddEditCampaignModal, setShowAddEditCampaignModal] =
     React.useState(false);
   const [beneficiaryCampaigns, setBeneficiaryCampaigns] = React.useState();
+  const [isRefreshCampaignList, setIsRefreshCampaignList] = React.useState(false);
+  const [changedCampaign, setChangedCampaign] = React.useState();
 
   useEffect(() => {
     const selectedCampaigns =
@@ -32,6 +34,24 @@ const ManageCampaigns = ({ beneficiaryAddress,beneficiaryPKAddress }) => {
       );
     campaigns && setBeneficiaryCampaigns(selectedCampaigns);
   }, [campaigns, entityInfo.publicKey]);
+
+  React.useEffect(() => {
+    if (changedCampaign) {
+      debugger;
+      const resIndex = beneficiaryCampaigns?.findIndex(
+        ({ id }) => id == changedCampaign.id
+      );
+      beneficiaryCampaigns?.splice(resIndex, 1);
+      setBeneficiaryCampaigns([
+          ...beneficiaryCampaigns?.slice(0, resIndex),
+          changedCampaign,
+          ...beneficiaryCampaigns?.slice(resIndex),
+        ]
+      );
+      setShowAddEditCampaignModal(false);
+    
+    }
+  }, [isRefreshCampaignList]);
 
   return (
     <div className='m-auto m-b30'>
@@ -78,6 +98,11 @@ const ManageCampaigns = ({ beneficiaryAddress,beneficiaryPKAddress }) => {
                       key={campaign.id}
                       beneficiaryAddress={beneficiaryAddress}
                       beneficiaryPKAddress={beneficiaryPKAddress}
+                      handleUpdateCampaignSuccess={(campaign) => {
+                        debugger;
+                        setChangedCampaign(campaign);
+                        setIsRefreshCampaignList(!isRefreshCampaignList);
+                      }}
                     />
                   ))}
                 </tbody>
