@@ -11,6 +11,8 @@ import MarketPlaceSingleRow from '../Element/marketPlaceSingleRow';
  const BeneficiariesMarket = () => {
   const { isLoggedIn } = useAuth();
   const { beneficiaries } = useNFTState();
+  
+  
   return (
     <Layout>
     <div className='page-content bg-white'>

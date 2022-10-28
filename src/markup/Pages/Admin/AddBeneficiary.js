@@ -18,10 +18,13 @@ import ReactGA from 'react-ga';
 import { SDGsData } from '../../../data/SDGsGoals/index';
 import SDGsMultiSelect from '../../Element/SDGsMultiSelect';
 import { isValidWallet } from '../../../utils/contract-utils';
+import { refreshBeneficiaries, useNFTDispatch, useNFTState} from '../../../contexts/NFTContext';
 
 //add new beneficiary page
 const AddBeneficiary = () => {
   const { isLoggedIn, entityInfo } = useAuth();
+  const { ...stateList } = useNFTState();
+  const nftDispatch = useNFTDispatch();
 
   const [beneficiaryInputs, setBeneficiaryInputs] = React.useState({
     name: '',
@@ -74,13 +77,14 @@ const AddBeneficiary = () => {
       await SendTweet(
         `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts. ${s.toString().replaceAll(',', ' ')} click here ${window.location.origin}/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
       );
-      window.location.reload();
-      // setBeneficiaryInputs({
-      //   name: '',
-      //   description: '',
-      //   address: '',
-      //   SDGsGoals:[SDGsData[18].value]
-      // });
+      
+       await refreshBeneficiaries(nftDispatch, stateList)
+      setBeneficiaryInputs({
+        name: '',
+        description: '',
+        address: '',
+        SDGsGoals:[SDGsData[18].value]
+      });
       setIsClearSDGs(!isClearSDGs);
       setIsButtonClicked(false);
     } catch (err) {

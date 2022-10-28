@@ -8,7 +8,12 @@ import { useAuth } from '../../contexts/AuthContext';
 import { getDeployDetails } from '../../api/universal';
 import { createCampaign } from '../../api/createCampaign';
 
-import { useNFTState } from '../../contexts/NFTContext';
+import {
+  refreshCampaigns,
+  updateCampaigns,
+  useNFTDispatch,
+  useNFTState,
+} from '../../contexts/NFTContext';
 import ReactGA from 'react-ga';
 import SDGsMultiSelect from './SDGsMultiSelect';
 import { SDGsData } from '../../data/SDGsGoals/index';
@@ -21,9 +26,12 @@ const AddEditCampaignForm = ({
   isFromModal = false,
   beneficiaryAddress = undefined,
   beneficiaryPKAddress = undefined,
+  handleUpdateCampaignSuccess = () => {},
 }) => {
-  const { beneficiaries, nfts } = useNFTState();
   const { entityInfo } = useAuth();
+  const { ...stateList } = useNFTState();
+  const { beneficiaries, nfts } = stateList;
+  const nftDispatch = useNFTDispatch();
   const [beneficiary, setBeneficiary] = React.useState();
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
@@ -175,11 +183,35 @@ const AddEditCampaignForm = ({
         label: `${entityInfo.publicKey}: added new campaign ${state.inputs.name}`,
       });
       const deployResult = await getDeployDetails(savedCampaign);
+      if (data?.id) {
+        const changedCampaign = {
+          beneficiary_address: beneficiaryAddress
+            ? beneficiaryAddress
+            : beneficiary, //hash,
+          collection_ids: '0',
+          description: state.inputs.description,
+          id: data.id,
+          name: state.inputs.name,
+          requested_royalty: state.inputs.requestedRoyalty,
+          sdgs_ids: SDGsGoals.join(','),
+          url: state.inputs.campaignUrl,
+          w_pk: campaignAddress,
+          wallet_address: CLPublicKey.fromHex(campaignAddress)
+            .toAccountHashStr()
+            .slice(13),
+          wallet_address_pk: campaignAddress,
+        };
+        await updateCampaigns(nftDispatch, stateList, changedCampaign);
+        
+        handleUpdateCampaignSuccess(changedCampaign);
+      }
       console.log('...... Campaign saved successfully', deployResult);
       VIToast.success('Campaign saved successfully');
       setIsButtonClicked(false);
       isFromModal && closeModal();
-      isFromModal && window.location.reload();
+      //isFromModal && window.location.reload();
+      await refreshCampaigns(nftDispatch, stateList);
+      
       setState({
         inputs: {
           campaignUrl: '',
