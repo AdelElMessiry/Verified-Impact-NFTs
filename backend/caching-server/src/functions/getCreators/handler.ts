@@ -53,6 +53,7 @@ const getCreatorsList = async (countFrom: number, count: number) => {
 
 const getCreators: APIGatewayProxyHandler = async () => {
   await client.connect();
+  // await client.del(REDIS_CREATOR_KEY);
   let result: any;
   try {
     result = await client.lRange(REDIS_CREATOR_KEY, 0, -1);
@@ -68,10 +69,6 @@ const getCreators: APIGatewayProxyHandler = async () => {
     result &&
     parseInt(creatorsCount) - result?.length > 0 &&
     parseInt(creatorsCount) - result?.length;
-
-  console.log(result.length);
-  console.log(parseInt(creatorsCount));
-  console.log(countFrom);
 
   const mappedResult = result.map((item) => JSON.parse(item));
   if (!countFrom && result?.length > 0) {

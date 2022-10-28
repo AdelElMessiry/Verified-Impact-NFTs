@@ -43,7 +43,7 @@ const getBeneficiariesList = async (beneficiariesAddList) => {
             : parsedBeneficiary.address.slice(10).replace(')', '')
           : parsedBeneficiary.address;
 
-      console.log(parsedBeneficiary.address);
+      // console.log(parsedBeneficiary.address);
 
       await client.rPush(
         REDIS_BENEFICIARY_KEY,

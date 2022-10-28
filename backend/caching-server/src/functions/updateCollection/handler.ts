@@ -27,7 +27,11 @@ const updateCollection: APIGatewayProxyHandler = async (event) => {
       ({ creator }: any) => creator === collection.creator
     );
 
-    await client.lRem(REDIS_COLLECTION_KEY, 0, JSON.stringify(collection));
+    const toBeDeleted = mappedResult.find(
+      ({ creator }: any) => creator === collection.creator
+    );
+
+    await client.lRem(REDIS_COLLECTION_KEY, 0, JSON.stringify(toBeDeleted));
     await client.lSet(
       REDIS_COLLECTION_KEY,
       collectionIndex,
