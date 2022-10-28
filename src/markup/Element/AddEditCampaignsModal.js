@@ -18,8 +18,7 @@ const AddEditCampaignsModal = ({
   handleCloseParent,
   data,
   beneficiaryAddress,
-  beneficiaryPKAddress,
-  handleUpdateCampaignSuccess
+  beneficiaryPKAddress
 }) => {
   const [showModal, setShowModal] = React.useState(show);
 
@@ -49,9 +48,6 @@ const AddEditCampaignsModal = ({
           isFromModal={true}
           beneficiaryAddress={beneficiaryAddress}
           beneficiaryPKAddress={beneficiaryPKAddress}
-          handleUpdateCampaignSuccess={(campaign) =>
-            handleUpdateCampaignSuccess(campaign)
-          }
         />
       </Modal.Body>
       <Modal.Footer>

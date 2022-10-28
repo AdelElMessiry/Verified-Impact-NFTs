@@ -26,7 +26,6 @@ const AddEditCampaignForm = ({
   isFromModal = false,
   beneficiaryAddress = undefined,
   beneficiaryPKAddress = undefined,
-  handleUpdateCampaignSuccess = () => {},
 }) => {
   const { entityInfo } = useAuth();
   const { ...stateList } = useNFTState();
@@ -203,7 +202,6 @@ const AddEditCampaignForm = ({
         };
         await updateCampaigns(nftDispatch, stateList, changedCampaign);
         
-        handleUpdateCampaignSuccess(changedCampaign);
       }
       console.log('...... Campaign saved successfully', deployResult);
       VIToast.success('Campaign saved successfully');
@@ -279,7 +277,7 @@ const AddEditCampaignForm = ({
                         >
                           {beneficiaries
                             ?.filter(({ isApproved }) => isApproved === 'true')
-                            .map(({ username, address, index }) => (
+                            .map(({ username, address}, index ) => (
                               <option
                                 key={`${address}_${index}`}
                                 value={address}
