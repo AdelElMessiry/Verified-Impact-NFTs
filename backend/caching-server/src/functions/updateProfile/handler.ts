@@ -24,13 +24,9 @@ const updateProfile: APIGatewayProxyHandler = async (event) => {
     const profileIndex: any = mappedResult.findIndex(
       ({ address }: any) => address === profile.address
     );
-    const toBeDeleted = mappedResult.find(
-      ({ address }: any) => address === profile.address
-    );
 
-    await client.lRem(REDIS_PROFILE_KEY, 0, JSON.stringify(toBeDeleted));
     await client.lSet(REDIS_PROFILE_KEY, profileIndex, JSON.stringify(profile));
-
+    mappedResult[profileIndex] = profile;
     client.quit();
 
     return MessageUtil.success({
