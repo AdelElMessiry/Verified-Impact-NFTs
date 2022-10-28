@@ -3,10 +3,18 @@ import {
   faDiscord,
   faMediumM,
   faTwitter,
+  faTelegram
 } from '@fortawesome/free-brands-svg-icons';
+import { faEnvelopeOpenText } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {Link} from "react-router-dom";
+import VINftsTooltip from '../Element/Tooltip';
 class Footer extends React.Component {
+   sendMail = () => {
+    let email = process.env.REACT_APP_CONTACT_US_EMAIL
+    const mailto = `mailto:${email} ?subject=New &body=`;
+    window.open(mailto, '_blank');
+  }
   render() {
     return (
       <>
@@ -54,6 +62,18 @@ class Footer extends React.Component {
                       <a href={process.env.REACT_APP_MEDUIM_ACCOUNT_LINK} target="_blank">
                         <FontAwesomeIcon icon={faMediumM} size="2x" />
                       </a>
+                    </li>
+                    <li className='mr-3'>
+                      <a href={process.env.REACT_APP_TELEGRAM_LINK} target="_blank">
+                        <FontAwesomeIcon icon={faTelegram} size="2x" />
+                      </a>
+                    </li>
+                    <li className='mr-3'>
+                    <VINftsTooltip title={"Contact Us"}>
+                      <a target="_blank" onClick={()=>this.sendMail()}>
+                        <FontAwesomeIcon icon={faEnvelopeOpenText} size="2x" />
+                      </a>
+                      </VINftsTooltip>
                     </li>
                     <li className='text-success mr-3 align-items-center'><Link to={"/terms-of-services"}>Terms Of Services</Link></li>
                     <li className='text-success mr-3 align-items-center'><Link to={"/privacy"}>Privacy</Link></li>
