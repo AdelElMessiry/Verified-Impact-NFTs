@@ -12,7 +12,7 @@ import MarketPlaceSingleRow from '../Element/marketPlaceSingleRow';
   const { isLoggedIn } = useAuth();
   const { beneficiaries } = useNFTState();
   
-  debugger;
+  
   return (
     <Layout>
     <div className='page-content bg-white'>

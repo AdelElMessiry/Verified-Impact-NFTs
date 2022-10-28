@@ -8,7 +8,12 @@ import { useAuth } from '../../contexts/AuthContext';
 import { getDeployDetails } from '../../api/universal';
 import { createCampaign } from '../../api/createCampaign';
 
-import { refreshCampaigns, updateCampaigns, useNFTDispatch, useNFTState } from '../../contexts/NFTContext';
+import {
+  refreshCampaigns,
+  updateCampaigns,
+  useNFTDispatch,
+  useNFTState,
+} from '../../contexts/NFTContext';
 import ReactGA from 'react-ga';
 import SDGsMultiSelect from './SDGsMultiSelect';
 import { SDGsData } from '../../data/SDGsGoals/index';
@@ -21,7 +26,7 @@ const AddEditCampaignForm = ({
   isFromModal = false,
   beneficiaryAddress = undefined,
   beneficiaryPKAddress = undefined,
-  changedCampaign=()=>{}
+  handleUpdateCampaignSuccess = () => {},
 }) => {
   const { entityInfo } = useAuth();
   const { ...stateList } = useNFTState();
@@ -178,32 +183,35 @@ const AddEditCampaignForm = ({
         label: `${entityInfo.publicKey}: added new campaign ${state.inputs.name}`,
       });
       const deployResult = await getDeployDetails(savedCampaign);
-      if(data?.id){
-      const changedCampaign = { 
-        name:  state.inputs.name,
-        description: state.inputs.description,
-        wallet_address:  CLPublicKey.fromHex(campaignAddress).toAccountHashStr().slice(13), //hash
-        wallet_pk: campaignAddress, //pk
-        url: state.inputs.campaignUrl,
-        requested_royalty: state.inputs.requestedRoyalty,
-        deploySender: CLPublicKey.fromHex(entityInfo.publicKey),
-        sdgs_ids:  SDGsGoals.map((str) => {
-          return Number(str);
-        }),
-        campaign_id:  data.id,
-        beneficiary_address: beneficiaryAddress ? beneficiaryAddress : beneficiary //hash
-        }
-      await updateCampaigns(nftDispatch, stateList, changedCampaign);
-      debugger;
-      handleUpdateCampaignSuccess(changedCampaign);
+      if (data?.id) {
+        const changedCampaign = {
+          beneficiary_address: beneficiaryAddress
+            ? beneficiaryAddress
+            : beneficiary, //hash,
+          collection_ids: '0',
+          description: state.inputs.description,
+          id: data.id,
+          name: state.inputs.name,
+          requested_royalty: state.inputs.requestedRoyalty,
+          sdgs_ids: SDGsGoals.join(','),
+          url: state.inputs.campaignUrl,
+          w_pk: campaignAddress,
+          wallet_address: CLPublicKey.fromHex(campaignAddress)
+            .toAccountHashStr()
+            .slice(13),
+          wallet_address_pk: campaignAddress,
+        };
+        await updateCampaigns(nftDispatch, stateList, changedCampaign);
+        
+        handleUpdateCampaignSuccess(changedCampaign);
       }
       console.log('...... Campaign saved successfully', deployResult);
       VIToast.success('Campaign saved successfully');
       setIsButtonClicked(false);
       isFromModal && closeModal();
       //isFromModal && window.location.reload();
-      await refreshCampaigns(nftDispatch, stateList)
-      debugger;
+      await refreshCampaigns(nftDispatch, stateList);
+      
       setState({
         inputs: {
           campaignUrl: '',
