@@ -24,7 +24,7 @@ const updateCollection: APIGatewayProxyHandler = async (event) => {
     let mappedResult = result.map((item) => JSON.parse(item));
 
     const collectionIndex: any = mappedResult.findIndex(
-      ({ creator }: any) => creator === collection.creator
+      ({ id }: any) => id === collection.id
     );
 
     const toBeDeleted = mappedResult.find(

@@ -81,6 +81,10 @@ const getCampaigns: APIGatewayProxyHandler = async () => {
     parseInt(campaignCount) - result?.length > 0 &&
     parseInt(campaignCount) - result?.length;
 
+  console.log(parseInt(campaignCount));
+  console.log(result?.length);
+  console.log(countFrom);
+
   if (!countFrom && result?.length > 0) {
     client.quit();
     return MessageUtil.success({

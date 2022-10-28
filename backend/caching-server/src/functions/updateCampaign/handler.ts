@@ -22,18 +22,31 @@ const updateCreator: APIGatewayProxyHandler = async (event) => {
     let mappedResult = result.map((item) => JSON.parse(item));
 
     const campaignIndex: any = mappedResult.findIndex(
-      ({ address }: any) => address === campaign.address
+      ({ id }: any) => id === campaign.id
     );
+    console.log(campaignIndex);
+    console.log(mappedResult[campaignIndex]);
+
     const toBeDeleted = mappedResult.find(
       ({ address }: any) => address === campaign.address
     );
-
+    let length = await client.lLen(REDIS_CAMPAIGN_KEY);
+    console.log(length);
     await client.lRem(REDIS_CAMPAIGN_KEY, 0, JSON.stringify(toBeDeleted));
+
+    console.log(mappedResult.length);
+
+    length = await client.lLen(REDIS_CAMPAIGN_KEY);
+    console.log(length);
+
     await client.lSet(
       REDIS_CAMPAIGN_KEY,
       campaignIndex,
       JSON.stringify(campaign)
     );
+    length = await client.lLen(REDIS_CAMPAIGN_KEY);
+    console.log(length);
+    mappedResult[mappedResult[campaignIndex]] = campaign;
 
     client.quit();
 
