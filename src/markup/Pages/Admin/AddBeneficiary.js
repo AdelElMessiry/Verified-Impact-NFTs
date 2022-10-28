@@ -15,6 +15,9 @@ import bnr1 from './../../../images/banner/bnr1.jpg';
 import { sendDiscordMessage } from '../../../utils/discordEvents';
 import { SendTweet } from '../../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
+import { SDGsData } from '../../../data/SDGsGoals/index';
+import SDGsMultiSelect from '../../Element/SDGsMultiSelect';
+import { isValidWallet } from '../../../utils/contract-utils';
 
 //add new beneficiary page
 const AddBeneficiary = () => {
@@ -24,69 +27,97 @@ const AddBeneficiary = () => {
     name: '',
     description: '',
     address: '',
+    SDGsGoals: [SDGsData[18].value],
   });
-  React.useEffect(()=>{
-    ReactGA.pageview(window.location.pathname +"/admin_beneficiary");
-  },[])
+
+  React.useEffect(() => {
+    ReactGA.pageview(window.location.pathname + '/admin_beneficiary');
+  }, []);
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
+  const [isClearSDGs, setIsClearSDGs] = React.useState(false);
 
   // },[])
   //saving new beneficiary function
   const saveBeneficiary = async () => {
     setIsButtonClicked(true);
-    try{
-    const savedBeneficiary = await addBeneficiary(
-      beneficiaryInputs.name,
-      beneficiaryInputs.description,
-      beneficiaryInputs.address,
-      CLPublicKey.fromHex(entityInfo.publicKey)
-      // 'UPDATE'
+    try {
+      const savedBeneficiary = await addBeneficiary(
+        beneficiaryInputs.name,
+        beneficiaryInputs.description,
+        CLPublicKey.fromHex(beneficiaryInputs.address)
+          .toAccountHashStr()
+          .slice(13),
+        beneficiaryInputs.address,
+        beneficiaryInputs.SDGsGoals.map((str) => {
+          return Number(str);
+        }),
+        CLPublicKey.fromHex(entityInfo.publicKey)
       );
-    const deployResult = await getDeployDetails(savedBeneficiary)
-    console.log('...... Beneficiary saved successfully', deployResult);
-    VIToast.success('Beneficiary saved successfully');
-    ReactGA.event({
-      category: 'Success',
-      action: 'Add beneficiary',
-      label: `${entityInfo.publicKey}: [${beneficiaryInputs.name}] beneficiary has been added`,
-    });
-    await sendDiscordMessage(
-      process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
-      process.env.REACT_APP_BENEFICIARIES_TOKEN,
-      beneficiaryInputs.name,
-      '',
-      `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)] @casper_network @devxdao `
-    );
-    await SendTweet(
-      `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @casper_network @devxdao `
-    );
-    setBeneficiaryInputs({
-      name: '',
-      description: '',
-      address: '',
-    });
-    setIsButtonClicked(false);
-  }
-  catch (err) {
-    if (err.message.includes('User Cancelled')) {
-      VIToast.error('User Cancelled Signing');
+      const deployResult = await getDeployDetails(savedBeneficiary);
+      console.log('...... Beneficiary saved successfully', deployResult);
+      VIToast.success('Beneficiary saved successfully');
       ReactGA.event({
-        category: 'User Cancelation',
+        category: 'Success',
         action: 'Add beneficiary',
-        label: `${entityInfo.publicKey}: Cancelled Signing`,
+        label: `${entityInfo.publicKey}: [${beneficiaryInputs.name}] beneficiary has been added`,
       });
-    } else {
-      ReactGA.event({
-        category: 'Error',
-        action: 'Add beneficiary',
-        label: `${entityInfo.publicKey}: ${err.message}`,
-      });
-      VIToast.error(err.message);
+      await sendDiscordMessage(
+        process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
+        process.env.REACT_APP_BENEFICIARIES_TOKEN,
+        beneficiaryInputs.name,
+        '',
+        `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)]  @vinfts @casper_network @devxdao `
+      );
+      let s = [];
+      if (beneficiaryInputs.SDGsGoals.length > 0) {
+        beneficiaryInputs.SDGsGoals.map((sdg) => s.push(`#SDG${sdg}`));
+      }
+      await SendTweet(
+        `Great news! ${
+          beneficiaryInputs.name
+        } beneficiary has been added to #verified_impact_nfts. ${s
+          .toString()
+          .replaceAll(',', ' ')} click here ${
+          window.location.origin
+        }/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
+      );
+      window.location.reload();
+      // setBeneficiaryInputs({
+      //   name: '',
+      //   description: '',
+      //   address: '',
+      //   SDGsGoals:[SDGsData[18].value]
+      // });
+      setIsClearSDGs(!isClearSDGs);
+      setIsButtonClicked(false);
+    } catch (err) {
+      if (err.message.includes('User Cancelled')) {
+        VIToast.error('User Cancelled Signing');
+        ReactGA.event({
+          category: 'User Cancelation',
+          action: 'Add beneficiary',
+          label: `${entityInfo.publicKey}: Cancelled Signing`,
+        });
+      } else {
+        ReactGA.event({
+          category: 'Error',
+          action: 'Add beneficiary',
+          label: `${entityInfo.publicKey}: ${err.message}`,
+        });
+        VIToast.error(err.message);
+      }
+      setIsButtonClicked(false);
+      return;
     }
-    setIsButtonClicked(false);
-    return;
-  }
   };
+
+  const handleSDGsChange = (data) => {
+    setBeneficiaryInputs({
+      ...beneficiaryInputs,
+      SDGsGoals: data,
+    });
+  };
+
   return (
     <>
       <Layout>
@@ -153,6 +184,24 @@ const AddBeneficiary = () => {
                               *
                             </span>
                           </div>{' '}
+                          {beneficiaryInputs.address !== '' &&
+                            !isValidWallet(beneficiaryInputs.address) && (
+                              <span className='text-danger'>
+                                Please Enter Valid Public Address
+                              </span>
+                            )}
+                        </Col>
+                      </Row>
+                      <Row className='mt-4'>
+                        <Col>
+                          <SDGsMultiSelect
+                            data={SDGsData}
+                            SDGsChanged={(selectedData) => {
+                              handleSDGsChange(selectedData);
+                            }}
+                            isAddBeneficiary={true}
+                            isClear={isClearSDGs}
+                          />
                         </Col>
                       </Row>
                       <Row className='mt-4'>
@@ -181,7 +230,9 @@ const AddBeneficiary = () => {
                             disabled={
                               beneficiaryInputs.name == '' ||
                               beneficiaryInputs.address == '' ||
-                              isButtonClicked
+                              isButtonClicked ||
+                              beneficiaryInputs.SDGsGoals.length <= 0 ||
+                              !isValidWallet(beneficiaryInputs.address)
                             }
                           >
                             {isButtonClicked ? (

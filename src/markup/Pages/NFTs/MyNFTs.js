@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Lightbox from 'react-image-lightbox';
 import { Link } from 'react-router-dom';
 import QRCode from 'react-qr-code';
+import { CLPublicKey } from 'casper-js-sdk';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNFTState } from '../../../contexts/NFTContext';
@@ -24,8 +25,11 @@ import CopyText from '../../Element/copyText';
 //images
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import soldIcon from '../../../images/icon/sold.png';
+import unitedNation from '../../../images/icon/unitedNation.png';
+
 import CopyCode from '../../Element/copyCode';
 import ReactGA from 'react-ga';
+import { SDGsData } from '../../../data/SDGsGoals';
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -94,7 +98,8 @@ const MyNFTs = () => {
   const [creatorTags, setCreatorTags] = React.useState([]);
   const [allNFTs, setAllNFTs] = React.useState();
   const [filteredNFTs, setFilteredNFTs] = React.useState();
-
+  const [isRefreshNFTList, setIsRefreshNFTList] = React.useState(false);
+  const [changedNFT, setChangedNFT] = React.useState();
   const filterCollectionByTag = React.useCallback((tag, filteredNFTs) => {
     const collectionsTagsName =
       filteredNFTs &&
@@ -165,6 +170,17 @@ const MyNFTs = () => {
     ReactGA.pageview(window.location.pathname +"MyNfts");
     entityInfo.publicKey && getFilteredNFTs();
   }, [entityInfo.publicKey, getFilteredNFTs]);
+
+  React.useEffect(() => {
+    if (changedNFT) {
+      const resIndex = filteredNFTs?.findIndex(
+        ({ tokenId }) => tokenId == changedNFT.tokenId
+      );
+      filteredNFTs?.splice(resIndex, 1);
+      setFilteredNFTs(filteredNFTs);
+      setShowBuyModal(false);
+    }
+  }, [isRefreshNFTList]);
 
   const getCollectionsBasedOnTag = React.useCallback(
     (tag = 'All') => {
@@ -388,9 +404,38 @@ const MyNFTs = () => {
         />
         &nbsp;&nbsp;{' '}
         <CopyCode
-          link={`<iframe src='https://dev.verifiedimpactnfts.com/#/nft-card?id=${nft.tokenId}'></iframe>`}
+          link={`<iframe src='${window.location.origin}/#/nft-card?id=${nft.tokenId}'></iframe>`}
         />
       </p>
+      <p>
+      {nft?.sdgs_ids?.length > 0 && nft?.sdgs_ids !== '0' && (
+        <div className="mt-3 px-2">
+          <a href="https://sdgs.un.org/goals" target="_blank">
+            <img
+              src={unitedNation}
+              style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
+            />
+          </a>
+          :{' '}
+          {SDGsData?.filter(({ value }) =>
+            nft?.sdgs_ids?.split(',').includes(value.toString())
+          )?.map((sdg, index) => (
+            <VINftsTooltip title={sdg.label} key={index}>
+              <label>
+                <img
+                  src={process.env.PUBLIC_URL + 'images/sdgsIcons/' + sdg.icon}
+                  style={{
+                    width: 25,
+                    pointerEvents: 'none',
+                    cursor: 'default',
+                  }}
+                />
+              </label>
+            </VINftsTooltip>
+          ))}
+        </div>
+      )}
+    </p>
     </div>
   );
 
@@ -516,20 +561,33 @@ const MyNFTs = () => {
                           imagesLoadedOptions={imagesLoadedOptions} // default {}
                         >
                           {filteredNFTs.map((item, index) => (
-                            <li
-                              className='web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0'
-                              key={index}
-                            >
-                              <NFTCard
-                                item={item}
-                                index={index}
-                                openSlider={(newIndex) => {
-                                  setPhotoIndex(newIndex);
-                                  setOpenSlider(true);
-                                }}
-                                isTransfer={true}
-                              />
-                            </li>
+                            item.creator != `${CLPublicKey.fromHex(
+                              entityInfo.publicKey
+                            )
+                              .toAccountHashStr()
+                              .slice(13)}`&& (
+                              <li
+                                className='web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0'
+                                key={index}
+                              >
+                                <NFTCard
+                                  item={item}
+                                  index={index}
+                                  openSlider={(newIndex) => {
+                                    setPhotoIndex(newIndex);
+                                    setOpenSlider(true);
+                                  }}
+                                  isTransfer={true}
+                                  isMyNft={true}
+                                  handleCallChangeBuyNFTs={(nft) => {
+                                    setChangedNFT(nft);
+                                    setIsRefreshNFTList(
+                                      !isRefreshNFTList
+                                    );
+                                  }}
+                                />
+                              </li>
+                            )                                                       
                           ))}
                         </Masonry>
                       </ul>
@@ -560,6 +618,10 @@ const MyNFTs = () => {
           }}
           data={selectedNFT}
           isTransfer={true}
+          handleTransactionBuySuccess={(nft)=>{ setChangedNFT(nft);
+            setIsRefreshNFTList(
+              !isRefreshNFTList
+            );}}
         />
       )}
     </Layout>

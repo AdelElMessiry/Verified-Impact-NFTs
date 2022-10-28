@@ -225,12 +225,22 @@ export const transferFees = async (buyer: string, tokenId: string) => {
   const treasury = TREASURY_WALLET;
 
   let { beneficiary, price, campaign } = tokenDetails;
-  beneficiary = await hashToURef(`account-hash-${beneficiary}`);
+  // beneficiary = await hashToURef(`account-hash-${beneficiary}`);
 
   const campaignDetails: any = await getCampaignDetails(campaign);
   const parsedCampaigns: any = parseCampaign(campaignDetails);
 
   const beneficiaryPercentage = parseInt(parsedCampaigns.requested_royalty);
+  const mappedWalletAdd = (parsedCampaigns.wallet_address =
+    parsedCampaigns.wallet_address.includes('Account') ||
+    parsedCampaigns.wallet_address.includes('Key')
+      ? parsedCampaigns.wallet_address.includes('Account')
+        ? parsedCampaigns.wallet_address.slice(13).replace(')', '')
+        : parsedCampaigns.wallet_address.slice(10).replace(')', '')
+      : parsedCampaigns.wallet_address);
+
+  beneficiary = await hashToURef(`account-hash-${mappedWalletAdd}`);
+  console.log(beneficiary);
   const creatorPercentage = 100 - beneficiaryPercentage;
 
   const portalFees = (price / 100) * 2;
@@ -269,9 +279,15 @@ export const transferFees = async (buyer: string, tokenId: string) => {
 };
 
 export const getNFTImage = async (tokenMetaUri: string) => {
-  const resp = await fetch('https://gateway.ipfs.io/ipfs/' + tokenMetaUri);
+  const baseIPFS = 'https://vinfts.mypinata.cloud/ipfs/';
+  if (tokenMetaUri.includes('/')) {
+    const mappedUrl = tokenMetaUri.includes('ipfs/')
+      ? tokenMetaUri.split('ipfs/').pop()
+      : tokenMetaUri;
+    return baseIPFS + mappedUrl;
+  }
+  const resp = await fetch(baseIPFS + tokenMetaUri);
   const imgString = await resp.text();
-
   return imgString;
 };
 
@@ -285,4 +301,12 @@ export function isValidHttpUrl(string: string) {
   }
 
   return url.protocol === 'http:' || url.protocol === 'https:';
+}
+
+export function isValidWallet(publicKey: string) {
+  try {
+    return CLPublicKey.fromHex(publicKey) instanceof CLPublicKey;
+  } catch (error) {
+    return false;
+  }
 }
