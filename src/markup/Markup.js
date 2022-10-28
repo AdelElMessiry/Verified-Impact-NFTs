@@ -26,6 +26,8 @@ import NFTCardURL from './Element/NFTCardURL';
 import Privacy from './Pages/Privacy';
 import RequestForm from './Pages/RequestForm';
 import SDGGoalNFTs from './Pages/NFTs/SDGGoalNFTs';
+import BeneficiariesMarket from './Pages/BeneficiariesMarket';
+import CreatorsMarketPlace from './Pages/CreatorsMarketPlace';
 
 const Markup = () => {
   return (
@@ -76,6 +78,16 @@ const Markup = () => {
                 path='/SDGGoalNFTs'
                 exact
                 component={SDGGoalNFTs}
+              />
+              <Route
+                path='/BeneficiariesMarket'
+                exact
+                component={BeneficiariesMarket}
+              />
+              <Route
+                path='/CreatorsMarketPlace'
+                exact
+                component={CreatorsMarketPlace}
               />
             </Switch>
           </div>

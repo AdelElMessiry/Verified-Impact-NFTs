@@ -14,6 +14,7 @@ import { SocialLinks } from 'social-links';
 import SDGsMultiSelect from './SDGsMultiSelect';
 import { SDGsData } from '../../data/SDGsGoals';
 import { useNFTState } from '../../contexts/NFTContext';
+import ProfileBioModal from './ProfileBioModal';
 const ProfileForm = ({
   formName,
   isProfileExist,
@@ -30,7 +31,7 @@ const ProfileForm = ({
       shortTagLine: '',
       firstName: '',
       lastName: '',
-      fullBio: '',
+      //fullBio: '',
       externalSiteLink: '',
       phone: '',
       twitter: '',
@@ -43,7 +44,9 @@ const ProfileForm = ({
       isNFTImageURL: '',
       address: '',
       donationReceipt: false,
-      ein: ""
+      ein: "",
+      acceptPolicies: false,
+      authorizeArtist: false
     },
   });
 
@@ -70,7 +73,9 @@ const ProfileForm = ({
   });
   const [SDGsGoals, setSDGsGoals] = React.useState([SDGsData[18].value]);
   const [mandatorySDGs, setMandatorySDGs] = React.useState([SDGsData[18].value]);
-
+  const [showBioModal, setShowBioModal] = React.useState(false);
+  const [profileBio, setProfileBio] = React.useState();
+  
   React.useEffect(() => {
     setState({
       inputs: {
@@ -78,7 +83,7 @@ const ProfileForm = ({
         shortTagLine: formData ? formData.tagline : '',
         firstName: formData ? formData.firstName : '',
         lastName: formData ? formData.lastName : '',
-        fullBio: formData ? formData.bio : '',
+       // fullBio: formData ? formData.bio : '',
         externalSiteLink: formData ? formData.externalLink : '',
         phone: formData ? formData.phone : '',
         twitter: formData ? formData.twitter : '',
@@ -94,6 +99,7 @@ const ProfileForm = ({
         donationReceipt: formData ? formData.has_receipt==="true"?true:false : false
       },
     });
+    setProfileBio(formData ? formData.bio : '')
     setUploadedProfileImage(formData ? formData?.imgUrl : null);
     setUploadedNFTImage(formData ? formData?.nftUrl : null);
     setSDGsGoals(formData ? formData?.sdgs_ids?.split(",") : SDGsGoals);
@@ -251,7 +257,7 @@ const ProfileForm = ({
           NFTImgURL,
           state.inputs.firstName,
           state.inputs.lastName,
-          state.inputs.fullBio,
+          //state.inputs.fullBio,
           state.inputs.externalSiteLink,
           state.inputs.phone,
           state.inputs.twitter,
@@ -369,8 +375,17 @@ const ProfileForm = ({
       });
   };
 
+const getSavedData=(bio)=>{
+  setProfileBio(bio)
+}
+
   return (
     <div className='shop-account '>
+        <Row>
+        <Col>
+        <h4 className='text-dark'>Main Info</h4>
+        </Col>
+      </Row>
       <Row>
         <Col>
           <Row className='form-group'>
@@ -575,6 +590,46 @@ const ProfileForm = ({
                   />
                 </Col>
               </Row>
+              {isSignUpBeneficiary && (
+                <>
+                  <Row className='form-group pt-1'>
+                    <Col>
+                      <Form.Check
+                        type={'checkbox'}
+                        id={`acceptPolicies`}
+                        label={
+                          <span>
+                            By signing up I accept the
+                            {" "}
+                            <a href={`${window.location.origin}/#/privacy`} target="_blank" rel="noopener noreferrer">
+                              Terms of Service  and Privacy
+                            </a>
+                          </span>
+                        }
+                        onChange={(e) => handleChange(e)}
+                        value={state.inputs.acceptPolicies}
+                        name='acceptPolicies'
+                        className='float-left'
+                        checked={state.inputs.acceptPolicies}
+                      />
+                    </Col>
+                  </Row>
+                  <Row className='form-group'>
+                    <Col>
+                      <Form.Check
+                        type={'checkbox'}
+                        id={`authorizeArtist`}
+                        label={`I authorize artists and creators to list NFTs for the benefit of my campaigns`}
+                        onChange={(e) => handleChange(e)}
+                        value={state.inputs.authorizeArtist}
+                        name='authorizeArtist'
+                        className='float-left'
+                        checked={state.inputs.authorizeArtist}
+                      />
+                    </Col>
+                  </Row>
+                </>
+              )}
               {state.inputs.donationReceipt && (
                 <Row className='form-group'>
                 <Col>
@@ -759,40 +814,20 @@ const ProfileForm = ({
           </Row>
         </Col>
       </Row>
-      <Row className='form-group'>
-        <Col lg={6} md={6}>
-          <span>Short Bio</span>
-          {/* <textarea
-            name='fullBio'
-            className='form-control'
-            value={state.inputs.fullBio}
-            onChange={(e) => handleChange(e)}
-          /> */}
-          <input
-            type="text"
-            name="fullBio"
-            className="form-control"
-            value={state.inputs.fullBio}
-            onChange={(e) => {
-              handleChange(e);
-            }}
-            maxLength={100}
-          />
-          <span>{state.inputs.fullBio.length} / 100 characters</span>
-        </Col>
-      </Row>
 
-      <Row className='form-group'>
+      <Row className='form-group mt-3'>
         <Col>
           <button
             className='btn btn-success'
             disabled={
-              state.inputs.userName == '' || 
-              isSaveButtonClicked || 
-              !uploadedProfileImageURL || 
+              state.inputs.userName == '' ||
+              isSaveButtonClicked ||
+              !uploadedProfileImageURL ||
               !uploadedNFTImageURL ||
-              (state.inputs.donationReceipt &&  state.inputs.ein == "")||
-              (formName === ProfileFormsEnum.BeneficiaryProfile&&SDGsGoals?.length<=0||SDGsGoals==undefined)
+              (state.inputs.donationReceipt && state.inputs.ein == "") ||
+              ((formName === ProfileFormsEnum.BeneficiaryProfile && SDGsGoals?.length <= 0) || (formName === ProfileFormsEnum.BeneficiaryProfile && SDGsGoals == undefined))||
+              !state.inputs.authorizeArtist ||
+              !state.inputs.acceptPolicies
             }
             onClick={(e) => {
               handleSave(e);
@@ -804,8 +839,48 @@ const ProfileForm = ({
               'Save'
             )}
           </button>
-        </Col>        
+        </Col>
       </Row>
+      <hr/>
+      <Row>
+        <Col>
+        <h4  className='text-dark'>Full Bio</h4>{!formData&&<span>Please add Profile First</span>}
+        </Col>
+      </Row>
+     {formData&& <>
+      <Row className='form-group'>
+        
+        <Col lg={6} md={6}>
+          <div>
+            {profileBio}
+          </div>
+      
+          {/* <span>{state.inputs.fullBio.length} / 100 characters</span> */}
+        </Col>
+      </Row>
+      <Row className='form-group'>
+        <Col>
+          <button
+            className='btn btn-success'
+            onClick={() => {
+              setShowBioModal(true);
+            }}
+          >
+              Edit
+          </button>
+        </Col>        
+      </Row></>}
+      {showBioModal && (
+          <ProfileBioModal
+            show={showBioModal}
+            handleCloseParent={() => {
+              setShowBioModal(false);
+            }}
+            type={formName}
+            handleDataSaved={(bio)=>{getSavedData(bio)}}
+            existingBio={profileBio}
+          />
+        )}
     </div>
   );
 };

@@ -11,7 +11,6 @@ import { useAuth } from '../../contexts/AuthContext';
 import { sendDiscordMessage } from '../../utils/discordEvents';
 import {
   SendTweetWithImage,
-  SendTweetWithImage64,
 } from '../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
 import {useNFTDispatch, useNFTState,refreshNFTs,updateNFTs, } from '../../contexts/NFTContext';
@@ -71,6 +70,7 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false,handleT
           handleTransactionBuySuccess(changedNFT);
           VIToast.success('Transaction ended successfully');
           await refreshNFTs(nftDispatch,stateList);
+          setIsBuyClicked(false);
           handleClose();
           await sendDiscordMessage(
             process.env.REACT_APP_NFT_WEBHOOK_ID,
@@ -86,11 +86,9 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false,handleT
               `Exciting news! ${data.title} #NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao `
             );
           } else {
-            let image64 =
-              'https://vinfts.mypinata.cloud/ipfs/' + data.pureImageKey;
-            await SendTweetWithImage64(
-              image64,
-              `Exciting news! ${data.title} #NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao `
+            await SendTweetWithImage(
+              image,
+              `Exciting news! ${data.title} #NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao`
             );
           }
         } else {
@@ -117,7 +115,6 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false,handleT
       }
     }
   };
-
   //transfer nft Function
   const transferNFT = async () => {
     const nftID = data.tokenId;

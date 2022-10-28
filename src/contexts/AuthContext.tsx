@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { Signer } from 'casper-js-sdk';
+import { toast as VIToast } from 'react-toastify';
 
 import { getAccountBalance } from '../utils/contract-utils';
 interface IEntityInfo {
@@ -29,6 +30,8 @@ async function getConnectionStatus(): Promise<null | string> {
   if (!window.casperlabsHelper) {
     // alert("Please install Casper signer Signer extension")
     console.log('Casper signer not available :(');
+    VIToast.error("Casper signer not available please download it first", {
+      position: "top-center"})
     return null;
   }
 
