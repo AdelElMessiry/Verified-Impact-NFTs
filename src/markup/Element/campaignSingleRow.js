@@ -3,7 +3,7 @@ import AddEditCampaignsModal from './AddEditCampaignsModal';
 import editIcon from './../../images/icon/edit.png';
 
 //Manage Beneficiaries page
-const CampaignSingleRow = ({ campaign,beneficiaryAddress,beneficiaryPKAddress }) => {
+const CampaignSingleRow = ({ campaign,beneficiaryAddress,beneficiaryPKAddress, handleUpdateCampaignSuccess}) => {
   const [showAddEditCampaignModal, setShowAddEditCampaignModal] =
     React.useState(false);
   return (
@@ -28,6 +28,9 @@ const CampaignSingleRow = ({ campaign,beneficiaryAddress,beneficiaryPKAddress })
             data={campaign}
             beneficiaryAddress={beneficiaryAddress}
             beneficiaryPKAddress={beneficiaryPKAddress}
+            handleUpdateCampaignSuccess={(campaign) =>
+              handleUpdateCampaignSuccess(campaign)
+            }
           />
         )}
       </td>

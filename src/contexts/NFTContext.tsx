@@ -162,7 +162,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
           campaignsCount: parseInt(campaignsCount.toString()),
           creatorsCount: parseInt(creatorsCount.toString()),
           collectionsCount: parseInt(collectionsCount.toString()),
-          collections: collectionsList.collectionsList,
+          collections: collectionsList,
           uniqueCollections: collectionsList.uniqueCollections,
           creators: creatorsList,
           campaigns: campaignsList,
