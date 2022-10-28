@@ -6,6 +6,7 @@ use cep47::contract_utils::{get_key, set_key, ContractContext, ContractStorage, 
 
 const BENEFICIARIES_DICT: &str = "beneficiaries";
 const BENEFICIARIES_ADDRESSES_DICT: &str = "beneficiaries_addresses";
+const BENEFICIARIES_APPROVED_ADDRESSES_DICT: &str = "beneficiaries_approved_addresses";
 pub const TOTAL_BENEFICIARIES: &str = "total_beneficiaries";
 pub const BENEFICIARIES_LIST: &str = "beneficiaries_list";
 pub trait BeneficiaryControl<Storage: ContractStorage>: ContractContext<Storage> {
@@ -82,4 +83,12 @@ pub fn set_all_beneficiaries(all_beneficiaries: Vec<Key>) {
 
 pub fn get_all_beneficiaries() -> Vec<Key> {
     get_key(BENEFICIARIES_ADDRESSES_DICT).unwrap_or_revert()
+}
+
+pub fn set_approved_beneficiaries(all_beneficiaries: Vec<Key>) {
+    set_key(BENEFICIARIES_APPROVED_ADDRESSES_DICT, all_beneficiaries);
+}
+
+pub fn get_approved_beneficiaries() -> Vec<Key> {
+    get_key(BENEFICIARIES_APPROVED_ADDRESSES_DICT).unwrap_or_revert()
 }

@@ -13,7 +13,7 @@ import { SendTweetWithImage } from '../../utils/VINFTsTweets';
 import AddEditCampaignForm from './AddEditCampaignForm';
 
 //buying NFT Modal
-const AddEditCampaignsModal = ({ show, handleCloseParent, data,beneficiaryAddress }) => {
+const AddEditCampaignsModal = ({ show, handleCloseParent, data,beneficiaryAddress,beneficiaryPKAddress }) => {
   const [showModal, setShowModal] = React.useState(show);
 
   //handle closing modal
@@ -37,7 +37,7 @@ const AddEditCampaignsModal = ({ show, handleCloseParent, data,beneficiaryAddres
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-      <AddEditCampaignForm data={data} closeModal={()=>handleCloseParent()} isFromModal={true} beneficiaryAddress={beneficiaryAddress}/>
+      <AddEditCampaignForm data={data} closeModal={()=>handleCloseParent()} isFromModal={true} beneficiaryAddress={beneficiaryAddress} beneficiaryPKAddress={beneficiaryPKAddress}/>
       </Modal.Body>
       <Modal.Footer>
         <button className='btn' onClick={handleClose}>

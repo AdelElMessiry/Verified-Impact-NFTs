@@ -11,6 +11,7 @@ import {
   CLValueParsers,
   CLByteArray,
   CLAccountHash,
+  decodeBase16,
 } from 'casper-js-sdk';
 import { concat } from '@ethersproject/bytes';
 import blake from 'blakejs';
@@ -213,6 +214,19 @@ class CEP47Client {
     return this.contractClient.queryContractData(['total_beneficiaries']);
   }
 
+  public async _balanceOf(account: string, isHash?: boolean) {
+    const result = await this.contractClient.queryContractDictionary(
+      'balances',
+      isHash
+        ? account
+        : CLPublicKey.fromHex(account).toAccountHashStr().slice(13)
+    );
+
+    const maybeValue = result.value().unwrap();
+
+    return maybeValue.value().toString();
+  }
+
   public async balanceOf(account: CLPublicKey) {
     const result = await this.contractClient.queryContractDictionary(
       'balances',
@@ -272,13 +286,13 @@ class CEP47Client {
           ? mapObj.creator.slice(13).replace(')', '')
           : mapObj.creator.slice(10).replace(')', '')
         : mapObj.creator;
-    mapObj.pureImageKey = mapObj.image
+    mapObj.pureImageKey = mapObj.image;
     mapObj.image = isUpdate
       ? mapObj.image
       : isValidHttpUrl(mapObj.image)
       ? mapObj.image
       : await getNFTImage(mapObj.image);
-      
+
     return mapObj;
   }
 
@@ -337,6 +351,29 @@ class CEP47Client {
     const maybeValue = result.value().unwrap().value();
 
     return fromCLMap(maybeValue);
+  }
+
+  public async _getTokenByIndex(
+    owner: string,
+    index: string,
+    isHash?: boolean
+  ) {
+    const mappedOwner = isHash
+      ? new CLAccountHash(decodeBase16(owner))
+      : CLPublicKey.fromHex(owner);
+
+    const hex = keyAndValueToHex(
+      CLValueBuilder.key(mappedOwner),
+      CLValueBuilder.u256(index)
+    );
+    const result = await this.contractClient.queryContractDictionary(
+      'owned_tokens_by_index',
+      hex
+    );
+
+    const maybeValue = result.value().unwrap();
+
+    return maybeValue.value().toString();
   }
 
   public async getTokenByIndex(owner: CLPublicKey, index: string) {
@@ -430,6 +467,8 @@ class CEP47Client {
       collectionName,
       beneficiary,
       beneficiaryPercentage,
+      sdgs_ids,
+      hasReceipt,
     } = metas;
 
     const runtimeArgs = RuntimeArgs.fromMap({
@@ -440,6 +479,7 @@ class CEP47Client {
       image: CLValueBuilder.string(image),
       price: CLValueBuilder.string(price),
       isForSale: CLValueBuilder.bool(isForSale),
+      hasReceipt: CLValueBuilder.bool(hasReceipt),
       currency: CLValueBuilder.string(currency),
       campaign: CLValueBuilder.string(campaign),
       creator: CLValueBuilder.key(
@@ -454,6 +494,11 @@ class CEP47Client {
       beneficiaryPercentage: CLValueBuilder.string(beneficiaryPercentage),
       profile_contract_hash: CLValueBuilder.string(
         `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
+      sdgs_ids: CLValueBuilder.list(
+        sdgs_ids?.length
+          ? sdgs_ids.map((id: number) => CLValueBuilder.u256(id))
+          : [CLValueBuilder.u256(0)]
       ),
     });
 
@@ -558,13 +603,13 @@ class CEP47Client {
 
   public async transfer(
     recipient: CLKeyParameters,
-    ids: string[],
+    id: string,
     deploySender: CLPublicKey,
     keys?: Keys.AsymmetricKey[]
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       recipient: CLValueBuilder.key(recipient),
-      token_ids: CLValueBuilder.list(ids.map((id) => CLValueBuilder.u256(id))),
+      token_id: CLValueBuilder.u256(id),
     });
 
     return this.contractClient.callEntrypoint(
@@ -625,8 +670,11 @@ class CEP47Client {
     name: string,
     description: string,
     wallet_address: CLAccountHash,
+    wallet_address_pk: string,
+    beneficiary_address: CLAccountHash,
     url: string,
     requested_royalty: string,
+    sdgs_ids: number[],
     paymentAmount: string,
     deploySender: CLPublicKey,
     keys?: Keys.AsymmetricKey[]
@@ -638,9 +686,15 @@ class CEP47Client {
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       wallet_address: CLValueBuilder.key(wallet_address),
+      beneficiary_address: CLValueBuilder.key(beneficiary_address),
       url: CLValueBuilder.string(url),
-      // recipient: CLValueBuilder.key(CLPublicKey.fromHex(wallet_address)),
       requested_royalty: CLValueBuilder.string(requested_royalty),
+      sdgs_ids: CLValueBuilder.list(
+        sdgs_ids?.length
+          ? sdgs_ids.map((id) => CLValueBuilder.u256(id))
+          : [CLValueBuilder.u256(0)]
+      ),
+      wallet_address_pk: CLValueBuilder.string(wallet_address_pk),
     });
 
     return this.contractClient.callEntrypoint(
@@ -658,7 +712,9 @@ class CEP47Client {
     name: string,
     description: string,
     address: CLByteArray,
+    address_pk: string,
     mode: string,
+    sdgs_ids: number[],
     paymentAmount: string,
     deploySender: CLPublicKey
   ) {
@@ -668,8 +724,14 @@ class CEP47Client {
       name: CLValueBuilder.string(name),
       description: CLValueBuilder.string(description),
       address: CLValueBuilder.key(address),
+      address_pk: CLValueBuilder.string(address_pk),
       profile_contract_hash: CLValueBuilder.string(
         `contract-${PROFILE_CONTRACT_HASH!}`
+      ),
+      sdgs_ids: CLValueBuilder.list(
+        sdgs_ids?.length
+          ? sdgs_ids.map((id) => CLValueBuilder.u256(id))
+          : [CLValueBuilder.u256(0)]
       ),
     });
 
@@ -684,12 +746,14 @@ class CEP47Client {
 
   public async approveBeneficiary(
     address: CLByteArray,
+    address_pk: string,
     status: boolean,
     paymentAmount: string,
     deploySender: CLPublicKey
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       address: CLValueBuilder.key(address),
+      address_pk: CLValueBuilder.string(address_pk),
       status: CLValueBuilder.bool(status),
       profile_contract_hash: CLValueBuilder.string(
         `contract-${PROFILE_CONTRACT_HASH!}`

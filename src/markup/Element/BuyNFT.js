@@ -9,11 +9,14 @@ import { transfer, purchaseNFT } from '../../api/transfer';
 import { getDeployDetails } from '../../api/universal';
 import { useAuth } from '../../contexts/AuthContext';
 import { sendDiscordMessage } from '../../utils/discordEvents';
-import {
-  SendTweetWithImage,
-  SendTweetWithImage64,
-} from '../../utils/VINFTsTweets';
+import { SendTweetWithImage } from '../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
+import {
+  useNFTDispatch,
+  useNFTState,
+  refreshNFTs,
+  updateNFTs,
+} from '../../contexts/NFTContext';
 const InitialInputs = () => ({
   inputs: {
     address: '',
@@ -21,12 +24,19 @@ const InitialInputs = () => ({
 });
 
 //buying NFT Modal
-const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
+const BuyNFTModal = ({
+  show,
+  handleCloseParent,
+  data,
+  isTransfer = false,
+  handleTransactionBuySuccess = () => {},
+}) => {
   const { entityInfo } = useAuth();
   const [showModal, setShowModal] = React.useState(show);
   const [state, setState] = React.useState(InitialInputs());
   const [isBuyClicked, setIsBuyClicked] = React.useState(false);
-
+  const { ...stateList } = useNFTState();
+  const nftDispatch = useNFTDispatch();
   //buy NFT Function
   const buyNFT = async () => {
     if (entityInfo.publicKey) {
@@ -61,7 +71,15 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
             action: 'Buy nft',
             label: `${entityInfo.publicKey}: bought a new nft id: ${nftID}`,
           });
+          const changedNFT = Object.assign({}, data, {
+            isForSale: 'false',
+            isCreatorOwner: false,
+          });
+          await updateNFTs(nftDispatch, stateList, changedNFT);
+          handleTransactionBuySuccess(changedNFT);
           VIToast.success('Transaction ended successfully');
+          await refreshNFTs(nftDispatch, stateList);
+          setIsBuyClicked(false);
           handleClose();
           await sendDiscordMessage(
             process.env.REACT_APP_NFT_WEBHOOK_ID,
@@ -74,17 +92,14 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
           if (isValidHttpUrl(data.pureImageKey)) {
             await SendTweetWithImage(
               image,
-              `Exciting news! ${data.title} #NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes. @casper_network @devxdao `
+              `Exciting news! ${data.title} #NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao `
             );
           } else {
-            let image64 = 'https://gateway.ipfs.io/ipfs/' + data.pureImageKey;
-            await SendTweetWithImage64(
-              image64,
-              `Exciting news! ${data.title} #NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes. @casper_network @devxdao `
+            await SendTweetWithImage(
+              image,
+              `Exciting news! ${data.title} #NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao`
             );
           }
-
-          window.location.reload();
         } else {
           setIsBuyClicked(false);
         }
@@ -109,7 +124,6 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
       }
     }
   };
-
   //transfer nft Function
   const transferNFT = async () => {
     const nftID = data.tokenId;
@@ -120,10 +134,18 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
         CLPublicKey.fromHex(state.inputs.address),
         nftID
       );
-      if (transferDeployHash) {
+      const deployTransferResult = await getDeployDetails(transferDeployHash);
+      if (deployTransferResult) {
+        const changedNFT = Object.assign({}, data, {
+          isForSale: 'false',
+          isCreatorOwner: false,
+          tokenId: parseInt(data.tokenId),
+        });
+        await updateNFTs(nftDispatch, stateList, changedNFT);
+        handleTransactionBuySuccess(changedNFT);
         VIToast.success('NFT transfered successfully');
+        await refreshNFTs(nftDispatch, stateList);
         handleClose();
-        window.location.reload();
       } else {
         VIToast.error('Error happened please try again later');
       }

@@ -35,6 +35,14 @@ export async function getCampaignsList() {
               ? parsedCampaigns.wallet_address.slice(13).replace(')', '')
               : parsedCampaigns.wallet_address.slice(10).replace(')', '')
             : parsedCampaigns.wallet_address;
+
+        parsedCampaigns.beneficiary_address =
+          parsedCampaigns.beneficiary_address.includes('Account') ||
+          parsedCampaigns.beneficiary_address.includes('Key')
+            ? parsedCampaigns.beneficiary_address.includes('Account')
+              ? parsedCampaigns.beneficiary_address.slice(13).replace(')', '')
+              : parsedCampaigns.beneficiary_address.slice(10).replace(')', '')
+            : parsedCampaigns.beneficiary_address;
         campaignsList.push(parsedCampaigns);
       })
       .catch((err) => {

@@ -9,7 +9,7 @@ import AddEditCampaignsModal from '../Element/AddEditCampaignsModal';
 import { CLPublicKey } from 'casper-js-sdk';
 
 //Manage Beneficiaries page
-const ManageCampaigns = ({ beneficiaryAddress }) => {
+const ManageCampaigns = ({ beneficiaryAddress,beneficiaryPKAddress }) => {
   const { campaigns } = useNFTState();
   const { entityInfo } = useAuth();
   const [showAddEditCampaignModal, setShowAddEditCampaignModal] =
@@ -19,13 +19,13 @@ const ManageCampaigns = ({ beneficiaryAddress }) => {
   useEffect(() => {
     const selectedCampaigns =
       campaigns &&
-      campaigns?.filter(({ wallet_address }) =>
-        wallet_address.includes('Key')
-          ? wallet_address.slice(10).replace(')', '') ===
+      campaigns?.filter(({ beneficiary_address }) =>
+      beneficiary_address?.includes('Account')
+          ? beneficiary_address.slice(13).replace(')', '') ===
             CLPublicKey.fromHex(entityInfo.publicKey)
               .toAccountHashStr()
               .slice(13)
-          : wallet_address ===
+          : beneficiary_address ===
             CLPublicKey.fromHex(entityInfo.publicKey)
               .toAccountHashStr()
               .slice(13)
@@ -54,6 +54,7 @@ const ManageCampaigns = ({ beneficiaryAddress }) => {
                 }}
                 data={undefined}
                 beneficiaryAddress={beneficiaryAddress}
+                beneficiaryPKAddress={beneficiaryPKAddress}
               />
             )}
           </Col>
@@ -76,6 +77,7 @@ const ManageCampaigns = ({ beneficiaryAddress }) => {
                       campaign={campaign}
                       key={campaign.id}
                       beneficiaryAddress={beneficiaryAddress}
+                      beneficiaryPKAddress={beneficiaryPKAddress}
                     />
                   ))}
                 </tbody>
