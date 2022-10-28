@@ -35,7 +35,7 @@ const serverlessConfiguration: AWS = {
       NFT_PACKAGE_HASH_DEV:
         'fc4aca70bfc4fc084ecb22ef1c3602323e1b5fdb1bc3f409da8415c59fbbced7',
       NFT_CONTRACT_HASH_PROD:
-        'ca3b53caee78e6e2021218079cfe10972b6f74b00d6f97f13bf03014aceffe3f',
+        'cb8a6cd596fd723a5bb9bfa9457a86f2b8e9a24de9b07e951c08bec8370f5892',
       NFT_PACKAGE_HASH_PROD:
         '656bd7e7c2c00aebbea182d63a15f49577e2a1d34d176ef83086cbe678b43963',
       REDIS_SAVED_KEY: 'l_nfts_${opt:stage}_',

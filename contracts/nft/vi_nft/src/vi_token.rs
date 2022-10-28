@@ -162,6 +162,7 @@ impl ViToken {
         url: String,
         requested_royalty: String,
         sdgs_ids: Vec<U256>,
+        resale_prc: String
     ) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
         let campaigns_dict = Campaigns::instance();
@@ -202,6 +203,7 @@ impl ViToken {
                         .join(","),
                 );
                 campaign.insert(format!("requested_royalty: "), requested_royalty);
+                campaign.insert(format!("resale_prc: "), resale_prc);
 
                 if ViToken::default().is_beneficiary(caller) | ViToken::default().is_admin(caller) {
                     campaign.insert(format!("wallet_address: "), wallet_address.to_string());
@@ -564,6 +566,7 @@ impl ViToken {
         url: String,
         requested_royalty: String,
         sdgs_ids: Vec<U256>,
+        resale_prc: String
     ) -> Result<(), Error> {
         // let caller = ViToken::default().get_caller();
 
@@ -582,7 +585,7 @@ impl ViToken {
             beneficiary_address,
             url,
             requested_royalty,
-            sdgs_ids,
+            sdgs_ids,resale_prc
         )
         .unwrap_or_revert();
         Ok(())
@@ -905,6 +908,7 @@ fn create_campaign() {
     let beneficiary_address = runtime::get_named_arg::<Key>("beneficiary_address");
     let url = runtime::get_named_arg::<String>("url");
     let requested_royalty = runtime::get_named_arg::<String>("requested_royalty");
+    let resale_prc = runtime::get_named_arg::<String>("resale_prc");
     ViToken::default()
         .create_campaign(
             campaign_id,
@@ -918,6 +922,7 @@ fn create_campaign() {
             url,
             requested_royalty,
             sdgs_ids,
+            resale_prc,
         )
         .unwrap_or_revert();
 }
@@ -1549,6 +1554,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("url", String::cl_type()),
             Parameter::new("requested_royalty", String::cl_type()),
             Parameter::new("sdgs_ids", CLType::List(Box::new(U256::cl_type()))),
+            Parameter::new("resale_prc", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,

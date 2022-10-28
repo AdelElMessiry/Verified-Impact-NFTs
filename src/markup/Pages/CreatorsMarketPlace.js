@@ -173,7 +173,7 @@ const CreatorsMarketPlace = () => {
                             displayedProfileCreators.map((item, index) => (
                               <React.Fragment key={`${index}${item.address}`}>
                                 <li className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0 ">
-                                  <UserCard item={item} />
+                                  <UserCard item={item} type={"creator"} />
                                 </li>
                               </React.Fragment>
                             ))}

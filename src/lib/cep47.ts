@@ -675,6 +675,7 @@ class CEP47Client {
     url: string,
     requested_royalty: string,
     sdgs_ids: number[],
+    resale_prc: string,
     paymentAmount: string,
     deploySender: CLPublicKey,
     keys?: Keys.AsymmetricKey[]
@@ -695,6 +696,7 @@ class CEP47Client {
           : [CLValueBuilder.u256(0)]
       ),
       wallet_address_pk: CLValueBuilder.string(wallet_address_pk),
+      resale_prc: CLValueBuilder.string(resale_prc),
     });
 
     return this.contractClient.callEntrypoint(
