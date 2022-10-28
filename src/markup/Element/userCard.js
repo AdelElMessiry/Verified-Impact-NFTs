@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Link } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 import {
     faTelegram,
     faFacebook,
@@ -13,17 +13,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SDGsData } from '../../data/SDGsGoals';
 import VINftsTooltip from './Tooltip'
 import unitedNation from '../../images/icon/unitedNation.png';
-import artist from "../../images/icon/artist.png"
+import Creator from "../../images/icon/Creator.png"
+import Beneficiary from "../../images/icon/Beneficiary.png"
 export default function UserCard({ item, type = 'beneficiary' }) {
+    const history = useHistory();
     const noData = "No Data Provided"
     const sendMail = (email) => {
         if (email != "") {
             const mailto = `mailto:${email}?subject=New ${type} &body=`;
-            window.location.href = mailto;
+            window.open(mailto, '_blank');
         } else {
 
         }
 
+    }
+    const visitPage = (item) => {
+        history.push(type == "beneficiary" ? `./BeneficiaryNFTs?beneficiary=${item.address}` : `./CreatorNFTs?creator=${item.address}`)
     }
     const IconImage = () => {
         return (
@@ -97,16 +102,15 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                 </li>
                 <li className='text-success mr-1 align-items-center'>
                     <VINftsTooltip
-                        title={`${item.address == "" ? noData
-                            : `Visit  page`
+                        title={`${item.externalLink == "" ? noData
+                            : `Visit ${type} website.`
                             } `}
                     >
-                        <Link
-                            to={type == "beneficiary" ? `./BeneficiaryNFTs?beneficiary=${item.address}` : `./CreatorNFTs?creator=${item.address}`}
-                            className='dez-page'
-                        >
-                            <FontAwesomeIcon icon={faEye} size="2x" />
-                        </Link>
+                        <label>
+                            <a href={item.externalLink} target="_blank" className={item.externalLink == "" ? 'disable-social-media-anchor' : ""}>
+                                <FontAwesomeIcon icon={faEye} size="2x" />
+                            </a>
+                        </label>
                     </VINftsTooltip>
                 </li>
             </ul>
@@ -115,10 +119,10 @@ export default function UserCard({ item, type = 'beneficiary' }) {
     };
     return (
         <>
-            <div className='mb-3 nftcard-parent'>
+            <div className='mb-3 nftcard-parent m-3'  onClick={()=>visitPage(item)}>
                 <div className='dlab-box dlab-gallery-box'>
                     <div className='dlab-media dlab-img-overlay1 position-relative dlab-img-effect'>
-                        <img src={item.imgUrl != "" ? item.imgUrl : artist} className="img img-fluid fit-img fit-img-cover" />
+                        <img src={item.imgUrl != "" ? item.imgUrl : type == "beneficiary"? Beneficiary: Creator} className="img img-fluid fit-img fit-img-cover" />
                         <div className='overlay-bx'>
                             <div className='overlay-icon align-b text-white text-left'>
                                 <div className='text-white text-left port-box'>
