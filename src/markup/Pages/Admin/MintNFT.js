@@ -15,6 +15,7 @@ import {
   useNFTState,
   useNFTDispatch,
   refreshNFTs,
+  refreshCollections,
 } from '../../../contexts/NFTContext';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
@@ -406,6 +407,7 @@ const MintNFT = () => {
         console.log('...... Token minted successfully', deployResult);
         VIToast.success('NFT minted successfully');
         await refreshNFTs(nftDispatch, stateList);
+        await refreshCollections(nftDispatch, stateList);
         setState({
           inputs: {
             name: '',
