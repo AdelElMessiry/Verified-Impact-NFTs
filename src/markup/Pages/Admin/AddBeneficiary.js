@@ -77,7 +77,7 @@ const AddBeneficiary = () => {
       await SendTweet(
         `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts. ${s.toString().replaceAll(',', ' ')} click here ${window.location.origin}/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
       );
-      debugger;
+      
        await refreshBeneficiaries(nftDispatch, stateList)
       setBeneficiaryInputs({
         name: '',

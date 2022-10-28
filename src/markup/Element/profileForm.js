@@ -100,7 +100,7 @@ const ProfileForm = ({
    if (formName==ProfileFormsEnum.BeneficiaryProfile&&formData){
     const beneficiaryCampaigns=campaigns.filter(({beneficiary_address})=>beneficiary_address==formData.address);
   if (beneficiaryCampaigns&& beneficiaryCampaigns.length>0){
-  const sdgsCampaigns=  beneficiaryCampaigns.map(({sdgs_ids})=>sdgs_ids?.split(",")).flat();
+  const sdgsCampaigns=  beneficiaryCampaigns.map(({sdgs_ids})=>!Array.isArray(sdgs_ids)&& sdgs_ids?.split(",")).flat();
   const beneficiaryArray=  formData?.sdgs_ids?.split(',')
     var savedSDGs = sdgsCampaigns.filter(function(obj) { 
       return beneficiaryArray.indexOf(obj) > -1; 
