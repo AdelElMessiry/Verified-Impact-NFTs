@@ -26,8 +26,11 @@ const updateBeneficiary: APIGatewayProxyHandler = async (event) => {
     const beneficiaryIndex: any = mappedResult.findIndex(
       ({ address }: any) => address === beneficiary.address
     );
+    const toBeDeleted = mappedResult.find(
+      ({ address }: any) => address === beneficiary.address
+    );
 
-    await client.lRem(REDIS_BENEFICIARY_KEY, 0, JSON.stringify(beneficiary));
+    await client.lRem(REDIS_BENEFICIARY_KEY, 0, JSON.stringify(toBeDeleted));
     await client.lSet(
       REDIS_BENEFICIARY_KEY,
       beneficiaryIndex,

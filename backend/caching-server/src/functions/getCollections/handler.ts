@@ -59,6 +59,7 @@ const getCollectionsList = async (countFrom: number, count: number) => {
 
 const getCollections: APIGatewayProxyHandler = async () => {
   await client.connect();
+  // await client.del(REDIS_COLLECTION_KEY);
   let result: any;
   try {
     result = await client.lRange(REDIS_COLLECTION_KEY, 0, -1);
