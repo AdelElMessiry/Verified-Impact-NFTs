@@ -325,6 +325,8 @@ const ProfileForm = ({
           window.location.href = mailto;
     
           await updateBeneficiaries(nftDispatch, stateList, changedData);
+          await refreshBeneficiaries(nftDispatch,stateList)
+
         }
          if(formName === ProfileFormsEnum.CreatorProfile){
           await updateCreators(nftDispatch, stateList, changedData);
