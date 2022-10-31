@@ -49,9 +49,8 @@ type NFTAction =
   | { type: NFTActionTypes.SUCCESS; payload: any };
 
 const NFTStateContext = React.createContext<NFTState | undefined>(undefined);
-const NFTDispatchContext = React.createContext<NFTDispatch | undefined>(
-  undefined
-);
+const NFTDispatchContext =
+  React.createContext<NFTDispatch | undefined>(undefined);
 
 function nftReducer(state: NFTState, action: NFTAction): NFTState {
   switch (action.type) {
@@ -312,7 +311,14 @@ export const refreshNFTs = async (dispatch: any, state: any) => {
 };
 
 export const refreshBeneficiaries = async (dispatch: any, state: any) => {
-  const cachedBeneficiaries = await getCachedBeneficiariesList();
+  const cachedProfiles = await profileClient.getCachedProfilesList();
+  const beneficiariesAddList = cachedProfiles.flatMap(Object.keys);
+  const cachedBeneficiaries: any = [];
+  cachedProfiles.forEach(
+    (item: any, i: number) =>
+      Object.keys(item[beneficiariesAddList[i]]?.beneficiary)?.length &&
+      cachedBeneficiaries.push(item[beneficiariesAddList[i]]?.beneficiary)
+  );
 
   dispatch({
     type: NFTActionTypes.SUCCESS,
