@@ -57,6 +57,7 @@ const SDGsMultiSelect = ({
       ...provided,
       color: '#fff',
     }),
+    menuPortal: base => ({ ...base, zIndex: 9999 })
   };
 
   const handleSDGsChange = (data, ActionTypes) => {

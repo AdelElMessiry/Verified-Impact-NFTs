@@ -1,101 +1,206 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Col, Container, Row, Spinner } from 'react-bootstrap';
-import { useAuth } from '../../contexts/AuthContext'
+import { Col, Row, Spinner } from 'react-bootstrap';
+import Masonry from 'react-masonry-component';
+import SimpleReactLightbox from 'simple-react-lightbox';
+import { SRLWrapper } from 'simple-react-lightbox';
 import { useNFTState } from '../../contexts/NFTContext';
 import Layout from '../Layout';
-import PromptLogin from './PromptLogin';
 import bnr1 from './../../images/banner/bnr1.jpg';
-import MarketPlaceSingleRow from '../Element/marketPlaceSingleRow';
+import UserCard from '../Element/userCard';
+import SDGsMultiSelect from '../Element/SDGsMultiSelect';
+import { SDGsData } from '../../data/SDGsGoals';
 
- const BeneficiariesMarket = () => {
-  const { isLoggedIn } = useAuth();
+// Masonry section
+const masonryOptions = {
+  transitionDuration: 0,
+};
+
+const options = {
+  buttons: { showDownloadButton: false },
+};
+
+const imagesLoadedOptions = { background: '.my-bg-image-el' };
+
+const BeneficiariesMarket = () => {
   const { beneficiaries } = useNFTState();
-  
-  
+  const [SDGsGoals, setSDGsGoals] = React.useState([]);
+
+  const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
+  const [isClearSDGs, setIsClearSDGs] = React.useState(false);
+  const [displayedBenficiaries, setDisplayedBenficiaries] = React.useState([]);
+
+  const filterSDGByTag = React.useCallback((tag, filteredBeneficiaries) => {
+    const AllSDGsTagsName =
+    filteredBeneficiaries &&
+    filteredBeneficiaries
+        .map((nft) => ({ value: nft.sdgs_ids?.split(',') }))
+        .flatMap(({ value }) => value);
+    let sdgsTagsName = AllSDGsTagsName.filter(function (item, pos) {
+      return AllSDGsTagsName.indexOf(item) == pos;
+    });
+    sdgsTagsName &&
+      setSDGsGoalsData(
+        SDGsData.filter(({ value }) => sdgsTagsName.includes(value.toString()))
+      );
+  }, []);
+
+  const getFilteredBeneficiaries = React.useCallback(async () => {
+    const approvedBen=beneficiaries?.filter(
+      (beneficiary) => beneficiary.isApproved == 'true'
+    )
+    const filtBeneficiaries=beneficiaries && approvedBen.filter( (ele, ind) => ind === approvedBen.findIndex( elem => elem.address === ele.address))
+    beneficiaries && filterSDGByTag({ name: 'All', id: '' },filtBeneficiaries);
+    beneficiaries && setDisplayedBenficiaries(filtBeneficiaries);
+  }, [beneficiaries, filterSDGByTag]);
+
+  React.useEffect(() => {
+    getFilteredBeneficiaries();
+  }, [getFilteredBeneficiaries]);
+
+  const getSDGsBasedOnTag = React.useCallback(
+    (selectedData = []) => {
+      let allFilteredBeneficiaries = [];
+      for (let index = 0; index < selectedData.length; index++) {
+        const selectedNfts =
+          beneficiaries &&
+          beneficiaries.filter(
+            (beneficiary) => beneficiary.isApproved == 'true'
+          ).filter(({ sdgs_ids }) =>
+            sdgs_ids?.split(',').includes(selectedData[index].toString())
+          );
+        allFilteredBeneficiaries = [
+          ...allFilteredBeneficiaries,
+          ...selectedNfts,
+        ];
+      }
+      const approvedBen=beneficiaries.filter(
+        (beneficiary) => beneficiary.isApproved == 'true'
+      )
+      allFilteredBeneficiaries.length > 0
+        ? setDisplayedBenficiaries(allFilteredBeneficiaries.filter( (ele, ind) => ind === allFilteredBeneficiaries.findIndex( elem => elem.address === ele.address)))
+        : setDisplayedBenficiaries(approvedBen.filter( (ele, ind) => ind === approvedBen.findIndex( elem => elem.address === ele.address)));
+    },
+
+    [setDisplayedBenficiaries,beneficiaries]
+  );
+
+  const handleSDGsChange = (data) => {
+    setSDGsGoals(data);
+    getSDGsBasedOnTag(data);
+  };
+
   return (
     <Layout>
-    <div className='page-content bg-white'>
-      {/* <!-- inner page banner --> */}
-      <div
-        className='dlab-bnr-inr overlay-primary bg-pt'
-        style={{ backgroundImage: 'url(' + bnr1 + ')' }}
-      >
-        <div className='container'>
-          <div className='dlab-bnr-inr-entry'>
-            <h1 className='text-white d-flex align-items-center'>
-              <span className='mr-1'>
-                Discover Beneficiaries{' '}
-              </span>
-            </h1>
+      <div className="page-content bg-white">
+        {/* <!-- inner page banner --> */}
+        <div
+          className="dlab-bnr-inr overlay-primary bg-pt"
+          style={{ backgroundImage: 'url(' + bnr1 + ')' }}
+        >
+          <div className="container">
+            <div className="dlab-bnr-inr-entry">
+              <h1 className="text-white d-flex align-items-center">
+                <span className="mr-1">Discover Beneficiaries </span>
+              </h1>
 
-            <div className='breadcrumb-row'>
-              <ul className='list-inline'>
-                <li>
-                  <Link to={'#'}>Home</Link>
-                </li>
-                <li className='ml-1'>Discover Beneficiaries</li>
-              </ul>
+              <div className="breadcrumb-row">
+                <ul className="list-inline">
+                  <li>
+                    <Link to={'#'}>Home</Link>
+                  </li>
+                  <li className="ml-1">Discover Beneficiaries</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      {/* <!-- inner page banner END --> */}
-      {/* <!-- contact area --> */}
-      {!isLoggedIn ? (
-        <PromptLogin />
-      ) : (
-        <div className='section-full content-inner shop-account'>
+        {/* <!-- inner page banner END --> */}
+        {/* <!-- contact area --> */}
+        <div className="section-full content-inner-1 portfolio text-uppercase">
           {/* <!-- Product --> */}
-          <div className='container'>
+          <div>
             <div>
-              <div className=' m-auto m-b30'>
-                <Container>
-                  <Row>
-                    <Col>
-                      {beneficiaries  ? (
-                        <table className='table'>
-                          <thead>
-                            <tr>
-                              <th scope='col'></th>
-                              <th scope='col'>Name</th>
-                              <th scope='col'>Address</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {beneficiaries.length > 0 ? (
-                              beneficiaries?.map((beneficiary) => (
-                                beneficiary.isApproved == "true" &&
-                                <MarketPlaceSingleRow
-                                  item={beneficiary}
-                                  key={beneficiary.address}
-                                />
-                              ))
-                            ) : (
-                              <h4 className='text-muted text-center my-5'>
-                                No Beneficiaries registered yet
-                              </h4>
-                            )}
-                          </tbody>
-                        </table>
-                      ) : (
-                        <div className='vinft-section-loader text-center my-5'>
-                          <Spinner animation='border' variant='success' />
-                          <p>Fetching Beneficiaries Please wait...</p>
-                        </div>
-                      )}
-                    </Col>
-                  </Row>
-                </Container>
-              </div>
+              {SDGsGoalsData.length > 0 && (
+                <div className="site-filters clearfix  left mx-5   m-b40">
+                  SDGs Goals:{' '}
+                  <SDGsMultiSelect
+                    data={SDGsGoalsData}
+                    SDGsChanged={(selectedData) => {
+                      handleSDGsChange(selectedData);
+                    }}
+                    isClear={isClearSDGs}
+                  />
+                </div>
+              )}
+              {beneficiaries ? (
+                //   <table className='table'>
+                //   <thead>
+                //     <tr>
+                //       <th scope='col'></th>
+                //       <th scope='col'>Name</th>
+                //       <th scope='col'>Address</th>
+                //     </tr>
+                //   </thead>
+                //   <tbody>
+                //     {beneficiaries.length > 0 ? (
+                //       beneficiaries?.map((beneficiary) => (
+                //         beneficiary.isApproved == "true" &&
+                //         <MarketPlaceSingleRow
+                //           item={beneficiary}
+                //           key={beneficiary.address}
+                //         />
+                //       ))
+                //     ) : (
+                //       <h4 className='text-muted text-center my-5'>
+                //         No Beneficiaries registered yet
+                //       </h4>
+                //     )}
+                //   </tbody>
+                // </table>
+                <SimpleReactLightbox>
+                  <SRLWrapper options={options}>
+                    <div className="clearfix">
+                      <ul
+                        id="masonry"
+                        className="dlab-gallery-listing gallery-grid-4 gallery mfp-gallery port-style1"
+                      >
+                        <Masonry
+                          className={'my-gallery-class'} // default ''
+                          options={masonryOptions} // default {}
+                          disableImagesLoaded={false} // default false
+                          updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
+                          imagesLoadedOptions={imagesLoadedOptions} // default {}
+                        >
+                          {displayedBenficiaries
+                            .filter(
+                              (beneficiary) => beneficiary.isApproved == 'true'
+                            )
+                            .map((item, index) => (
+                              <React.Fragment key={`${index}${item.address}`}>
+                                <li className="web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0 ">
+                                  <UserCard item={item} />
+                                </li>
+                              </React.Fragment>
+                            ))}
+                        </Masonry>
+                      </ul>
+                    </div>
+                  </SRLWrapper>
+                </SimpleReactLightbox>
+              ) : (
+                <div className="vinft-section-loader text-center my-5">
+                  <Spinner animation="border" variant="success" />
+                  <p>Fetching Beneficiaries Please wait...</p>
+                </div>
+              )}
             </div>
           </div>
           {/* <!-- Product END --> */}
         </div>
-      )}
-      {/* <!-- contact area  END --> */}
-    </div>
-  </Layout>
-  )
-}
-export default BeneficiariesMarket
+        {/* <!-- contact area  END --> */}
+      </div>
+    </Layout>
+  );
+};
+export default BeneficiariesMarket;

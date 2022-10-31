@@ -30,6 +30,7 @@ export enum NFTActionTypes {
 interface NFTState {
   nfts?: [];
   beneficiaries?: [];
+  profileCreators?: [];
   campaigns?: [];
   collections?: [];
   uniqueCollections?: [];
@@ -65,6 +66,7 @@ function nftReducer(state: NFTState, action: NFTAction): NFTState {
         isLoading: false,
         nfts: action.payload.nfts,
         beneficiaries: action.payload.beneficiaries,
+        profileCreators:action.payload.profileCreators,
         campaigns: action.payload.campaigns,
         creators: action.payload.creators,
         collections: action.payload.collections,
@@ -106,11 +108,13 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
         creators: undefined,
         campaigns: undefined,
         beneficiaries: undefined,
+        profileCreators:undefined,
         vINFTsBeneficiaries: undefined,
       },
     });
 
-    let selectedList: any = [];
+    let selectedBeneficiaryList: any = [];
+    let selectedCreatorsList: any = [];
     let profiles = await profileClient.getProfilesList();
     // let profiles = await profileClient.getCachedProfilesList();
 
@@ -119,9 +123,12 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
         let lists: any = Object.values(data)[0];
 
         Object.keys(lists.beneficiary).length !== 0 &&
-          selectedList.push(lists.beneficiary);
+        selectedBeneficiaryList.push(lists.beneficiary);
+        Object.keys(lists.creator).length !== 0 &&
+        selectedCreatorsList.push(lists.creator);
       });
-    const beneficiariesList = profiles && selectedList;
+    const beneficiariesList = profiles && selectedBeneficiaryList;
+    const profileCreatorsList = profiles && selectedCreatorsList;
 
     // const beneficiariesVINFTsList = await getBeneficiariesList();
     const beneficiariesVINFTsList = await getCachedBeneficiariesList();
@@ -164,6 +171,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
           collections: collectionsList,
           uniqueCollections: collectionsList.uniqueCollections,
           creators: creatorsList,
+          profileCreators: profileCreatorsList,
           campaigns: campaignsList,
           beneficiaries: beneficiariesList,
           vINFTsBeneficiaries: beneficiariesVINFTsList,

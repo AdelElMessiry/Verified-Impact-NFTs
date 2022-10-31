@@ -162,6 +162,7 @@ impl ViToken {
         url: String,
         requested_royalty: String,
         sdgs_ids: Vec<U256>,
+        resale_prc: String
     ) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
         let campaigns_dict = Campaigns::instance();
@@ -202,6 +203,7 @@ impl ViToken {
                         .join(","),
                 );
                 campaign.insert(format!("requested_royalty: "), requested_royalty);
+                campaign.insert(format!("resale_prc: "), resale_prc);
 
                 if ViToken::default().is_beneficiary(caller) | ViToken::default().is_admin(caller) {
                     campaign.insert(format!("wallet_address: "), wallet_address.to_string());
@@ -496,18 +498,14 @@ impl ViToken {
         Ok(())
     }
 
-    fn transfer(&mut self, recipient: Key, token_ids: Vec<TokenId>) -> Result<(), Error> {
-        let token_id = token_ids.clone().into_iter().nth(0).unwrap();
-
+    fn transfer(&mut self, recipient: Key, token_id: TokenId) -> Result<(), Error> {
         let mut token_meta = ViToken::default()
             .token_meta(token_id.clone())
             .unwrap_or_revert();
         token_meta.insert(format!("price"), "0".to_string());
-        CEP47::set_token_meta(self, token_id.clone(), token_meta).unwrap_or_revert();
+        CEP47::set_token_meta(self, token_id, token_meta).unwrap_or_revert();
 
-        ViToken::default()
-            .transfer(recipient, token_ids)
-            .unwrap_or_revert();
+        CEP47::transfer(self, recipient, vec![token_id]).unwrap_or_revert();
 
         Ok(())
     }
@@ -568,6 +566,7 @@ impl ViToken {
         url: String,
         requested_royalty: String,
         sdgs_ids: Vec<U256>,
+        resale_prc: String
     ) -> Result<(), Error> {
         // let caller = ViToken::default().get_caller();
 
@@ -586,7 +585,7 @@ impl ViToken {
             beneficiary_address,
             url,
             requested_royalty,
-            sdgs_ids,
+            sdgs_ids,resale_prc
         )
         .unwrap_or_revert();
         Ok(())
@@ -909,6 +908,7 @@ fn create_campaign() {
     let beneficiary_address = runtime::get_named_arg::<Key>("beneficiary_address");
     let url = runtime::get_named_arg::<String>("url");
     let requested_royalty = runtime::get_named_arg::<String>("requested_royalty");
+    let resale_prc = runtime::get_named_arg::<String>("resale_prc");
     ViToken::default()
         .create_campaign(
             campaign_id,
@@ -922,6 +922,7 @@ fn create_campaign() {
             url,
             requested_royalty,
             sdgs_ids,
+            resale_prc,
         )
         .unwrap_or_revert();
 }
@@ -1049,17 +1050,10 @@ fn burn() {
 #[no_mangle]
 fn transfer() {
     let recipient = runtime::get_named_arg::<Key>("recipient");
-    let token_ids = runtime::get_named_arg::<Vec<TokenId>>("token_ids");
-    // let token_id = token_ids.clone().into_iter().nth(0).unwrap();
-
-    // let mut token_meta = ViToken::default()
-    //     .token_meta(token_id.clone())
-    //     .unwrap_or_revert();
-    // token_meta.insert(format!("price"), "0".to_string());
-    // CEP47::set_token_meta(self, token_id.clone(), token_meta).unwrap_or_revert();
+    let token_id = runtime::get_named_arg::<TokenId>("token_id");
 
     ViToken::default()
-        .transfer(recipient, token_ids)
+        .transfer(recipient, token_id)
         .unwrap_or_revert();
 }
 
@@ -1560,6 +1554,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("url", String::cl_type()),
             Parameter::new("requested_royalty", String::cl_type()),
             Parameter::new("sdgs_ids", CLType::List(Box::new(U256::cl_type()))),
+            Parameter::new("resale_prc", String::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
@@ -1659,7 +1654,7 @@ fn get_entry_points() -> EntryPoints {
         "transfer",
         vec![
             Parameter::new("recipient", Key::cl_type()),
-            Parameter::new("token_ids", CLType::List(Box::new(TokenId::cl_type()))),
+            Parameter::new("token_id", TokenId::cl_type()),
         ],
         <()>::cl_type(),
         EntryPointAccess::Public,
