@@ -468,7 +468,7 @@ const MyCollections = () => {
       captions.length && setSliderCaptions(captions);
       setShowListForSaleModal(false);
     }
-  }, [isRefreshNFTList, changedNFT, displayedCollections]);
+  }, [isRefreshNFTList, changedNFT]);
 
   const getCollectionsBasedOnTag = React.useCallback(
     (tag = 'All') => {
