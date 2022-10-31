@@ -145,24 +145,24 @@ fn create_profile() {
     profile.insert(format!("{}_medium", profile_type), medium);
     profile.insert(format!("{}_telegram", profile_type), telegram);
     profile.insert(format!("{}_mail", profile_type), mail);
+    profile.insert(
+        format!("{}_sdgs_ids", profile_type),
+        sdgs_ids
+            .iter()
+            .map(ToString::to_string)
+            .collect::<Vec<String>>()
+            .join(","),
+    );
+    profile.insert(
+        format!("{}_has_receipt", profile_type),
+        has_receipt.to_string(),
+    );
+    profile.insert(format!("{}_ein", profile_type), ein);
+    profile.insert(format!("{}_address_pk", profile_type), address_pk);
 
     if mode != "UPDATE" {
         if profile_type == "beneficiary" {
             is_approved = false;
-            profile.insert(
-                format!("{}_sdgs_ids", profile_type),
-                sdgs_ids
-                    .iter()
-                    .map(ToString::to_string)
-                    .collect::<Vec<String>>()
-                    .join(","),
-            );
-            profile.insert(
-                format!("{}_has_receipt", profile_type),
-                has_receipt.to_string(),
-            );
-            profile.insert(format!("{}_ein", profile_type), ein);
-            profile.insert(format!("{}_address_pk", profile_type), address_pk);
         } else {
             is_approved = true;
         }
