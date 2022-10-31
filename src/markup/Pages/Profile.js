@@ -233,7 +233,7 @@ const Profile = () => {
                     <TabPane tabId='1'>
                       {(normalProfile == null ||
                         normalProfile ||
-                        noProfilesForThisUser) ? (
+                        noProfilesForThisUser)&&activeTab==='1' ? (
                         <ProfileForm
                           formName={ProfileFormsEnum.NormalProfile}
                           isProfileExist={
@@ -253,7 +253,7 @@ const Profile = () => {
                     </TabPane>
                     <TabPane tabId='2'>
                       {(creatorProfile || noCreatorProfilesForThisUser) &&
-                        creators ? (
+                        creators &&activeTab==='2'? (
                           <ProfileForm
                             formName={ProfileFormsEnum.CreatorProfile}
                             isProfileExist={
@@ -273,7 +273,7 @@ const Profile = () => {
                     <TabPane tabId='3'>
                       {(beneficiaryProfile ||
                         noBeneficiaryProfilesForThisUser) &&
-                        beneficiaries ? (
+                        beneficiaries &&activeTab==='3' ? (
                           <>
                             <div className='dlab-tabs choseus-tabs'>
                               <ul
