@@ -13,7 +13,7 @@ import { uploadImg } from '../../api/imageCDN';
 import { SocialLinks } from 'social-links';
 import SDGsMultiSelect from './SDGsMultiSelect';
 import { SDGsData } from '../../data/SDGsGoals';
-import { useNFTState } from '../../contexts/NFTContext';
+import { updateBeneficiaries, useNFTState,useNFTDispatch } from '../../contexts/NFTContext';
 const ProfileForm = ({
   formName,
   isProfileExist,
@@ -21,7 +21,9 @@ const ProfileForm = ({
   isSignUpBeneficiary = false,
 }) => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
-  const { campaigns } = useNFTState();
+  const { ...stateList } = useNFTState();
+  const nftDispatch = useNFTDispatch();
+  const { campaigns } = stateList;
 
   //setting initial values of controls
   const [state, setState] = useState({
@@ -292,6 +294,32 @@ const ProfileForm = ({
           const mailto = `mailto:verifiedimpactnfts@gmail.com?subject=New Beneficiary ${state.inputs.userName}&body=Dear Verified Impact NFTs Team:%0D%0A%0D%0AHello, ${state.inputs.userName} would like to signup .%0D%0A%0D%0APlease approve my beneficiary.%0D%0A%0D%0AAdditional notes:%0D%0A
           (Please type your notes here)%0D%0A%0D%0AMany thanks.%0D%0AWith kind regards,`;
           window.location.href = mailto;
+          const changedBeneficiaries={
+            address: CLPublicKey.fromHex(entityInfo.publicKey).toAccountHashStr().slice(13),
+            address_pk: entityInfo.publicKey,
+            ein: state.inputs.donationReceipt?state.inputs.ein:"",
+            externalLink: state.inputs.externalSiteLink,
+            facebook: state.inputs.facebook,
+            firstName: state.inputs.firstName,
+            has_receipt: state.inputs.donationReceipt,
+            imgUrl: ProfileImgURL,
+            instagram: state.inputs.instagram,
+            isApproved: formData.isApproved,
+            lastName: state.inputs.lastName,
+            mail: state.inputs.email,
+            medium: state.inputs.medium,
+            nftUrl: NFTImgURL,
+            phone: state.inputs.phone,
+            sdgs_ids: SDGsGoals.map(str => {
+              return Number(str);
+            }),
+            tagline: state.inputs.tagline,
+            telegram: state.inputs.telegram,
+            twitter: state.inputs.twitter,
+            username: state.inputs.userName,
+            bio: formData.bio,
+        }
+          await updateBeneficiaries(nftDispatch, stateList, changedBeneficiaries);
         }
         if (
           formName === ProfileFormsEnum.BeneficiaryProfile &&
