@@ -32,7 +32,9 @@ export default function UserCard({ item, type = 'beneficiary' }) {
     }
     const IconImage = () => {
         return (
-            <ul key={item.address} className='list-inline portfolio-fullscreen mt-4'>
+            <ul key={item.address} className='list-inline portfolio-fullscreen mt-4' onClick={(e)=>{
+                if(e && e.stopPropagation) e.stopPropagation(); 
+              }}>
                 <li className='text-success mr-1 align-items-center'>
                     <VINftsTooltip
                         title={`${item.mail == "" ? noData
@@ -128,9 +130,11 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                                 <div className='text-white text-left port-box'>
                                     <h4 >{item.username}</h4>
                                     <h6 >{item.bio}</h6>
-                                    <a href={`${process.env.REACT_APP_CPR_LINK}${item.address}`} target="_blank" style={{ wordBreak: "break-all" }}>
-                                        {item.address}
-                                    </a>
+                                    <div onClick={(e)=>{if(e && e.stopPropagation) e.stopPropagation(); }}>
+                                        <a href={`${process.env.REACT_APP_CPR_LINK}${item.address}`} target="_blank" style={{ wordBreak: "break-all" }}>
+                                            {item.address}
+                                        </a>
+                                    </div>
                                     <div>
                                         <IconImage />
                                     </div>
