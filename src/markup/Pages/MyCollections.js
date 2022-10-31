@@ -605,7 +605,7 @@ const MyCollections = () => {
               <h1 className='text-white d-flex align-items-center'>
                 <span className='mr-1'>
                   My Minted Collections{' '}
-                  <VINftsTooltip title={`Add New Collection`}>
+                 {isCreatorExist===true&&<> <VINftsTooltip title={`Add New Collection`}>
                     <Link to={'./add-collection?id=0'}>
                       <img
                         src={plusIcon}
@@ -624,7 +624,8 @@ const MyCollections = () => {
                         alt='mintIcon'
                       />
                     </Link>
-                  </VINftsTooltip>
+                  </VINftsTooltip></>
+                }
                 </span>
               </h1>
 
