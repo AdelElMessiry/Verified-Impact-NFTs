@@ -7,6 +7,10 @@ import Lightbox from 'react-image-lightbox';
 import { Link } from 'react-router-dom';
 import QRCode from 'react-qr-code';
 import Carousel from 'react-elastic-carousel';
+import ReactGA from 'react-ga';
+import { faStoreAlt, faStoreAltSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { CLPublicKey } from 'casper-js-sdk';
 
 import { useAuth } from '../../contexts/AuthContext';
 import { refreshNFTs, useNFTState } from '../../contexts/NFTContext';
@@ -36,9 +40,6 @@ import soldIcon from '../../images/icon/sold.png';
 import mintIcon from '../../images/icon/Mint.png';
 import unitedNation from '../../images/icon/unitedNation.png';
 
-import ReactGA from 'react-ga';
-import { faStoreAlt, faStoreAltSlash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CopyCode from '../Element/copyCode';
 import { SDGsData } from '../../data/SDGsGoals';
 // Masonry section
@@ -89,8 +90,14 @@ const TagLi = ({ name, handleSetTag, tagActive, type }) => {
 
 const MyCollections = () => {
   const { isLoggedIn, entityInfo } = useAuth();
-  const { nfts, beneficiaries, campaigns, collections, creators } =
-    useNFTState();
+  const {
+    nfts,
+    beneficiaries,
+    campaigns,
+    collections,
+    creators,
+    profileCreators,
+  } = useNFTState();
 
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
@@ -118,6 +125,7 @@ const MyCollections = () => {
   const [selectedCollection, setSelectedCollection] = React.useState();
   const [isRefreshNFTList, setIsRefreshNFTList] = React.useState(false);
   const [changedNFT, setChangedNFT] = React.useState();
+  const [isCreatorExist, setIsCreatorExist] = React.useState();
 
   //function returns button of buying NFT
   const IconImage = ({ nft }) => {
@@ -253,7 +261,7 @@ const MyCollections = () => {
           </>
         )}
         {nft.isCreatorOwner === false && nft.isForSale === 'true' && (
-         <> <IconImage nft={nft} />cc{nft.isCreatorOwner}</>
+         <IconImage nft={nft} />
         )}
         &nbsp;&nbsp; &nbsp;&nbsp;{' '}
         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
@@ -371,33 +379,49 @@ const MyCollections = () => {
 
   const getFilteredNFTs = React.useCallback(async () => {
     const captions = [];
-
-    const nftsList = await getCachedCreatorNftList(nfts, entityInfo.publicKey);
-    const mappedNFTsList =
-      nftsList &&
-      beneficiaries &&
-      campaigns &&
-      creators &&
-      collections &&
-      getMappedNftsByList(
-        nftsList,
-        beneficiaries,
-        campaigns,
-        creators,
-        collections
+    const isCreatorExist =
+      profileCreators &&
+      profileCreators.filter(
+        ({ address }) =>
+          address ==
+          CLPublicKey.fromHex(entityInfo.publicKey).toAccountHashStr().slice(13)
       );
+    if (profileCreators) {
+      if (isCreatorExist.length > 0) {
+        setIsCreatorExist(true);
+        const nftsList = await getCachedCreatorNftList(
+          nfts,
+          entityInfo.publicKey
+        );
+        const mappedNFTsList =
+          nftsList &&
+          beneficiaries &&
+          campaigns &&
+          creators &&
+          collections &&
+          getMappedNftsByList(
+            nftsList,
+            beneficiaries,
+            campaigns,
+            creators,
+            collections
+          );
 
-    const filteredNFTs = mappedNFTsList && mappedNFTsList;
-    filteredNFTs &&
-      setDisplayedCollections(setNFTsBasedOnCollection(filteredNFTs));
-    filteredNFTs && filterCollectionByTag('All', filteredNFTs);
-    filteredNFTs && filterCampaignByTag('All', filteredNFTs);
-    filteredNFTs && filterCreatorByTag('All', filteredNFTs);
-    filteredNFTs && setAllNFTs(filteredNFTs);
+        const filteredNFTs = mappedNFTsList && mappedNFTsList;
+        filteredNFTs &&
+          setDisplayedCollections(setNFTsBasedOnCollection(filteredNFTs));
+        filteredNFTs && filterCollectionByTag('All', filteredNFTs);
+        filteredNFTs && filterCampaignByTag('All', filteredNFTs);
+        filteredNFTs && filterCreatorByTag('All', filteredNFTs);
+        filteredNFTs && setAllNFTs(filteredNFTs);
 
-    filteredNFTs &&
-      filteredNFTs.forEach((nft) => captions.push(CaptionItem(nft)));
-    filteredNFTs && captions.length && setSliderCaptions(captions);
+        filteredNFTs &&
+          filteredNFTs.forEach((nft) => captions.push(CaptionItem(nft)));
+        filteredNFTs && captions.length && setSliderCaptions(captions);
+      } else {
+        setIsCreatorExist(false);
+      }
+    }
   }, [
     entityInfo.publicKey,
     beneficiaries,
@@ -408,6 +432,7 @@ const MyCollections = () => {
     filterCampaignByTag,
     filterCreatorByTag,
     nfts,
+    profileCreators,
   ]);
 
   React.useEffect(() => {
@@ -618,7 +643,7 @@ const MyCollections = () => {
         {/*  Section-1 Start  */}
         {!isLoggedIn ? (
           <PromptLogin />
-        ) : (
+        ) : isCreatorExist ? (
           <div className='section-full content-inner-1 portfolio text-uppercase'>
             {(creator === undefined || creator === null) && (
               <div className='site-filters clearfix  left mx-5   m-b40'>
@@ -855,6 +880,17 @@ const MyCollections = () => {
                 </div>
               </div>
             )}
+          </div>
+        ) : isCreatorExist == false ? (
+          <h4 className="text-muted text-center my-5">
+            You Don't have Creator Profile Please Create One First
+          </h4>
+        ) : (
+          <div className="vinft-page-loader">
+            <div className="vinft-spinner-body">
+              <Spinner animation="border" variant="success" />
+              <p>Checking if Creator Exist...</p>
+            </div>
           </div>
         )}
       </div>
