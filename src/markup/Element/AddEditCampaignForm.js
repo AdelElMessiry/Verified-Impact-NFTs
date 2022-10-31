@@ -113,6 +113,7 @@ const AddEditCampaignForm = ({
       name: data ? data.name : '',
       description: data ? data.description : '',
       requestedRoyalty: data ? data.requested_royalty : '',
+      resaleRoyalty: ''
     },
   });
 
@@ -155,7 +156,7 @@ const AddEditCampaignForm = ({
   };
 
   //saving new campaign related to beneficiary function
-  const saveCampaign = async () => {
+  const saveCampaign = async () => {    
     setIsButtonClicked(true);
     if (state.inputs.campaignUrl !== '' && showURLErrorMsg) {
       return;
@@ -172,6 +173,7 @@ const AddEditCampaignForm = ({
         SDGsGoals.map((str) => {
           return Number(str);
         }),
+        state.inputs.resaleRoyalty,
         data ? 'UPDATE' : 'ADD',
         data ? data.id : undefined,
         beneficiaryAddress ? beneficiaryAddress : beneficiary
@@ -382,7 +384,44 @@ const AddEditCampaignForm = ({
                     <span className='text-danger'>Please enter Valid URL</span>
                   )}
                 </Col>
-                {SDGsGoalsData.length > 0 && (
+                <Col>
+                <div className='required-field'>
+                  <input
+                      type='number'
+                      placeholder='Resale Royalty %'
+                      name='resaleRoyalty'
+                      className='form-control'
+                      value={state.inputs.resaleRoyalty}
+                      onChange={(e) => {
+                        handleChange(e);
+                      }}
+                    />
+                    <span className='text-danger required-field-symbol'>*</span>
+                  </div>
+                  {(state.inputs.resaleRoyalty < 0 ||
+                      state.inputs.resaleRoyalty > 100) && (
+                      <span className='text-danger'>
+                        Requested Resale Royalty value must be more than 0 and less
+                        than 100
+                      </span>
+                    )}
+                </Col>
+              </Row>
+
+              <Row className='mt-4'>
+                <Col>
+                  <textarea
+                    rows={4}
+                    name='description'
+                    placeholder='Description'
+                    className='form-control'
+                    onChange={(e) => handleChange(e)}
+                    value={state.inputs.description}
+                  ></textarea>
+                </Col>
+              </Row>
+              <Row className='mt-4'>
+              {SDGsGoalsData.length > 0 && (
                   <Col>
                     <SDGsMultiSelect
                       data={SDGsGoalsData}
@@ -399,19 +438,7 @@ const AddEditCampaignForm = ({
                     />
                   </Col>
                 )}
-              </Row>
-
-              <Row className='mt-4'>
-                <Col>
-                  <textarea
-                    rows={4}
-                    name='description'
-                    placeholder='Description'
-                    className='form-control'
-                    onChange={(e) => handleChange(e)}
-                    value={state.inputs.description}
-                  ></textarea>
-                </Col>
+                
               </Row>
               <Row className='mt-4'>
                 <Col>

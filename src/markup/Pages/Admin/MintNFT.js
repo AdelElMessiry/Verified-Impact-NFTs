@@ -83,6 +83,7 @@ const MintNFT = () => {
       currency: 'CSPR',
       beneficiaryPercentage: '',
       isImageURL: false,
+      isAuthorBeneficiary:false
     },
   });
 
@@ -481,13 +482,6 @@ const MintNFT = () => {
             window.location.origin
           }/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
         );
-        //  else{
-        //   let image64 = 'https://dweb.link/ipfs/'+ image
-        //   await SendTweetWithImage64(
-        //     image64,
-        //     `Great news! "${state.inputs.name}" NFT  has been added to #verified_impact_nfts click here ${window.location.origin}/#/ to know more about their cause. @vinfts @casper_network @devxdao ${twitterName}`
-        //   )
-        // }
         ReactGA.event({
           category: 'Success',
           action: 'Mint',
@@ -814,6 +808,28 @@ const MintNFT = () => {
                         />
                       </Col>
                     </Row>
+                    <Row className='form-group'>
+                      <Col>
+                      <div className='required-field'>
+                        <Form.Check
+                          type={'checkbox'}
+                          id={'isAuthorBeneficiary'}
+                          label={`I authorize the donation of this NFT for the selected beneficiary campaign.`}
+                          onChange={(e) => {
+                            handleChange(e)
+                          }}
+                          value={state.inputs.isAuthorBeneficiary}
+                          name='isAuthorBeneficiary'
+                          checked={state.inputs.isAuthorBeneficiary}
+                        />
+                        {!state.inputs.isAuthorBeneficiary && (
+                          <span className='text-danger required-field-symbol'>
+                            *
+                          </span>
+                        )}
+                        </div>
+                      </Col>
+                    </Row>
                     {state.inputs.isForSale && (
                       <>
                         <Row className='form-group'>
@@ -900,7 +916,8 @@ const MintNFT = () => {
                               isMintAnotherClicked ||
                               !uploadedImageBlob ||
                               (SDGsGoalsData.length > 0 &&
-                                SDGsGoals.length <= 0)
+                                SDGsGoals.length <= 0)||
+                                !state.inputs.isAuthorBeneficiary
                             }
                           >
                             {isMintClicked ? (
@@ -931,7 +948,8 @@ const MintNFT = () => {
                               !uploadedImageBlob ||
                               isMintClicked ||
                               (SDGsGoalsData.length > 0 &&
-                                SDGsGoals.length <= 0)
+                                SDGsGoals.length <= 0)||
+                                !state.inputs.isAuthorBeneficiary
                             }
                           >
                             {isMintAnotherClicked ? (

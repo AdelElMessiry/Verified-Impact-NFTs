@@ -25,11 +25,12 @@ export async function createCampaign(
   requested_royalty: string,
   deploySender: CLPublicKey,
   sdgs_ids: number[],
+  resale_prc: string,
   mode?: string,
   campaign_id?: string,
   beneficiary_address?: string //hash
 ) {
-  if ((mode && mode === 'ADD') && !beneficiary_address) {
+  if (mode && mode === 'ADD' && !beneficiary_address) {
     beneficiary_address = wallet_address;
   }
   const campaignDeploy = await cep47.createCampaign(
@@ -43,6 +44,7 @@ export async function createCampaign(
     url,
     requested_royalty,
     sdgs_ids,
+    resale_prc,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     deploySender
   );
