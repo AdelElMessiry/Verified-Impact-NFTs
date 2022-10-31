@@ -13,8 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CLPublicKey } from 'casper-js-sdk';
 
 import { useAuth } from '../../contexts/AuthContext';
-import { refreshNFTs, useNFTState } from '../../contexts/NFTContext';
-import { getCreatorNftList } from '../../api/nftInfo';
+import { useNFTState } from '../../contexts/NFTContext';
 import {
   getMappedNftsByList,
   getCachedCreatorNftList,
@@ -261,7 +260,7 @@ const MyCollections = () => {
           </>
         )}
         {nft.isCreatorOwner === false && nft.isForSale === 'true' && (
-         <IconImage nft={nft} />
+          <IconImage nft={nft} />
         )}
         &nbsp;&nbsp; &nbsp;&nbsp;{' '}
         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
@@ -383,7 +382,7 @@ const MyCollections = () => {
       profileCreators &&
       profileCreators.filter(
         ({ address }) =>
-          address ==
+          address ===
           CLPublicKey.fromHex(entityInfo.publicKey).toAccountHashStr().slice(13)
       );
     if (profileCreators) {
@@ -444,12 +443,12 @@ const MyCollections = () => {
     if (changedNFT) {
       let flatAll = displayedCollections.flat();
       let finalArr = [];
-      flatAll.map((flat) => {
+      flatAll.forEach((flat) => {
         const collectionArr = Object.values(flat);
         finalArr = [...finalArr, ...collectionArr[0]];
       });
       const resIndex = finalArr?.findIndex(
-        ({ tokenId }) => tokenId == changedNFT.tokenId
+        ({ tokenId }) => tokenId === changedNFT.tokenId
       );
       finalArr?.splice(resIndex, 1);
       setDisplayedCollections(
@@ -466,10 +465,10 @@ const MyCollections = () => {
         changedNFT,
         ...finalArr?.slice(resIndex),
       ].forEach((nft) => captions.push(CaptionCampaign(nft, IconImage)));
-       captions.length && setSliderCaptions(captions);
+      captions.length && setSliderCaptions(captions);
       setShowListForSaleModal(false);
     }
-  }, [isRefreshNFTList]);
+  }, [isRefreshNFTList, changedNFT, displayedCollections]);
 
   const getCollectionsBasedOnTag = React.useCallback(
     (tag = 'All') => {
@@ -605,7 +604,7 @@ const MyCollections = () => {
             <div className='dlab-bnr-inr-entry'>
               <h1 className='text-white d-flex align-items-center'>
                 <span className='mr-1'>
-                My Minted Collections{' '}
+                  My Minted Collections{' '}
                   <VINftsTooltip title={`Add New Collection`}>
                     <Link to={'./add-collection?id=0'}>
                       <img
@@ -881,14 +880,14 @@ const MyCollections = () => {
               </div>
             )}
           </div>
-        ) : isCreatorExist == false ? (
-          <h4 className="text-muted text-center my-5">
+        ) : isCreatorExist === false ? (
+          <h4 className='text-muted text-center my-5'>
             You Don't have Creator Profile Please Create One First
           </h4>
         ) : (
-          <div className="vinft-page-loader">
-            <div className="vinft-spinner-body">
-              <Spinner animation="border" variant="success" />
+          <div className='vinft-page-loader'>
+            <div className='vinft-spinner-body'>
+              <Spinner animation='border' variant='success' />
               <p>Checking if Creator Exist...</p>
             </div>
           </div>
@@ -902,10 +901,10 @@ const MyCollections = () => {
           }}
           data={selectedNFT}
           isTransfer={true}
-          handleTransactionBuySuccess={(nft)=>{ setChangedNFT(nft);
-            setIsRefreshNFTList(
-              !isRefreshNFTList
-            );}}
+          handleTransactionBuySuccess={(nft) => {
+            setChangedNFT(nft);
+            setIsRefreshNFTList(!isRefreshNFTList);
+          }}
         />
       )}
       {showListForSaleModal && (
@@ -915,10 +914,10 @@ const MyCollections = () => {
             setShowListForSaleModal(false);
           }}
           data={listForSaleNFT}
-          handleTransactionSuccess={(nft)=>{  setChangedNFT(nft);
-            setIsRefreshNFTList(
-              !isRefreshNFTList
-            );}}
+          handleTransactionSuccess={(nft) => {
+            setChangedNFT(nft);
+            setIsRefreshNFTList(!isRefreshNFTList);
+          }}
         />
       )}
     </Layout>
