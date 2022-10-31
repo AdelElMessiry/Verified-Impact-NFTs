@@ -49,9 +49,8 @@ type NFTAction =
   | { type: NFTActionTypes.SUCCESS; payload: any };
 
 const NFTStateContext = React.createContext<NFTState | undefined>(undefined);
-const NFTDispatchContext = React.createContext<NFTDispatch | undefined>(
-  undefined
-);
+const NFTDispatchContext =
+  React.createContext<NFTDispatch | undefined>(undefined);
 
 function nftReducer(state: NFTState, action: NFTAction): NFTState {
   switch (action.type) {
@@ -286,6 +285,39 @@ export const updateCreators = async (
   });
 };
 
+export const updateProfiles = async (
+  dispatch: any,
+  state: any,
+  profile: any
+) => {
+  const updatedProfiles = await profileClient.updateCachedProfile(profile);
+
+  const profilesAddList = updatedProfiles.flatMap(Object.keys);
+  const cachedBeneficiaries: any = [];
+  const cachedCreators: any = [];
+
+  updatedProfiles.forEach(
+    (item: any, i: number) =>
+      Object.keys(item[profilesAddList[i]]?.beneficiary)?.length &&
+      cachedBeneficiaries.push(item[profilesAddList[i]]?.beneficiary)
+  );
+
+  updatedProfiles.forEach(
+    (item: any, i: number) =>
+      Object.keys(item[profilesAddList[i]]?.creator)?.length &&
+      cachedCreators.push(item[profilesAddList[i]]?.creator)
+  );
+
+  dispatch({
+    type: NFTActionTypes.SUCCESS,
+    payload: {
+      ...state,
+      creators: cachedCreators,
+      beneficiaries: cachedBeneficiaries,
+    },
+  });
+};
+
 export const refreshNFTs = async (dispatch: any, state: any) => {
   const cachedNFTs = await getCachedNFTsList(state.nfts);
   const { campaigns, creators, beneficiaries, collections } = state;
@@ -312,7 +344,14 @@ export const refreshNFTs = async (dispatch: any, state: any) => {
 };
 
 export const refreshBeneficiaries = async (dispatch: any, state: any) => {
-  const cachedBeneficiaries = await getCachedBeneficiariesList();
+  const cachedProfiles = await profileClient.getCachedProfilesList();
+  const beneficiariesAddList = cachedProfiles.flatMap(Object.keys);
+  const cachedBeneficiaries: any = [];
+  cachedProfiles.forEach(
+    (item: any, i: number) =>
+      Object.keys(item[beneficiariesAddList[i]]?.beneficiary)?.length &&
+      cachedBeneficiaries.push(item[beneficiariesAddList[i]]?.beneficiary)
+  );
 
   dispatch({
     type: NFTActionTypes.SUCCESS,

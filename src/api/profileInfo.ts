@@ -263,20 +263,20 @@ class ProfileClient {
     return profiles?.data.list;
   }
 
-  public async updateCachedProfile(profile: any, profiles: any) {
+  public async updateCachedProfile(profile: any) {
     const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
     const apiName = 'updateProfile';
 
-    await axios.patch(
+    const updatedProfiles: any = await axios.patch(
       `${REACT_APP_NFT_API_BASE_URL}/${REACT_APP_NFT_API_ENV}/${apiName}`,
       { profile }
     );
 
-    profiles[
-      profiles.findIndex(({ address }: any) => address === profile.address)
-    ] = profile;
+    // profiles[
+    //   profiles.findIndex(({ address }: any) => address === profile.address)
+    // ] = profile;
 
-    return profiles;
+    return updatedProfiles.data.profiles;
   }
 }
 
