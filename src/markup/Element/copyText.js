@@ -9,8 +9,8 @@ const CopyText = ({ link }) => {
     <img
       src={copyIcon}
       width="40px"
-      onClick={() => {
-        navigator.clipboard.writeText(link);VIToast.success('Text Copied successfully!');
+      onClick={(e) => {
+       e.stopPropagation(); navigator.clipboard.writeText(link);VIToast.success('Text Copied successfully!');
       }}
       className="cursor-pointer"
     />
