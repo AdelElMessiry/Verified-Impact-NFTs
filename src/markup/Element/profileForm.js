@@ -826,8 +826,8 @@ const getSavedData=(bio)=>{
               !uploadedNFTImageURL ||
               (state.inputs.donationReceipt && state.inputs.ein == "") ||
               ((formName === ProfileFormsEnum.BeneficiaryProfile && SDGsGoals?.length <= 0) || (formName === ProfileFormsEnum.BeneficiaryProfile && SDGsGoals == undefined))||
-              !state.inputs.authorizeArtist ||
-              !state.inputs.acceptPolicies
+              ( isSignUpBeneficiary&&(!state.inputs.authorizeArtist ||
+              !state.inputs.acceptPolicies))
             }
             onClick={(e) => {
               handleSave(e);

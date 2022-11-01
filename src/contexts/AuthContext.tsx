@@ -30,7 +30,15 @@ async function getConnectionStatus(): Promise<null | string> {
   if (!window.casperlabsHelper) {
     // alert("Please install Casper signer Signer extension")
     console.log('Casper signer not available :(');
-    VIToast.error("Casper signer not available please download it first", {
+    const displayMessageWithLink = () => (
+      
+      <div>
+        Install the Casper signer extension from the Google extension store
+        {" "}
+        <a href="https://chrome.google.com/webstore/detail/casper-signer/djhndpllfiibmcdbnmaaahkhchcoijce" target="_blank" >Click Here</a>
+      </div>
+    );
+    VIToast.error(displayMessageWithLink, {
       position: "top-center"})
     return null;
   }
