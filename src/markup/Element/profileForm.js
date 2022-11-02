@@ -156,7 +156,8 @@ const ProfileForm = ({
   };
 
   const checkURLValidation = (value, urlNum) => {
-    if (validator.isURL(value)) {
+    var re = new RegExp("^(http|https)://", "i");
+    if (validator.isURL(value) && re.test(value)) {
       urlNum == 1
         ? setShowProfileURLErrorMsg(false)
         : urlNum == 2
@@ -586,6 +587,7 @@ const ProfileForm = ({
                 name='externalSiteLink'
                 className='form-control'
                 value={state.inputs.externalSiteLink}
+                placeholder="https://example.com"
                 onChange={(e) => {
                   handleChange(e);
                   checkURLValidation(e.target.value, 3);
