@@ -94,7 +94,6 @@ const MyCollections = () => {
     beneficiaries,
     campaigns,
     collections,
-    creators,
     profileCreators,
   } = useNFTState();
 
@@ -396,13 +395,13 @@ const MyCollections = () => {
           nftsList &&
           beneficiaries &&
           campaigns &&
-          creators &&
+          profileCreators &&
           collections &&
           getMappedNftsByList(
             nftsList,
             beneficiaries,
             campaigns,
-            creators,
+            profileCreators,
             collections
           );
 
@@ -426,7 +425,6 @@ const MyCollections = () => {
     beneficiaries,
     campaigns,
     collections,
-    creators,
     filterCollectionByTag,
     filterCampaignByTag,
     filterCreatorByTag,
