@@ -5,12 +5,21 @@ import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from '../api/campaignInfo';
 import { getCreatorsList } from '../api/creatorInfo';
 import { getUniqueCollectionsList } from '../api/collectionInfo';
-import {
-  getNFTsList,
-  getCachedNFTsList,
-  updateCachedNFT,
-} from '../api/nftInfo';
+import { getCachedNFTsList, updateCachedNFT } from '../api/nftInfo';
 import { profileClient } from '../api/profileInfo';
+import { getCachedCreatorsList, updateCachedCreator } from '../api/creatorInfo';
+import {
+  getCachedCollectionsList,
+  updateCachedCollection,
+} from '../api/collectionInfo';
+import {
+  getCachedCampaignsList,
+  updateCachedCampaign,
+} from '../api/campaignInfo';
+import {
+  getCachedBeneficiariesList,
+  updateCachedBeneficiary,
+} from '../api/beneficiaryInfo';
 
 export enum NFTActionTypes {
   LOADING = 'loading',
@@ -32,7 +41,6 @@ interface NFTState {
   campaignsCount?: Number;
   creatorsCount?: Number;
   collectionsCount?: Number;
-  // refreshNFTs?: () => void;
 }
 
 type NFTDispatch = (action: NFTAction) => void;
@@ -42,9 +50,8 @@ type NFTAction =
   | { type: NFTActionTypes.SUCCESS; payload: any };
 
 const NFTStateContext = React.createContext<NFTState | undefined>(undefined);
-const NFTDispatchContext = React.createContext<NFTDispatch | undefined>(
-  undefined
-);
+const NFTDispatchContext =
+  React.createContext<NFTDispatch | undefined>(undefined);
 
 function nftReducer(state: NFTState, action: NFTAction): NFTState {
   switch (action.type) {
@@ -69,7 +76,6 @@ function nftReducer(state: NFTState, action: NFTAction): NFTState {
         creatorsCount: action.payload.creatorsCount,
         collectionsCount: action.payload.collectionsCount,
         vINFTsBeneficiaries: action.payload.vINFTsBeneficiaries,
-        // refreshNFTs: getCachedNFTsList,
       };
     }
     default: {
@@ -81,19 +87,10 @@ function nftReducer(state: NFTState, action: NFTAction): NFTState {
 export const NFTProvider: React.FC<{}> = ({ children }: any) => {
   const [state, dispatch] = React.useReducer(nftReducer, { isLoading: true });
 
-  // const [beneficiaries, setBeneficiaries] = React.useState();
-  // const [campaigns, setCampaigns] = React.useState();
-  // const [creators, setCreators] = React.useState();
-  // const [collections, setCollections] = React.useState();
-  // // const [uniqueCollections, setUniqueCollections] = React.useState();
-  // const [nfts, setNFTs] = React.useState();
-
   const getList = React.useCallback(async () => {
     dispatch({ type: NFTActionTypes.LOADING });
 
-    // const nftsList = await getNFTsList();
     const nftsList = await getCachedNFTsList();
-    // const beneficiaryCount = await cep47.totalBeneficiaries();
     const campaignsCount = await cep47.totalCampaigns();
     const creatorsCount = await cep47.totalCreators();
     const collectionsCount = await cep47.totalCollections();
@@ -119,6 +116,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
     let selectedBeneficiaryList: any = [];
     let selectedCreatorsList: any = [];
     let profiles = await profileClient.getProfilesList();
+    // let profiles = await profileClient.getCachedProfilesList();
 
     profiles &&
       profiles.forEach((data: any) => {
@@ -132,66 +130,45 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
     const beneficiariesList = profiles && selectedBeneficiaryList;
     const profileCreatorsList = profiles && selectedCreatorsList;
 
-    const beneficiariesVINFTsList = await getBeneficiariesList();
+    // const beneficiariesVINFTsList = await getBeneficiariesList();
+    const beneficiariesVINFTsList = await getCachedBeneficiariesList();
     const beneficiariesCount = beneficiariesVINFTsList?.filter(
       ({ isApproved }: any) => isApproved === 'true'
     )?.length;
 
-    // beneficiariesList && setBeneficiaries(beneficiariesList);
+    // const campaignsList = await getCampaignsList();
+    const campaignsList = await getCachedCampaignsList();
+    // const creatorsList = await getCreatorsList();
+    const creatorsList = await getCachedCreatorsList();
+    // const collectionsList = await getUniqueCollectionsList();
+    const collectionsList = await getCachedCollectionsList();
 
-    const campaignsList = await getCampaignsList();
-    // campaignsList && setCampaigns(campaignsList);
+    const mappedNFTS = nftsList?.map((nft: any) => ({
+      ...nft,
+      campaignName:
+        campaignsList.find(({ id }: any) => nft.campaign === id)?.name || '',
+      creatorName:
+        creatorsList.find(({ address }: any) => nft.creator === address)
+          ?.name || '',
+      beneficiaryName:
+        beneficiariesList.find(
+          ({ address }: any) => nft.beneficiary === address
+        )?.username || '',
+      collectionName:
+        collectionsList.find(({ id }: any) => nft.collection === id)?.name ||
+        '',
+    }));
 
-    const creatorsList = await getCreatorsList();
-    // creatorsList && setCreators(creatorsList);
-
-    const collectionsList = await getUniqueCollectionsList();
-    // collectionsList &&
-    // collectionsList.collectionsList &&
-    // setCollections(collectionsList.collectionsList);
-
-    const mappedNFTS =
-      // beneficiariesList &&
-      // campaignsList &&
-      // creatorsList &&
-      // collectionsList?.collectionsList &&
-      // nftsList &&
-      nftsList?.map((nft: any) => ({
-        ...nft,
-        campaignName:
-          campaignsList.find(({ id }: any) => nft.campaign === id)?.name || '',
-        creatorName:
-          creatorsList.find(({ address }: any) => nft.creator === address)
-            ?.name || '',
-        beneficiaryName:
-          beneficiariesList.find(
-            ({ address }: any) => nft.beneficiary === address
-          )?.username || '',
-        collectionName:
-          collectionsList.collectionsList.find(
-            ({ id }: any) => nft.collection === id
-          )?.name || '',
-      }));
-    // &&
-    // setNFTs(nftsList);
-
-    // mappedNFTS && setNFTs(mappedNFTS);
-
-    // beneficiariesList &&
-    //   campaignsList &&
-    //   creatorsList &&
-    //   collectionsList?.collectionsList &&
     mappedNFTS &&
       dispatch({
         type: NFTActionTypes.SUCCESS,
         payload: {
           nfts: mappedNFTS,
-          // beneficiaryCount: parseInt(beneficiaryCount.toString()),
           beneficiaryCount: beneficiariesCount,
           campaignsCount: parseInt(campaignsCount.toString()),
           creatorsCount: parseInt(creatorsCount.toString()),
           collectionsCount: parseInt(collectionsCount.toString()),
-          collections: collectionsList.collectionsList,
+          collections: collectionsList,
           uniqueCollections: collectionsList.uniqueCollections,
           creators: creatorsList,
           profileCreators: profileCreatorsList,
@@ -203,10 +180,8 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
   }, []);
 
   React.useEffect(() => {
-    // (!beneficiaries || !campaigns || !creators || !collections || !nfts) &&
     getList();
   }, [getList]);
-  // }, [beneficiaries, campaigns, creators, collections, nfts, getList]);
 
   return (
     <NFTStateContext.Provider value={state}>
@@ -242,6 +217,115 @@ export const updateNFTs = async (dispatch: any, state: any, nft: any) => {
   });
 };
 
+export const updateBeneficiaries = async (
+  dispatch: any,
+  state: any,
+  beneficiary: any
+) => {
+  const updateCachedBeneficiaries = await updateCachedBeneficiary(
+    beneficiary,
+    state.beneficiaries
+  );
+
+  dispatch({
+    type: NFTActionTypes.SUCCESS,
+    payload: {
+      ...state,
+      beneficiaries: updateCachedBeneficiaries,
+    },
+  });
+};
+
+export const updateCollections = async (
+  dispatch: any,
+  state: any,
+  collection: any
+) => {
+  const updateCachedCollections = await updateCachedCollection(
+    collection,
+    state.collections
+  );
+
+  dispatch({
+    type: NFTActionTypes.SUCCESS,
+    payload: {
+      ...state,
+      collections: updateCachedCollections,
+    },
+  });
+};
+
+export const updateCampaigns = async (
+  dispatch: any,
+  state: any,
+  campaign: any
+) => {
+  const updateCachedCampaigns = await updateCachedCampaign(
+    campaign,
+    state.campaigns
+  );
+
+  dispatch({
+    type: NFTActionTypes.SUCCESS,
+    payload: {
+      ...state,
+      campaigns: updateCachedCampaigns,
+    },
+  });
+};
+
+export const updateCreators = async (
+  dispatch: any,
+  state: any,
+  creator: any
+) => {
+  const updateCachedCreators = await updateCachedCreator(
+    creator,
+    state.creators
+  );
+
+  dispatch({
+    type: NFTActionTypes.SUCCESS,
+    payload: {
+      ...state,
+      creators: updateCachedCreators,
+    },
+  });
+};
+
+export const updateProfiles = async (
+  dispatch: any,
+  state: any,
+  profile: any
+) => {
+  const updatedProfiles = await profileClient.updateCachedProfile(profile);
+
+  const profilesAddList = updatedProfiles.flatMap(Object.keys);
+  const cachedBeneficiaries: any = [];
+  const cachedCreators: any = [];
+
+  updatedProfiles.forEach(
+    (item: any, i: number) =>
+      Object.keys(item[profilesAddList[i]]?.beneficiary)?.length &&
+      cachedBeneficiaries.push(item[profilesAddList[i]]?.beneficiary)
+  );
+
+  updatedProfiles.forEach(
+    (item: any, i: number) =>
+      Object.keys(item[profilesAddList[i]]?.creator)?.length &&
+      cachedCreators.push(item[profilesAddList[i]]?.creator)
+  );
+
+  dispatch({
+    type: NFTActionTypes.SUCCESS,
+    payload: {
+      ...state,
+      profileCreators: cachedCreators,
+      beneficiaries: cachedBeneficiaries,
+    },
+  });
+};
+
 export const refreshNFTs = async (dispatch: any, state: any) => {
   const cachedNFTs = await getCachedNFTsList(state.nfts);
   const { campaigns, creators, beneficiaries, collections } = state;
@@ -263,6 +347,61 @@ export const refreshNFTs = async (dispatch: any, state: any) => {
         collectionName:
           collections.find(({ id }: any) => nft.collection === id)?.name || '',
       })),
+    },
+  });
+};
+
+export const refreshBeneficiaries = async (dispatch: any, state: any) => {
+  const cachedProfiles = await profileClient.getCachedProfilesList();
+  const beneficiariesAddList = cachedProfiles.flatMap(Object.keys);
+  const cachedBeneficiaries: any = [];
+  cachedProfiles.forEach(
+    (item: any, i: number) =>
+      Object.keys(item[beneficiariesAddList[i]]?.beneficiary)?.length &&
+      cachedBeneficiaries.push(item[beneficiariesAddList[i]]?.beneficiary)
+  );
+
+  dispatch({
+    type: NFTActionTypes.SUCCESS,
+    payload: {
+      ...state,
+      beneficiaries: cachedBeneficiaries,
+    },
+  });
+};
+
+export const refreshCollections = async (dispatch: any, state: any) => {
+  const cachedCollections = await getCachedCollectionsList();
+
+  dispatch({
+    type: NFTActionTypes.SUCCESS,
+    payload: {
+      ...state,
+      collections: cachedCollections,
+    },
+  });
+};
+
+export const refreshCampaigns = async (dispatch: any, state: any) => {
+  const cachedCampaigns = await getCachedCampaignsList();
+
+  dispatch({
+    type: NFTActionTypes.SUCCESS,
+    payload: {
+      ...state,
+      campaigns: cachedCampaigns,
+    },
+  });
+};
+
+export const refreshCreators = async (dispatch: any, state: any) => {
+  const cachedCreators = await getCachedCreatorsList();
+
+  dispatch({
+    type: NFTActionTypes.SUCCESS,
+    payload: {
+      ...state,
+      creators: cachedCreators,
     },
   });
 };

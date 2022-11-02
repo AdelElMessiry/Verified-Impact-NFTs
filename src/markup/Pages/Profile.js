@@ -16,6 +16,7 @@ import bnr1 from './../../images/banner/bnr1.jpg';
 import ManageCampaigns from './ManageCampaigns';
 import ReactGA from 'react-ga';
 import { Spinner } from 'react-bootstrap';
+import { CLPublicKey } from 'casper-js-sdk';
 
 const Profile = () => {
   const { beneficiaries, creators } = useNFTState();
@@ -25,6 +26,7 @@ const Profile = () => {
   const [normalProfile, setNormalProfile] = useState();
   const [beneficiaryProfile, setBeneficiaryProfile] = useState();
   const [creatorProfile, setCreatorProfile] = useState();
+  const [allProfile, setAllProfile] = useState();
   const [noProfilesForThisUser, setNoProfilesForThisUser] = useState(false);
   const [
     noBeneficiaryProfilesForThisUser,
@@ -50,10 +52,15 @@ const Profile = () => {
       const _creatorProfile = creators?.find(
         ({ address }) => address === entityInfo.publicKey
       );
-
-      const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
+     
+      const userProfiles = await profileClient.getProfile(CLPublicKey.fromHex(entityInfo.publicKey)
+      .toAccountHashStr()
+      .slice(13),true);
 
       if (userProfiles) {
+        let beneficiaryObject;
+        let creatorObject;
+        let normalObject;
         if (userProfiles.err === 'Address Not Found') {
           if (beneficiaries) {
             if (_beneficiaryProfile) {
@@ -77,9 +84,11 @@ const Profile = () => {
                 sdgs_ids:_beneficiaryProfile.sdgs_ids.split(",")
               };
               setBeneficiaryProfile(beneficiary);
+              beneficiaryObject = beneficiary;
               setNoBeneficiaryProfilesForThisUser(false);
             } else {
               setBeneficiaryProfile(null);
+              beneficiaryObject = {};
               setNoBeneficiaryProfilesForThisUser(true);
             }
           }
@@ -104,14 +113,17 @@ const Profile = () => {
                 mail: '',
               };
               setCreatorProfile(creator);
+              creatorObject = creator;
               setNoCreatorProfilesForThisUser(false);
             } else {
               setCreatorProfile(null);
+              creatorObject = {};
               setNoCreatorProfilesForThisUser(true);
             }
           }
           setNoProfilesForThisUser(true);
           setNormalProfile(null);
+          normalObject = {};
         } else {
           if (beneficiaries) {
             if (_beneficiaryProfile) {
@@ -132,6 +144,16 @@ const Profile = () => {
             setNormalProfile(
               Object.keys(list.normal).length === 0 ? null : list.normal
             );
+          if (userProfiles) {
+            normalObject =
+              Object.keys(list.normal).length === 0 ? {} : list.normal;
+            beneficiaryObject =
+              Object.keys(list.beneficiary).length === 0
+                ? {}
+                : list.beneficiary;
+            creatorObject =
+              Object.keys(list.creator).length === 0 ? {} : list.creator;
+          }
           userProfiles &&
             setBeneficiaryProfile(
               Object.keys(list.beneficiary).length === 0
@@ -143,6 +165,11 @@ const Profile = () => {
               Object.keys(list.creator).length === 0 ? null : list.creator
             );
         }
+        setAllProfile( {
+            normal: normalObject,
+            beneficiary: beneficiaryObject,
+            creator: creatorObject,
+        });
       }
     } catch (e) {
       console.log(e);
@@ -233,7 +260,7 @@ const Profile = () => {
                     <TabPane tabId='1'>
                       {(normalProfile == null ||
                         normalProfile ||
-                        noProfilesForThisUser) ? (
+                        noProfilesForThisUser)&&activeTab==='1' ? (
                         <ProfileForm
                           formName={ProfileFormsEnum.NormalProfile}
                           isProfileExist={
@@ -246,6 +273,7 @@ const Profile = () => {
                           formData={
                             noProfilesForThisUser ? null : normalProfile
                           }
+                          allProfileData={allProfile}
                         />
                       ):(  <div className='d-flex justify-content-center'>
                       <Spinner animation='border' variant='success' />
@@ -253,120 +281,127 @@ const Profile = () => {
                     </TabPane>
                     <TabPane tabId='2'>
                       {(creatorProfile || noCreatorProfilesForThisUser) &&
-                        creators ? (
-                          <ProfileForm
-                            formName={ProfileFormsEnum.CreatorProfile}
-                            isProfileExist={
-                              noProfilesForThisUser ||
-                              (creatorProfile &&
-                                Object.keys(creatorProfile).length === 0)
-                                ? false
-                                : true
-                            }
-                            formData={creatorProfile}
-                          />
-                        ):(
-                          <div className='d-flex justify-content-center'>
-                          <Spinner animation='border' variant='success' />
-                          </div>)}
+                      creators &&
+                      activeTab === '2' ? (
+                        <ProfileForm
+                          formName={ProfileFormsEnum.CreatorProfile}
+                          isProfileExist={
+                            noProfilesForThisUser ||
+                            (creatorProfile &&
+                              Object.keys(creatorProfile).length === 0)
+                              ? false
+                              : true
+                          }
+                          formData={creatorProfile}
+                          allProfileData={allProfile}
+                        />
+                      ) : (
+                        <div className="d-flex justify-content-center">
+                          <Spinner animation="border" variant="success" />
+                        </div>
+                      )}
                     </TabPane>
-                    <TabPane tabId='3'>
+                    <TabPane tabId="3">
                       {(beneficiaryProfile ||
                         noBeneficiaryProfilesForThisUser) &&
-                        beneficiaries ? (
-                          <>
-                            <div className='dlab-tabs choseus-tabs'>
-                              <ul
-                                className='nav row justify-content-center'
-                                id='beneficiaryTab'
-                                role='tablist'
-                              >
-                                <li>
-                                  <Link
-                                    to={'#'}
-                                    className={
-                                      classnames({
-                                        active: activeBeneficiaryTab === '4',
-                                      }) + ''
-                                    }
-                                    onClick={() => {
-                                      toggleBeneficiaryTab('4');
-                                    }}
-                                  >
-                                    <span className='title-head'>
-                                      Account Info
-                                    </span>
-                                  </Link>
-                                </li>
-                                <li>
-                                  <Link
-                                    to={'#'}
-                                    className={
-                                      classnames({
-                                        active: activeBeneficiaryTab === '5',
-                                      }) + ''
-                                    }
-                                    onClick={() => {
-                                      toggleBeneficiaryTab('5');
-                                    }}
-                                  >
-                                    <span className='title-head'>
-                                      Manage Campaigns
-                                    </span>
-                                  </Link>
-                                </li>
-                              </ul>
-                            </div>
-                            <div className='container'>
-                              <div className='tab-content chosesus-content'>
-                                <div
-                                  id='beneficiartMain'
-                                  className='tab-pane active py-5'
+                      beneficiaries &&
+                      activeTab === '3' ? (
+                        <>
+                          <div className="dlab-tabs choseus-tabs">
+                            <ul
+                              className="nav row justify-content-center"
+                              id="beneficiaryTab"
+                              role="tablist"
+                            >
+                              <li>
+                                <Link
+                                  to={'#'}
+                                  className={
+                                    classnames({
+                                      active: activeBeneficiaryTab === '4',
+                                    }) + ''
+                                  }
+                                  onClick={() => {
+                                    toggleBeneficiaryTab('4');
+                                  }}
                                 >
-                                  <TabContent activeTab={activeBeneficiaryTab}>
-                                    <TabPane tabId='4'>
-                                      <ProfileForm
-                                        formName={
-                                          ProfileFormsEnum.BeneficiaryProfile
+                                  <span className="title-head">
+                                    Account Info
+                                  </span>
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  to={'#'}
+                                  className={
+                                    classnames({
+                                      active: activeBeneficiaryTab === '5',
+                                    }) + ''
+                                  }
+                                  onClick={() => {
+                                    toggleBeneficiaryTab('5');
+                                  }}
+                                >
+                                  <span className="title-head">
+                                    Manage Campaigns
+                                  </span>
+                                </Link>
+                              </li>
+                            </ul>
+                          </div>
+                          <div className="container">
+                            <div className="tab-content chosesus-content">
+                              <div
+                                id="beneficiartMain"
+                                className="tab-pane active py-5"
+                              >
+                                <TabContent activeTab={activeBeneficiaryTab}>
+                                  <TabPane tabId="4">
+                                    <ProfileForm
+                                      formName={
+                                        ProfileFormsEnum.BeneficiaryProfile
+                                      }
+                                      isProfileExist={
+                                        noProfilesForThisUser ||
+                                        (beneficiaryProfile &&
+                                          Object.keys(beneficiaryProfile)
+                                            .length === 0)
+                                          ? false
+                                          : true
+                                      }
+                                      formData={beneficiaryProfile}
+                                      isVINftExist={
+                                        !noBeneficiaryProfilesForThisUser
+                                      }
+                                      allProfileData={allProfile}
+                                    />
+                                  </TabPane>
+                                  <TabPane tabId="5">
+                                    {beneficiaryProfile ? (
+                                      <ManageCampaigns
+                                        beneficiaryAddress={
+                                          beneficiaryProfile.address
                                         }
-                                        isProfileExist={
-                                          noProfilesForThisUser ||
-                                          (beneficiaryProfile &&
-                                            Object.keys(beneficiaryProfile)
-                                              .length === 0)
-                                            ? false
-                                            : true
-                                        }
-                                        formData={beneficiaryProfile}
-                                        isVINftExist={
-                                          !noBeneficiaryProfilesForThisUser
+                                        beneficiaryPKAddress={
+                                          entityInfo.publicKey
                                         }
                                       />
-                                    </TabPane>
-                                    <TabPane tabId='5'>
-                                      {beneficiaryProfile ? (
-                                        <ManageCampaigns
-                                          beneficiaryAddress={
-                                            beneficiaryProfile.address
-                                          }
-                                          beneficiaryPKAddress={
-                                            entityInfo.publicKey
-                                          }
-                                        />
-                                      ) : (
-                                        <h4 className='text-muted text-center my-5'>
-                                          Please Add Beneficiary First
-                                        </h4>
-                                      )}
-                                    </TabPane>
-                                  </TabContent>
-                                </div>
+                                    ) : (
+                                      <h4 className="text-muted text-center my-5">
+                                        Please Add Beneficiary First
+                                      </h4>
+                                    )}
+                                  </TabPane>
+                                </TabContent>
                               </div>
                             </div>
-                          </>
-                        ):(  <div className='d-flex justify-content-center'>
-                        <Spinner animation='border' variant='success' />
-                        </div>)}
+                          </div>
+                        </>
+                      ) : (
+                        <div className="d-flex justify-content-center">
+                          <Spinner animation="border" variant="success" />
+                        </div>
+                      )}
                     </TabPane>
                   </TabContent>
                 </div>
