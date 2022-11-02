@@ -747,8 +747,14 @@ const ProfileForm = ({
                           <span>
                             By signing up I accept the
                             {" "}
+                            <a href={`${window.location.origin}/#/terms-of-services`} target="_blank" rel="noopener noreferrer">
+                              Terms of Service 
+                            </a>
+                            {" "}
+                            and
+                            {" "}
                             <a href={`${window.location.origin}/#/privacy`} target="_blank" rel="noopener noreferrer">
-                              Terms of Service  and Privacy
+                              Privacy
                             </a>
                           </span>
                         }
