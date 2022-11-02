@@ -112,7 +112,7 @@ const CreatorNFTs = () => {
   const creator = queryParams.get('creator');
   const collection = queryParams.get('collection');
 
-  const { nfts, collections, creators } = useNFTState();
+  const { nfts, collections, profileCreators } = useNFTState();
   const [tagCollection, setTagCollection] = React.useState({
     name: 'All',
     id: '',
@@ -179,11 +179,11 @@ const CreatorNFTs = () => {
   //getting Creator details
   const getCreators = React.useCallback(async () => {
     const setSelectedCreator =
-      creators &&
+      profileCreators &&
       creator &&
-      creators.find(({ address }) => creator === address);
-    setSelectedCreator && setCreatorName(setSelectedCreator.name);
-  }, [creator, creators]);
+      profileCreators.find(({ address }) => creator === address);
+    setSelectedCreator && setCreatorName(setSelectedCreator.username);
+  }, [creator, profileCreators]);
 
   React.useEffect(() => {
     (!creatorName || creator) && getCreators();
