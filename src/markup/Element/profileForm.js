@@ -736,7 +736,7 @@ const ProfileForm = ({
                   />
                 </Col>
               </Row>
-              {isSignUpBeneficiary && (
+              {isSignUpBeneficiary || (formName === ProfileFormsEnum.BeneficiaryProfile && !formData) && (
                 <>
                   <Row className='form-group pt-1'>
                     <Col>
@@ -972,7 +972,7 @@ const ProfileForm = ({
               !uploadedNFTImageURL ||
               (state.inputs.donationReceipt && state.inputs.ein == "") ||
               ((formName === ProfileFormsEnum.BeneficiaryProfile && SDGsGoals?.length <= 0) || (formName === ProfileFormsEnum.BeneficiaryProfile && SDGsGoals == undefined))||
-              ( isSignUpBeneficiary&&(!state.inputs.authorizeArtist ||
+              ((isSignUpBeneficiary || (formName === ProfileFormsEnum.BeneficiaryProfile && !formData))&&(!state.inputs.authorizeArtist ||
               !state.inputs.acceptPolicies))
             }
             onClick={(e) => {
