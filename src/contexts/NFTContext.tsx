@@ -148,8 +148,8 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
       campaignName:
         campaignsList.find(({ id }: any) => nft.campaign === id)?.name || '',
       creatorName:
-        creatorsList.find(({ address }: any) => nft.creator === address)
-          ?.name || '',
+        profileCreatorsList.find(({ address }: any) => nft.creator === address)
+          ?.username || '',
       beneficiaryName:
         beneficiariesList.find(
           ({ address }: any) => nft.beneficiary === address

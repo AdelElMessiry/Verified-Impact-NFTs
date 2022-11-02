@@ -16,7 +16,7 @@ import { SDGsData } from '../../data/SDGsGoals';
 //nft details component
 const NFTDetail = () => {
   const search = useLocation().search;
-  const { nfts, beneficiaries, creators, campaigns, collections } =
+  const { nfts, beneficiaries, profileCreators, campaigns, collections } =
     useNFTState();
   const queryParams = new URLSearchParams(search);
   const id = queryParams.get('id');
@@ -39,7 +39,7 @@ const NFTDetail = () => {
   const getNftDetails = React.useCallback(async () => {
     if(item){
       beneficiaries &&
-        creators &&
+      profileCreators &&
         campaigns &&
         collections &&
         setItem({
@@ -47,9 +47,9 @@ const NFTDetail = () => {
           campaignName: campaigns.find(
             ({ id }) => item.campaign === id
           ).name,
-          creatorName: creators.find(
+          creatorName: profileCreators.find(
             ({ address }) => item.creator === address
-          ).name,
+          ).username,
           beneficiaryName: beneficiaries.find(
             ({ address }) => item.beneficiary === address
           ).username,
@@ -58,7 +58,7 @@ const NFTDetail = () => {
           ).name,
         });
       }
-  }, [beneficiaries, creators, collections, campaigns]);
+  }, [beneficiaries, profileCreators, collections, campaigns]);
 
   //getting nft details
   React.useEffect(() => {
