@@ -9,7 +9,7 @@ import { getDeployDetails } from '../../../api/universal';
 import { addCollection, updateCollection } from '../../../api/addCollection';
 import { useAuth } from '../../../contexts/AuthContext';
 import PromptLogin from '../PromptLogin';
-import { useNFTState } from '../../../contexts/NFTContext';
+import { refreshCollections, updateCollections, useNFTDispatch, useNFTState } from '../../../contexts/NFTContext';
 
 import Layout from '../../Layout';
 import PageTitle from '../../Layout/PageTitle';
@@ -25,7 +25,9 @@ const AddCollection = () => {
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
   const collectionId = queryParams.get('id');
-  const { collections } = useNFTState();
+  const { ...stateList } = useNFTState();
+  const { collections } = stateList;
+  const nftDispatch = useNFTDispatch();
 
   const [isSaveClicked, setIsSaveClicked] = React.useState(false);
   const [selectedCollection, setSelectedCollection] = React.useState();
@@ -83,12 +85,14 @@ const AddCollection = () => {
       );
 
     const deployResult = await getDeployDetails(savedCollection);
+    if(deployResult){
     console.log('...... Collection saved successfully', deployResult);
     ReactGA.event({
       category: 'Success',
       action: 'Add collection',
       label: `${entityInfo.publicKey}: added new collection ${collectionInputs.name}`,
     });
+    await refreshCollections(nftDispatch, stateList);
     await sendDiscordMessage(
       process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
       process.env.REACT_APP_COLLECTIONS_TOKEN,
@@ -101,13 +105,13 @@ const AddCollection = () => {
       // );
     VIToast.success('Collection saved successfully');
     setIsSaveClicked(false);
-    window.location.reload();
     setCollectionInputs({
       name: '',
       description: '',
       creator: '',
       url: '',
     });
+  }
   } catch (err) {
     if (err.message.includes('User Cancelled')) {
       VIToast.error('User Cancelled Signing');
@@ -139,11 +143,22 @@ const AddCollection = () => {
       CLPublicKey.fromHex(entityInfo.publicKey)
     );
     const deployResult = await getDeployDetails(savedCollection);
+    if(deployResult){
+      const changedCollection = {
+        name:  collectionInputs.name,
+        description:  collectionInputs.description ,
+        creator: collectionInputs.creator ,
+        url:  collectionInputs.url ,
+        id:collectionId,
+        token_ids:"0"
+      };
+    await updateCollections(nftDispatch, stateList, changedCollection);
+    }
     console.log('...... Collection saved successfully', deployResult);
     VIToast.success('Collection saved successfully');
+    await refreshCollections(nftDispatch, stateList);
     setIsSaveClicked(false);
-    window.location.reload();
-  };
+  }
 
   return (
     <>

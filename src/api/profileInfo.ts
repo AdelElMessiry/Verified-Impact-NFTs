@@ -5,6 +5,7 @@ import {
   Contracts,
   CLValueBuilder,
 } from 'casper-js-sdk';
+import axios from 'axios';
 
 import { signDeploy } from '../utils/signer';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
@@ -249,6 +250,33 @@ class ProfileClient {
     }
 
     return mappedProfiles;
+  }
+
+  public async getCachedProfilesList() {
+    const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
+    const apiName = 'profiles';
+
+    const profiles: any = await axios(
+      `${REACT_APP_NFT_API_BASE_URL}/${REACT_APP_NFT_API_ENV}/${apiName}`
+    );
+
+    return profiles?.data.list;
+  }
+
+  public async updateCachedProfile(profile: any) {
+    const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
+    const apiName = 'updateProfile';
+
+    const updatedProfiles: any = await axios.patch(
+      `${REACT_APP_NFT_API_BASE_URL}/${REACT_APP_NFT_API_ENV}/${apiName}`,
+      { profile }
+    );
+
+    // profiles[
+    //   profiles.findIndex(({ address }: any) => address === profile.address)
+    // ] = profile;
+
+    return updatedProfiles.data.profiles;
   }
 }
 

@@ -1,42 +1,31 @@
-import { CasperClient, Contracts } from 'casper-js-sdk';
-import axios from 'axios';
+import { CasperClient, Contracts, CLPublicKey } from 'casper-js-sdk';
+
+const {
+  STAGE,
+  NODE_RPC_MAINNET_ADDRESS,
+  NODE_RPC_TESTNET_ADDRESS,
+  NFT_CONTRACT_HASH_DEV,
+  NFT_CONTRACT_HASH_PROD,
+  NFT_PACKAGE_HASH_PROD,
+  NFT_PACKAGE_HASH_DEV,
+} = process.env;
 
 const proxyServer = '';
-const NODE_RPC_ADDRESS = process.env.NODE_RPC_ADDRESS;
+
+const NODE_RPC_ADDRESS =
+  process.env.STAGE === 'prod'
+    ? NODE_RPC_MAINNET_ADDRESS
+    : NODE_RPC_TESTNET_ADDRESS;
 
 const CONNECTION = {
   NODE_ADDRESS: proxyServer + NODE_RPC_ADDRESS,
-  CHAIN_NAME: 'casper-test',
+  CHAIN_NAME: STAGE === 'prod' ? 'casper' : 'casper-test',
 };
 
-const { NFT_CONTRACT_HASH, NFT_PACKAGE_HASH } = process.env;
-
-function isValidHttpUrl(string: string) {
-  let url;
-
-  try {
-    url = new URL(string);
-  } catch (_) {
-    return false;
-  }
-
-  return url.protocol === 'http:' || url.protocol === 'https:';
-}
-
-const getNFTImage = async (tokenMetaUri: string) => {
-  const baseIPFS = 'https://vinfts.mypinata.cloud/ipfs/';
-  if (tokenMetaUri.includes('/')) {
-    const mappedUrl = tokenMetaUri.includes('ipfs/')
-      ? tokenMetaUri.split('ipfs/').pop()
-      : tokenMetaUri;
-    return baseIPFS + mappedUrl;
-  }
-  const resp: any = await axios(baseIPFS + tokenMetaUri);
-  // console.log(resp);
-
-  const imgString = resp.data;
-  return imgString;
-};
+const CONTRACT_HASH =
+  STAGE === 'prod' ? NFT_CONTRACT_HASH_PROD : NFT_CONTRACT_HASH_DEV;
+const CONTRACT_PACKAGE_HASH =
+  STAGE === 'prod' ? NFT_PACKAGE_HASH_PROD : NFT_PACKAGE_HASH_DEV;
 
 const { NODE_ADDRESS, CHAIN_NAME } = CONNECTION;
 
@@ -53,8 +42,8 @@ class CEP47Client {
     this.contractClient = new Contract(this.casperClient);
     this.networkName = CHAIN_NAME;
     this.contractClient.setContractHash(
-      `hash-2d6842ba80bbc66bc88d1ccfa8c3a923bc5a786b5f2194ac74b47f4a4e3e5917`,
-      `hash-fc4aca70bfc4fc084ecb22ef1c3602323e1b5fdb1bc3f409da8415c59fbbced7`
+      `hash-${CONTRACT_HASH}`,
+      `hash-${CONTRACT_PACKAGE_HASH}`
     );
     this.isContractIHashSetup = true;
   }
@@ -103,13 +92,81 @@ class CEP47Client {
           : mapObj.creator.slice(10).replace(')', '')
         : mapObj.creator;
     mapObj.pureImageKey = mapObj.image;
-    // mapObj.image = isUpdate
-    //   ? mapObj.image
-    //   : isValidHttpUrl(mapObj.image)
-    //   ? mapObj.image
-    //   : await getNFTImage(mapObj.image);
 
     return mapObj;
+  }
+
+  public async totalCampaigns() {
+    return this.contractClient.queryContractData(['total_campaigns']);
+  }
+
+  public async totalCollections() {
+    return this.contractClient.queryContractData(['total_collections']);
+  }
+
+  public async totalCreators() {
+    return this.contractClient.queryContractData(['total_creators']);
+  }
+
+  public async totalBeneficiaries() {
+    return this.contractClient.queryContractData(['total_beneficiaries']);
+  }
+
+  public async getCampaign(campaignId: string) {
+    const result = await this.contractClient.queryContractDictionary(
+      'campaigns',
+      campaignId
+    );
+
+    const maybeValue = result.value().unwrap().value();
+
+    return fromCLMap(maybeValue);
+  }
+
+  public async getCollection(collectionId: string) {
+    const result = await this.contractClient.queryContractDictionary(
+      'collections_list',
+      collectionId
+    );
+
+    const maybeValue = result.value().unwrap().value();
+
+    return fromCLMap(maybeValue);
+  }
+
+  public async getCreator(creatorId: string) {
+    const result = await this.contractClient.queryContractDictionary(
+      'creators_list',
+      creatorId
+    );
+
+    const maybeValue = result.value().unwrap().value();
+
+    return fromCLMap(maybeValue);
+  }
+
+  public async getBeneficiariesAddList() {
+    const result: any = await this.contractClient.queryContractData([
+      'beneficiaries_addresses',
+    ]);
+
+    const mappedAddresses = result.map((address: any) =>
+      Buffer.from(address.data.value()).toString('hex')
+    );
+    return mappedAddresses;
+  }
+
+  public async getBeneficiary(beneficiaryId: string, isHash: boolean) {
+    const result = await this.contractClient.queryContractDictionary(
+      'beneficiaries_list',
+      isHash
+        ? beneficiaryId
+        : CLPublicKey.fromHex(beneficiaryId).toAccountHashStr().slice(13)
+    );
+
+    const maybeValue = result.value().unwrap().value();
+
+    return fromCLMap(maybeValue);
   }
 }
 
