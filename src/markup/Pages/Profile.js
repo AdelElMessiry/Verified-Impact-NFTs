@@ -16,6 +16,7 @@ import bnr1 from './../../images/banner/bnr1.jpg';
 import ManageCampaigns from './ManageCampaigns';
 import ReactGA from 'react-ga';
 import { Spinner } from 'react-bootstrap';
+import { CLPublicKey } from 'casper-js-sdk';
 
 const Profile = () => {
   const { beneficiaries, creators } = useNFTState();
@@ -51,8 +52,10 @@ const Profile = () => {
       const _creatorProfile = creators?.find(
         ({ address }) => address === entityInfo.publicKey
       );
-
-      const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
+     
+      const userProfiles = await profileClient.getProfile(CLPublicKey.fromHex(entityInfo.publicKey)
+      .toAccountHashStr()
+      .slice(13),true);
 
       if (userProfiles) {
         let beneficiaryObject;
@@ -149,7 +152,7 @@ const Profile = () => {
                 ? {}
                 : list.beneficiary;
             creatorObject =
-              Object.keys(list.normal).length === 0 ? {} : list.normal;
+              Object.keys(list.creator).length === 0 ? {} : list.creator;
           }
           userProfiles &&
             setBeneficiaryProfile(
