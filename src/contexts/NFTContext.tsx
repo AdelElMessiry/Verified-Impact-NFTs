@@ -320,7 +320,7 @@ export const updateProfiles = async (
     type: NFTActionTypes.SUCCESS,
     payload: {
       ...state,
-      creators: cachedCreators,
+      profileCreators: cachedCreators,
       beneficiaries: cachedBeneficiaries,
     },
   });
