@@ -162,7 +162,7 @@ impl ViToken {
         url: String,
         requested_royalty: String,
         sdgs_ids: Vec<U256>,
-        resale_prc: String
+        resale_prc: String,
     ) -> Result<(), Error> {
         let caller = ViToken::default().get_caller();
         let campaigns_dict = Campaigns::instance();
@@ -566,7 +566,7 @@ impl ViToken {
         url: String,
         requested_royalty: String,
         sdgs_ids: Vec<U256>,
-        resale_prc: String
+        resale_prc: String,
     ) -> Result<(), Error> {
         // let caller = ViToken::default().get_caller();
 
@@ -585,7 +585,8 @@ impl ViToken {
             beneficiary_address,
             url,
             requested_royalty,
-            sdgs_ids,resale_prc
+            sdgs_ids,
+            resale_prc,
         )
         .unwrap_or_revert();
         Ok(())
@@ -986,7 +987,7 @@ fn mint() {
             "nftUrl" => "".to_string(),
             "firstName" => "".to_string(),
             "lastName" => "".to_string(),
-            "bio" => "".to_string(),
+            // "bio" => "".to_string(),
             "externalLink" => "".to_string(),
             "phone" => "".to_string(),
             "twitter" => "".to_string(),
@@ -1146,7 +1147,7 @@ fn add_beneficiary() {
         "nftUrl" => "".to_string(),
         "firstName" => "".to_string(),
         "lastName" => "".to_string(),
-        "bio" => description.clone(),
+        // "bio" => description.clone(),
         "externalLink" => "".to_string(),
         "phone" => "".to_string(),
         "twitter" => "".to_string(),
@@ -1210,7 +1211,7 @@ fn add_creator() {
         "nftUrl" => "".to_string(),
         "firstName" => "".to_string(),
         "lastName" => "".to_string(),
-        "bio" => description.clone(),
+        // "bio" => description.clone(),
         "externalLink" => url.to_string(),
         "phone" => "".to_string(),
         "twitter" => "".to_string(),
