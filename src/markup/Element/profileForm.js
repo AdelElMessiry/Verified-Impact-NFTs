@@ -65,7 +65,6 @@ const ProfileForm = ({
   const [isSaveButtonClicked, setIsSaveButtonClicked] = React.useState(false);
   const [isOndropProfileClicked, setIsOndropProfileClicked] = useState(false);
   const [isOndropNFTClicked, setIsOndropNFTClicked] = useState(false);
-console.log(isSignUpBeneficiary);
   const [showProfileURLErrorMsg, setShowProfileURLErrorMsg] =
     React.useState(false);
   const [showNFTURLErrorMsg, setShowNFTURLErrorMsg] = React.useState(false);
