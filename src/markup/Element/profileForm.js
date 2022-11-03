@@ -156,7 +156,8 @@ const ProfileForm = ({
   };
 
   const checkURLValidation = (value, urlNum) => {
-    if (validator.isURL(value)) {
+    var re = new RegExp("^(http|https)://", "i");
+    if (validator.isURL(value) && re.test(value)) {
       urlNum == 1
         ? setShowProfileURLErrorMsg(false)
         : urlNum == 2
@@ -306,7 +307,9 @@ const ProfileForm = ({
           (Please type your notes here)%0D%0A%0D%0AMany thanks.%0D%0AWith kind regards,`;
           window.location.href = mailto;
         }
-        const pk = entityInfo.publicKey;
+        const pk = CLPublicKey.fromHex(entityInfo.publicKey)
+        .toAccountHashStr()
+        .slice(13);
         let changedData = {};
         if (formName === ProfileFormsEnum.BeneficiaryProfile) {
           changedData = {
@@ -335,7 +338,7 @@ const ProfileForm = ({
                 telegram: state.inputs.telegram,
                 twitter: state.inputs.twitter,
                 username: state.inputs.userName,
-                bio: formData.bio,
+                bio: formData ? formData.bio : '',
               },
               creator: allProfileData.creator,
             },
@@ -357,18 +360,17 @@ const ProfileForm = ({
                 has_receipt: state.inputs.donationReceipt,
                 imgUrl: ProfileImgURL,
                 instagram: state.inputs.instagram,
-                isApproved: formData.isApproved,
+                isApproved: 'false',
                 lastName: state.inputs.lastName,
                 mail: state.inputs.email,
                 medium: state.inputs.medium,
                 nftUrl: NFTImgURL,
                 phone: state.inputs.phone,
-                sdgs_ids: SDGsGoals.join(','),
                 tagline: state.inputs.tagline,
                 telegram: state.inputs.telegram,
                 twitter: state.inputs.twitter,
                 username: state.inputs.userName,
-                bio: formData.bio,
+                bio: formData ? formData.bio : '',
               },
             },
           };
@@ -393,12 +395,11 @@ const ProfileForm = ({
                 medium: state.inputs.medium,
                 nftUrl: NFTImgURL,
                 phone: state.inputs.phone,
-                sdgs_ids: SDGsGoals.join(','),
                 tagline: state.inputs.tagline,
                 telegram: state.inputs.telegram,
                 twitter: state.inputs.twitter,
                 username: state.inputs.userName,
-                bio: formData.bio,
+                bio: formData ? formData.bio : '',
               },
               beneficiary: allProfileData.beneficiary,
               creator: allProfileData.creator,
@@ -485,7 +486,9 @@ const ProfileForm = ({
 
   const getSavedData = async (bio) => {
     setProfileBio(bio);
-    const pk = entityInfo.publicKey;
+    const pk = CLPublicKey.fromHex(entityInfo.publicKey)
+    .toAccountHashStr()
+    .slice(13);
     let changedData = {};
     if (formName === ProfileFormsEnum.BeneficiaryProfile) {
       changedData = {
@@ -584,6 +587,7 @@ const ProfileForm = ({
                 name='externalSiteLink'
                 className='form-control'
                 value={state.inputs.externalSiteLink}
+                placeholder="https://example.com"
                 onChange={(e) => {
                   handleChange(e);
                   checkURLValidation(e.target.value, 3);
