@@ -103,6 +103,7 @@ const SDGsMultiSelect = ({
         ref={selectInputRef}
         isClearable={false}
         value={selectedOptions}
+        menuPortalTarget={document.body} 
       />
       <span className="text-danger required-field-symbol">*</span>
       </div>
