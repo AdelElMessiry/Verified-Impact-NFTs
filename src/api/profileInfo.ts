@@ -58,11 +58,13 @@ class ProfileClient {
 
   public async getProfile(address: string, isAccountHash?: Boolean) {
     try {
+      address = isAccountHash
+        ? address
+        : CLPublicKey.fromHex(address).toAccountHashStr().slice(13);
+
       const result = await this.contractClient.queryContractDictionary(
         'profiles',
-        isAccountHash
-          ? address
-          : CLPublicKey.fromHex(address).toAccountHashStr().slice(13)
+        address
       );
 
       const maybeValue = result.value().unwrap().value();
