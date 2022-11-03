@@ -113,7 +113,7 @@ const AddEditCampaignForm = ({
       name: data ? data.name : '',
       description: data ? data.description : '',
       requestedRoyalty: data ? data.requested_royalty : '',
-      resaleRoyalty: ''
+      resaleRoyalty: data ? data.resale_prc: ''
     },
   });
 
@@ -218,8 +218,10 @@ const AddEditCampaignForm = ({
           name: '',
           description: '',
           requestedRoyalty: '',
+          resaleRoyalty: '',
         },
       });
+      selectedBeneficiary();
 
       console.log('save Result', savedCampaign);
       console.log(
