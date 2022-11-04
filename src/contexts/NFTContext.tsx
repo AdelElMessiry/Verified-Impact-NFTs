@@ -115,8 +115,8 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
 
     let selectedBeneficiaryList: any = [];
     let selectedCreatorsList: any = [];
-    let profiles = await profileClient.getProfilesList();
-    // let profiles = await profileClient.getCachedProfilesList();
+    //let profiles = await profileClient.getProfilesList();
+    let profiles = await profileClient.getCachedProfilesList();
 
     profiles &&
       profiles.forEach((data: any) => {
