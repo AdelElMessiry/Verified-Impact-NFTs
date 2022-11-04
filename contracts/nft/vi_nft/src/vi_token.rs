@@ -973,37 +973,37 @@ fn mint() {
     let profile_contract_string = runtime::get_named_arg::<String>("profile_contract_hash");
     let sdgs_ids = runtime::get_named_arg::<Vec<U256>>("sdgs_ids");
 
-    if !ViToken::default().is_creator(creator.clone()) {
-        let profile_contract_hash: ContractHash =
-            ContractHash::from_formatted_str(&profile_contract_string).unwrap_or_default();
+    // if !ViToken::default().is_creator(creator.clone()) {
+    //     let profile_contract_hash: ContractHash =
+    //         ContractHash::from_formatted_str(&profile_contract_string).unwrap_or_default();
 
-        let method: &str = "create_profile";
-        let args: RuntimeArgs = runtime_args! {"mode" => "ADD".clone(),
-            "address" => creator.clone(),
-            "address_pk" => "".to_string(),
-            "username" => creator_name.clone(),
-            "tagline" => "".to_string(),
-            "imgUrl" => "".to_string(),
-            "nftUrl" => "".to_string(),
-            "firstName" => "".to_string(),
-            "lastName" => "".to_string(),
-            // "bio" => "".to_string(),
-            "externalLink" => "".to_string(),
-            "phone" => "".to_string(),
-            "twitter" => "".to_string(),
-            "instagram" => "".to_string(),
-            "facebook" => "".to_string(),
-            "medium" => "".to_string(),
-            "telegram" => "".to_string(),
-            "mail" => "".to_string(),
-            "profileType" => "creator".to_string(),
-            "sdgs_ids" => sdgs_ids.clone(),
-            "has_receipt" => false,
-            "ein" => "".to_string(),
-        };
+    //     let method: &str = "create_profile";
+    //     let args: RuntimeArgs = runtime_args! {"mode" => "ADD".clone(),
+    //         "address" => creator.clone(),
+    //         "address_pk" => "".to_string(),
+    //         "username" => creator_name.clone(),
+    //         "tagline" => "".to_string(),
+    //         "imgUrl" => "".to_string(),
+    //         "nftUrl" => "".to_string(),
+    //         "firstName" => "".to_string(),
+    //         "lastName" => "".to_string(),
+    //         // "bio" => "".to_string(),
+    //         "externalLink" => "".to_string(),
+    //         "phone" => "".to_string(),
+    //         "twitter" => "".to_string(),
+    //         "instagram" => "".to_string(),
+    //         "facebook" => "".to_string(),
+    //         "medium" => "".to_string(),
+    //         "telegram" => "".to_string(),
+    //         "mail" => "".to_string(),
+    //         "profileType" => "creator".to_string(),
+    //         "sdgs_ids" => sdgs_ids.clone(),
+    //         "has_receipt" => false,
+    //         "ein" => "".to_string(),
+    //     };
 
-        runtime::call_contract::<()>(profile_contract_hash, method, args);
-    }
+    //     runtime::call_contract::<()>(profile_contract_hash, method, args);
+    // }
 
     ViToken::default()
         .mint(

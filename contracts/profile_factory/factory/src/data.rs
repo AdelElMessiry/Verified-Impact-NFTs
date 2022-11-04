@@ -33,8 +33,8 @@ impl Profiles {
         self.dict.set_by_key(address, value);
     }
 
-    pub fn is_profile(&self, caller: Key) -> bool {
-        self.dict.get_by_key::<()>(&caller).is_some()
+    pub fn is_profile(&self, caller: &Key) -> bool {
+        self.dict.get_by_key::<()>(caller).is_some()
     }
 }
 

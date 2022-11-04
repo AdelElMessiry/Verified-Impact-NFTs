@@ -52,7 +52,7 @@ pub trait FACTORY<Storage: ContractStorage>: ContractContext<Storage> {
 
     // fn is_existent_profile(&self) -> bool {
     fn is_existent_profile(&self, address: Key) -> bool {
-        Profiles::instance().is_profile(address)
+        Profiles::instance().is_profile(&address)
         // Profiles::instance().is_profile(self.get_caller())
     }
 
