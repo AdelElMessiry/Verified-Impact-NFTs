@@ -81,8 +81,8 @@ fn all_profiles() {
 
 #[no_mangle]
 fn is_profile_exist() {
-    let address: Key = runtime::get_named_arg("address");
-    let ret = Factory::default().is_existent_profile(address);
+    // let address: Key = runtime::get_named_arg("address");
+    let ret = Factory::default().is_existent_profile();
     runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
 }
 
@@ -174,7 +174,7 @@ fn create_profile() {
     }
 
     if mode.clone() == "ADD" {
-        if !Factory::default().is_existent_profile(address) {
+        if !Factory::default().is_existent_profile() {
             Factory::default().create_profile(address, profile);
         }
         // else {
