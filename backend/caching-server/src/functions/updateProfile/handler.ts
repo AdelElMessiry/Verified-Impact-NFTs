@@ -20,9 +20,10 @@ const updateProfile: APIGatewayProxyHandler = async (event) => {
     let result = await client.lRange(REDIS_PROFILE_KEY, 0, -1);
 
     let mappedResult = result.map((item) => JSON.parse(item));
+    const profilesAddList = mappedResult.flatMap(Object.keys);
 
-    const profileIndex: any = mappedResult.findIndex(
-      ({ address }: any) => address === profile.address
+    const profileIndex: any = profilesAddList.findIndex(
+      (address) => address === Object.keys(profile)[0]
     );
 
     await client.lSet(REDIS_PROFILE_KEY, profileIndex, JSON.stringify(profile));

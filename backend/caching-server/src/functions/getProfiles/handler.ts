@@ -31,6 +31,7 @@ const getProfilesList = async (profilesAddList) => {
 
 const getProfiles: APIGatewayProxyHandler = async () => {
   await client.connect();
+  // await client.del(REDIS_PROFILE_KEY);
   let cachedProfile: any;
   try {
     cachedProfile = await client.lRange(REDIS_PROFILE_KEY, 0, -1);

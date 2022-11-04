@@ -65,7 +65,6 @@ const ProfileForm = ({
   const [isSaveButtonClicked, setIsSaveButtonClicked] = React.useState(false);
   const [isOndropProfileClicked, setIsOndropProfileClicked] = useState(false);
   const [isOndropNFTClicked, setIsOndropNFTClicked] = useState(false);
-
   const [showProfileURLErrorMsg, setShowProfileURLErrorMsg] =
     React.useState(false);
   const [showNFTURLErrorMsg, setShowNFTURLErrorMsg] = React.useState(false);
@@ -736,7 +735,7 @@ const ProfileForm = ({
                   />
                 </Col>
               </Row>
-              {isSignUpBeneficiary || (formName === ProfileFormsEnum.BeneficiaryProfile && !formData) && (
+              {(isSignUpBeneficiary || (formName === ProfileFormsEnum.BeneficiaryProfile && !formData)) && (
                 <>
                   <Row className='form-group pt-1'>
                     <Col>
@@ -978,8 +977,10 @@ const ProfileForm = ({
               !uploadedNFTImageURL ||
               (state.inputs.donationReceipt && state.inputs.ein == "") ||
               ((formName === ProfileFormsEnum.BeneficiaryProfile && SDGsGoals?.length <= 0) || (formName === ProfileFormsEnum.BeneficiaryProfile && SDGsGoals == undefined))||
-              ((isSignUpBeneficiary || (formName === ProfileFormsEnum.BeneficiaryProfile && !formData))&&(!state.inputs.authorizeArtist ||
-              !state.inputs.acceptPolicies))
+             ( isSignUpBeneficiary || (formName === ProfileFormsEnum.BeneficiaryProfile && !formData))&&
+             (
+              !state.inputs.authorizeArtist ||
+              !state.inputs.acceptPolicies)
             }
             onClick={(e) => {
               handleSave(e);
