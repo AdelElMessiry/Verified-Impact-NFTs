@@ -174,10 +174,12 @@ fn create_profile() {
     }
 
     if mode.clone() == "ADD" {
-        if !Factory::default().is_existent_profile(address) {
-            Factory::default().create_profile(address, profile);
-        }
-        // else {
+        Factory::default().create_profile(address, profile);
+        // if profile_type == "creator" {
+        //     if !Factory::default().is_existent_profile(address.clone()) {
+        //         Factory::default().create_profile(address, profile);
+        //     }
+        // } else {
         //     Factory::default().create_profile(address, profile);
         // }
     } else {
