@@ -62,21 +62,21 @@ const AddBeneficiary = () => {
         action: 'Add beneficiary',
         label: `${entityInfo.publicKey}: [${beneficiaryInputs.name}] beneficiary has been added`,
       });
-      await sendDiscordMessage(
-        process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
-        process.env.REACT_APP_BENEFICIARIES_TOKEN,
-        beneficiaryInputs.name,
-        '',
-        `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)]  @vinfts @casper_network @devxdao `
-      );
+      // await sendDiscordMessage(
+      //   process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
+      //   process.env.REACT_APP_BENEFICIARIES_TOKEN,
+      //   beneficiaryInputs.name,
+      //   '',
+      //   `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)]  @vinfts @casper_network @devxdao `
+      // );
       let s = []
       if (beneficiaryInputs.SDGsGoals.length > 0){     
         beneficiaryInputs.SDGsGoals.map((sdg) => (
             s.push(`#SDG${sdg}`)
         ))}
-      await SendTweet(
-        `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts. ${s.toString().replaceAll(',', ' ')} click here ${window.location.origin}/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
-      );
+      // await SendTweet(
+      //   `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts. ${s.toString().replaceAll(',', ' ')} click here ${window.location.origin}/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
+      // );
       
        await refreshBeneficiaries(nftDispatch, stateList)
       setBeneficiaryInputs({

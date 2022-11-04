@@ -176,7 +176,7 @@ fn create_profile() {
     if mode.clone() == "ADD" {
         if !Factory::default().is_existent_profile(address) {
             Factory::default().create_profile(address, profile);
-        } 
+        }
         // else {
         //     Factory::default().create_profile(address, profile);
         // }
@@ -287,7 +287,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("nftUrl", String::cl_type()),
             Parameter::new("firstName", String::cl_type()),
             Parameter::new("lastName", String::cl_type()),
-            Parameter::new("bio", String::cl_type()),
+            // Parameter::new("bio", String::cl_type()),
             Parameter::new("externalLink", String::cl_type()),
             Parameter::new("phone", String::cl_type()),
             Parameter::new("twitter", String::cl_type()),
