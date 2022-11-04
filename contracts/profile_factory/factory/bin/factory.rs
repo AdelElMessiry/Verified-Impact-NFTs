@@ -79,12 +79,12 @@ fn all_profiles() {
     runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
 }
 
-#[no_mangle]
-fn is_profile_exist() {
-    // let address: Key = runtime::get_named_arg("address");
-    let ret = Factory::default().is_existent_profile();
-    runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
-}
+// #[no_mangle]
+// fn is_profile_exist() {
+//     // let address: Key = runtime::get_named_arg("address");
+//     let ret = Factory::default().is_existent_profile();
+//     runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
+// }
 
 /// This function is to return the total length of Profiles
 ///
@@ -174,7 +174,7 @@ fn create_profile() {
     }
 
     if mode.clone() == "ADD" {
-        if !Factory::default().is_existent_profile() {
+        if !Factory::default().is_existent_profile(address) {
             Factory::default().create_profile(address, profile);
         }
         // else {
@@ -347,13 +347,13 @@ fn get_entry_points() -> EntryPoints {
         EntryPointAccess::Public,
         EntryPointType::Contract,
     ));
-    entry_points.add_entry_point(EntryPoint::new(
-        "is_profile_exist",
-        vec![],
-        CLType::Option(Box::new(CLType::Bool)),
-        EntryPointAccess::Public,
-        EntryPointType::Contract,
-    ));
+    // entry_points.add_entry_point(EntryPoint::new(
+    //     "is_profile_exist",
+    //     vec![],
+    //     CLType::Option(Box::new(CLType::Bool)),
+    //     EntryPointAccess::Public,
+    //     EntryPointType::Contract,
+    // ));
     entry_points.add_entry_point(EntryPoint::new(
         "grant_admin",
         vec![Parameter::new("admin", Key::cl_type())],
