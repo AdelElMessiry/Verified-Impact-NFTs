@@ -17,12 +17,14 @@ import ManageCampaigns from './ManageCampaigns';
 import ReactGA from 'react-ga';
 import { Spinner } from 'react-bootstrap';
 import { CLPublicKey } from 'casper-js-sdk';
+import ManageCollections from './ManageCollections';
 
 const Profile = () => {
   const { beneficiaries, creators } = useNFTState();
   const { isLoggedIn, entityInfo } = useAuth();
   const [activeTab, setActiveTab] = useState('1');
   const [activeBeneficiaryTab, setActiveBeneficiaryTab] = useState('4');
+  const [activeCreatorTab, setActiveCreatorTab] = useState('6');
   const [normalProfile, setNormalProfile] = useState();
   const [beneficiaryProfile, setBeneficiaryProfile] = useState();
   const [creatorProfile, setCreatorProfile] = useState();
@@ -41,6 +43,10 @@ const Profile = () => {
 
   const toggleBeneficiaryTab = (tab) => {
     if (activeBeneficiaryTab !== tab) setActiveBeneficiaryTab(tab);
+  };
+
+  const toggleCreatorTab = (tab) => {
+    if (activeCreatorTab !== tab) setActiveCreatorTab(tab);
   };
 
   const getUserProfiles = React.useCallback(async () => {
@@ -283,18 +289,85 @@ const Profile = () => {
                       {(creatorProfile || noCreatorProfilesForThisUser) &&
                       creators &&
                       activeTab === '2' ? (
-                        <ProfileForm
-                          formName={ProfileFormsEnum.CreatorProfile}
-                          isProfileExist={
-                            noProfilesForThisUser ||
-                            (creatorProfile &&
-                              Object.keys(creatorProfile).length === 0)
-                              ? false
-                              : true
-                          }
-                          formData={creatorProfile}
-                          allProfileData={allProfile}
-                        />
+                        <>
+                          <div className="dlab-tabs choseus-tabs">
+                            <ul
+                              className="nav row justify-content-center"
+                              id="creatorTab"
+                              role="tablist"
+                            >
+                              <li>
+                                <Link
+                                  to={'#'}
+                                  className={
+                                    classnames({
+                                      active: activeCreatorTab === '6',
+                                    }) + ''
+                                  }
+                                  onClick={() => {
+                                    toggleCreatorTab('6');
+                                  }}
+                                >
+                                  <span className="title-head">
+                                    Account Info
+                                  </span>
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  to={'#'}
+                                  className={
+                                    classnames({
+                                      active: activeCreatorTab === '7',
+                                    }) + ''
+                                  }
+                                  onClick={() => {
+                                    toggleCreatorTab('7');
+                                  }}
+                                >
+                                  <span className="title-head">
+                                    Manage Collections
+                                  </span>
+                                </Link>
+                              </li>
+                            </ul>
+                          </div>
+                          <div className="container">
+                            <div className="tab-content chosesus-content">
+                              <div
+                                id="beneficiartMain"
+                                className="tab-pane active py-5"
+                              >
+                                <TabContent activeTab={activeCreatorTab}>
+                                  <TabPane tabId="6">
+                                    <ProfileForm
+                                      formName={ProfileFormsEnum.CreatorProfile}
+                                      isProfileExist={
+                                        noProfilesForThisUser ||
+                                        (creatorProfile &&
+                                          Object.keys(creatorProfile).length ===
+                                            0)
+                                          ? false
+                                          : true
+                                      }
+                                      formData={creatorProfile}
+                                      allProfileData={allProfile}
+                                    />
+                                  </TabPane>
+                                  <TabPane tabId="7">
+                                    {creatorProfile ? (
+                                      <ManageCollections/>
+                                    ) : (
+                                      <h4 className="text-muted text-center my-5">
+                                        Please Add Creator First
+                                      </h4>
+                                    )}
+                                  </TabPane>
+                                </TabContent>
+                              </div>
+                            </div>
+                          </div>
+                        </>
                       ) : (
                         <div className="d-flex justify-content-center">
                           <Spinner animation="border" variant="success" />
