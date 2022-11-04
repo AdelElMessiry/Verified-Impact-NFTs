@@ -408,7 +408,6 @@ const MintNFT = () => {
         console.log('...... Token minted successfully', deployResult);
         VIToast.success('NFT minted successfully');
         await refreshNFTs(nftDispatch, stateList);
-        await refreshCollections(nftDispatch, stateList);
         setState({
           inputs: {
             name: '',
@@ -447,6 +446,7 @@ const MintNFT = () => {
           );
         }
         if (isCreateNewCollection) {
+          await refreshCollections(nftDispatch, stateList);
           //add collection discord
           await sendDiscordMessage(
             process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
