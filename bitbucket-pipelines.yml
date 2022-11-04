@@ -1,4 +1,4 @@
-image: nikolaik/python3.11-nodejs16
+image: nikolaik/python-nodejs:python3.11-nodejs18
 pipelines:
   branches:
     master:
