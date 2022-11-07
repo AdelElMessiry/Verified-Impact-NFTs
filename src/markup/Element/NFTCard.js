@@ -42,6 +42,13 @@ const NFTCard = ({
 
   React.useEffect(() => {
     (!beneficiaryData) && getBeneficiaries();
+    // setTimeout(() => {
+    //   setImageScale(1.75)
+    //   setTimeout(() => {
+    //     setImageScale(1)
+    //   }, 400);
+    // }, 200);
+      
   }, [beneficiaryData, getBeneficiaries ]);
   //function which return buttons (buy NFT) & (expand NFT) on nft card
   const IconImage = () => {
@@ -170,7 +177,7 @@ const NFTCard = ({
   return (
     <>
       <div className='mb-3 nftcard-parent'>
-        <div className='dlab-box dlab-gallery-box'>
+        <div className='dlab-box dlab-gallery-box push'>
           <div className='dlab-media dlab-img-overlay1 position-relative dlab-img-effect'>
             <img
               src={item.image}
