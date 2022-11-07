@@ -17,6 +17,7 @@ import {
   useNFTState,
   useNFTDispatch,
   updateProfiles,
+  refreshProfiles
 } from '../../contexts/NFTContext';
 import ProfileBioModal from './ProfileBioModal';
 const ProfileForm = ({
@@ -25,6 +26,7 @@ const ProfileForm = ({
   formData,
   isSignUpBeneficiary = false,
   allProfileData = {},
+  noProfilesForThisUser=false
 }) => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
   const { ...stateList } = useNFTState();
@@ -306,6 +308,9 @@ const ProfileForm = ({
           (Please type your notes here)%0D%0A%0D%0AMany thanks.%0D%0AWith kind regards,`;
           window.location.href = mailto;
         }
+        if(noProfilesForThisUser){
+         await refreshProfiles(nftDispatch,stateList)
+        }else{
         const pk = CLPublicKey.fromHex(entityInfo.publicKey)
         .toAccountHashStr()
         .slice(13);
@@ -407,6 +412,7 @@ const ProfileForm = ({
         }
         console.log("chnaged Data",changedData)
         await updateProfiles(nftDispatch, stateList, changedData);
+      }
         if (
           formName === ProfileFormsEnum.BeneficiaryProfile &&
           !isProfileExist
