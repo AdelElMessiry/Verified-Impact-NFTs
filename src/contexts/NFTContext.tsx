@@ -66,7 +66,7 @@ function nftReducer(state: NFTState, action: NFTAction): NFTState {
         isLoading: false,
         nfts: action.payload.nfts,
         beneficiaries: action.payload.beneficiaries,
-        profileCreators:action.payload.profileCreators,
+        profileCreators: action.payload.profileCreators,
         campaigns: action.payload.campaigns,
         creators: action.payload.creators,
         collections: action.payload.collections,
@@ -108,7 +108,7 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
         creators: undefined,
         campaigns: undefined,
         beneficiaries: undefined,
-        profileCreators:undefined,
+        profileCreators: undefined,
         vINFTsBeneficiaries: undefined,
       },
     });
@@ -123,9 +123,9 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
         let lists: any = Object.values(data)[0];
 
         Object.keys(lists.beneficiary).length !== 0 &&
-        selectedBeneficiaryList.push(lists.beneficiary);
+          selectedBeneficiaryList.push(lists.beneficiary);
         Object.keys(lists.creator).length !== 0 &&
-        selectedCreatorsList.push(lists.creator);
+          selectedCreatorsList.push(lists.creator);
       });
     const beneficiariesList = profiles && selectedBeneficiaryList;
     const profileCreatorsList = profiles && selectedCreatorsList;
@@ -311,6 +311,35 @@ export const updateProfiles = async (
   );
 
   updatedProfiles.forEach(
+    (item: any, i: number) =>
+      Object.keys(item[profilesAddList[i]]?.creator)?.length &&
+      cachedCreators.push(item[profilesAddList[i]]?.creator)
+  );
+
+  dispatch({
+    type: NFTActionTypes.SUCCESS,
+    payload: {
+      ...state,
+      profileCreators: cachedCreators,
+      beneficiaries: cachedBeneficiaries,
+    },
+  });
+};
+
+export const refreshProfiles = async (dispatch: any, state: any) => {
+  const cachedProfiles = await profileClient.getCachedProfilesList();
+
+  const profilesAddList = cachedProfiles.flatMap(Object.keys);
+  const cachedBeneficiaries: any = [];
+  const cachedCreators: any = [];
+
+  cachedProfiles.forEach(
+    (item: any, i: number) =>
+      Object.keys(item[profilesAddList[i]]?.beneficiary)?.length &&
+      cachedBeneficiaries.push(item[profilesAddList[i]]?.beneficiary)
+  );
+
+  cachedProfiles.forEach(
     (item: any, i: number) =>
       Object.keys(item[profilesAddList[i]]?.creator)?.length &&
       cachedCreators.push(item[profilesAddList[i]]?.creator)
