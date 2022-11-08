@@ -280,6 +280,7 @@ const Profile = () => {
                             noProfilesForThisUser ? null : normalProfile
                           }
                           allProfileData={allProfile}
+                          noProfilesForThisUser={noProfilesForThisUser}
                         />
                       ):(  <div className='d-flex justify-content-center'>
                       <Spinner animation='border' variant='success' />
@@ -352,6 +353,7 @@ const Profile = () => {
                                       }
                                       formData={creatorProfile}
                                       allProfileData={allProfile}
+                                      noProfilesForThisUser={noProfilesForThisUser}
                                     />
                                   </TabPane>
                                   <TabPane tabId="7">
@@ -447,6 +449,7 @@ const Profile = () => {
                                         !noBeneficiaryProfilesForThisUser
                                       }
                                       allProfileData={allProfile}
+                                      noProfilesForThisUser={noProfilesForThisUser}
                                     />
                                   </TabPane>
                                   <TabPane tabId="5">
