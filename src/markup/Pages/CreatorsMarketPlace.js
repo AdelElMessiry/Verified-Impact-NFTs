@@ -69,7 +69,6 @@ const CreatorsMarketPlace = () => {
   const getFilteredCreators = React.useCallback(async () => {
     if (nfts && profileCreators) {
       const CreatorList = getFinalCreatorList();
-      console.log(CreatorList);
       profileCreators && filterSDGByTag({ name: 'All', id: '' }, CreatorList);
       profileCreators && setDisplayedProfileCreators(CreatorList);
     }
@@ -111,9 +110,11 @@ const CreatorsMarketPlace = () => {
                 )
             )
           )
-        : text == ""?
-        setDisplayedProfileCreators(CreatorList) :
-        setDisplayedProfileCreators(CreatorList.filter(creator => { return creator.username.toLowerCase().includes(text?.toLowerCase())})) 
+        : text != "" && selectedData.length > 0 ? 
+        setDisplayedProfileCreators([]):
+        text != "" ? 
+        setDisplayedProfileCreators(CreatorList.filter(creator=>{return creator.username.toLowerCase().includes(text?.toLowerCase())})) :
+        setDisplayedProfileCreators(CreatorList) 
     },
 
     [setDisplayedProfileCreators, profileCreators]
