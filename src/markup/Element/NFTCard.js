@@ -41,14 +41,7 @@ const NFTCard = ({
   }, [ beneficiaries ]);
 
   React.useEffect(() => {
-    (!beneficiaryData) && getBeneficiaries();
-    // setTimeout(() => {
-    //   setImageScale(1.75)
-    //   setTimeout(() => {
-    //     setImageScale(1)
-    //   }, 400);
-    // }, 200);
-      
+    (!beneficiaryData) && getBeneficiaries();      
   }, [beneficiaryData, getBeneficiaries ]);
   //function which return buttons (buy NFT) & (expand NFT) on nft card
   const IconImage = () => {
