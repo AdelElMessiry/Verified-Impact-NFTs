@@ -73,6 +73,9 @@
   &.fit-img-cover {
     object-fit: cover;
   }
+  &.fit-img-contain {
+    object-fit: contain;
+  }
 }
 
 .nfts-slider {
@@ -322,17 +325,35 @@
 }
 
 .sdgs-icon {
-  img{
-  width: 25px;
-  pointer-events: none;
-  cursor: default;
+  img {
+    width: 25px;
+    pointer-events: none;
+    cursor: default;
   }
+
   margin-right: 2px;
 }
+
 .disable-social-media-anchor {
-  color: #D3D3D3!important;
+  color: #D3D3D3 !important;
   pointer-events: none;
 }
-// .dlab-media {
-//   z-index: 0;
-// }
+
+img.not-clickable-link {
+  pointer-events: none;
+  cursor: default;
+}
+.address-link{
+  img{
+    height: 30px !important;
+    width: 30px !important;
+  }
+}
+.h-25p{
+  height: 25px;
+}
+@media screen and (min-width: 1600px) {
+.home-banner{
+  height: 55vh;
+}
+}
