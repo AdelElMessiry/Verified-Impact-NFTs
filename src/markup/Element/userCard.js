@@ -15,6 +15,7 @@ import VINftsTooltip from './Tooltip'
 import unitedNation from '../../images/icon/unitedNation.png';
 import Creator from "../../images/icon/Creator.png"
 import Beneficiary from "../../images/icon/Beneficiary.png"
+import CopyText from './copyText';
 export default function UserCard({ item, type = 'beneficiary' }) {
     const history = useHistory();
     const noData = "No Data Provided"
@@ -124,7 +125,7 @@ export default function UserCard({ item, type = 'beneficiary' }) {
             <div className='mb-3 nftcard-parent m-3'  onClick={()=>visitPage(item)}>
                 <div className='dlab-box dlab-gallery-box'>
                     <div className='dlab-media dlab-img-overlay1 position-relative dlab-img-effect'>
-                        <img src={item.imgUrl != "" ? item.imgUrl : type == "beneficiary"? Beneficiary: Creator} className="img img-fluid fit-img fit-img-cover" />
+                        <img src={item.imgUrl != "" ? item.imgUrl : type == "beneficiary"? Beneficiary: Creator} className="img img-fluid fit-img fit-img-contain" />
                         <div className='overlay-bx'>
                             <div className='overlay-icon align-b text-white text-left'>
                                 <div className='text-white text-left port-box'>
@@ -134,6 +135,11 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                                         <a href={`${process.env.REACT_APP_CPR_LINK}${item.address}`} target="_blank" style={{ wordBreak: "break-all" }}>
                                             {item.address}
                                         </a>
+                                        <VINftsTooltip title={'Copy Public Address'}>
+                                           <div className="address-link">
+                                                <CopyText link={item.address}/>
+                                            </div>
+                                        </VINftsTooltip>
                                     </div>
                                     <div>
                                         <IconImage />
@@ -145,8 +151,9 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                 </div>
 
             </div>
-            {item?.sdgs_ids?.length > 0 && item?.sdgs_ids !== '0' && (
-                <div className='mt-3 px-2'>
+            <div className='mt-3 px-2'>
+                {item?.sdgs_ids?.length > 0 && item?.sdgs_ids !== '0' ? (
+                <>
                     <a href='https://sdgs.un.org/goals' target='_blank'>
                         <img
                             src={unitedNation}
@@ -165,8 +172,9 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                             </label>
                         </VINftsTooltip>
                     ))}
-                </div>
-            )}
+                </>
+                ):<div className='h-25p'></div>}
+            </div>
         </>
     )
 }
