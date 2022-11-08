@@ -308,7 +308,7 @@ const ProfileForm = ({
           (Please type your notes here)%0D%0A%0D%0AMany thanks.%0D%0AWith kind regards,`;
           window.location.href = mailto;
         }
-        if(noProfilesForThisUser){
+        if(noProfilesForThisUser||isSignUpBeneficiary){
          await refreshProfiles(nftDispatch,stateList)
         }else{
         const pk = CLPublicKey.fromHex(entityInfo.publicKey)
@@ -442,6 +442,7 @@ const ProfileForm = ({
       if (formName === ProfileFormsEnum.BeneficiaryProfile && !isProfileExist) {
         handleSaveToSheet(ProfileImgURL, NFTImgURL);
         setIsSaveButtonClicked(false);
+        refreshProfiles(nftDispatch,stateList)
       }
     }
   }
