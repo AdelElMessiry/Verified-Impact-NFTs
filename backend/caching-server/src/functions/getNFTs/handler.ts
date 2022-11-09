@@ -32,6 +32,7 @@ const getNFTsList = async (countFrom: number, count: number) => {
 
 const getNFTs: APIGatewayProxyHandler = async () => {
   await client.connect();
+  // await client.del(REDIS_NFT_KEY);
   let result: any;
   try {
     result = await client.lRange(REDIS_NFT_KEY, 0, -1);
