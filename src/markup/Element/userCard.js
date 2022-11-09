@@ -130,7 +130,7 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                             <div className='overlay-icon align-b text-white text-left'>
                                 <div className='text-white text-left port-box'>
                                     <h4 >{item.username}</h4>
-                                    <h6 >{item.bio}</h6>
+                                    <h6 className='VI-text-truncate'>{item.bio}</h6>
                                     <div onClick={(e)=>{if(e && e.stopPropagation) e.stopPropagation(); }}>
                                         <a href={`${process.env.REACT_APP_CPR_LINK}${item.address}`} target="_blank" style={{ wordBreak: "break-all" }}>
                                             {item.address}

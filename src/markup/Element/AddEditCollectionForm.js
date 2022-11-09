@@ -29,7 +29,6 @@ const AddEditCollectionForm = ({
   closeModal = undefined,
   isFromModal = false,
 }) => {
-  debugger;
   const { ...stateList } = useNFTState();
   const { collections } = stateList;
   const nftDispatch = useNFTDispatch();
