@@ -10,6 +10,7 @@ import bnr1 from './../../images/banner/bnr1.jpg';
 import UserCard from '../Element/userCard';
 import SDGsMultiSelect from '../Element/SDGsMultiSelect';
 import { SDGsData } from '../../data/SDGsGoals';
+import SDGsMultiSelectImages from '../Element/SDGsMultiSelectImages';
 
 // Masonry section
 const masonryOptions = {
@@ -156,15 +157,11 @@ const CreatorsMarketPlace = () => {
           <div>
             <div>
               {SDGsGoalsData.length > 0 && (
-                <div className="site-filters clearfix  left mx-5   m-b40">
+                <div className="site-filters  left   m-b40 d-flex justify-content-around">
                   SDGs Goals:{' '}
-                  <SDGsMultiSelect
-                    data={SDGsGoalsData}
-                    SDGsChanged={(selectedData) => {
-                      handleSDGsChange(selectedData);
-                    }}
-                    isClear={isClearSDGs}
-                  />
+                    <SDGsMultiSelectImages data={SDGsGoalsData}   SDGsChanged={(selectedData) => {
+                      handleSDGsChange(selectedData); 
+                    }} isClear={isClearSDGs}/>
                 </div>
               )}
               {profileCreators ? (

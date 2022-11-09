@@ -95,7 +95,6 @@ const BeneficiariesMarket = () => {
   );
 
   const handleSDGsChange = (data) => {
-    debugger;
     setSDGsGoals(data);
     getSDGsBasedOnTag(data, searchText);
   };
@@ -135,18 +134,11 @@ const BeneficiariesMarket = () => {
           <div>
             <div>
               {SDGsGoalsData.length > 0 && (
-                <div className="site-filters clearfix  left mx-5   m-b40 d-flex justify-content-between">
+                <div className="site-filters  left   m-b40 d-flex justify-content-around">
                   SDGs Goals:{' '}
-                  {/* <SDGsMultiSelect
-                    data={SDGsGoalsData}
-                    SDGsChanged={(selectedData) => {
-                      handleSDGsChange(selectedData);
-                    }}
-                    isClear={isClearSDGs}
-                  /> */}
                   <SDGsMultiSelectImages data={SDGsGoalsData}   SDGsChanged={(selectedData) => {
-                      handleSDGsChange(selectedData);
-                    }}/>
+                      handleSDGsChange(selectedData); 
+                    }} isClear={isClearSDGs}/>
                 </div>
               )}
               {beneficiaries ? (
