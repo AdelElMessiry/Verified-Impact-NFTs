@@ -12,7 +12,7 @@ const SingleSDGsMultiSelectImage = ({ data, SDGsChanged, isClear }) => {
   return (
     <>
       <VINftsTooltip title={data.label}>
-        <div className="position-relative">
+        <div className="position-relative mx-3">
           <img
             src={process.env.PUBLIC_URL + 'images/sdgsGoals/' + data.image}
             style={{ width: 40 }}
