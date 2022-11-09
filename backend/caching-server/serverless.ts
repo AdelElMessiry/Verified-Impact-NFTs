@@ -43,13 +43,13 @@ const serverlessConfiguration: AWS = {
       NODE_RPC_MAINNET_ADDRESS:
         'https://gstiugzrmk.execute-api.us-east-1.amazonaws.com/dev/?url=https://node-clarity-mainnet.make.services/rpc',
       NFT_CONTRACT_HASH_DEV:
-        '7446c47d27e1c6fdb1bfd7e8902bd4744d7c8ab577ca5d0a4b3174c6d38a6e4a',
+        '27d3e7ce6428678a29e10e29d770d58cb2321a6b7ddede4a9170356f482d3953',
       NFT_PACKAGE_HASH_DEV:
-        '756320792afb408d9695775a691f9e52f462951e977783f425a4ad0569fa3ae3',
+        'b0b0887c55923fba6ba81e187c85d94982f1f3473cc9b96df41aa43c946d8651',
       PROFILE_CONTRACT_HASH_DEV:
-        'bf8d97daa5a2be66fd2196d35f7125e1d3f06b868a3895ecb6960a0e87c228f5',
+        '6b2f8995932ac20cb7cf10f569c450281086a7ccca64a881e219d8b67204e524',
       PROFILE_PACKAGE_HASH_DEV:
-        '6fb4c20fb59edc63f5c201cbb0718a5c5119b3a07be6e65f7d46a305fc66e29d',
+        '06940afb3f39d129865de8b885ec96e0f33de6eafa34e6b5bad67d99dd6b0c7d',
 
       NFT_CONTRACT_HASH_PROD:
         '2a1b76bd94b0fc0e68cceb504952294e3706a76ec191cd02960af825a0786a1e',
