@@ -10,6 +10,7 @@ import bnr1 from './../../images/banner/bnr1.jpg';
 import UserCard from '../Element/userCard';
 import SDGsMultiSelect from '../Element/SDGsMultiSelect';
 import { SDGsData } from '../../data/SDGsGoals';
+import SDGsMultiSelectImages from '../Element/SDGsMultiSelectImages';
 
 // Masonry section
 const masonryOptions = {
@@ -86,6 +87,7 @@ const BeneficiariesMarket = () => {
   );
 
   const handleSDGsChange = (data) => {
+    debugger;
     setSDGsGoals(data);
     getSDGsBasedOnTag(data);
   };
@@ -122,15 +124,18 @@ const BeneficiariesMarket = () => {
           <div>
             <div>
               {SDGsGoalsData.length > 0 && (
-                <div className="site-filters clearfix  left mx-5   m-b40">
+                <div className="site-filters clearfix  left mx-5   m-b40 d-flex justify-content-between">
                   SDGs Goals:{' '}
-                  <SDGsMultiSelect
+                  {/* <SDGsMultiSelect
                     data={SDGsGoalsData}
                     SDGsChanged={(selectedData) => {
                       handleSDGsChange(selectedData);
                     }}
                     isClear={isClearSDGs}
-                  />
+                  /> */}
+                  <SDGsMultiSelectImages data={SDGsGoalsData}   SDGsChanged={(selectedData) => {
+                      handleSDGsChange(selectedData);
+                    }}/>
                 </div>
               )}
               {beneficiaries ? (
