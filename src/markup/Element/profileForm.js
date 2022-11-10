@@ -712,7 +712,7 @@ const ProfileForm = ({
                 name='telegram'
                 className='form-control'
                 value={state.inputs.telegram}
-                placeholder='https://telegram.com/userName'
+                placeholder='https://t.me/userName'
                 onChange={(e) => {
                   handleChange(e);
                   checkSocialLinksValidation(e.target.value, 'telegram');

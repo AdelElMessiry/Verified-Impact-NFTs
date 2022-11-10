@@ -62,7 +62,7 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                     >
                         <label>
                             <a href={item.facebook} target="_blank" className={item.facebook == "" ? 'disable-social-media-anchor' : ""}>
-                                <FontAwesomeIcon icon={faFacebook} size="2x" />
+                                <FontAwesomeIcon icon={faFacebook} size="2x" className={item.facebook == "" ? '': "facebook-icon"}/>
                             </a>
                         </label>
 
@@ -89,7 +89,7 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                     >
                         <label>
                             <a href={item.instagram} target="_blank" className={item.instagram == "" ? 'disable-social-media-anchor' : ""}>
-                                <FontAwesomeIcon icon={faInstagram} size="2x" />
+                                <FontAwesomeIcon icon={faInstagram} size="2x" className={item.instagram == "" ? '': "instagram-icon"}/>
                             </a>
                         </label>
                     </VINftsTooltip>
@@ -102,7 +102,7 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                     >
                         <label>
                             <a href={item.telegram} target="_blank" className={item.telegram == "" ? 'disable-social-media-anchor' : ""}>
-                                <FontAwesomeIcon icon={faTelegram} size="2x" />
+                                <FontAwesomeIcon icon={faTelegram} size="2x" className={item.telegram == "" ? '': "telegram-icon"}/>
                             </a>
                         </label>
                     </VINftsTooltip>
