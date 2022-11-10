@@ -811,8 +811,8 @@ const BeneficiaryNFTs = () => {
         {/*  Section-1 Start  */}
         <div className='section-full content-inner-1 portfolio text-uppercase'>
           {SDGsGoalsData.length > 0 && (
-            <div className='site-filters  left   m-b40 d-flex justify-content-around'>
-              SDGs Goals:{' '}
+           <div className="site-filters  left mx-5   m-b40 d-flex">
+           <span>SDGs Goals:<br/><span className='fz-10'>SDGs are filtered based on the SDGs chose only</span></span>
                <SDGsMultiSelectImages data={SDGsGoalsData}   SDGsChanged={(selectedData) => {
                       handleSDGsChange(selectedData); 
                }} isClear={isClearSDGs}/>

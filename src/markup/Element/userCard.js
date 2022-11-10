@@ -15,6 +15,10 @@ import VINftsTooltip from './Tooltip'
 import unitedNation from '../../images/icon/unitedNation.png';
 import Creator from "../../images/icon/Creator.png"
 import Beneficiary from "../../images/icon/Beneficiary.png"
+import Bronze from '../../images/icon/Bronze.png';
+import Gold from '../../images/icon/Gold.png';
+import Platinum from '../../images/icon/Platinum.png';
+import Silver from '../../images/icon/Silver.png';
 import CopyText from './copyText';
 export default function UserCard({ item, type = 'beneficiary' }) {
     const history = useHistory();
@@ -126,10 +130,35 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                 <div className='dlab-box dlab-gallery-box'>
                     <div className='dlab-media dlab-img-overlay1 position-relative dlab-img-effect'>
                         <img src={item.imgUrl != "" ? item.imgUrl : type == "beneficiary"? Beneficiary: Creator} className="img img-fluid fit-img fit-img-contain" />
+                        {type == 'creator' && (
+                        <div className="sold-icon">
+                            <img
+                            src={
+                                item.percentage == 0
+                                ? Platinum
+                                : item.percentage > 0 && item.percentage <= 5
+                                ? Gold
+                                : item.percentage > 5 && item.percentage <= 20
+                                ? Silver
+                                : Bronze
+                            }
+                            />
+                       </div>
+                        )}
                         <div className='overlay-bx'>
                             <div className='overlay-icon align-b text-white text-left'>
                                 <div className='text-white text-left port-box'>
                                     <h4 >{item.username}</h4>
+                                    <ul className="pl-3">
+                                        <li>{item.collectionsNumber} collection(s)</li>
+                                        <li>{item.nftNumber} NFT(s)</li>
+                                        <li>{item.campaignsNumber} Campaign(s)</li>
+                                        {type == 'creator' ? (
+                                        <li>{item.beneficiriesNumber} Beneficiary(s)</li>
+                                        ) : (
+                                        <li>{item.creatorsNumber} Creator(s)</li>
+                                        )}
+                                    </ul>
                                     <h6 className='VI-text-truncate'>{item.bio}</h6>
                                     <div onClick={(e)=>{if(e && e.stopPropagation) e.stopPropagation(); }}>
                                         <a href={`${process.env.REACT_APP_CPR_LINK}${item.address}`} target="_blank" style={{ wordBreak: "break-all" }}>
