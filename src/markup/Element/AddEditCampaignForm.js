@@ -387,7 +387,7 @@ const AddEditCampaignForm = ({
                   )}
                 </Col>
                 <Col>
-                <div className='required-field'>
+                <div>
                   <input
                       type='number'
                       placeholder='Resale Royalty %'
@@ -398,7 +398,6 @@ const AddEditCampaignForm = ({
                         handleChange(e);
                       }}
                     />
-                    <span className='text-danger required-field-symbol'>*</span>
                   </div>
                   {(state.inputs.resaleRoyalty < 0 ||
                       state.inputs.resaleRoyalty > 100) && (
@@ -450,6 +449,7 @@ const AddEditCampaignForm = ({
                       onClick={saveCampaign}
                       disabled={
                         state.inputs.name === '' ||
+                        state.inputs.requestedRoyalty ==='' ||
                         state.inputs.requestedRoyalty < 0 ||
                         state.inputs.requestedRoyalty > 100 ||
                         (SDGsGoalsData?.length > 0 && SDGsGoals?.length <= 0) ||
