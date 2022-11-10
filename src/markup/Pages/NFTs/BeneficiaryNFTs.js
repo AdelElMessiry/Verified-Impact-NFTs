@@ -812,7 +812,15 @@ const BeneficiaryNFTs = () => {
         <div className='section-full content-inner-1 portfolio text-uppercase'>
           {SDGsGoalsData.length > 0 && (
            <div className="site-filters  left mx-5   m-b40 d-flex">
-           <span>SDGs Goals:<br/><span className='fz-10'>SDGs are filtered based on the SDGs chosen only</span></span>
+           <span>
+             <VINftsTooltip title={"Click for more info"}>  
+                    <a href='https://sdgs.un.org/goals' target='_blank'>
+                        <img
+                            src={unitedNation}
+                            style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
+                        />
+                    </a>
+             </VINftsTooltip> SDGs Goals:<br/><span className='fz-10'>SDGs are filtered based on<br/> the SDGs chosen only</span></span>
                <SDGsMultiSelectImages data={SDGsGoalsData}   SDGsChanged={(selectedData) => {
                       handleSDGsChange(selectedData); 
                }} isClear={isClearSDGs}/>
