@@ -24,13 +24,31 @@ const options = {
 const imagesLoadedOptions = { background: '.my-bg-image-el' };
 
 const BeneficiariesMarket = () => {
-  const { beneficiaries } = useNFTState();
+  const { beneficiaries,campaigns,nfts } = useNFTState();
   const [SDGsGoals, setSDGsGoals] = React.useState([]);
 
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
   const [isClearSDGs, setIsClearSDGs] = React.useState(false);
   const [displayedBenficiaries, setDisplayedBenficiaries] = React.useState([]);
   const [searchText, setSearchText] = React.useState("")
+
+  const getFinalBeneficiariesList = () => {
+    let beneficiaryList=[];
+    beneficiaries?.forEach((eleBeneficiary) => {
+      const BeneficiaryNfts = nfts
+        .filter(({ beneficiary }) => eleBeneficiary.address == beneficiary)
+        const beneficiaryCollections =BeneficiaryNfts.map(({collection})=>collection)
+        const beneficiaryCreators =BeneficiaryNfts.map(({creator})=>creator)
+        eleBeneficiary['nftNumber']=BeneficiaryNfts?.length;
+        eleBeneficiary['campaignsNumber']=campaigns?.filter(({beneficiary_address}) => beneficiary_address==eleBeneficiary?.address).length;
+        eleBeneficiary['collectionsNumber']=beneficiaryCollections?.filter((ele, ind) => ind === beneficiaryCollections.findIndex(elem => elem.collection === ele.collection)).length;
+        eleBeneficiary['creatorsNumber']=beneficiaryCreators?.filter((ele, ind) => ind === beneficiaryCreators.findIndex(elem => elem.creator === ele.creator)).length;
+      
+      beneficiaryList.push(eleBeneficiary);
+    });
+    return beneficiaryList;
+  };
+
   const filterSDGByTag = React.useCallback((tag, filteredBeneficiaries) => {
     const AllSDGsTagsName =
       filteredBeneficiaries &&
@@ -47,7 +65,8 @@ const BeneficiariesMarket = () => {
   }, []);
 
   const getFilteredBeneficiaries = React.useCallback(async () => {
-    const approvedBen = beneficiaries?.filter(
+    const BeneficiaryList = getFinalBeneficiariesList();
+    const approvedBen = BeneficiaryList?.filter(
       (beneficiary) => beneficiary.isApproved == 'true'
     )
     const filtBeneficiaries = beneficiaries && approvedBen.filter((ele, ind) => ind === approvedBen.findIndex(elem => elem.address === ele.address))
