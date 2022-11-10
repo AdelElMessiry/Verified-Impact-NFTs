@@ -170,7 +170,7 @@ const CreatorsMarketPlace = () => {
             <div>
               {SDGsGoalsData.length > 0 && (
                  <div className="site-filters  left mx-5   m-b40 d-flex">
-                 <span>SDGs Goals:<br/><span className='fz-10'>SDGs are filtered based on the SDGs chose only</span></span>
+                 <span>SDGs Goals:<br/><span className='fz-10'>SDGs are filtered based on the SDGs chosen only</span></span>
                     <SDGsMultiSelectImages data={SDGsGoalsData}   SDGsChanged={(selectedData) => {
                       handleSDGsChange(selectedData); 
                     }} isClear={isClearSDGs}/>
