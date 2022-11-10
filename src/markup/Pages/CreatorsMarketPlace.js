@@ -23,7 +23,7 @@ const options = {
 
 const imagesLoadedOptions = { background: '.my-bg-image-el' };
 const CreatorsMarketPlace = () => {
-  const { profileCreators, nfts } = useNFTState();
+  const { profileCreators, nfts,collections } = useNFTState();
   const [SDGsGoals, setSDGsGoals] = React.useState([]);
 
   const [SDGsGoalsData, setSDGsGoalsData] = React.useState([]);
@@ -54,8 +54,11 @@ const CreatorsMarketPlace = () => {
         profileCreators.findIndex((elem) => elem.address === ele.address)
     );
     selectedProfileCreator?.forEach((eleCreator) => {
-      const CreatorSDGs = nfts
+      const Creatornfts = nfts
         .filter(({ creator }) => eleCreator.address == creator)
+        const CreatorCampaign =Creatornfts.map(({campaign})=>campaign)
+        const CreatorBeneficiary =Creatornfts.map(({beneficiary})=>beneficiary)
+      const CreatorSDGs = Creatornfts
         .map(({ sdgs_ids }) => sdgs_ids.split(','));
       const allSDGS = Object.values(CreatorSDGs)
         .flat()
@@ -63,6 +66,15 @@ const CreatorsMarketPlace = () => {
           return array.indexOf(val) == id;
         });
       eleCreator['sdgs_ids'] = allSDGS.join(',');
+      eleCreator['percentage']=Creatornfts.reduce(
+        (xcreatorPercentage, { creatorPercentage }) => Number(xcreatorPercentage) + Number(creatorPercentage),
+        0
+      )/Creatornfts.length
+      eleCreator['nftNumber']=Creatornfts?.length;
+      eleCreator['collectionsNumber']=collections.filter(({creator})=>creator==eleCreator?.address)?.length;
+      eleCreator['campaignsNumber']=CreatorCampaign?.filter((ele, ind) => ind === CreatorCampaign.findIndex(elem => elem.id === ele.id)).length;
+      eleCreator['beneficiriesNumber']=CreatorBeneficiary?.filter((ele, ind) => ind === CreatorBeneficiary.findIndex(elem => elem.address === ele.address)).length;;
+      
       CreatorList.push(eleCreator);
     });
     return CreatorList;
@@ -157,8 +169,8 @@ const CreatorsMarketPlace = () => {
           <div>
             <div>
               {SDGsGoalsData.length > 0 && (
-                <div className="site-filters  left   m-b40 d-flex justify-content-around">
-                  SDGs Goals:{' '}
+                 <div className="site-filters  left mx-5   m-b40 d-flex">
+                 <span>SDGs Goals:<br/><span className='fz-10'>SDGs are filtered based on the SDGs chose only</span></span>
                     <SDGsMultiSelectImages data={SDGsGoalsData}   SDGsChanged={(selectedData) => {
                       handleSDGsChange(selectedData); 
                     }} isClear={isClearSDGs}/>
