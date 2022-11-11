@@ -183,22 +183,30 @@ export default function UserCard({ item, type = 'beneficiary' }) {
             <div className='mt-3 px-2'>
                 {item?.sdgs_ids?.length > 0 && item?.sdgs_ids !== '0' ? (
                 <>
+                  <VINftsTooltip title={"Click for more info"}>  
                     <a href='https://sdgs.un.org/goals' target='_blank'>
                         <img
                             src={unitedNation}
                             style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
                         />
                     </a>
+                    </VINftsTooltip>
                     :{' '}
                     {SDGsData?.filter(({ value }) =>
                         item?.sdgs_ids?.split(',').includes(value.toString())
                     )?.map((sdg, index) => (
-                        <VINftsTooltip title={sdg.label} key={index}>
+                        <VINftsTooltip title={<div>{sdg.label} <br/> List of the campaign SDGs, click for more info</div> } key={index}>
+                          {(sdg.value==18||sdg.value==19)? ( <a className="sdgs-icon" href={`https://sdgs.un.org/goals/goal${sdg.value}`} target='_blank'>
+                                <img
+                                    src={process.env.PUBLIC_URL + 'images/sdgsIcons/' + sdg.icon}
+                                />
+                            </a>) :(
                             <label className="sdgs-icon">
                                 <img
                                     src={process.env.PUBLIC_URL + 'images/sdgsIcons/' + sdg.icon}
                                 />
-                            </label>
+                            </label>)
+                         }
                         </VINftsTooltip>
                     ))}
                 </>
