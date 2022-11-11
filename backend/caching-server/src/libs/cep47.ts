@@ -10,16 +10,6 @@ const {
   NFT_PACKAGE_HASH_DEV,
 } = process.env;
 
-const {
-  STAGE,
-  NODE_RPC_MAINNET_ADDRESS,
-  NODE_RPC_TESTNET_ADDRESS,
-  NFT_CONTRACT_HASH_DEV,
-  NFT_CONTRACT_HASH_PROD,
-  NFT_PACKAGE_HASH_PROD,
-  NFT_PACKAGE_HASH_DEV,
-} = process.env;
-
 const proxyServer = '';
 
 const NODE_RPC_ADDRESS =
