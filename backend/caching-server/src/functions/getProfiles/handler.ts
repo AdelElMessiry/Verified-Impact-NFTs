@@ -13,12 +13,15 @@ const REDIS_PROFILE_KEY =
     ? process.env.REDIS_PROFILE_SAVED_KEY
     : `${process.env.REDIS_PROFILE_SAVED_KEY.split(process.env.STAGE)[0]}dev`;
 
-const getProfilesList = async (profilesAddList) => {
+const getProfilesList = async (profilesAddList: string[]) => {
   const mappedProfiles: any = [];
 
-  for (const address of profilesAddList) {
+  let uniqueProfilesAddList: string[] = [...new Set(profilesAddList)];
+
+  for (const address of uniqueProfilesAddList) {
     try {
       const profile: any = await profileClient.getProfile(address, true);
+
       await client.rPush(REDIS_PROFILE_KEY, JSON.stringify(profile));
       mappedProfiles.push(profile);
     } catch (err) {
@@ -31,7 +34,7 @@ const getProfilesList = async (profilesAddList) => {
 
 const getProfiles: APIGatewayProxyHandler = async () => {
   await client.connect();
-  // await client.del(REDIS_PROFILE_KEY);
+  await client.del(REDIS_PROFILE_KEY);
   let cachedProfile: any;
   try {
     cachedProfile = await client.lRange(REDIS_PROFILE_KEY, 0, -1);
