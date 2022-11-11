@@ -3,29 +3,21 @@ import 'source-map-support/register';
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { MessageUtil } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
-import { createClient } from 'redis';
 
 import { HttpStatusCode } from '@libs/HttpStatusCode';
+import { client } from '@utils/redisClient';
 
-const REDIS_KEY =
+const REDIS_NFT_KEY =
   process.env.STAGE === 'prod' || process.env.STAGE === 'dev'
-    ? process.env.REDIS_SAVED_KEY
-    : `${process.env.REDIS_SAVED_KEY.split(process.env.STAGE)[0]}dev`;
-
-const client = createClient({
-  url: `rediss://default:${process.env.UPSTASH_PASSWORD}@${process.env.UPSTASH_REGION}-solid-husky-38167.upstash.io:38167`,
-});
-
-client.on('connect', function () {
-  console.log('Connected!');
-});
+    ? process.env.REDIS_NFT_SAVED_KEY
+    : `${process.env.REDIS_NFT_SAVED_KEY.split(process.env.STAGE)[0]}dev`;
 
 const updateNFT: APIGatewayProxyHandler = async (event) => {
   const { nft }: any = event.body;
 
   try {
     await client.connect();
-    let result = await client.lRange(REDIS_KEY, 0, -1);
+    let result = await client.lRange(REDIS_NFT_KEY, 0, -1);
 
     let mappedResult = result.map((item) => JSON.parse(item));
 
@@ -38,8 +30,8 @@ const updateNFT: APIGatewayProxyHandler = async (event) => {
     );
     mappedResult.push(nft);
 
-    await client.lRem(REDIS_KEY, 0, JSON.stringify(toBeDeleted));
-    await client.rPush(REDIS_KEY, JSON.stringify(nft));
+    await client.lRem(REDIS_NFT_KEY, 0, JSON.stringify(toBeDeleted));
+    await client.rPush(REDIS_NFT_KEY, JSON.stringify(nft));
 
     client.quit();
 

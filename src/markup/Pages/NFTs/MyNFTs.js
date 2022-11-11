@@ -77,7 +77,7 @@ const TagLi = ({ name, handleSetTag, tagActive, type }) => {
 
 const MyNFTs = () => {
   const { isLoggedIn, entityInfo } = useAuth();
-  const { beneficiaries, creators, collections, campaigns } = useNFTState();
+  const { beneficiaries, profileCreators, collections, campaigns } = useNFTState();
 
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
@@ -135,13 +135,13 @@ const MyNFTs = () => {
       nftsList &&
       beneficiaries &&
       campaigns &&
-      creators &&
+      profileCreators &&
       collections &&
       getMappedNftsByList(
         nftsList,
         beneficiaries,
         campaigns,
-        creators,
+        profileCreators,
         collections
       );
 
@@ -160,7 +160,7 @@ const MyNFTs = () => {
     beneficiaries,
     campaigns,
     collections,
-    creators,
+    profileCreators,
     filterCollectionByTag,
     filterCampaignByTag,
     filterCreatorByTag,

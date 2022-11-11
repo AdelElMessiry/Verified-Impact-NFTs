@@ -13,7 +13,13 @@ import { SendTweetWithImage } from '../../utils/VINFTsTweets';
 import AddEditCampaignForm from './AddEditCampaignForm';
 
 //buying NFT Modal
-const AddEditCampaignsModal = ({ show, handleCloseParent, data,beneficiaryAddress,beneficiaryPKAddress }) => {
+const AddEditCampaignsModal = ({
+  show,
+  handleCloseParent,
+  data,
+  beneficiaryAddress,
+  beneficiaryPKAddress
+}) => {
   const [showModal, setShowModal] = React.useState(show);
 
   //handle closing modal
@@ -22,30 +28,35 @@ const AddEditCampaignsModal = ({ show, handleCloseParent, data,beneficiaryAddres
     handleCloseParent();
   };
 
-
   return (
     <Modal
       show={showModal}
       onHide={handleClose}
       scrollable={true}
-      size='lg'
-      backdrop='static'
+      size="lg"
+      backdrop="static"
     >
       <Modal.Header closeButton>
         <Modal.Title>
-          {data ? 'Edit' : 'Add'} {data&&data.name} Campaign
+          {data ? 'Edit' : 'Add'} {data && data.name} Campaign
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-      <AddEditCampaignForm data={data} closeModal={()=>handleCloseParent()} isFromModal={true} beneficiaryAddress={beneficiaryAddress} beneficiaryPKAddress={beneficiaryPKAddress}/>
+        <AddEditCampaignForm
+          data={data}
+          closeModal={() => handleCloseParent()}
+          isFromModal={true}
+          beneficiaryAddress={beneficiaryAddress}
+          beneficiaryPKAddress={beneficiaryPKAddress}
+        />
       </Modal.Body>
       <Modal.Footer>
-        <button className='btn' onClick={handleClose}>
+        <button className="btn" onClick={handleClose}>
           Close
         </button>
       </Modal.Footer>
     </Modal>
-  )
+  );
 };
 
 export default AddEditCampaignsModal;

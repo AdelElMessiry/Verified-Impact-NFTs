@@ -13,16 +13,25 @@ import { uploadImg } from '../../api/imageCDN';
 import { SocialLinks } from 'social-links';
 import SDGsMultiSelect from './SDGsMultiSelect';
 import { SDGsData } from '../../data/SDGsGoals';
-import { useNFTState } from '../../contexts/NFTContext';
+import {
+  useNFTState,
+  useNFTDispatch,
+  updateProfiles,
+  refreshProfiles
+} from '../../contexts/NFTContext';
 import ProfileBioModal from './ProfileBioModal';
 const ProfileForm = ({
   formName,
   isProfileExist,
   formData,
   isSignUpBeneficiary = false,
+  allProfileData = {},
+  noProfilesForThisUser=false
 }) => {
   const { entityInfo, refreshAuth, isLoggedIn } = useAuth();
-  const { campaigns } = useNFTState();
+  const { ...stateList } = useNFTState();
+  const nftDispatch = useNFTDispatch();
+  const { campaigns } = stateList;
 
   //setting initial values of controls
   const [state, setState] = useState({
@@ -58,7 +67,6 @@ const ProfileForm = ({
   const [isSaveButtonClicked, setIsSaveButtonClicked] = React.useState(false);
   const [isOndropProfileClicked, setIsOndropProfileClicked] = useState(false);
   const [isOndropNFTClicked, setIsOndropNFTClicked] = useState(false);
-
   const [showProfileURLErrorMsg, setShowProfileURLErrorMsg] =
     React.useState(false);
   const [showNFTURLErrorMsg, setShowNFTURLErrorMsg] = React.useState(false);
@@ -106,7 +114,7 @@ const ProfileForm = ({
    if (formName==ProfileFormsEnum.BeneficiaryProfile&&formData){
     const beneficiaryCampaigns=campaigns.filter(({beneficiary_address})=>beneficiary_address==formData.address);
   if (beneficiaryCampaigns&& beneficiaryCampaigns.length>0){
-  const sdgsCampaigns=  beneficiaryCampaigns.map(({sdgs_ids})=>sdgs_ids?.split(",")).flat();
+  const sdgsCampaigns=  beneficiaryCampaigns.map(({sdgs_ids})=>!Array.isArray(sdgs_ids)&& sdgs_ids?.split(",")).flat();
   const beneficiaryArray=  formData?.sdgs_ids?.split(',')
     var savedSDGs = sdgsCampaigns.filter(function(obj) { 
       return beneficiaryArray.indexOf(obj) > -1; 
@@ -149,7 +157,8 @@ const ProfileForm = ({
   };
 
   const checkURLValidation = (value, urlNum) => {
-    if (validator.isURL(value)) {
+    var re = new RegExp("^(http|https)://", "i");
+    if (validator.isURL(value) && re.test(value)) {
       urlNum == 1
         ? setShowProfileURLErrorMsg(false)
         : urlNum == 2
@@ -299,6 +308,111 @@ const ProfileForm = ({
           (Please type your notes here)%0D%0A%0D%0AMany thanks.%0D%0AWith kind regards,`;
           window.location.href = mailto;
         }
+        if(noProfilesForThisUser||isSignUpBeneficiary){
+         await refreshProfiles(nftDispatch,stateList)
+        }else{
+        const pk = CLPublicKey.fromHex(entityInfo.publicKey)
+        .toAccountHashStr()
+        .slice(13);
+        let changedData = {};
+        if (formName === ProfileFormsEnum.BeneficiaryProfile) {
+          changedData = {
+            [pk]: {
+              normal: allProfileData.normal,
+              beneficiary: {
+                address: CLPublicKey.fromHex(entityInfo.publicKey)
+                  .toAccountHashStr()
+                  .slice(13),
+                address_pk: entityInfo.publicKey,
+                ein: state.inputs.donationReceipt ? state.inputs.ein : '',
+                externalLink: state.inputs.externalSiteLink,
+                facebook: state.inputs.facebook,
+                firstName: state.inputs.firstName,
+                has_receipt: state.inputs.donationReceipt,
+                imgUrl: ProfileImgURL,
+                instagram: state.inputs.instagram,
+                isApproved:  formData ?formData?.isApproved:"false",
+                lastName: state.inputs.lastName,
+                mail: state.inputs.email,
+                medium: state.inputs.medium,
+                nftUrl: NFTImgURL,
+                phone: state.inputs.phone,
+                sdgs_ids: SDGsGoals.join(','),
+                tagline: state.inputs.tagline,
+                telegram: state.inputs.telegram,
+                twitter: state.inputs.twitter,
+                username: state.inputs.userName,
+                bio: formData ? formData.bio : '',
+              },
+              creator: allProfileData.creator,
+            },
+          };
+        } else if (formName === ProfileFormsEnum.CreatorProfile) {
+          changedData = {
+            [pk]: {
+              normal: allProfileData.normal,
+              beneficiary: allProfileData.beneficiary,
+              creator: {
+                address: CLPublicKey.fromHex(entityInfo.publicKey)
+                  .toAccountHashStr()
+                  .slice(13),
+                address_pk: entityInfo.publicKey,
+                ein: state.inputs.donationReceipt ? state.inputs.ein : '',
+                externalLink: state.inputs.externalSiteLink,
+                facebook: state.inputs.facebook,
+                firstName: state.inputs.firstName,
+                has_receipt: state.inputs.donationReceipt,
+                imgUrl: ProfileImgURL,
+                instagram: state.inputs.instagram,
+                isApproved: 'false',
+                lastName: state.inputs.lastName,
+                mail: state.inputs.email,
+                medium: state.inputs.medium,
+                nftUrl: NFTImgURL,
+                phone: state.inputs.phone,
+                tagline: state.inputs.tagline,
+                telegram: state.inputs.telegram,
+                twitter: state.inputs.twitter,
+                username: state.inputs.userName,
+                bio: formData ? formData.bio : '',
+              },
+            },
+          };
+        } else {
+          changedData = {
+            [pk]: {
+              normal: {
+                address: CLPublicKey.fromHex(entityInfo.publicKey)
+                  .toAccountHashStr()
+                  .slice(13),
+                address_pk: entityInfo.publicKey,
+                ein: state.inputs.donationReceipt ? state.inputs.ein : '',
+                externalLink: state.inputs.externalSiteLink,
+                facebook: state.inputs.facebook,
+                firstName: state.inputs.firstName,
+                has_receipt: state.inputs.donationReceipt,
+                imgUrl: ProfileImgURL,
+                instagram: state.inputs.instagram,
+                isApproved: "false",
+                lastName: state.inputs.lastName,
+                mail: state.inputs.email,
+                medium: state.inputs.medium,
+                nftUrl: NFTImgURL,
+                phone: state.inputs.phone,
+                tagline: state.inputs.tagline,
+                telegram: state.inputs.telegram,
+                twitter: state.inputs.twitter,
+                username: state.inputs.userName,
+                bio: formData ? formData.bio : '',
+              },
+              beneficiary: allProfileData.beneficiary,
+              creator: allProfileData.creator,
+            },
+          };
+        }
+        console.log("chnaged Data",changedData)
+        await updateProfiles(nftDispatch, stateList, changedData);
+      }
         if (
           formName === ProfileFormsEnum.BeneficiaryProfile &&
           !isProfileExist
@@ -308,7 +422,7 @@ const ProfileForm = ({
         VIToast.success('Profile Saved successfully');
         //NOTE: every channel has a special keys and tokens sorted on .env file
         setTimeout(() => {
-          window.location.reload();
+          // window.location.reload();
           setIsSaveButtonClicked(false);
         }, 50);
       } catch (err) {
@@ -328,6 +442,7 @@ const ProfileForm = ({
       if (formName === ProfileFormsEnum.BeneficiaryProfile && !isProfileExist) {
         handleSaveToSheet(ProfileImgURL, NFTImgURL);
         setIsSaveButtonClicked(false);
+        refreshProfiles(nftDispatch,stateList)
       }
     }
   }
@@ -362,22 +477,58 @@ const ProfileForm = ({
       .then((response) => {
         VIToast.success('Your Sign up submitted Successfully');
         setTimeout(() => {
-          window.location.reload();
+          // window.location.reload();
           setIsSaveButtonClicked(false);
         }, 50);
       })
       .catch((error) => {
         VIToast.error('An error occured with sign up');
         setTimeout(() => {
-          window.location.reload();
+          //  window.location.reload();
           setIsSaveButtonClicked(false);
         }, 50);
       });
   };
 
-const getSavedData=(bio)=>{
-  setProfileBio(bio)
-}
+  const getSavedData = async (bio) => {
+    setProfileBio(bio);
+    const pk = CLPublicKey.fromHex(entityInfo.publicKey)
+    .toAccountHashStr()
+    .slice(13);
+    let changedData = {};
+    if (formName === ProfileFormsEnum.BeneficiaryProfile) {
+      changedData = {
+        [pk]: {
+          normal: allProfileData.normal,
+          beneficiary: Object.assign({}, formData, {
+            bio: bio,
+          }),
+          creator: allProfileData.creator,
+        },
+      };
+    } else if (formName === ProfileFormsEnum.CreatorProfile) {
+      changedData = {
+        [pk]: {
+          normal: allProfileData.normal,
+          beneficiary: allProfileData.beneficiary,
+          creator: Object.assign({}, formData, {
+            bio: bio,
+          }),
+        },
+      };
+    } else {
+      changedData = {
+        [pk]: {
+          normal: Object.assign({}, formData, {
+            bio: bio,
+          }),
+          beneficiary: allProfileData.beneficiary,
+          creator: allProfileData.creator,
+        },
+      };
+    }
+    await updateProfiles(nftDispatch, stateList, changedData);
+  };
 
   return (
     <div className='shop-account '>
@@ -442,6 +593,7 @@ const getSavedData=(bio)=>{
                 name='externalSiteLink'
                 className='form-control'
                 value={state.inputs.externalSiteLink}
+                placeholder="https://example.com"
                 onChange={(e) => {
                   handleChange(e);
                   checkURLValidation(e.target.value, 3);
@@ -560,7 +712,7 @@ const getSavedData=(bio)=>{
                 name='telegram'
                 className='form-control'
                 value={state.inputs.telegram}
-                placeholder='https://telegram.com/userName'
+                placeholder='https://t.me/userName'
                 onChange={(e) => {
                   handleChange(e);
                   checkSocialLinksValidation(e.target.value, 'telegram');
@@ -590,7 +742,7 @@ const getSavedData=(bio)=>{
                   />
                 </Col>
               </Row>
-              {isSignUpBeneficiary && (
+              {(isSignUpBeneficiary || (formName === ProfileFormsEnum.BeneficiaryProfile && !formData)) && (
                 <>
                   <Row className='form-group pt-1'>
                     <Col>
@@ -601,8 +753,14 @@ const getSavedData=(bio)=>{
                           <span>
                             By signing up I accept the
                             {" "}
+                            <a href={`${window.location.origin}/#/terms-of-services`} target="_blank" rel="noopener noreferrer">
+                              Terms of Service 
+                            </a>
+                            {" "}
+                            and
+                            {" "}
                             <a href={`${window.location.origin}/#/privacy`} target="_blank" rel="noopener noreferrer">
-                              Terms of Service  and Privacy
+                              Privacy
                             </a>
                           </span>
                         }
@@ -826,8 +984,10 @@ const getSavedData=(bio)=>{
               !uploadedNFTImageURL ||
               (state.inputs.donationReceipt && state.inputs.ein == "") ||
               ((formName === ProfileFormsEnum.BeneficiaryProfile && SDGsGoals?.length <= 0) || (formName === ProfileFormsEnum.BeneficiaryProfile && SDGsGoals == undefined))||
-              ( isSignUpBeneficiary&&(!state.inputs.authorizeArtist ||
-              !state.inputs.acceptPolicies))
+             ( isSignUpBeneficiary || (formName === ProfileFormsEnum.BeneficiaryProfile && !formData))&&
+             (
+              !state.inputs.authorizeArtist ||
+              !state.inputs.acceptPolicies)
             }
             onClick={(e) => {
               handleSave(e);

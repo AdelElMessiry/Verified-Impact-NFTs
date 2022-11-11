@@ -31,6 +31,7 @@ const ManageCampaigns = ({ beneficiaryAddress,beneficiaryPKAddress }) => {
               .slice(13)
       );
     campaigns && setBeneficiaryCampaigns(selectedCampaigns);
+    
   }, [campaigns, entityInfo.publicKey]);
 
   return (

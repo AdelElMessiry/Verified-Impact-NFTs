@@ -16,15 +16,19 @@ import bnr1 from './../../images/banner/bnr1.jpg';
 import ManageCampaigns from './ManageCampaigns';
 import ReactGA from 'react-ga';
 import { Spinner } from 'react-bootstrap';
+import { CLPublicKey } from 'casper-js-sdk';
+import ManageCollections from './ManageCollections';
 
 const Profile = () => {
   const { beneficiaries, creators } = useNFTState();
   const { isLoggedIn, entityInfo } = useAuth();
   const [activeTab, setActiveTab] = useState('1');
   const [activeBeneficiaryTab, setActiveBeneficiaryTab] = useState('4');
+  const [activeCreatorTab, setActiveCreatorTab] = useState('6');
   const [normalProfile, setNormalProfile] = useState();
   const [beneficiaryProfile, setBeneficiaryProfile] = useState();
   const [creatorProfile, setCreatorProfile] = useState();
+  const [allProfile, setAllProfile] = useState();
   const [noProfilesForThisUser, setNoProfilesForThisUser] = useState(false);
   const [
     noBeneficiaryProfilesForThisUser,
@@ -41,6 +45,10 @@ const Profile = () => {
     if (activeBeneficiaryTab !== tab) setActiveBeneficiaryTab(tab);
   };
 
+  const toggleCreatorTab = (tab) => {
+    if (activeCreatorTab !== tab) setActiveCreatorTab(tab);
+  };
+
   const getUserProfiles = React.useCallback(async () => {
     try {
       const _beneficiaryProfile = beneficiaries?.find(
@@ -51,9 +59,15 @@ const Profile = () => {
         ({ address }) => address === entityInfo.publicKey
       );
 
-      const userProfiles = await profileClient.getProfile(entityInfo.publicKey);
+      const userProfiles = await profileClient.getProfile(
+        CLPublicKey.fromHex(entityInfo.publicKey).toAccountHashStr().slice(13),
+        true
+      );
 
       if (userProfiles) {
+        let beneficiaryObject;
+        let creatorObject;
+        let normalObject;
         if (userProfiles.err === 'Address Not Found') {
           if (beneficiaries) {
             if (_beneficiaryProfile) {
@@ -77,9 +91,11 @@ const Profile = () => {
                 sdgs_ids: _beneficiaryProfile.sdgs_ids.split(','),
               };
               setBeneficiaryProfile(beneficiary);
+              beneficiaryObject = beneficiary;
               setNoBeneficiaryProfilesForThisUser(false);
             } else {
               setBeneficiaryProfile(null);
+              beneficiaryObject = {};
               setNoBeneficiaryProfilesForThisUser(true);
             }
           }
@@ -104,14 +120,17 @@ const Profile = () => {
                 mail: '',
               };
               setCreatorProfile(creator);
+              creatorObject = creator;
               setNoCreatorProfilesForThisUser(false);
             } else {
               setCreatorProfile(null);
+              creatorObject = {};
               setNoCreatorProfilesForThisUser(true);
             }
           }
           setNoProfilesForThisUser(true);
           setNormalProfile(null);
+          normalObject = {};
         } else {
           if (beneficiaries) {
             if (_beneficiaryProfile) {
@@ -132,6 +151,16 @@ const Profile = () => {
             setNormalProfile(
               Object.keys(list.normal).length === 0 ? null : list.normal
             );
+          if (userProfiles) {
+            normalObject =
+              Object.keys(list.normal).length === 0 ? {} : list.normal;
+            beneficiaryObject =
+              Object.keys(list.beneficiary).length === 0
+                ? {}
+                : list.beneficiary;
+            creatorObject =
+              Object.keys(list.creator).length === 0 ? {} : list.creator;
+          }
           userProfiles &&
             setBeneficiaryProfile(
               Object.keys(list.beneficiary).length === 0
@@ -143,6 +172,11 @@ const Profile = () => {
               Object.keys(list.creator).length === 0 ? null : list.creator
             );
         }
+        setAllProfile({
+          normal: normalObject,
+          beneficiary: beneficiaryObject,
+          creator: creatorObject,
+        });
       }
     } catch (e) {
       console.log(e);
@@ -231,9 +265,10 @@ const Profile = () => {
                 <div id='cost' className='tab-pane active py-5'>
                   <TabContent activeTab={activeTab}>
                     <TabPane tabId='1'>
-                      {normalProfile == null ||
-                      normalProfile ||
-                      noProfilesForThisUser ? (
+                      {(normalProfile == null ||
+                        normalProfile ||
+                        noProfilesForThisUser) &&
+                      activeTab === '1' ? (
                         <ProfileForm
                           formName={ProfileFormsEnum.NormalProfile}
                           isProfileExist={
@@ -246,6 +281,8 @@ const Profile = () => {
                           formData={
                             noProfilesForThisUser ? null : normalProfile
                           }
+                          allProfileData={allProfile}
+                          noProfilesForThisUser={noProfilesForThisUser}
                         />
                       ) : (
                         <div className='d-flex justify-content-center'>
@@ -255,18 +292,90 @@ const Profile = () => {
                     </TabPane>
                     <TabPane tabId='2'>
                       {(creatorProfile || noCreatorProfilesForThisUser) &&
-                      creators ? (
-                        <ProfileForm
-                          formName={ProfileFormsEnum.CreatorProfile}
-                          isProfileExist={
-                            noProfilesForThisUser ||
-                            (creatorProfile &&
-                              Object.keys(creatorProfile).length === 0)
-                              ? false
-                              : true
-                          }
-                          formData={creatorProfile}
-                        />
+                      creators &&
+                      activeTab === '2' ? (
+                        <>
+                          <div className='dlab-tabs choseus-tabs'>
+                            <ul
+                              className='nav row justify-content-center'
+                              id='creatorTab'
+                              role='tablist'
+                            >
+                              <li>
+                                <Link
+                                  to={'#'}
+                                  className={
+                                    classnames({
+                                      active: activeCreatorTab === '6',
+                                    }) + ''
+                                  }
+                                  onClick={() => {
+                                    toggleCreatorTab('6');
+                                  }}
+                                >
+                                  <span className='title-head'>
+                                    Account Info
+                                  </span>
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  to={'#'}
+                                  className={
+                                    classnames({
+                                      active: activeCreatorTab === '7',
+                                    }) + ''
+                                  }
+                                  onClick={() => {
+                                    toggleCreatorTab('7');
+                                  }}
+                                >
+                                  <span className='title-head'>
+                                    Manage Collections
+                                  </span>
+                                </Link>
+                              </li>
+                            </ul>
+                          </div>
+                          <div className='container'>
+                            <div className='tab-content chosesus-content'>
+                              <div
+                                id='beneficiartMain'
+                                className='tab-pane active py-5'
+                              >
+                                <TabContent activeTab={activeCreatorTab}>
+                                  <TabPane tabId='6'>
+                                    <ProfileForm
+                                      formName={ProfileFormsEnum.CreatorProfile}
+                                      isProfileExist={
+                                        noProfilesForThisUser ||
+                                        (creatorProfile &&
+                                          Object.keys(creatorProfile).length ===
+                                            0)
+                                          ? false
+                                          : true
+                                      }
+                                      formData={creatorProfile}
+                                      allProfileData={allProfile}
+                                      noProfilesForThisUser={
+                                        noProfilesForThisUser
+                                      }
+                                    />
+                                  </TabPane>
+                                  <TabPane tabId='7'>
+                                    {creatorProfile ? (
+                                      <ManageCollections />
+                                    ) : (
+                                      <h4 className='text-muted text-center my-5'>
+                                        Please Add Creator First
+                                      </h4>
+                                    )}
+                                  </TabPane>
+                                </TabContent>
+                              </div>
+                            </div>
+                          </div>
+                        </>
                       ) : (
                         <div className='d-flex justify-content-center'>
                           <Spinner animation='border' variant='success' />
@@ -276,7 +385,8 @@ const Profile = () => {
                     <TabPane tabId='3'>
                       {(beneficiaryProfile ||
                         noBeneficiaryProfilesForThisUser) &&
-                      beneficiaries ? (
+                      beneficiaries &&
+                      activeTab === '3' ? (
                         <>
                           <div className='dlab-tabs choseus-tabs'>
                             <ul
@@ -343,6 +453,10 @@ const Profile = () => {
                                       formData={beneficiaryProfile}
                                       isVINftExist={
                                         !noBeneficiaryProfilesForThisUser
+                                      }
+                                      allProfileData={allProfile}
+                                      noProfilesForThisUser={
+                                        noProfilesForThisUser
                                       }
                                     />
                                   </TabPane>

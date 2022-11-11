@@ -3,7 +3,7 @@ import AddEditCampaignsModal from './AddEditCampaignsModal';
 import editIcon from './../../images/icon/edit.png';
 
 //Manage Beneficiaries page
-const CampaignSingleRow = ({ campaign,beneficiaryAddress,beneficiaryPKAddress }) => {
+const CampaignSingleRow = ({ campaign,beneficiaryAddress,beneficiaryPKAddress}) => {
   const [showAddEditCampaignModal, setShowAddEditCampaignModal] =
     React.useState(false);
   return (

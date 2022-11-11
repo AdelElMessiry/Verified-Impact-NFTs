@@ -15,6 +15,7 @@ import {
   useNFTState,
   useNFTDispatch,
   refreshNFTs,
+  refreshCollections,
 } from '../../../contexts/NFTContext';
 import { mint } from '../../../api/mint';
 import { getDeployDetails } from '../../../api/universal';
@@ -445,6 +446,7 @@ const MintNFT = () => {
           );
         }
         if (isCreateNewCollection) {
+          await refreshCollections(nftDispatch, stateList);
           //add collection discord
           await sendDiscordMessage(
             process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
