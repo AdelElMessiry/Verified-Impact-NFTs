@@ -16,10 +16,7 @@ const REDIS_PROFILE_KEY =
 const getProfilesList = async (profilesAddList: string[]) => {
   const mappedProfiles: any = [];
 
-  let uniqueProfilesAddList: string[] = [...new Set(profilesAddList)];
-  console.log(uniqueProfilesAddList);
-
-  for (const address of uniqueProfilesAddList) {
+  for (const address of profilesAddList) {
     try {
       const profile: any = await profileClient.getProfile(address, true);
 
@@ -46,8 +43,9 @@ const getProfiles: APIGatewayProxyHandler = async () => {
     );
   }
 
-  let profilesAddList = await profileClient.profilesAddList();
-  let uniqueProfilesAddList = [...new Set(profilesAddList)];
+  let profilesAddList: string[] = await profileClient.profilesAddList();
+  let uniqueProfilesAddList: string[] = [...new Set(profilesAddList)];
+
   const profilesCount: any = uniqueProfilesAddList.length;
 
   const countFrom =
@@ -66,7 +64,7 @@ const getProfiles: APIGatewayProxyHandler = async () => {
       list: mappedResult,
     });
   } else {
-    const list: any = await getProfilesList(profilesAddList);
+    const list: any = await getProfilesList(uniqueProfilesAddList);
     if (list.err) {
       client.quit();
       return MessageUtil.error(
