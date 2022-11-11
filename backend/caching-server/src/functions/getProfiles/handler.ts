@@ -17,6 +17,7 @@ const getProfilesList = async (profilesAddList: string[]) => {
   const mappedProfiles: any = [];
 
   let uniqueProfilesAddList: string[] = [...new Set(profilesAddList)];
+  console.log(uniqueProfilesAddList);
 
   for (const address of uniqueProfilesAddList) {
     try {
@@ -34,7 +35,7 @@ const getProfilesList = async (profilesAddList: string[]) => {
 
 const getProfiles: APIGatewayProxyHandler = async () => {
   await client.connect();
-  await client.del(REDIS_PROFILE_KEY);
+  // await client.del(REDIS_PROFILE_KEY);
   let cachedProfile: any;
   try {
     cachedProfile = await client.lRange(REDIS_PROFILE_KEY, 0, -1);
@@ -46,7 +47,8 @@ const getProfiles: APIGatewayProxyHandler = async () => {
   }
 
   let profilesAddList = await profileClient.profilesAddList();
-  const profilesCount: any = profilesAddList.length;
+  let uniqueProfilesAddList = [...new Set(profilesAddList)];
+  const profilesCount: any = uniqueProfilesAddList.length;
 
   const countFrom =
     cachedProfile &&
