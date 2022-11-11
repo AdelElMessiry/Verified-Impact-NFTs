@@ -196,7 +196,7 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                         item?.sdgs_ids?.split(',').includes(value.toString())
                     )?.map((sdg, index) => (
                         <VINftsTooltip title={<div>{sdg.label} <br/> List of the campaign SDGs, click for more info</div> } key={index}>
-                          {(sdg.value==18||sdg.value==19)? ( <a className="sdgs-icon" href={`https://sdgs.un.org/goals/goal${sdg.value}`} target='_blank'>
+                          {(sdg.value!=18&&sdg.value!=19)? ( <a className="sdgs-icon" href={`https://sdgs.un.org/goals/goal${sdg.value}`} target='_blank'>
                                 <img
                                     src={process.env.PUBLIC_URL + 'images/sdgsIcons/' + sdg.icon}
                                 />
