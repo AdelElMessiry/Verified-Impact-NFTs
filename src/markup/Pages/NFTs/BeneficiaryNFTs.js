@@ -29,6 +29,7 @@ import CopyCode from '../../Element/copyCode';
 import ReactGA from 'react-ga';
 import SDGsMultiSelect from '../../Element/SDGsMultiSelect';
 import { SDGsData } from '../../../data/SDGsGoals';
+import SDGsMultiSelectImages from '../../Element/SDGsMultiSelectImages';
 // Masonry section
 const masonryOptions = {
   transitionDuration: 0,
@@ -810,15 +811,19 @@ const BeneficiaryNFTs = () => {
         {/*  Section-1 Start  */}
         <div className='section-full content-inner-1 portfolio text-uppercase'>
           {SDGsGoalsData.length > 0 && (
-            <div className='site-filters clearfix  left mx-5   m-b40'>
-              SDGs Goals:{' '}
-              <SDGsMultiSelect
-                data={SDGsGoalsData}
-                SDGsChanged={(selectedData) => {
-                  handleSDGsChange(selectedData);
-                }}
-                isClear={isClearSDGs}
-              />
+           <div className="site-filters  left mx-5   m-b40 d-flex">
+           <span>
+             <VINftsTooltip title={"Click for more info"}>  
+                    <a href='https://sdgs.un.org/goals' target='_blank'>
+                        <img
+                            src={unitedNation}
+                            style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
+                        />
+                    </a>
+             </VINftsTooltip> SDGs Goals:<br/><span className='fz-10'>SDGs are filtered based on<br/> the SDGs chosen only</span></span>
+               <SDGsMultiSelectImages data={SDGsGoalsData}   SDGsChanged={(selectedData) => {
+                      handleSDGsChange(selectedData); 
+               }} isClear={isClearSDGs}/>
             </div>
           )}
           {(creator === undefined || creator === null) && (

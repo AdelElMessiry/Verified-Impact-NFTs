@@ -6,14 +6,13 @@ import copyIcon from './../../images/icon/copy.png';
 //shared tooltip component
 const CopyText = ({ link }) => {
   return (
-    <img
-      src={copyIcon}
-      width="40px"
-      onClick={(e) => {
+   <span onClick={(e) => {
        e.stopPropagation(); navigator.clipboard.writeText(link);VIToast.success('Text Copied successfully!');
-      }}
-      className="cursor-pointer"
-    />
+      }}> <img
+      src={copyIcon}
+      width="40"
+      className="cursor-pointer not-clickable-link"
+    /></span>
   );
 };
 export default CopyText;
