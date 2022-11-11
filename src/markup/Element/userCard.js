@@ -148,7 +148,7 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                         <div className='overlay-bx'>
                             <div className='overlay-icon align-b text-white text-left'>
                                 <div className='text-white text-left port-box'>
-                                    <h4 >{item.username}</h4>
+                                    <h5 >{item.username}</h5>
                                     <ul className="pl-3">
                                         <li>{item.collectionsNumber} collection(s)</li>
                                         <li>{item.nftNumber} NFT(s)</li>
