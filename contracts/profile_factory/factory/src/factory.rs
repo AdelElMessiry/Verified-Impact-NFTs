@@ -50,8 +50,10 @@ pub trait FACTORY<Storage: ContractStorage>: ContractContext<Storage> {
         data::get_all_profiles()
     }
 
-    fn is_existent_profile(&self) -> bool {
-        Profiles::instance().is_profile(self.get_caller())
+    // fn is_existent_profile(&self) -> bool {
+    fn is_existent_profile(&self, address: Key) -> bool {
+        Profiles::instance().is_profile(&address)
+        // Profiles::instance().is_profile(self.get_caller())
     }
 
     fn get_package_hash(&mut self) -> ContractPackageHash {

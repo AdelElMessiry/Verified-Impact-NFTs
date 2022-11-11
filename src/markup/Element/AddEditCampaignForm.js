@@ -8,7 +8,12 @@ import { useAuth } from '../../contexts/AuthContext';
 import { getDeployDetails } from '../../api/universal';
 import { createCampaign } from '../../api/createCampaign';
 
-import { useNFTState } from '../../contexts/NFTContext';
+import {
+  refreshCampaigns,
+  updateCampaigns,
+  useNFTDispatch,
+  useNFTState,
+} from '../../contexts/NFTContext';
 import ReactGA from 'react-ga';
 import SDGsMultiSelect from './SDGsMultiSelect';
 import { SDGsData } from '../../data/SDGsGoals/index';
@@ -22,8 +27,10 @@ const AddEditCampaignForm = ({
   beneficiaryAddress = undefined,
   beneficiaryPKAddress = undefined,
 }) => {
-  const { beneficiaries, nfts } = useNFTState();
   const { entityInfo } = useAuth();
+  const { ...stateList } = useNFTState();
+  const { beneficiaries, nfts } = stateList;
+  const nftDispatch = useNFTDispatch();
   const [beneficiary, setBeneficiary] = React.useState();
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
   const [showURLErrorMsg, setShowURLErrorMsg] = React.useState(false);
@@ -106,7 +113,7 @@ const AddEditCampaignForm = ({
       name: data ? data.name : '',
       description: data ? data.description : '',
       requestedRoyalty: data ? data.requested_royalty : '',
-      resaleRoyalty: ''
+      resaleRoyalty: data ? data.resale_prc: ''
     },
   });
 
@@ -177,19 +184,44 @@ const AddEditCampaignForm = ({
         label: `${entityInfo.publicKey}: added new campaign ${state.inputs.name}`,
       });
       const deployResult = await getDeployDetails(savedCampaign);
+      if (data?.id) {
+        const changedCampaign = {
+          beneficiary_address: beneficiaryAddress
+            ? beneficiaryAddress
+            : beneficiary, //hash,
+          collection_ids: '0',
+          description: state.inputs.description,
+          id: data.id,
+          name: state.inputs.name,
+          requested_royalty: state.inputs.requestedRoyalty,
+          sdgs_ids: SDGsGoals.join(','),
+          url: state.inputs.campaignUrl,
+          w_pk: campaignAddress,
+          wallet_address: CLPublicKey.fromHex(campaignAddress)
+            .toAccountHashStr()
+            .slice(13),
+          wallet_address_pk: campaignAddress,
+        };
+        await updateCampaigns(nftDispatch, stateList, changedCampaign);
+        
+      }
       console.log('...... Campaign saved successfully', deployResult);
       VIToast.success('Campaign saved successfully');
       setIsButtonClicked(false);
       isFromModal && closeModal();
-      isFromModal && window.location.reload();
+      //isFromModal && window.location.reload();
+      await refreshCampaigns(nftDispatch, stateList);
+      
       setState({
         inputs: {
           campaignUrl: '',
           name: '',
           description: '',
           requestedRoyalty: '',
+          resaleRoyalty: '',
         },
       });
+      selectedBeneficiary();
 
       console.log('save Result', savedCampaign);
       console.log(
@@ -249,7 +281,7 @@ const AddEditCampaignForm = ({
                         >
                           {beneficiaries
                             ?.filter(({ isApproved }) => isApproved === 'true')
-                            .map(({ username, address, index }) => (
+                            .map(({ username, address}, index ) => (
                               <option
                                 key={`${address}_${index}`}
                                 value={address}
@@ -355,7 +387,7 @@ const AddEditCampaignForm = ({
                   )}
                 </Col>
                 <Col>
-                <div className='required-field'>
+                <div>
                   <input
                       type='number'
                       placeholder='Resale Royalty %'
@@ -366,7 +398,6 @@ const AddEditCampaignForm = ({
                         handleChange(e);
                       }}
                     />
-                    <span className='text-danger required-field-symbol'>*</span>
                   </div>
                   {(state.inputs.resaleRoyalty < 0 ||
                       state.inputs.resaleRoyalty > 100) && (
@@ -418,6 +449,7 @@ const AddEditCampaignForm = ({
                       onClick={saveCampaign}
                       disabled={
                         state.inputs.name === '' ||
+                        state.inputs.requestedRoyalty ==='' ||
                         state.inputs.requestedRoyalty < 0 ||
                         state.inputs.requestedRoyalty > 100 ||
                         (SDGsGoalsData?.length > 0 && SDGsGoals?.length <= 0) ||
