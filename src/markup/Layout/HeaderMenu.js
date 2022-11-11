@@ -9,7 +9,7 @@ import { useNFTState } from '../../contexts/NFTContext';
 
 const HeaderMenu = () => {
   const { isLoggedIn } = useAuth();
-  const { beneficiaries, campaigns, collections, creators } = useNFTState();
+  const { beneficiaries, campaigns, collections, profileCreators } = useNFTState();
 
   const [creatorsList, setCreatorsList] = React.useState();
   const [beneficiariesList, setBeneficiariesList] = React.useState();
@@ -24,11 +24,11 @@ const HeaderMenu = () => {
       ));
     beneficiaryList && setBeneficiariesList(beneficiaryList);
     const creatorList =
-      creators &&
+    profileCreators &&
       collections &&
-      (await _getCreatorsCollectionsList(creators, collections));
+      (await _getCreatorsCollectionsList(profileCreators, collections));
     creatorList && setCreatorsList(creatorList);
-  }, [beneficiaries, campaigns, collections, creators]);
+  }, [beneficiaries, campaigns, collections, profileCreators]);
 
   React.useEffect(() => {
     loadSubMenu();
@@ -92,7 +92,7 @@ const HeaderMenu = () => {
                   to={`./CreatorNFTs?creator=${c.address}`}
                   className='dez-page'
                 >
-                  {c.name} <i className='fa fa-angle-right'></i>
+                  {c.username} <i className='fa fa-angle-right'></i>
                 </Link>
                 <ul className='sub-menu'>
                   {c.collections?.map((col, index) => (

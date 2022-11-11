@@ -8,11 +8,14 @@ import { getDeployDetails } from '../../api/universal';
 import { useAuth } from '../../contexts/AuthContext';
 import { sendDiscordMessage } from '../../utils/discordEvents';
 import { SendTweet } from '../../utils/VINFTsTweets';
+import { profileClient } from '../../api/profileInfo';
+import { updateProfiles, useNFTDispatch, useNFTState } from '../../contexts/NFTContext';
 //Manage Beneficiaries page
 const BeneficiarySingleRow = ({ beneficiary }) => {
   const { isLoggedIn, entityInfo } = useAuth();
   const [isApproveClicked, setIsApproveClicked] = React.useState(false);
-
+  const { ...stateList } = useNFTState();
+  const nftDispatch = useNFTDispatch();
   //saving new collection function
   const handleApproveBeneficiary = async (beneficiary) => {
     setIsApproveClicked(true);
@@ -30,6 +33,31 @@ const BeneficiarySingleRow = ({ beneficiary }) => {
           beneficiary?.isApproved === 'true' ? 'unapproved' : 'approved'
         } successfully`
       );
+      const userProfiles = await profileClient.getProfile(beneficiary.address,true);
+      if (userProfiles) {
+        let list = Object.values(userProfiles)[0];
+      const normalList=  Object.keys(list.normal).length === 0 ? {} : list.normal
+      const beneficiaryList =
+      Object.keys(list.beneficiary).length === 0
+        ? {}
+        : list.beneficiary;
+    const creatorList =
+      Object.keys(list.creator).length === 0 ? {} : list.creator;
+      const isApproved=beneficiary?.isApproved === 'true' ? 'false' : 'true'
+      let changedData = {};
+        changedData = {
+          [beneficiary.address]: {
+            normal: normalList,
+            beneficiary: Object.assign({}, beneficiaryList, {
+             isApproved ,
+            }),
+            creator: creatorList,
+          },
+        };
+      await updateProfiles(nftDispatch, stateList, changedData);
+
+      }
+
       // beneficiary.approved state is checking on the passed beneficiary object from the parent with the old state before admin approval
       if (beneficiary?.isApproved === 'false') {
         let sdgs = beneficiary.sdgs_ids?.split(',');
@@ -57,7 +85,7 @@ const BeneficiarySingleRow = ({ beneficiary }) => {
 
       setIsApproveClicked(false);
 
-      window.location.reload();
+      //window.location.reload();
     } catch (err) {
       if (err.message.includes('User Cancelled')) {
         VIToast.error('User Cancelled Signing');

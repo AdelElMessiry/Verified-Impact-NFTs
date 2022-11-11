@@ -18,10 +18,17 @@ import ReactGA from 'react-ga';
 import { SDGsData } from '../../../data/SDGsGoals/index';
 import SDGsMultiSelect from '../../Element/SDGsMultiSelect';
 import { isValidWallet } from '../../../utils/contract-utils';
+import {
+  refreshBeneficiaries,
+  useNFTDispatch,
+  useNFTState,
+} from '../../../contexts/NFTContext';
 
 //add new beneficiary page
 const AddBeneficiary = () => {
   const { isLoggedIn, entityInfo } = useAuth();
+  const { ...stateList } = useNFTState();
+  const nftDispatch = useNFTDispatch();
 
   const [beneficiaryInputs, setBeneficiaryInputs] = React.useState({
     name: '',
@@ -61,33 +68,28 @@ const AddBeneficiary = () => {
         action: 'Add beneficiary',
         label: `${entityInfo.publicKey}: [${beneficiaryInputs.name}] beneficiary has been added`,
       });
-      await sendDiscordMessage(
-        process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
-        process.env.REACT_APP_BENEFICIARIES_TOKEN,
-        beneficiaryInputs.name,
-        '',
-        `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)]  @vinfts @casper_network @devxdao `
-      );
+      // await sendDiscordMessage(
+      //   process.env.REACT_APP_BENEFICIARIES_WEBHOOK_ID,
+      //   process.env.REACT_APP_BENEFICIARIES_TOKEN,
+      //   beneficiaryInputs.name,
+      //   '',
+      //   `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)]  @vinfts @casper_network @devxdao `
+      // );
       let s = [];
       if (beneficiaryInputs.SDGsGoals.length > 0) {
         beneficiaryInputs.SDGsGoals.map((sdg) => s.push(`#SDG${sdg}`));
       }
-      await SendTweet(
-        `Great news! ${
-          beneficiaryInputs.name
-        } beneficiary has been added to #verified_impact_nfts. ${s
-          .toString()
-          .replaceAll(',', ' ')} click here ${
-          window.location.origin
-        }/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
-      );
-      window.location.reload();
-      // setBeneficiaryInputs({
-      //   name: '',
-      //   description: '',
-      //   address: '',
-      //   SDGsGoals:[SDGsData[18].value]
-      // });
+      // await SendTweet(
+      //   `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts. ${s.toString().replaceAll(',', ' ')} click here ${window.location.origin}/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
+      // );
+
+      await refreshBeneficiaries(nftDispatch, stateList);
+      setBeneficiaryInputs({
+        name: '',
+        description: '',
+        address: '',
+        SDGsGoals: [SDGsData[18].value],
+      });
       setIsClearSDGs(!isClearSDGs);
       setIsButtonClicked(false);
     } catch (err) {

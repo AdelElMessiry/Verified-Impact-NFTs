@@ -79,11 +79,12 @@ fn all_profiles() {
     runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
 }
 
-#[no_mangle]
-fn is_profile_exist() {
-    let ret = Factory::default().is_existent_profile();
-    runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
-}
+// #[no_mangle]
+// fn is_profile_exist() {
+//     // let address: Key = runtime::get_named_arg("address");
+//     let ret = Factory::default().is_existent_profile();
+//     runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
+// }
 
 /// This function is to return the total length of Profiles
 ///
@@ -173,11 +174,14 @@ fn create_profile() {
     }
 
     if mode.clone() == "ADD" {
-        if Factory::default().is_existent_profile() {
-            Factory::default().update_profile(address, profile);
-        } else {
-            Factory::default().create_profile(address, profile);
-        }
+        Factory::default().create_profile(address, profile);
+        // if profile_type == "creator" {
+        //     if !Factory::default().is_existent_profile(address.clone()) {
+        //         Factory::default().create_profile(address, profile);
+        //     }
+        // } else {
+        //     Factory::default().create_profile(address, profile);
+        // }
     } else {
         Factory::default().update_profile(address, profile);
     }
@@ -285,7 +289,7 @@ fn get_entry_points() -> EntryPoints {
             Parameter::new("nftUrl", String::cl_type()),
             Parameter::new("firstName", String::cl_type()),
             Parameter::new("lastName", String::cl_type()),
-            Parameter::new("bio", String::cl_type()),
+            // Parameter::new("bio", String::cl_type()),
             Parameter::new("externalLink", String::cl_type()),
             Parameter::new("phone", String::cl_type()),
             Parameter::new("twitter", String::cl_type()),
@@ -345,13 +349,13 @@ fn get_entry_points() -> EntryPoints {
         EntryPointAccess::Public,
         EntryPointType::Contract,
     ));
-    entry_points.add_entry_point(EntryPoint::new(
-        "is_profile_exist",
-        vec![],
-        CLType::Option(Box::new(CLType::Bool)),
-        EntryPointAccess::Public,
-        EntryPointType::Contract,
-    ));
+    // entry_points.add_entry_point(EntryPoint::new(
+    //     "is_profile_exist",
+    //     vec![],
+    //     CLType::Option(Box::new(CLType::Bool)),
+    //     EntryPointAccess::Public,
+    //     EntryPointType::Contract,
+    // ));
     entry_points.add_entry_point(EntryPoint::new(
         "grant_admin",
         vec![Parameter::new("admin", Key::cl_type())],

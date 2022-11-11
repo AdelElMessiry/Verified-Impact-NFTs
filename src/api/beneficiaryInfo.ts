@@ -1,4 +1,4 @@
-// import { CLPublicKey } from 'casper-js-sdk';
+import axios from 'axios';
 import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from './campaignInfo';
 
@@ -151,4 +151,35 @@ export async function _getBeneficiariesCampaignsList(
   // console.log(mappedBeneficiariesList);
 
   return mappedBeneficiariesList;
+}
+
+export async function getCachedBeneficiariesList() {
+  const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
+  const apiName = 'beneficiaries';
+  const beneficiaries: any = await axios(
+    `${REACT_APP_NFT_API_BASE_URL}/${REACT_APP_NFT_API_ENV}/${apiName}`
+  );
+
+  return beneficiaries?.data.list;
+}
+
+export async function updateCachedBeneficiary(
+  beneficiary: any,
+  beneficiaries: any
+) {
+  const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
+  const apiName = 'updateBeneficiary';
+
+  await axios.patch(
+    `${REACT_APP_NFT_API_BASE_URL}/${REACT_APP_NFT_API_ENV}/${apiName}`,
+    { beneficiary }
+  );
+
+  beneficiaries[
+    beneficiaries.findIndex(
+      ({ address }: any) => address === beneficiary.address
+    )
+  ] = beneficiary;
+
+  return beneficiaries;
 }
