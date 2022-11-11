@@ -1,11 +1,11 @@
 {
   "name": "vi-cache-api",
   "version": "1.0.0",
-  "description": "Serverless aws-nodejs-typescript cache api",
+  "description": "Serverless aws-nodejs-typescript template",
   "main": "serverless.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "sls offline --stage prod",
+    "start": "sls offline --stage dev",
     "deploy:dev": "sls deploy --stage dev",
     "deploy:prod": "sls deploy --stage prod"
   },
@@ -20,7 +20,9 @@
     "casper-js-sdk": "^2.10.0",
     "redis": "^4.3.1",
     "serverless-dotenv-plugin": "^3.9.0",
-    "source-map-support": "^0.5.19"
+    "serverless-offline": "^8.5.0",
+    "source-map-support": "^0.5.19",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@serverless/typescript": "^3.21.0",
@@ -28,10 +30,8 @@
     "@types/node": "^14.14.25",
     "json-schema-to-ts": "^1.5.0",
     "serverless": "^2.23.0",
-    "serverless-offline": "^8.5.0",
     "serverless-webpack": "^5.10.0",
     "ts-loader": "^8.0.15",
-    "ts-node": "^10.9.1",
     "tsconfig-paths": "^3.9.0",
     "tsconfig-paths-webpack-plugin": "^3.3.0",
     "typescript": "^4.8.4",
