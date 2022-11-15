@@ -26,7 +26,7 @@ const NFTDetail = () => {
   const [allNFTs, setAllNFTs] = React.useState();
 
   React.useEffect(() => {
-    ReactGA.pageview(window.location.pathname +"nft-detail");
+    ReactGA.pageview(window.location.pathname + 'nft-detail');
     (async () => {
       if (!allNFTs) {
         nfts && setAllNFTs(nfts);
@@ -37,27 +37,24 @@ const NFTDetail = () => {
   }, [allNFTs, nfts, id]);
 
   const getNftDetails = React.useCallback(async () => {
-    if(item){
+    if (item) {
       beneficiaries &&
-      profileCreators &&
+        profileCreators &&
         campaigns &&
         collections &&
         setItem({
           ...item,
-          campaignName: campaigns.find(
-            ({ id }) => item.campaign === id
-          ).name,
+          campaignName: campaigns.find(({ id }) => item.campaign === id).name,
           creatorName: profileCreators.find(
             ({ address }) => item.creator === address
           ).username,
           beneficiaryName: beneficiaries.find(
             ({ address }) => item.beneficiary === address
           ).username,
-          collectionName: collections.find(
-            ({ id }) => item.collection === id
-          ).name,
+          collectionName: collections.find(({ id }) => item.collection === id)
+            .name,
         });
-      }
+    }
   }, [beneficiaries, profileCreators, collections, campaigns]);
 
   //getting nft details
@@ -186,34 +183,46 @@ const NFTDetail = () => {
                     )}
                   </p>
                   <p>
-      {item?.sdgs_ids?.length > 0 && item?.sdgs_ids !== '0' && (
-        <div className="mt-3 px-2">
-          <a href="https://sdgs.un.org/goals" target="_blank">
-            <img
-              src={unitedNation}
-              style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
-            />
-          </a>
-          :{' '}
-          {SDGsData?.filter(({ value }) =>
-            item?.sdgs_ids?.split(',').includes(value.toString())
-          )?.map((sdg, index) => (
-            <VINftsTooltip title={sdg.label} key={index}>
-              <label>
-                <img
-                  src={process.env.PUBLIC_URL + 'images/sdgsIcons/' + sdg.icon}
-                  style={{
-                    width: 25,
-                    pointerEvents: 'none',
-                    cursor: 'default',
-                  }}
-                />
-              </label>
-            </VINftsTooltip>
-          ))}
-        </div>
-      )}
-    </p>
+                    {item?.sdgs_ids?.length > 0 && item?.sdgs_ids !== '0' && (
+                      <div className='mt-3 px-2'>
+                        <a
+                          href='https://sdgs.un.org/goals'
+                          target='_blank'
+                          rel='noreferrer'
+                        >
+                          <img
+                            src={unitedNation}
+                            style={{
+                              width: 40,
+                              pointerEvents: 'none',
+                              cursor: 'default',
+                            }}
+                          />
+                        </a>
+                        :{' '}
+                        {SDGsData?.filter(({ value }) =>
+                          item?.sdgs_ids?.split(',').includes(value.toString())
+                        )?.map((sdg, index) => (
+                          <VINftsTooltip title={sdg.label} key={index}>
+                            <label>
+                              <img
+                                src={
+                                  process.env.PUBLIC_URL +
+                                  'images/sdgsIcons/' +
+                                  sdg.icon
+                                }
+                                style={{
+                                  width: 25,
+                                  pointerEvents: 'none',
+                                  cursor: 'default',
+                                }}
+                              />
+                            </label>
+                          </VINftsTooltip>
+                        ))}
+                      </div>
+                    )}
+                  </p>
                 </div>
               </div>
             </div>

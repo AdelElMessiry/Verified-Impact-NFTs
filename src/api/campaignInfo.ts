@@ -45,35 +45,7 @@ export async function getCampaignsList() {
               ? parsedCampaigns.beneficiary_address.slice(13).replace(')', '')
               : parsedCampaigns.beneficiary_address.slice(10).replace(')', '')
             : parsedCampaigns.beneficiary_address;
-        // parsedCampaigns["sdgs"]=["19"]
         campaignsList.push(parsedCampaigns);
-
-        // const {
-        //   sdgs_ids,
-        //   description,
-        //   id,
-        //   name,
-        //   requested_royalty,
-        //   url,
-        //   wallet_address,
-        // } = parsedCampaigns;
-
-        // const savedCampaign = await createCampaign(
-        //   name,
-        //   description,
-        //   wallet_address,
-        //   url,
-        //   requested_royalty,
-        //   CLPublicKey.fromHex(
-        //     '0131561311ded2e4c2bbb6d2497e231ae554afc86e7b6b9a083a84330830b8cfc5'
-        //   ),
-        //   sdgs_ids.split(','),
-        //   'UPDATE',
-        //   id,
-        //   wallet_address
-        // );
-        // const deployResult = await getDeployDetails(savedCampaign);
-        // console.log('...... Campaign saved successfully', deployResult);
       })
       .catch((err) => {
         console.log(err);

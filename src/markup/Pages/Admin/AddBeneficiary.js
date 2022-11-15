@@ -18,7 +18,11 @@ import ReactGA from 'react-ga';
 import { SDGsData } from '../../../data/SDGsGoals/index';
 import SDGsMultiSelect from '../../Element/SDGsMultiSelect';
 import { isValidWallet } from '../../../utils/contract-utils';
-import { refreshBeneficiaries, useNFTDispatch, useNFTState} from '../../../contexts/NFTContext';
+import {
+  refreshBeneficiaries,
+  useNFTDispatch,
+  useNFTState,
+} from '../../../contexts/NFTContext';
 
 //add new beneficiary page
 const AddBeneficiary = () => {
@@ -32,13 +36,13 @@ const AddBeneficiary = () => {
     address: '',
     SDGsGoals: [SDGsData[18].value],
   });
-  
+
   React.useEffect(() => {
     ReactGA.pageview(window.location.pathname + '/admin_beneficiary');
   }, []);
   const [isButtonClicked, setIsButtonClicked] = React.useState(false);
   const [isClearSDGs, setIsClearSDGs] = React.useState(false);
-  
+
   // },[])
   //saving new beneficiary function
   const saveBeneficiary = async () => {
@@ -47,9 +51,11 @@ const AddBeneficiary = () => {
       const savedBeneficiary = await addBeneficiary(
         beneficiaryInputs.name,
         beneficiaryInputs.description,
-        CLPublicKey.fromHex(beneficiaryInputs.address).toAccountHashStr().slice(13),
+        CLPublicKey.fromHex(beneficiaryInputs.address)
+          .toAccountHashStr()
+          .slice(13),
         beneficiaryInputs.address,
-        beneficiaryInputs.SDGsGoals.map(str => {
+        beneficiaryInputs.SDGsGoals.map((str) => {
           return Number(str);
         }),
         CLPublicKey.fromHex(entityInfo.publicKey)
@@ -69,21 +75,20 @@ const AddBeneficiary = () => {
       //   '',
       //   `Great news! [${beneficiaryInputs.name}] beneficiary has been added to #verified-impact-nfts [click here to know more about their cause. (${window.location.origin}/#/)]  @vinfts @casper_network @devxdao `
       // );
-      let s = []
-      if (beneficiaryInputs.SDGsGoals.length > 0){     
-        beneficiaryInputs.SDGsGoals.map((sdg) => (
-            s.push(`#SDG${sdg}`)
-        ))}
+      let s = [];
+      if (beneficiaryInputs.SDGsGoals.length > 0) {
+        beneficiaryInputs.SDGsGoals.map((sdg) => s.push(`#SDG${sdg}`));
+      }
       // await SendTweet(
       //   `Great news! ${beneficiaryInputs.name} beneficiary has been added to #verified_impact_nfts. ${s.toString().replaceAll(',', ' ')} click here ${window.location.origin}/#/ to know more about their cause.  @vinfts @casper_network @devxdao `
       // );
-      
-       await refreshBeneficiaries(nftDispatch, stateList)
+
+      await refreshBeneficiaries(nftDispatch, stateList);
       setBeneficiaryInputs({
         name: '',
         description: '',
         address: '',
-        SDGsGoals:[SDGsData[18].value]
+        SDGsGoals: [SDGsData[18].value],
       });
       setIsClearSDGs(!isClearSDGs);
       setIsButtonClicked(false);
@@ -183,7 +188,7 @@ const AddBeneficiary = () => {
                           </div>{' '}
                           {beneficiaryInputs.address !== '' &&
                             !isValidWallet(beneficiaryInputs.address) && (
-                              <span className="text-danger">
+                              <span className='text-danger'>
                                 Please Enter Valid Public Address
                               </span>
                             )}
@@ -191,7 +196,14 @@ const AddBeneficiary = () => {
                       </Row>
                       <Row className='mt-4'>
                         <Col>
-                        <SDGsMultiSelect data={SDGsData} SDGsChanged={(selectedData)=>{handleSDGsChange(selectedData)}} isAddBeneficiary={true} isClear={isClearSDGs}/>
+                          <SDGsMultiSelect
+                            data={SDGsData}
+                            SDGsChanged={(selectedData) => {
+                              handleSDGsChange(selectedData);
+                            }}
+                            isAddBeneficiary={true}
+                            isClear={isClearSDGs}
+                          />
                         </Col>
                       </Row>
                       <Row className='mt-4'>

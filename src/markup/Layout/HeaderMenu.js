@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { _getBeneficiariesCampaignsList } from '../../api/beneficiaryInfo';
 import { _getCreatorsCollectionsList } from '../../api/creatorInfo';
-import { profileClient } from '../../api/profileInfo';
+// import { profileClient } from '../../api/profileInfo';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNFTState } from '../../contexts/NFTContext';
 
