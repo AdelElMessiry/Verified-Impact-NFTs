@@ -148,7 +148,7 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                         <div className='overlay-bx'>
                             <div className='overlay-icon align-b text-white text-left'>
                                 <div className='text-white text-left port-box'>
-                                    <h4 >{item.username}</h4>
+                                    <h5 >{item.username}</h5>
                                     <ul className="pl-3">
                                         <li>{item.collectionsNumber} collection(s)</li>
                                         <li>{item.nftNumber} NFT(s)</li>
@@ -161,7 +161,7 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                                     </ul>
                                     <h6 className='VI-text-truncate'>{item.bio}</h6>
                                     <div onClick={(e)=>{if(e && e.stopPropagation) e.stopPropagation(); }}>
-                                        <a href={`${process.env.REACT_APP_CPR_LINK}${item.address}`} target="_blank" style={{ wordBreak: "break-all" }}>
+                                        <a className='VI-text-truncate' href={`${process.env.REACT_APP_CPR_LINK}${item.address}`} target="_blank" style={{ wordBreak: "break-all" }}>
                                             {item.address}
                                         </a>
                                         <VINftsTooltip title={'Copy Public Address'}>
