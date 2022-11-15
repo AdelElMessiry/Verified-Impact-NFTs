@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { getBeneficiariesList } from '../api/beneficiaryInfo';
 import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from '../api/campaignInfo';

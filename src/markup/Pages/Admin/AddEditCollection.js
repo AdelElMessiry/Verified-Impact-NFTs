@@ -9,7 +9,12 @@ import { getDeployDetails } from '../../../api/universal';
 import { addCollection, updateCollection } from '../../../api/addCollection';
 import { useAuth } from '../../../contexts/AuthContext';
 import PromptLogin from '../PromptLogin';
-import { refreshCollections, updateCollections, useNFTDispatch, useNFTState } from '../../../contexts/NFTContext';
+import {
+  refreshCollections,
+  updateCollections,
+  useNFTDispatch,
+  useNFTState,
+} from '../../../contexts/NFTContext';
 
 import Layout from '../../Layout';
 import PageTitle from '../../Layout/PageTitle';
@@ -39,15 +44,13 @@ const AddCollection = () => {
 
   //getting list of NFTs
   React.useEffect(() => {
-    ReactGA.pageview(window.location.pathname +"/add-collection");
+    ReactGA.pageview(window.location.pathname + '/add-collection');
     if (collectionId !== '0' && collectionId !== null) {
       getSelectedCollection();
     } else {
       setSelectedCollection(undefined);
     }
   }, [collectionId, getSelectedCollection]);
-
-
 
   return (
     <>
@@ -72,7 +75,7 @@ const AddCollection = () => {
           {!isLoggedIn ? (
             <PromptLogin />
           ) : (
-            <AddEditCollectionForm data={selectedCollection}/>
+            <AddEditCollectionForm data={selectedCollection} />
           )}
           {/* <!-- contact area  END --> */}
         </div>

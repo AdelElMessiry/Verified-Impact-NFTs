@@ -421,7 +421,7 @@ const MintNFT = () => {
         });
         setBeneficiary(isAnotherMint ? beneficiary : undefined);
         setCampaign(isAnotherMint ? campaign : undefined);
-        setUploadedBlobImage(null)
+        setUploadedBlobImage(null);
         pictureElement.current.clearPictures();
         setSDGsGoals([]);
         setIsClearSDGs(!isClearSDGs);
@@ -453,7 +453,7 @@ const MintNFT = () => {
             process.env.REACT_APP_COLLECTIONS_TOKEN,
             selectedCollectionValue.label,
             '',
-            `${creator} creator has just added a new interesting #verified-impact-nfts collection. [Click here to see more interesting collections](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
+            `${creator} creator has just added a new interesting #verified-impact-nfts collection. [Click here to see more interesting collections](${window.location.origin}/#/) @casper_network @devxdao `
           );
           await SendTweet(
             `${creator} creator has just added a new interesting #verified_impact_nfts collection ${s
