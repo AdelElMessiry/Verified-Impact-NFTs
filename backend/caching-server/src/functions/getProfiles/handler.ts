@@ -53,9 +53,10 @@ const getProfiles: APIGatewayProxyHandler = async () => {
     parseInt(profilesCount) - cachedProfile?.length > 0 &&
     parseInt(profilesCount) - cachedProfile?.length;
 
-  // let profilesAddList = await profileClient.profilesAddList();
-
-  profilesAddList = profilesAddList.slice(cachedProfile?.length, profilesCount);
+  profilesAddList = uniqueProfilesAddList.slice(
+    cachedProfile?.length,
+    profilesCount
+  );
 
   const mappedResult = cachedProfile.map((item) => JSON.parse(item));
   if (!countFrom && cachedProfile?.length > 0) {
@@ -64,7 +65,7 @@ const getProfiles: APIGatewayProxyHandler = async () => {
       list: mappedResult,
     });
   } else {
-    const list: any = await getProfilesList(uniqueProfilesAddList);
+    const list: any = await getProfilesList(profilesAddList);
     if (list.err) {
       client.quit();
       return MessageUtil.error(
