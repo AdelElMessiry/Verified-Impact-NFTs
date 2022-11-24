@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Pages/Admin/AddCampaign.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Pages/Admin/AddCampaign.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
+import { CLPublicKey } from 'casper-js-sdk';
+
+import { useAuth } from '../../../contexts/AuthContext';
+import { getDeployDetails } from '../../../api/universal';
+import { getBeneficiariesList } from '../../../api/beneficiaryInfo';
+import { createCampaign } from '../../../api/createCampaign';
+import PromptLogin from '../PromptLogin';
+
+
+import PageTitle from '../../Layout/PageTitle';
+
+import bnr1 from './../../../images/banner/bnr1.jpg';
+import { toast as VIToast } from 'react-toastify';
+import Layout from '../../Layout';
+
+/**
+ * Add Campaign to verified-impact-nft's contract from admin side.
+ *
+ * @type {React.FC&lt;Props>}
+ * @returns {React.ReactElement} UI page
+ */
+//adding new campaign page
+const AddCampaign = () => {
+  const { entityInfo, isLoggedIn } = useAuth();
+
+  const [beneficiary, setBeneficiary] = React.useState();
+
+  const handleChange = (e, isBeneficiary = false) => {
+    if (isBeneficiary) {
+      setBeneficiary(e.target.value);
+    } else {
+      const { value, name, checked, type } = e.target;
+      const { inputs } = state;
+
+      inputs[name] = type === 'checkbox' ? checked : value;
+      setState({
+        ...state,
+        inputs,
+      });
+    }
+  };
+
+  //setting initial values of controls
+  const [state, setState] = useState({
+    inputs: {
+      campaignUrl: '',
+      name: '',
+      description: '',
+      requestedRoyalty: '',
+    },
+  });
+
+  const [beneficiaries, setBeneficiaries] = useState();
+
+  //getting beneficiary list
+  useEffect(() => {
+    (async () => {
+      let beneficiaryList = !beneficiaries &amp;&amp; (await getBeneficiariesList());
+      !beneficiaries &amp;&amp; setBeneficiaries(beneficiaryList);
+      !beneficiaries &amp;&amp; setBeneficiary(beneficiaryList[0]?.address);
+    })();
+  }, [beneficiaries]);
+
+  //saving new campaign related to beneficiary funcation
+  const saveCampaign = async () => {
+    const savedCampaign = await createCampaign(
+      state.inputs.name,
+      state.inputs.description,
+      beneficiary,
+      state.inputs.campaignUrl,
+      state.inputs.requestedRoyalty,
+      CLPublicKey.fromHex(entityInfo.publicKey)
+    );
+
+    const deployResult = await getDeployDetails(savedCampaign);
+    console.log('...... Campaign saved successfully', deployResult);
+    VIToast.success('Campaign saved successfully');
+
+    setState({
+      inputs: {
+        campaignUrl: '',
+        name: '',
+        description: '',
+        requestedRoyalty: '',
+      },
+    });
+
+    console.log('save Result', savedCampaign);
+    console.log(
+      'save Result',
+      state.inputs.name,
+      state.inputs.description,
+      beneficiary,
+      state.inputs.campaignUrl,
+      state.inputs.requestedRoyalty,
+      CLPublicKey.fromHex(entityInfo.publicKey)
+    );
+  };
+
+  return (
+    &lt;Layout>
+
+      &lt;div className="page-content bg-white">
+        {/* &lt;!-- inner page banner --> */}
+        &lt;div
+          className="dlab-bnr-inr overlay-primary bg-pt"
+          style={{ backgroundImage: 'url(' + bnr1 + ')' }}
+        >
+          &lt;PageTitle motherMenu="Add Campaign" activeMenu="Add Campaign" />
+        &lt;/div>
+        {/* &lt;!-- inner page banner END --> */}
+        {/* &lt;!-- contact area --> */}
+        {!isLoggedIn ? (
+          &lt;PromptLogin />
+        ) : (
+          &lt;div className="section-full content-inner shop-account">
+            {/* &lt;!-- Product --> */}
+            &lt;div className="container">
+              &lt;div>
+                &lt;div className=" m-auto m-b30">
+                  &lt;Container>
+                    &lt;Row>
+                      &lt;Col>
+                        &lt;select
+                          name="Beneficiary"
+                          placeholder="Beneficiary"
+                          className="form-control"
+                          onChange={(e) => handleChange(e, true)}
+                          value={beneficiary}
+                        >
+                          {beneficiaries?.map(({ name, address }) => (
+                            &lt;option key={address} value={address}>
+                              {' '}
+                              {name}
+                            &lt;/option>
+                          ))}
+                        &lt;/select>
+                      &lt;/Col>
+                      &lt;Col>
+                        &lt;input
+                          type="text"
+                          placeholder="Name"
+                          name="name"
+                          className="form-control"
+                          onChange={(e) => handleChange(e)}
+                          value={state.inputs.name}
+                        />
+                      &lt;/Col>
+                    &lt;/Row>
+                    &lt;Row className="mt-4">
+                      &lt;Col>
+                        &lt;input
+                          type="number"
+                          placeholder="Requested Royalty"
+                          name="requestedRoyalty"
+                          className="form-control"
+                          value={state.inputs.requestedRoyalty}
+                          onChange={(e) => handleChange(e)}
+                        />
+                        {(state.inputs.requestedRoyalty &lt; 0 ||
+                          state.inputs.requestedRoyalty > 100) &amp;&amp; (
+                          &lt;span className="text-danger">
+                            Requested Royalty value must be more than 0 and less
+                            than 100
+                          &lt;/span>
+                        )}
+                      &lt;/Col>
+                      &lt;Col>
+                        &lt;input
+                          type="text"
+                          placeholder="URL"
+                          name="campaignUrl"
+                          className="form-control"
+                          value={state.inputs.campaignUrl}
+                          onChange={(e) => handleChange(e)}
+                        />
+                      &lt;/Col>
+                    &lt;/Row>
+                    &lt;Row className="mt-4">
+                      &lt;Col>
+                        &lt;textarea
+                          rows={4}
+                          name="description"
+                          placeholder="Description"
+                          className="form-control"
+                          onChange={(e) => handleChange(e)}
+                          value={state.inputs.description}
+                        >&lt;/textarea>
+                      &lt;/Col>
+                    &lt;/Row>
+                    &lt;Row className="mt-4">
+                      &lt;Col>
+                        &lt;p className="form-submit">
+                          &lt;input
+                            type="button"
+                            value="Create"
+                            className="btn btn-success"
+                            name="submit"
+                            onClick={saveCampaign}
+                            disabled={
+                              state.inputs.name == '' ||
+                              state.inputs.requestedRoyalty &lt; 0 ||
+                              state.inputs.requestedRoyalty > 100 ||
+                              state.inputs.requestedRoyalty == ''
+                            }
+                          />
+                        &lt;/p>
+                      &lt;/Col>
+                    &lt;/Row>
+                  &lt;/Container>
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+            {/* &lt;!-- Product END --> */}
+          &lt;/div>
+        )}
+        {/* &lt;!-- contact area  END --> */}
+      &lt;/div>
+
+    &lt;/Layout>
+  );
+};
+
+export default AddCampaign;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-BuyNFTModal.html">BuyNFTModal</a></li><li><a href="module-ListForSaleNFTModal.html">ListForSaleNFTModal</a></li><li><a href="module-NFTCard.html">NFTCard</a></li><li><a href="module-VINFTsTooltip.html">VINFTsTooltip</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AddBeneficiary">AddBeneficiary</a></li><li><a href="global.html#AddCampaign">AddCampaign</a></li><li><a href="global.html#BenefeiciaryNFTs">BenefeiciaryNFTs</a></li><li><a href="global.html#CreatorNFTs">CreatorNFTs</a></li><li><a href="global.html#MintNFT">MintNFT</a></li><li><a href="global.html#MyCreations">MyCreations</a></li><li><a href="global.html#MyNFTs">MyNFTs</a></li><li><a href="global.html#NFTDetail">NFTDetail</a></li><li><a href="global.html#PromptLogin">PromptLogin</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Thu Jul 07 2022 22:45:17 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Pages/Admin/AddBeneficiary.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Pages/Admin/AddBeneficiary.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
+import { CLPublicKey } from 'casper-js-sdk';
+
+import { getDeployDetails } from '../../../api/universal';
+import { addBeneficiary } from '../../../api/addBeneficiary';
+import { useAuth } from '../../../contexts/AuthContext';
+import PromptLogin from '../PromptLogin';
+
+
+import PageTitle from '../../Layout/PageTitle';
+
+import bnr1 from './../../../images/banner/bnr1.jpg';
+import { toast as VIToast } from 'react-toastify';
+import Layout from '../../Layout';
+
+
+/**
+ * Add beneficiary to verified-impact-nft's contract from admin side.
+ *
+ * @type {React.FC&lt;Props>}
+ * @returns {React.ReactElement} UI page
+ */
+//add new beneficiary page
+const AddBeneficiary = () => {
+  const { isLoggedIn, entityInfo } = useAuth();
+
+  const [beneficiaryInputs, setBeneficiaryInputs] = useState({
+    BeneficiaryInputs: { name: '', description: '', address: '' },
+  });
+
+  useEffect(() => {
+    (async () => {
+      setBeneficiaryInputs({
+        name: '',
+        description: '',
+        address: '',
+      });
+    })();
+  }, [entityInfo.publicKey]);
+
+  //saving new beneficiary function
+  const saveBeneficiary = async () => {
+    const savedBeneficiary = await addBeneficiary(
+      beneficiaryInputs.name,
+      beneficiaryInputs.description,
+      beneficiaryInputs.address,
+      CLPublicKey.fromHex(entityInfo.publicKey)
+    );
+
+    const deployResult = await getDeployDetails(savedBeneficiary);
+    console.log('...... Beneficiary saved successfully', deployResult);
+    VIToast.success("Beneficiary saved successfully");
+
+    setBeneficiaryInputs({
+      name: '',
+      description: '',
+      address: '',
+    });
+  };
+
+  return (
+    &lt;>
+      &lt;Layout>
+
+      &lt;div className='page-content bg-white'>
+        {/* &lt;!-- inner page banner --> */}
+        &lt;div
+          className='dlab-bnr-inr overlay-primary bg-pt'
+          style={{ backgroundImage: 'url(' + bnr1 + ')' }}
+        >
+          &lt;PageTitle
+            motherMenu='Add Beneficiary'
+            activeMenu='Add Beneficiary'
+          />
+        &lt;/div>
+        {/* &lt;!-- inner page banner END --> */}
+        {/* &lt;!-- contact area --> */}
+        {!isLoggedIn ? (
+          &lt;PromptLogin />
+        ) : (
+          &lt;div className='section-full content-inner shop-account'>
+            {/* &lt;!-- Product --> */}
+            &lt;div className='container'>
+              &lt;div>
+                &lt;div className=' m-auto m-b30'>
+                  &lt;Container>
+                    &lt;Row>
+                      &lt;Col>
+                        &lt;input
+                          type='text'
+                          name='name'
+                          placeholder='Name'
+                          className='form-control'
+                          value={beneficiaryInputs.name}
+                          onChange={(e) =>
+                            setBeneficiaryInputs({
+                              ...beneficiaryInputs,
+                              name: e.target.value,
+                            })
+                          }
+                        />
+                      &lt;/Col>
+                      &lt;Col>
+                        &lt;input
+                          type='text'
+                          placeholder='Address'
+                          name='address'
+                          className='form-control'
+                          value={beneficiaryInputs.address}
+                          onChange={(e) =>
+                            setBeneficiaryInputs({
+                              ...beneficiaryInputs,
+                              address: e.target.value,
+                            })
+                          }
+                        />
+                      &lt;/Col>
+                    &lt;/Row>
+                    &lt;Row className='mt-4'>
+                      &lt;Col>
+                        &lt;textarea
+                          rows={4}
+                          name='description'
+                          placeholder='Description'
+                          className='form-control'
+                          value={beneficiaryInputs.description}
+                          onChange={(e) =>
+                            setBeneficiaryInputs({
+                              ...beneficiaryInputs,
+                              description: e.target.value,
+                            })
+                          }
+                        >&lt;/textarea>
+                      &lt;/Col>
+                    &lt;/Row>
+                    &lt;Row className='mt-4'>
+                      &lt;Col>
+                        {' '}
+                        &lt;p className='form-submit'>
+                          &lt;input
+                            type='button'
+                            value='Create'
+                            className='btn btn-success'
+                            name='submit'
+                            onClick={saveBeneficiary}
+                          />
+                        &lt;/p>
+                      &lt;/Col>
+                    &lt;/Row>
+                  &lt;/Container>
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+            {/* &lt;!-- Product END --> */}
+          &lt;/div>
+        )}
+        {/* &lt;!-- contact area  END --> */}
+      &lt;/div>
+
+      &lt;/Layout>
+    &lt;/>
+  );
+};
+
+export default AddBeneficiary;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-BuyNFTModal.html">BuyNFTModal</a></li><li><a href="module-ListForSaleNFTModal.html">ListForSaleNFTModal</a></li><li><a href="module-NFTCard.html">NFTCard</a></li><li><a href="module-VINFTsTooltip.html">VINFTsTooltip</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AddBeneficiary">AddBeneficiary</a></li><li><a href="global.html#AddCampaign">AddCampaign</a></li><li><a href="global.html#BenefeiciaryNFTs">BenefeiciaryNFTs</a></li><li><a href="global.html#CreatorNFTs">CreatorNFTs</a></li><li><a href="global.html#MintNFT">MintNFT</a></li><li><a href="global.html#MyCreations">MyCreations</a></li><li><a href="global.html#MyNFTs">MyNFTs</a></li><li><a href="global.html#NFTDetail">NFTDetail</a></li><li><a href="global.html#PromptLogin">PromptLogin</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Thu Jul 07 2022 22:45:17 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

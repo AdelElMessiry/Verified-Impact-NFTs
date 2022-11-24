@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Element/BuyNFT.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Element/BuyNFT.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import { CLPublicKey } from 'casper-js-sdk';
+import { Row, Col } from 'react-bootstrap';
+
+import { transferFees } from '../../utils/contract-utils';
+import { transfer, purchaseNFT } from '../../api/transfer';
+import { approve } from '../../api/approve';
+import { getDeployDetails } from '../../api/universal';
+import { useAuth } from '../../contexts/AuthContext';
+import { toast as VIToast } from 'react-toastify';
+/**
+ * @module BuyNFTModal
+ */
+/** 
+ * confirmation module for buy and transfer nfts
+ * @property {boolean} show - show module render status
+ * @property {function} handleCloseParent - callback function to parent on close modal
+ * @property {object} data - object includes nft information
+ * @property {boolean} isTransfer - detect nft is transfer or buy status
+ */
+
+
+//buying NFT Modal
+const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
+  const IntialInputs = () => ({
+    inputs: {
+      address: '',
+    },
+  });
+
+  const { entityInfo } = useAuth();
+  const [showModal, setShowModal] = useState(show);
+  const [state, setState] = useState(IntialInputs());
+  if (!data) return &lt;>&lt;/>;
+
+  //buy NFT Function
+  const buyNFT = async () => {
+    if (entityInfo.publicKey) {
+      const nftID = data.tokenId.toString();
+
+      // const approveTransfer = await approve(
+      //   CLPublicKey.fromHex(entityInfo.publicKey),
+      //   nftID
+      // );
+
+      // const deployApproveResult = await getDeployDetails(approveTransfer);
+      // console.log(
+      //   '...... Token approve transferred successfully',
+      //   deployApproveResult
+      // );
+      // VIToast.success('Token approve transferred successfully');
+      console.log(entityInfo.publicKey);
+      try {
+        const transferFeesHash = await transferFees(
+          entityInfo.publicKey,
+          nftID
+        );
+        const deployFeesResult = await getDeployDetails(transferFeesHash);
+
+        console.log(
+          '...... Token fees transferred successfully',
+          deployFeesResult
+        );
+        VIToast.success('Token fees transferred successfully');
+
+        const transferDeployHash = await purchaseNFT(
+          CLPublicKey.fromHex(entityInfo.publicKey),
+          nftID
+        );
+        const deployTransferResult = await getDeployDetails(transferDeployHash);
+        console.log(
+          '...... Token fees transferred successfully',
+          deployTransferResult
+        );
+
+        VIToast.success('Transaction ended successfully');
+      } catch (err) {
+        console.log('Transfer Fees Err ' + err);
+        VIToast.error('Error happened please try again later');
+      }
+
+      // try {
+
+      // } catch (err) {
+      //   console.log('Transfer Err ' + err);
+      // }
+    }
+  };
+
+  //transfer nft Function
+  const transferNFT = async () => {
+    const nftID = data.tokenId;
+    try {
+      const transferDeployHash = await transfer({
+        signer: CLPublicKey.fromHex(entityInfo.publicKey),
+        recipient: CLPublicKey.fromHex(state.inputs.address),
+        nftId: nftID,
+      });
+      if (transferDeployHash) {
+        VIToast.success('NFT transfered successfully');
+      } else {
+        VIToast.error('Error happend please try again later');
+      }
+    } catch (err) {
+      console.log('Transfer Err ' + err);
+      VIToast.error('Error happend please try again later');
+    }
+  };
+
+  //handle closing modal
+  const handleClose = () => {
+    setShowModal(false);
+    handleCloseParent();
+  };
+
+  //handling changing in controls
+  const handleChange = (e) => {
+    const { value, name, checked, type } = e.target;
+    const { inputs } = state;
+
+    inputs[name] = type === 'checkbox' ? checked : value;
+    setState({
+      ...state,
+      inputs,
+    });
+  };
+
+  return (
+    &lt;Modal
+      show={showModal}
+      onHide={handleClose}
+      scrollable={true}
+      size='lg'
+      backdrop='static'
+    >
+      &lt;Modal.Header closeButton>
+        &lt;Modal.Title>Buy {data.title} NFT&lt;/Modal.Title>
+      &lt;/Modal.Header>
+      &lt;Modal.Body>
+        &lt;div className='reserve-form'>
+          &lt;Row>
+            &lt;Col>
+              &lt;h5>{data.title}&lt;/h5>
+              &lt;p className='text-muted'>{data.description}&lt;/p>
+            &lt;/Col>
+          &lt;/Row>
+          {isTransfer ? (
+            &lt;div className='row form-group justify-content-center'>
+              &lt;div className='col-6'>
+                &lt;input
+                  type='text'
+                  className='form-control'
+                  name='address'
+                  placeholder='Transfer To*'
+                  onChange={(e) => handleChange(e)}
+                  value={state.inputs.address}
+                />
+              &lt;/div>
+            &lt;/div>
+          ) : (
+            &lt;span>Are you sure want to buy {data.title} NFT?&lt;/span>
+          )}
+        &lt;/div>
+      &lt;/Modal.Body>
+      &lt;Modal.Footer>
+        &lt;button className='btn' onClick={handleClose}>
+          Close
+        &lt;/button>
+        &lt;button
+          className='btn btn-success'
+          onClick={() => {
+            isTransfer ? transferNFT() : buyNFT();
+          }}
+        >
+          Buy
+        &lt;/button>
+      &lt;/Modal.Footer>
+    &lt;/Modal>
+  );
+};
+
+export default BuyNFTModal;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-BuyNFTModal.html">BuyNFTModal</a></li><li><a href="module-ListForSaleNFTModal.html">ListForSaleNFTModal</a></li><li><a href="module-NFTCard.html">NFTCard</a></li><li><a href="module-VINFTsTooltip.html">VINFTsTooltip</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AddBeneficiary">AddBeneficiary</a></li><li><a href="global.html#AddCampaign">AddCampaign</a></li><li><a href="global.html#BenefeiciaryNFTs">BenefeiciaryNFTs</a></li><li><a href="global.html#CreatorNFTs">CreatorNFTs</a></li><li><a href="global.html#MintNFT">MintNFT</a></li><li><a href="global.html#MyCreations">MyCreations</a></li><li><a href="global.html#MyNFTs">MyNFTs</a></li><li><a href="global.html#NFTDetail">NFTDetail</a></li><li><a href="global.html#PromptLogin">PromptLogin</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Thu Jul 07 2022 22:45:17 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
