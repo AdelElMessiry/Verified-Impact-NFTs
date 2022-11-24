@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>Verified-Impact-NFTs</h1>
+<p>An NFTs platform dedicated to impact causes with verification of the benificiaries.</p>
+<h2>Introduction</h2>
+<p>Welcome to the official Verified Impact NFTs docs. This manual aims to familiarize new and current users with Verified Impact NFTs, its products, and its services.
+Two major issues remain unaddressed:</p>
+<ol>
+<li>The verification of the beneficiary and the sales proceeds split.</li>
+<li>The second objective is to apply the contract for the benefit of Ukraine, with artists ready to add their work.</li>
+</ol>
+<h3>What is the Verified Impact NFTs website?</h3>
+<p>Verified Impact NFTs is an open-source platform created by the community for the community with a mission to launch an open financial network to donate to different causes and guarantees that beneficiaries can control the revenue splits through Verified Impact NFTs smart contract.</p>
+<p>In any conventional donations platform, many bad actors pose as legitimate impact projects while depriving the actual projects of revenue. In the baes case, the impact project would only receive a fraction of the proceeds because the creator of the NFT controls the contract.</p>
+<h3>Mission Statement</h3>
+<p>This project has two main objectives:
+Creating a new type of NFT contract that will allow the beneficiary to issue a verified contract and the supporter of minting using this contract. The main benefit is that the funds will go directly to the verified beneficiary, who will control the percentage that goes to the support.
+The second objective is to apply the contract for the benefit of Ukraine, with artists ready to add their work.</p>
+<p>The steps below are a quick start if you have already set up your <a href="https://docs.casperlabs.io/en/latest/dapp-dev-guide/setup-of-rust-contract-sdk.html">develoment environment</a>, the <a href="https://github.com/CasperLabs/casper-node">casper node</a>, and the <a href="https://github.com/CasperLabs/casper-node/tree/master/utils/nctl">nctl</a> testing tool.</p>
+<h3>Set up the Rust toolchain</h3>
+<p>You need the Rust toolchain to run the keys manager (or any other Casper smart contracts).</p>
+<pre class="prettyprint source lang-bash"><code> rustup install $(cat rust-toolchain)
+ rustup target add --toolchain $(cat rust-toolchain) wasm32-unknown-unknown
+</code></pre>
+<h3>Compile the Smart Contracts</h3>
+<p>To compile the WASM file, use these commands:</p>
+<pre class="prettyprint source lang-bash"><code> cd contracts
+ make prepare
+ make build-contract
+</code></pre>
+<h3>Client installation</h3>
+<ul>
+<li>
+<p>Add your casper private key to <code>.env.sample</code></p>
+</li>
+<li>
+<p>Rename <code>.env.sample</code> file to <code>.env</code></p>
+</li>
+<li>
+<p>To install the client, run <code>yarn install</code>.</p>
+</li>
+</ul>
+<h3>Running prepared scenarios</h3>
+<pre class="prettyprint source lang-bash"><code>yarn start
+</code></pre>
+<h3>Important Links</h3>
+<ul>
+<li>Landing page: https://verifiedimpactnfts.com/#/</li>
+<li>Dev site: https://dev.verifiedimpactnfts.com/</li>
+<li>Casper Testnet: https://testnet.cspr.live/</li>
+<li>Staging: https://staging.verifiedimpactnfts.com/#/</li>
+<li>GitHub Repo: https://github.com/AdelElMessiry/Verified-Impact-NFTs</li>
+<li>GitHub Contract: https://github.com/AdelElMessiry/Verified-Impact-NFTs/tree/main/contracts</li>
+</ul>
+<h3>Essential Definitions and abbreviations:</h3>
+<ul>
+<li>Beneficiary: The organization that will receive the sales proceeds.</li>
+<li>Creator: The person/ORG that will be minting NFTs on the platform to be bought for collecting donations for a specific campaign.</li>
+<li>Buyer/Donor: The person who will buy the NFTs to donate tokens.</li>
+<li>Campaign: A group of NFTs from one or more than one collection to be added together to serve a specific cause for a specific beneficiary.</li>
+<li>Collection: A group of NFTs owned by only one creator/artist.</li>
+<li>CSPR: The token used from Casper Labs.</li>
+<li>Requested Royality : The beneficiary defines it as the specific share for the organization to support its cause from the sales of any NFT minted for any campaign of this beneficiary</li>
+</ul>
+<h2>Prerequisites</h2>
+<h3>Casper wallet extension.</h3>
+<p><strong>Manually add the site to the permitted list</strong></p>
+<ol>
+<li>
+<p>Download customed extension signer through this link. https://drive.google.com/drive/folders/1in3IHpGP7fp_V6AiHrYAgiTna5PHfKRP?usp=sharing</p>
+</li>
+<li>
+<p>Go To Google Extensions settings Chrome Settings -&gt; Extensions.</p>
+</li>
+<li>
+<p>Turn on the developer mode.</p>
+</li>
+<li>
+<p>Click on “ Load unpacked “ and select the downloaded folder signer.</p>
+</li>
+<li>
+<p>Click on the extension icon to open and create a new wallet.</p>
+</li>
+<li>
+<p>Download the recover phrase to a safe place and don’t share it with anyone.</p>
+</li>
+<li>
+<p>Open URL: https://verifiedimpactnfts.com/#/</p>
+</li>
+<li>
+<p>Click on the Casper signer logo on the top right corner of the page and connect your wallet.</p>
+</li>
+</ol>
+<h3>Get CSPR tokens on the testnet.</h3>
+<ol>
+<li>Open Casper website “Faucet” page https://testnet.cspr.live/tools/faucet</li>
+<li>Connect your signer.</li>
+<li>Click on the reCAPTCHA then click on “Request tokens”.</li>
+<li>Wait for 2 min so that your transaction is confirmed.</li>
+<li>Open the account page to check your CSPR tokens.</li>
+</ol>
+<h2>Who are the primary users?</h2>
+<h3>We have 3 user roles:</h3>
+<ol>
+<li>
+<p>The Buyer/Donor User :</p>
+<p>While the NFTs could be bought for their actual artistic value, in most cases, the buyer/Donor would buy an NFT to contribute to a campaign in a non-direct way.</p>
+</li>
+</ol>
+<ul>
+<li>The first step toward using the site is to Connect with Casper Signer.</li>
+<li>The Donor can find his purchased NFTs on the &quot;My NFTs&quot; page.</li>
+<li>The Donor can surf the website to see Creators, collections, campaigns, and the NFTs inside each one of the previous sections.</li>
+<li>The Donor can see and read about the beneficiary.</li>
+<li>The Donor can have/own any NFT he desires after paying its price.</li>
+<li>The Donor should know that part of the price will go to the Beneficiary and the other part will be paid to the artist.</li>
+<li>The Donor can share the NFTs/Collections/Campaigns using Twitter.</li>
+</ul>
+<ol start="2">
+<li>
+<p>The Creator User :</p>
+<p>The creator is the one who adds new NFTs based on an existing contract. Besides the buyer's abilities, the creator can also do the following:</p>
+</li>
+</ol>
+<ul>
+<li>Display the current verified NFTs contracts.</li>
+<li>Select a verified NFT contract to use.</li>
+<li>Set the NFT properties including:
+<ul>
+<li>Title.</li>
+<li>Description.</li>
+<li>Price in CSPR.</li>
+</ul>
+</li>
+<li>Ability to mint the NFT based on the contract.</li>
+<li>Ability to List the NFT for sale.</li>
+</ul>
+<ol start="3">
+<li>
+<p>The Admin User :</p>
+<p>The admin user will be in control of the deployer wallet and thus will be able to add new beneficiaries to the system. Although this is a centralized point, it will be updated in the next version.
+The admin user will be able to perform the following:</p>
+</li>
+</ol>
+<ul>
+<li>Setting the beneficiary of the NFT sale (only by the deployer wallet).</li>
+<li>Set the wallet address for the beneficiary.</li>
+<li>Set the % of the initial sale to the creator.</li>
+<li>Set the royalties for subsequent sales.</li>
+<li>Allow the creator of minting based on the beneficiary contract.</li>
+<li>The admin has the ability to add a new campaign.</li>
+</ul>
+<ol start="4">
+<li>The Beneficiary User :</li>
+</ol>
+<ul>
+<li>The beneficiary should provide his paperwork for the admin so that the admin can proceed with the KYC and add the beneficiary and his campaigns to the system.</li>
+<li>The Beneficiary should contact the admin to add a new campaign and provide the admin with the campaign’s data.</li>
+<li>The beneficiary will collect his approved royalty from each sale.
+Ex: Beneficiary will collect 80% of the NFT price.</li>
+</ul>
+<h2>Website Pages</h2>
+<h3>Home Page</h3>
+<p>The home page is the main page and will contain the following data:</p>
+<ul>
+<li>KPIs which are numbers of beneficiaries, campaigns, collections, creators, NFTs, CSPR, and amount of donations in USD</li>
+<li>Connect to Casper.</li>
+<li>Wallet public key and CSPR amount.</li>
+<li>Beneficiaries, Creators, and My collection dropdowns.</li>
+<li>Latest campaigns and NFTs.</li>
+<li>Share Campaigns/NFTs on Twitter</li>
+</ul>
+<h3>Beneficiary Page</h3>
+<ul>
+<li>Users can easily navigate between beneficiaries and their campaigns through the dropdown menu on the header.</li>
+<li>Users can view NFTs of any campaign and filter the NFTs regarding their choice from the dropdown menu or responsive filters which are found under the header.</li>
+<li>The Beneficiary page will include the Beneficiary’s name and description.</li>
+<li>The user can use an advanced filter to find a specific NFT</li>
+</ul>
+<h3>My Creation page</h3>
+<p>The minted NFTs that are owned by the wallet holder will be visible on this page.
+Creators will see their Minted NFTs.</p>
+<h3>My NFTs page</h3>
+<p>The user will see the NFTs that he bought on this page.</p>
+<h3>Creators page</h3>
+<p>The user can view the NFTs and campaigns of every creator from the dropdown on the header.
+Users can view the NFTs of any creator and filter the NFTs regarding his choice from the dropdown menu or responsive filters which are found under the header.
+Creators will be added automatically when minting a new NFT.</p>
+<h2>Website Features</h2>
+<h3>Adding a new Beneficiary (Admin only)</h3>
+<p>After manual verification of the beneficiary’s cause and purpose, the admin user will add the beneficiary and its campaigns as the beneficiary wishes according to the data the beneficiary provides.
+Only the admin can use this feature as the admin is the holder of the deployer wallet that is responsible for adding the beneficiaries.
+Via a special page for the admin, you can - as admin with a deployer wallet connection - add the beneficiary name, description, and the wallet address to collect donations on it then Click on “ Create “
+Wait for the notification telling “ A beneficiary has been added successfully “.
+Refresh the page and hover over the header to verify that the beneficiary name is added to the beneficiary tab dropdown.</p>
+<h3>Adding a new Campaign</h3>
+<ol>
+<li>Via a special window of the admin, you can fill in the details of the campaign</li>
+<li>Select the Beneficiary name correctly that is owning this campaign</li>
+<li>Fill in the Name, URL, and Description of the campaign</li>
+<li>Add the requested royalty for this campaign so that we can control the royalties shares as the beneficiary wishes and guarantee the impact on its cause</li>
+<li>Click on “ Create “ and Refresh the page</li>
+<li>hover over the header to verify that the campaign name is added to the beneficiary tab dropdown nested list under the beneficiary name</li>
+</ol>
+<h3>Adding a new Creator</h3>
+<p>The creator will be automatically added from the Mint NFT page.</p>
+<h3>Adding/Minting a new NFT</h3>
+<p>Creator has the ability to Mint a new NFT.</p>
+<h4>Minting “Not for Sale” NFT:</h4>
+<ol>
+<li>Click on the “ My Collection “ tab on the header.</li>
+<li>Choose the “ My Creations “ option from the drop-down list.</li>
+<li>Click on the “+” sign beside “ My Creations “ on the My Creations page.</li>
+<li>On the minting page choose the beneficiary that you support their cause.</li>
+<li>Choose the campaign name that best fits your NFTs.</li>
+<li>If this is the first time for you to mint you should create the collection name by typing its name and clicking on ( Click here to create “ [Collection name] “ Collection ) and note that this collection will be saved and appear as a choice to mint under it again ( in future ) and on the header drop-down as well.</li>
+<li>Also, you should type your name in the field of Creator name and be careful after minting that name can’t be changed.</li>
+<li>Enter also the NFT name and upload the image by pasting the URL directly by clicking on the checkbox titled “Already hosted image, enter direct URL? “ or browsing your computer (default choice).</li>
+<li>Add a description of the NFT to impress Donors.</li>
+<li>Click on “ Mint “ and wait until the transaction is recorded to the Casper chain a notification will appear and the page will refresh.</li>
+</ol>
+<ul>
+<li>Note that: After minting a Not for Sale NFT it will appear only under the “My NFTs“ &amp; “My Creations” tabs.</li>
+</ul>
+<h4>Minting a “ for Sale “ NFT:</h4>
+<ol>
+<li>Repeat all steps from the previous section 1:9.
+Before minting click on the “ Is For Sale “ Checkbox.</li>
+<li>Add the price of your NFT and select the currency type.</li>
+<li>Click on “ Mint “ and wait until the transaction is recorded to the Casper chain a notification will appear and the page will refresh.</li>
+</ol>
+<ul>
+<li>Note that: After minting a Not for Sale NFT it will appear under  “My NFTs “,“ My Creations” and the Homepage.</li>
+</ul>
+<h3>Listing and unlisting the NFT for sale</h3>
+<h4>Listing - Not for Sale NFTs - For Sale</h4>
+<ul>
+<li>After the user mint A not for sale NFT it appears for the user only under “ My collections “ -&gt; “ My Creations “ page</li>
+<li>The user can hover over the NFT or click on it to see its details and action bar</li>
+<li>Inside that action bar the user can find the List for Sale icon</li>
+<li>After he clicks a pop-up will appear to  enter the pice amount in CSPR to confirm the action and the user will sign on the Casper extension as well</li>
+<li>The NFT will appear on the home page so any user can view it and buy</li>
+</ul>
+<h4>Unlisting - For Sale NFTs - For Sale</h4>
+<ul>
+<li>After the user mint A for sale NFT it appears for all users on the home page and for the creator in  “ My collections “ -&gt; “ My Creations “ page</li>
+<li>The user can hover over the NFT or click on it to see its details and action bar</li>
+<li>Inside that action bar the user can find the Unlist for Sale icon</li>
+<li>After he clicks a pop-up will appear to confirm the action and the user will sign on the Casper extension as well</li>
+<li>The NFT will appear only in  “ My collections “ -&gt; “ My Creations “ page</li>
+</ul>
+<h3>Buying an NFT</h3>
+<p>The creator user is a normal user who minted NFTs which means you still can buy NFTs from other creators also to support other causes as a donor.</p>
+<ol>
+<li>Hover over any NFT from the home page to preview its details.</li>
+<li>Click on the Shopping Cart icon on the right down of the NFT preview.</li>
+<li>A pop-up will appear to click on the “Buy “ Button.</li>
+<li>Casper extension will pop up twice so click on “ Sign “ to transfer the amount and wait for the notification of transfer success, then click on “ Sign “ again to deploy the transaction on the chain and wait for the notification of the deployment.</li>
+<li>After the transaction is done you will see the bought NFT under the “My NFTs“ tab only.</li>
+</ol>
+<h2>Workflow Example</h2>
+<h3>Beneficiary Registration</h3>
+<ol>
+<li>A Beneficiary, which is the organization that supports a special cause and needs to collect donations to continue its support, will contact the Verified Impact NFTs platform admin to add its’ campaigns on the platform and publish its cause.</li>
+<li>The admin will do some investigation to verify whether this beneficiary is a real organization and comply with VINFT criteria or not</li>
+<li>After this verification, the beneficiary will get an answer whether its name and its’ campaigns are approved or not</li>
+<li>After the approval, the Beneficiary will send specific details about the organization and its’ campaigns to be published on the platform ( Most important detail is the Requested Royalty )
+The name of the beneficiary will appear in the drop-down list  of the header and its campaigns will be nested in it</li>
+</ol>
+<h3>Creator Registration</h3>
+<ol>
+<li>The Creator is a normal Donor except that he will donate with his art or NFTs</li>
+<li>Any user can see the beneficiaries and read about their cause and campaigns. The creator can choose to mint NFTs to support any campaign and will receive sale share according to the Requested Royality which is defined by the beneficiary to guarantee the impact of donations</li>
+<li>During minting the Creator fill in his and the collection names which will be published also on the drop-down list of the platform header</li>
+<li>After minting this normal user/donor will turn into a creator user and will receive sales shares on his wallet</li>
+<li>The creator also can mint Not for Sale NFTs and offer them for sale later</li>
+</ol>
+<h3>Donor</h3>
+<ol>
+<li>The normal user is a donor who donates by buying the NFTs to support a campaign, the VINFT platform is made to verify the impact of this user donations</li>
+<li>This user can just hover over any NFT and read about its details and click to buy it</li>
+<li>The NFT will appear late under the “ My NFTs “ tab of this user and will be recorded on the chain</li>
+<li>After buying the NFT the amount of CSPR will be divided according to the Requested Royality between the Beneficiary and the Creator</li>
+</ol>
+<h2>Site Unit Tests</h2>
+<p>To run the unit tests, please do the following steps:</p>
+<pre class="prettyprint source lang-bash"><code>yarn test 
+</code></pre>
+<h3>BuyNFTModal test</h3>
+<pre class="prettyprint source lang-bash"><code>
+import BuyNFTModal from '../BuyNFT'
+import ReactDom from 'react-dom'
+test('should render buynft component', ()=>{
+   const div = document.createElement('div')
+    ReactDom.render(&lt;BuyNFTModal/> , div)
+})
+</code></pre>
+<h3>ListForSaleNFTModal test</h3>
+<pre class="prettyprint source lang-bash"><code>import ListForSaleNFTModal from '../ListForSaleNFT'
+import ReactDom from 'react-dom'
+test('should render buynft component', ()=>{
+   const div = document.createElement('div')
+    ReactDom.render(&lt;ListForSaleNFTModal show ={true} handleCloseParent={()=>{}} data= {{beneficiary: &quot;01501b4037bdeffd70849a86698922f6f3ed2ff52dad5235b2472b09ae66e48e8c&quot;,
+    beneficiaryName: &quot;Ukraine Gov&quot;,
+    beneficiaryPercentage: &quot;80&quot;,
+    campaign: &quot;1&quot;,
+    campaignName: &quot;Stand With Ukraine&quot;,
+    collection: &quot;1&quot;,
+    collectionName: &quot;A Hero's Stand&quot;,
+    creator: &quot;0127271ea03f8cb24e0e3100d18e4d29fc860b35a2c9eb86ae4cca280a8fc40e1f&quot;,
+    creatorName: &quot;NFT Punks&quot;,
+    creatorPercentage: &quot;20&quot;,
+    currency: &quot;CSPR&quot;,
+    description: &quot;Got bitten by the snake island and sank&quot;,
+    image: &quot;https://vi-nfts-storage.s3.us-east-2.amazonaws.com/NFT+Punks/A+Hero_s+Stand/Stamp_7.png&quot;,
+    isForSale: &quot;true&quot;,
+    price: &quot;100&quot;,
+    title: &quot;Snake Sunk &quot;,
+    tokenId: 3}} /> , div)
+})
+</code></pre>
+<h3>NFTCard test</h3>
+<pre class="prettyprint source lang-bash"><code>import React from &quot;react&quot;;
+import {render}  from &quot;react-dom&quot;;
+import {BrowserRouter}  from &quot;react-router-dom&quot;;
+import NFTCard from &quot;../NFTCard&quot;;
+
+it(&quot;renders without crashing&quot;,()=>{
+    const div=document.createElement(&quot;div&quot;);
+    render(&lt;BrowserRouter>&lt;NFTCard index={0} item={{beneficiary: &quot;01501b4037bdeffd70849a86698922f6f3ed2ff52dad5235b2472b09ae66e48e8c&quot;,
+    beneficiaryName: &quot;Ukraine Gov&quot;,
+    beneficiaryPercentage: &quot;80&quot;,
+    campaign: &quot;1&quot;,
+    campaignName: &quot;Stand With Ukraine&quot;,
+    collection: &quot;1&quot;,
+    collectionName: &quot;A Hero's Stand&quot;,
+    creator: &quot;0127271ea03f8cb24e0e3100d18e4d29fc860b35a2c9eb86ae4cca280a8fc40e1f&quot;,
+    creatorName: &quot;NFT Punks&quot;,
+    creatorPercentage: &quot;20&quot;,
+    currency: &quot;CSPR&quot;,
+    description: &quot;Got bitten by the snake island and sank&quot;,
+    image: &quot;https://vi-nfts-storage.s3.us-east-2.amazonaws.com/NFT+Punks/A+Hero_s+Stand/Stamp_7.png&quot;,
+    isForSale: &quot;true&quot;,
+    price: &quot;100&quot;,
+    title: &quot;Snake Sunk &quot;,
+    tokenId: 3}}/>&lt;/BrowserRouter>,div)
+})
+</code></pre>
+<h3>VideoPopup test</h3>
+<pre class="prettyprint source lang-bash"><code>import VideoPopup from '../VideoPopup'
+import ReactDom from 'react-dom'
+test('should render buynft component', ()=>{
+   const div = document.createElement('div')
+    ReactDom.render(&lt;VideoPopup/> , div)
+})
+</code></pre>
+<h3>Header test</h3>
+<pre class="prettyprint source lang-bash"><code>import React from &quot;react&quot;;
+import {render}  from &quot;react-dom&quot;;
+import {BrowserRouter}  from &quot;react-router-dom&quot;;
+import Footer1 from '../Footer1'
+
+it(&quot;renders without crashing&quot;,()=>{
+    const div=document.createElement(&quot;div&quot;);
+    render(&lt;BrowserRouter>&lt;Footer1/>&lt;/BrowserRouter>,div)
+})
+</code></pre>
+<h3>Footer test</h3>
+<pre class="prettyprint source lang-bash"><code>import React from &quot;react&quot;;
+import {render}  from &quot;react-dom&quot;;
+import {BrowserRouter}  from &quot;react-router-dom&quot;;
+import Header1 from &quot;../Header1&quot;;
+
+it(&quot;renders without crashing&quot;,()=>{
+    const div=document.createElement(&quot;div&quot;);
+    render(&lt;BrowserRouter>&lt;Header1/>&lt;/BrowserRouter>,div)
+})
+</code></pre>
+<h3>Beneficiary info test</h3>
+<pre class="prettyprint source lang-bash"><code>import React from 'react';
+import { render } from 'react-dom';
+import {
+  getBeneficiariesList
+} from '../beneficiaryInfo';
+
+
+beforeAll(() => jest.setTimeout(90 * 1000))
+describe('get beneficiary using Promises', () => {
+  jest.setTimeout(30000);
+test('the data is array of objects', async () => {
+  const data = await getBeneficiariesList();
+
+  expect(data).toBeDefined();
+  expect(data).toStrictEqual([
+    {
+      address:
+        '01501b4037bdeffd70849a86698922f6f3ed2ff52dad5235b2472b09ae66e48e8c',
+      description:
+        'The Ministry of Digital Transformation (Ukrainian: Міністерство цифрової трансформації України) is a government ministry in Ukraine that was established on 29 August 2019 when Mykhailo Fedorov was appointed as Minister of Digital Transformation in the Honcharuk Government. Its current and first minister is Mykhailo Fedorov.',
+      id: '1',
+      name: 'Ukraine Gov',
+    },
+    {
+      address:
+        '01aa837e4f212d197b00be3d93c5d5ca08df00d6016ce39f293f295bbcb850707d',
+      description: 'From our kids to all the kids of Ukraine',
+      id: '2',
+      name: 'Kids 4 Ukraine',
+    },
+  ]);
+});})
+afterAll(() => jest.setTimeout(5 * 1000))
+</code></pre>
+<h3>Campaign info test</h3>
+<pre class="prettyprint source lang-bash"><code>import React from 'react';
+import { render } from 'react-dom';
+import { getCampaignsList } from '../campaignInfo';
+beforeAll(() => jest.setTimeout(300 * 1000))
+
+describe('get campaign using Promises', () => {
+  jest.setTimeout(30000);
+test('campaigns data is array of objects', async () => {
+
+  const data = await getCampaignsList();
+  expect(data).toBeDefined();
+  expect(data).toStrictEqual([
+    {
+      collection_ids: '0',
+      description: 'Stand with Ukraine people in their time of need!',
+      id: '1',
+      name: 'Stand With Ukraine',
+      requested_royalty: '80',
+      url: 'https://thedigital.gov.ua/',
+      wallet_address:
+        '01501b4037bdeffd70849a86698922f6f3ed2ff52dad5235b2472b09ae66e48e8c',
+    },
+    {
+      collection_ids: '0',
+      description:
+        'Supporting more than 6 million Ukrainian refugees through a rough time!',
+      id: '2',
+      name: 'Refugees',
+      requested_royalty: '80',
+      url: 'https://thedigital.gov.ua/',
+      wallet_address:
+        '01501b4037bdeffd70849a86698922f6f3ed2ff52dad5235b2472b09ae66e48e8c',
+    },
+    {
+      collection_ids: '0',
+      description: &quot;Let's build Ukraine better than ever!&quot;,
+      id: '3',
+      name: 'Reconstruction',
+      requested_royalty: '80',
+      url: 'https://thedigital.gov.ua/',
+      wallet_address:
+        '01501b4037bdeffd70849a86698922f6f3ed2ff52dad5235b2472b09ae66e48e8c',
+    },
+  ]);
+});
+})
+afterAll(() => jest.setTimeout(5 * 1000))
+</code></pre>
+<h3>Collection info test</h3>
+<pre class="prettyprint source lang-bash"><code>import React from 'react';
+import {
+  getCollectionsList
+} from '../collectionInfo';
+
+
+beforeAll(() => jest.setTimeout(90 * 1000))
+describe('get Collections using Promises', () => {
+  jest.setTimeout(30000);
+test('collections is array of objects', async () => {
+  const data = await getCollectionsList();
+
+  expect(data).toBeDefined();
+  expect(data).toStrictEqual([{
+creator: &quot;0127271ea03f8cb24e0e3100d18e4d29fc860b35a2c9eb86ae4cca280a8fc40e1f&quot;,
+description: &quot;&quot;,
+id: &quot;1&quot;,
+name: &quot;A Hero's Stand&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;},{
+creator: &quot;0127271ea03f8cb24e0e3100d18e4d29fc860b35a2c9eb86ae4cca280a8fc40e1f&quot;,
+description: &quot;&quot;,
+id: &quot;2&quot;,
+name: &quot;Never Forget&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;
+},{
+creator: &quot;0127271ea03f8cb24e0e3100d18e4d29fc860b35a2c9eb86ae4cca280a8fc40e1f&quot;,
+description: &quot;&quot;,
+id: &quot;3&quot;,
+name: &quot;Forever Keys&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;
+},{
+
+creator: &quot;013171ea0c93f82b0d2b680e9f1ecdfbccb2cd79c17a06094d7e43be1274568c52&quot;,
+description: &quot;&quot;,
+id: &quot;4&quot;,
+name: &quot;Freedom for Ukraine&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;
+},{
+
+creator: &quot;013171ea0c93f82b0d2b680e9f1ecdfbccb2cd79c17a06094d7e43be1274568c52&quot;,
+description: &quot;&quot;,
+id: &quot;5&quot;,
+name: &quot;Freedom for Ukraine&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;
+},{
+
+creator: &quot;013171ea0c93f82b0d2b680e9f1ecdfbccb2cd79c17a06094d7e43be1274568c52&quot;,
+description: &quot;&quot;,
+id: &quot;6&quot;,
+name: &quot;Freedom for Ukraine&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;
+},{
+
+creator: &quot;013171ea0c93f82b0d2b680e9f1ecdfbccb2cd79c17a06094d7e43be1274568c52&quot;,
+description: &quot;&quot;,
+id: &quot;7&quot;,
+name: &quot;Freedom for Ukraine&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;
+},{
+creator: &quot;013171ea0c93f82b0d2b680e9f1ecdfbccb2cd79c17a06094d7e43be1274568c52&quot;,
+description: &quot;&quot;,
+id: &quot;8&quot;,
+name: &quot;Freedom for Ukraine&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;
+},{
+creator: &quot;013171ea0c93f82b0d2b680e9f1ecdfbccb2cd79c17a06094d7e43be1274568c52&quot;,
+description: &quot;&quot;,
+id: &quot;9&quot;,
+name: &quot;Freedom for Ukraine&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;
+},{
+creator: &quot;013171ea0c93f82b0d2b680e9f1ecdfbccb2cd79c17a06094d7e43be1274568c52&quot;,
+description: &quot;&quot;,
+id: &quot;10&quot;,
+name: &quot;Freedom for Ukraine&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;
+},{
+creator: &quot;013171ea0c93f82b0d2b680e9f1ecdfbccb2cd79c17a06094d7e43be1274568c52&quot;,
+description: &quot;&quot;,
+id: &quot;11&quot;,
+name: &quot;Freedom for Ukraine&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;
+},{
+creator: &quot;013171ea0c93f82b0d2b680e9f1ecdfbccb2cd79c17a06094d7e43be1274568c52&quot;,
+description: &quot;&quot;,
+id: &quot;12&quot;,
+name: &quot;Freedom for Ukraine&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;
+},{
+creator: &quot;013171ea0c93f82b0d2b680e9f1ecdfbccb2cd79c17a06094d7e43be1274568c52&quot;,
+description: &quot;&quot;,
+id: &quot;13&quot;,
+name: &quot;Freedom for Ukraine&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;
+},{
+creator: &quot;01c82663493f5042af3b4247b07d3785978fb0491f75508a8da19b2b8792cee866&quot;,
+description: &quot;&quot;,
+id: &quot;14&quot;,
+name: &quot;Impact Cars&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;
+},{
+creator: &quot;013171ea0c93f82b0d2b680e9f1ecdfbccb2cd79c17a06094d7e43be1274568c52&quot;,
+description: &quot;&quot;,
+id: &quot;15&quot;,
+name: &quot;Freedom for Ukraine&quot;,
+token_ids: &quot;0&quot;,
+url: &quot;&quot;}
+  ]
+);
+});})
+afterAll(() => jest.setTimeout(5 * 1000))
+
+</code></pre></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-BuyNFTModal.html">BuyNFTModal</a></li><li><a href="module-ListForSaleNFTModal.html">ListForSaleNFTModal</a></li><li><a href="module-NFTCard.html">NFTCard</a></li><li><a href="module-VINFTsTooltip.html">VINFTsTooltip</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AddBeneficiary">AddBeneficiary</a></li><li><a href="global.html#AddCampaign">AddCampaign</a></li><li><a href="global.html#BenefeiciaryNFTs">BenefeiciaryNFTs</a></li><li><a href="global.html#CreatorNFTs">CreatorNFTs</a></li><li><a href="global.html#MintNFT">MintNFT</a></li><li><a href="global.html#MyCreations">MyCreations</a></li><li><a href="global.html#MyNFTs">MyNFTs</a></li><li><a href="global.html#NFTDetail">NFTDetail</a></li><li><a href="global.html#PromptLogin">PromptLogin</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Thu Jul 07 2022 22:45:17 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
