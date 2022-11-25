@@ -1,18 +1,24 @@
-//import Discord from 'discord.js';
-
-
-export async function sendDiscordMessage  (webhookId: any, webhookToken: any, elementName: string, nftUrl:string, description:string){
-    // const webhookClient = new Discord.WebhookClient(webhookId, webhookToken);
-    // const embed = new Discord.MessageEmbed()
-    //   .setTitle(elementName)
-    //   .setColor('#0099ff')
-    //   .setDescription(description)
-    //   .setImage(nftUrl)
-    //   .setTimestamp();
-    // webhookClient.send({
-    //   username: 'verified-impact-nft-news',
-    //   avatarURL: 'https://cdn-icons-png.flaticon.com/512/1042/1042680.png',
-    //   embeds: [embed],
-    // });
-    // webhookClient.destroy();
-  };
+export const sendDiscordMessage = async (id: string, token: string, description: string, title?: any, url?: string, imageUrl?: string)=> {
+  const { REACT_APP_DISCORD_API_URL } = process.env;
+  const apiName = 'discord';
+  const body = {
+    id,
+    token,
+    description,
+    title,
+    url,
+    imageUrl    
+  }
+  await fetch(
+    `${REACT_APP_DISCORD_API_URL}/${apiName}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }
+  )
+    .then((res) => res.json())
+    .then((result) => {
+      console.log(result);
+    });
+};

@@ -437,9 +437,10 @@ const MintNFT = () => {
           await sendDiscordMessage(
             process.env.REACT_APP_CREATORS_WEBHOOK_ID,
             process.env.REACT_APP_CREATORS_TOKEN,
+            `We are glad to announce that ${creator} creator has joined #verified-impact-nfts and minted a striking #NFT for donations. [Click here to see more about creators and their NFTs collections.](${window.location.origin}/#/) @vinfts @casper_network @devxdao `,
             creator,
-            '',
-            `We are glad to announce that ${creator} creator has joined #verified-impact-nfts and minted a striking #NFT for donations. [Click here to see more about creators and their NFTs collections.](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
+            `${window.location.origin}/#/`,
+            undefined            
           );
           await SendTweet(
             `We are glad to announce that ${creator} creator has joined #verified_impact_nfts and minted a striking #NFT for donations. Click here ${window.location.origin}/#/ to see more about creators and their NFTs collections @vinfts @casper_network @devxdao ${twitterName}`
@@ -451,9 +452,10 @@ const MintNFT = () => {
           await sendDiscordMessage(
             process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
             process.env.REACT_APP_COLLECTIONS_TOKEN,
+            `${creator} creator has just added a new interesting #verified-impact-nfts collection. [Click here to see more interesting collections](${window.location.origin}/#/) @vinfts @casper_network @devxdao `,
             selectedCollectionValue.label,
-            '',
-            `${creator} creator has just added a new interesting #verified-impact-nfts collection. [Click here to see more interesting collections](${window.location.origin}/#/) @casper_network @devxdao `
+            undefined,
+            undefined
           );
           await SendTweet(
             `${creator} creator has just added a new interesting #verified_impact_nfts collection ${s
@@ -463,15 +465,16 @@ const MintNFT = () => {
             }/#/ to see more interesting collections  @vinfts @casper_network @devxdao ${twitterName}`
           );
         }
-
+        let image = encodeURI('https://vinfts.mypinata.cloud/ipfs/' + imgURL);
         await sendDiscordMessage(
           process.env.REACT_APP_NFT_WEBHOOK_ID,
           process.env.REACT_APP_NFT_TOKEN,
+          `Great news! [${state.inputs.name}] #NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/) @vinfts @casper_network @devxdao `,
           state.inputs.name,
-          '',
-          `Great news! [${state.inputs.name}] #NFT  has been added to #verified-impact-nfts [click here to know more about their cause.](${window.location.origin}/#/) @vinfts @casper_network @devxdao `
+          undefined,
+          image
         );
-        let image = encodeURI('https://vinfts.mypinata.cloud/ipfs/' + imgURL);
+
         await SendTweetWithImage(
           image,
           `Great news! "${

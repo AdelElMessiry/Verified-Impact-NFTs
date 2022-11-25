@@ -77,9 +77,10 @@ const AddEditCollectionForm = ({
     await sendDiscordMessage(
       process.env.REACT_APP_COLLECTIONS_WEBHOOK_ID,
       process.env.REACT_APP_COLLECTIONS_TOKEN,
-      '',
-      '',
-      `Exciting news! [${collectionInputs.name}] Collection is just created. [Click here  to check more available collections.](${window.location.origin}/#/) @vinfts @casper_network @devxdao`
+      `Exciting news! [${collectionInputs.name}] Collection is just created. [Click here  to check more available collections.](${window.location.origin}/#/) @vinfts @casper_network @devxdao`,
+      undefined,
+      undefined,
+      undefined
     );
       // await SendTweet(
       //   `${collectionInputs.creator} just added a new interesting #verified_impact_nfts collection. Click here ${window.location.origin}/#/ to see more interesting collections`
