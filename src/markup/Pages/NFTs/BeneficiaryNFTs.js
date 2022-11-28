@@ -2,25 +2,24 @@ import React from 'react';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper } from 'simple-react-lightbox';
 import Masonry from 'react-masonry-component';
+import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import Lightbox from 'react-image-lightbox';
 import { Link } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import QRCode from 'react-qr-code';
 
 import { useNFTState } from '../../../contexts/NFTContext';
 
-import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
-import CampaignOrCollectionTwitterShare from '../../Element/TwitterShare/CampaignOrCollectionTwitterShare';
-import NFTCard from '../../Element/NFTCard';
 import VINftsTooltip from '../../Element/Tooltip';
+import NFTCard from '../../Element/NFTCard';
 import BuyNFTModal from '../../Element/BuyNFT';
 import Layout from '../../Layout';
+import NFTTwitterShare from '../../Element/TwitterShare/NFTTwitterShare';
+import CampaignOrCollectionTwitterShare from '../../Element/TwitterShare/CampaignOrCollectionTwitterShare';
 import CopyText from '../../Element/copyText';
 import ViewProfile from '../ViewProfile';
 import { ProfileFormsEnum } from '../../../Enums/index';
 
-//images
 import bnr1 from './../../../images/banner/bnr1.jpg';
 import soldIcon from '../../../images/icon/sold.png';
 import viewIcon from '../../../images/icon/view.png';
@@ -36,14 +35,17 @@ const masonryOptions = {
   transitionDuration: 0,
 };
 
+const options = {
+  buttons: { showDownloadButton: false },
+};
+
 const imagesLoadedOptions = { background: '.my-bg-image-el' };
-// Masonry section end
 
 //handling filtration markup
-const TagLi = ({ item, handleSetTag, tagActive, type, creator }) => {
+const TagLi = ({ item, handleSetTag, tagActive, type, beneficiary }) => {
   return (
     <VINftsTooltip
-      title={`Click to see all NFTs under the '${item?.name}' ${
+      title={`Click to see all NFTs under the "${item?.name}" ${
         type === 'creator'
           ? item?.name === 'All'
             ? 'creators'
@@ -70,20 +72,25 @@ const TagLi = ({ item, handleSetTag, tagActive, type, creator }) => {
         &nbsp;&nbsp;
         {item?.name !== 'All' && (
           <>
+            {' '}
             <Link
               to={
-                type === 'campaign'
-                  ? `./BeneficiaryNFTs?beneficiary=${item?.beneficiary}&campaign=${item?.id}`
-                  : `./CreatorNFTs?creator=${creator}&collection=${item?.id}`
+                type === 'creator'
+                  ? `./CreatorNFTs?creator=${item?.id}`
+                  : type === 'campaign'
+                  ? `./BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${item?.id}`
+                  : `./CreatorNFTs?creator=${item?.creator}&collection=${item?.id}`
               }
               className='mr-1 text-success text-underline'
             >
               <QRCode
                 className='mr-1'
                 value={
-                  type === 'campaign'
-                    ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${item?.beneficiary}&campaign=${item?.id}`
-                    : `${window.location.origin}/#/CreatorNFTs?creator=${creator}&collection=${item?.id}`
+                  type === 'creator'
+                    ? `${window.location.origin}/#/CreatorNFTs?creator=${item?.id}`
+                    : type === 'campaign'
+                    ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${item?.id}`
+                    : `${window.location.origin}/#/CreatorNFTs?creator=${item?.creator}&collection=${item?.id}`
                 }
                 size={90}
               />
@@ -91,9 +98,11 @@ const TagLi = ({ item, handleSetTag, tagActive, type, creator }) => {
             &nbsp;
             <CopyText
               link={
-                type === 'campaign'
-                  ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${item?.beneficiary}&campaign=${item?.id}`
-                  : `${window.location.origin}/#/CreatorNFTs?creator=${creator}&collection=${item?.id}`
+                type === 'creator'
+                  ? `${window.location.origin}/#/CreatorNFTs?creator=${item?.id}`
+                  : type === 'campaign'
+                  ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${item?.id}`
+                  : `${window.location.origin}/#/CreatorNFTs?creator=${item?.creator}&collection=${item?.id}`
               }
             />
           </>
@@ -103,20 +112,18 @@ const TagLi = ({ item, handleSetTag, tagActive, type, creator }) => {
   );
 };
 
-const options = {
-  buttons: { showDownloadButton: false },
-};
-
-const CreatorNFTs = () => {
+const BeneficiaryNFTs = () => {
   const search = useLocation().search;
   const queryParams = new URLSearchParams(search);
+  const beneficiary = queryParams.get('beneficiary');
   const creator = queryParams.get('creator');
-  const collection = queryParams.get('collection');
+  const campaign = queryParams.get('campaign');
 
-  const { nfts, collections, profileCreators } = useNFTState();
+  const { beneficiaries, nfts, campaigns } = useNFTState();
   const [tagCollection, setTagCollection] = React.useState({
     name: 'All',
     id: '',
+    creator: '',
   });
   const [tagCreator, setTagCreator] = React.useState({
     name: 'All',
@@ -125,21 +132,23 @@ const CreatorNFTs = () => {
   const [tagCampaign, setTagCampaign] = React.useState({
     name: 'All',
     id: '',
-    beneficiary: '',
   });
-
-  const [allNFTs, setAllNFTs] = React.useState();
-  const [filteredNFTs, setFilteredNFTs] = React.useState();
   const [openSlider, setOpenSlider] = React.useState(false);
   const [photoIndex, setPhotoIndex] = React.useState(0);
   const [sliderCaptions, setSliderCaptions] = React.useState([]);
   const [collectionTags, setCollectionTags] = React.useState([]);
   const [campaignTags, setCampaignTags] = React.useState([]);
   const [creatorTags, setCreatorTags] = React.useState([]);
+
   const [showBuyModal, setShowBuyModal] = React.useState(false);
   const [selectedNFT, setSelectedNFT] = React.useState();
-  const [collectionName, setCollectionName] = React.useState();
-  const [creatorName, setCreatorName] = React.useState();
+  const [beneficiaryDescription, setBeneficiaryDescription] = React.useState();
+  const [beneficiaryName, setBeneficiaryName] = React.useState();
+  const [campaignName, setCampaignName] = React.useState();
+  const [campaignDescription, setCampaignDescription] = React.useState();
+
+  const [allNFTs, setAllNFTs] = React.useState();
+  const [filteredNFTs, setFilteredNFTs] = React.useState();
   const [showViewModal, setShowViewModal] = React.useState(false);
   const [selectedViewProfile, setSelectedViewProfile] = React.useState();
   const [SDGsGoals, setSDGsGoals] = React.useState([]);
@@ -147,70 +156,60 @@ const CreatorNFTs = () => {
   const [isClearSDGs, setIsClearSDGs] = React.useState(false);
   const [isRefreshNFTList, setIsRefreshNFTList] = React.useState(false);
   const [changedNFT, setChangedNFT] = React.useState();
-  //getting Collections details
-  const getCollections = React.useCallback(async () => {
-    const setSelectedCollection =
-      collections &&
-      collection &&
-      collections.find(({ id }) => collection === id);
-    setSelectedCollection && setCollectionName(setSelectedCollection.name);
-  }, [collection, collections]);
+  //getting beneficiary details
+  const getBeneficiaries = React.useCallback(async () => {
+    const setSelectedBeneficiary =
+      beneficiaries &&
+      beneficiary &&
+      beneficiaries.find(({ address }) => beneficiary === address);
+    setSelectedBeneficiary &&
+      setBeneficiaryDescription(setSelectedBeneficiary.bio);
+    setSelectedBeneficiary &&
+      setBeneficiaryName(setSelectedBeneficiary.username);
+  }, [beneficiary, beneficiaries]);
 
   React.useEffect(() => {
     ReactGA.pageview(window.location.href);
-    (!collectionName || collection) && getCollections();
-  }, [collectionName, getCollections, collection]);
+    (!beneficiaryDescription || beneficiary) && getBeneficiaries();
+  }, [beneficiaryDescription, getBeneficiaries, beneficiary]);
+
+  //getting Campaigns details
+  const getCampaigns = React.useCallback(async () => {
+    const setSelectedCampaign =
+      campaigns && campaign && campaigns.find(({ id }) => campaign === id);
+    setSelectedCampaign && setCampaignName(setSelectedCampaign.name);
+    setSelectedCampaign &&
+      setCampaignDescription(setSelectedCampaign.description);
+  }, [campaign, campaigns]);
 
   React.useEffect(() => {
-    if (changedNFT) {
-      const resIndex = filteredNFTs?.findIndex(
-        ({ tokenId }) => tokenId == changedNFT.tokenId
-      );
-      filteredNFTs?.splice(resIndex, 1);
-      setFilteredNFTs([
-          ...filteredNFTs?.slice(0, resIndex),
-          changedNFT,
-          ...filteredNFTs?.slice(resIndex),
-        ]
-      );
-      setShowBuyModal(false);
-    }
-  }, [isRefreshNFTList]);
-
-  //getting Creator details
-  const getCreators = React.useCallback(async () => {
-    const setSelectedCreator =
-      profileCreators &&
-      creator &&
-      profileCreators.find(({ address }) => creator === address);
-    setSelectedCreator && setCreatorName(setSelectedCreator.username);
-  }, [creator, profileCreators]);
-
-  React.useEffect(() => {
-    (!creatorName || creator) && getCreators();
-  }, [creatorName, getCreators, creator]);
+    (!campaignName || campaign) && getCampaigns();
+  }, [campaignName, getCampaigns, campaign]);
 
   const filterCollectionByTag = React.useCallback((tag, filteredNFTs) => {
     const AllCollectionsTagsName =
       filteredNFTs &&
       filteredNFTs.map((nft) =>
         tag.name === 'All'
-          ? { name: nft.collectionName, id: nft.collection }
+          ? {
+              name: nft.collectionName,
+              id: nft.collection,
+              creator: nft.creator,
+            }
           : tag
       );
-    let keys = ['name', 'id'];
+
+    let keys = ['name', 'creator'];
     let collectionsTagsName = AllCollectionsTagsName.filter(
       (
         (s) => (o) =>
           ((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join('|'))
       )(new Set())
     );
+
     collectionsTagsName &&
       setCollectionTags([
-        {
-          name: 'All',
-          id: '',
-        },
+        { name: 'All', id: '', creator: '' },
         ...collectionsTagsName,
       ]);
   }, []);
@@ -219,15 +218,9 @@ const CreatorNFTs = () => {
     const AllCampaignsTagsName =
       filteredNFTs &&
       filteredNFTs.map((nft) =>
-        tag.name === 'All'
-          ? {
-              name: nft.campaignName,
-              id: nft.campaign,
-              beneficiary: nft.beneficiary,
-            }
-          : tag
+        tag.name === 'All' ? { name: nft.campaignName, id: nft.campaign } : tag
       );
-    let keys = ['name', 'beneficiary'];
+    let keys = ['name', 'id'];
     let campaignsTagsName = AllCampaignsTagsName.filter(
       (
         (s) => (o) =>
@@ -235,10 +228,7 @@ const CreatorNFTs = () => {
       )(new Set())
     );
     campaignsTagsName &&
-      setCampaignTags([
-        { name: 'All', id: '', beneficiary: '' },
-        ...campaignsTagsName,
-      ]);
+      setCampaignTags([{ name: 'All', id: '' }, ...campaignsTagsName]);
   }, []);
 
   const filterCreatorByTag = React.useCallback((tag, filteredNFTs) => {
@@ -254,14 +244,9 @@ const CreatorNFTs = () => {
           ((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join('|'))
       )(new Set())
     );
+
     creatorsTagsName &&
-      setCreatorTags([
-        {
-          name: 'All',
-          id: '',
-        },
-        ...creatorsTagsName,
-      ]);
+      setCreatorTags([{ name: 'All', id: '' }, ...creatorsTagsName]);
   }, []);
 
   const filterSDGByTag = React.useCallback((tag, filteredNFTs) => {
@@ -271,7 +256,7 @@ const CreatorNFTs = () => {
         .map((nft) => ({ value: nft.sdgs_ids?.split(',') }))
         .flatMap(({ value }) => value);
     let sdgsTagsName = AllSDGsTagsName.filter(function (item, pos) {
-      return AllSDGsTagsName.indexOf(item) === pos;
+      return AllSDGsTagsName.indexOf(item) == pos;
     });
     sdgsTagsName &&
       setSDGsGoalsData(
@@ -296,14 +281,14 @@ const CreatorNFTs = () => {
           (nft.isForSale === 'false' && nft.isCreatorOwner === false)
       );
 
-    if (creator && !collection) {
+    if (beneficiary && !campaign) {
       filteredNFTs =
-        nftsList && nftsList.filter((nft) => nft.creator === creator);
-    } else if (creator && collection) {
+        nftsList && nftsList.filter((nft) => nft.beneficiary === beneficiary);
+    } else if (beneficiary && campaign) {
       filteredNFTs =
         nftsList &&
         nftsList.filter(
-          (nft) => nft.creator === creator && nft.collection === collection
+          (nft) => nft.beneficiary === beneficiary && nft.campaign === campaign
         );
     } else {
       filteredNFTs = nftsList && nftsList;
@@ -311,54 +296,48 @@ const CreatorNFTs = () => {
 
     filteredNFTs && setFilteredNFTs(filteredNFTs);
     filteredNFTs &&
-      filterCollectionByTag(
-        {
-          name: 'All',
-          id: '',
-        },
-        filteredNFTs
-      );
-    filteredNFTs &&
-      filterCampaignByTag(
-        { name: 'All', id: '', beneficiary: '' },
-        filteredNFTs
-      );
-    filteredNFTs &&
-      filterCreatorByTag(
-        {
-          name: 'All',
-          id: '',
-        },
-        filteredNFTs
-      );
-    filteredNFTs && setAllNFTs(filteredNFTs);
+      filterCollectionByTag({ name: 'All', id: '', creator: '' }, filteredNFTs);
+    filteredNFTs && filterCampaignByTag({ name: 'All', id: '' }, filteredNFTs);
+    filteredNFTs && filterCreatorByTag({ name: 'All', id: '' }, filteredNFTs);
     filteredNFTs && filterSDGByTag({ name: 'All', id: '' }, filteredNFTs);
+    filteredNFTs && setAllNFTs(filteredNFTs);
 
     //setting captions of nfts full screen mode
     filteredNFTs &&
       filteredNFTs.forEach((nft) => captions.push(CaptionItem(nft)));
     filteredNFTs && captions.length && setSliderCaptions(captions);
   }, [
-    collection,
+    beneficiary,
     nfts,
-    creator,
-    filterCampaignByTag,
     filterCollectionByTag,
+    filterCampaignByTag,
     filterCreatorByTag,
     filterSDGByTag,
+    campaign,
   ]);
 
   React.useEffect(() => {
     getFilteredNFTs();
   }, [getFilteredNFTs]);
 
+  React.useEffect(() => {
+    if (changedNFT) {
+      const resIndex = filteredNFTs?.findIndex(
+        ({ tokenId }) => tokenId == changedNFT.tokenId
+      );
+      filteredNFTs?.splice(resIndex, 1);
+      setFilteredNFTs([
+          ...filteredNFTs?.slice(0, resIndex),
+          changedNFT,
+          ...filteredNFTs?.slice(resIndex),
+        ]
+      );
+      setShowBuyModal(false);
+    }
+  }, [isRefreshNFTList]);
+
   const getCollectionsBasedOnTag = React.useCallback(
-    (
-      tag = {
-        name: 'All',
-        id: '',
-      }
-    ) => {
+    (tag = { name: 'All', id: '', creator: '' }) => {
       setTagCollection(tag);
       setTagCreator({
         name: 'All',
@@ -373,20 +352,19 @@ const CreatorNFTs = () => {
       const filteredCollectionsNFTs = allNFTs.filter(({ collectionName }) =>
         tag.name === 'All' ? collectionName : collectionName === tag.name
       );
-
       filteredCollectionsNFTs && setFilteredNFTs(filteredCollectionsNFTs);
 
       const campaignsTagsName =
         filteredCollectionsNFTs &&
         filterCampaignByTag(
-          { name: 'All', id: '', beneficiary: '' },
+          {
+            name: 'All',
+            id: '',
+          },
           filteredCollectionsNFTs
         );
       campaignsTagsName &&
-        setCampaignTags([
-          { name: 'All', id: '', beneficiary: '' },
-          ...campaignsTagsName,
-        ]);
+        setCampaignTags([{ name: 'All', id: '' }, ...campaignsTagsName]);
 
       const creatorsTagsName =
         filteredCollectionsNFTs &&
@@ -410,16 +388,13 @@ const CreatorNFTs = () => {
   );
 
   const getCampaignsBasedOnTag = React.useCallback(
-    (tag = { name: 'All', id: '', beneficiary: '' }) => {
+    (tag = 'All') => {
       setTagCampaign(tag);
       setTagCreator({
         name: 'All',
         id: '',
       });
-      setTagCollection({
-        name: 'All',
-        id: '',
-      });
+      setTagCollection({ name: 'All', id: '', creator: '' });
       setIsClearSDGs(true);
       setSDGsGoals([]);
       const filteredCampaignsNFTs =
@@ -432,29 +407,45 @@ const CreatorNFTs = () => {
 
       const collectionsTagsName =
         filteredCampaignsNFTs &&
-        filterCollectionByTag({ name: 'All', id: '' }, filteredCampaignsNFTs);
+        filterCollectionByTag(
+          { name: 'All', id: '', creator: '' },
+          filteredCampaignsNFTs
+        );
       collectionsTagsName &&
-        setCollectionTags([{ name: 'All', id: '' }, ...collectionsTagsName]);
+        setCollectionTags([
+          { name: 'All', id: '', creator: '' },
+          ...collectionsTagsName,
+        ]);
 
       const creatorsTagsName =
         filteredCampaignsNFTs &&
-        filterCreatorByTag({ name: 'All', id: '' }, filteredCampaignsNFTs);
+        filterCreatorByTag(
+          {
+            name: 'All',
+            id: '',
+          },
+          filteredCampaignsNFTs
+        );
       creatorsTagsName &&
-        setCreatorTags([{ name: 'All', id: '' }, ...creatorsTagsName]);
+        setCreatorTags([
+          {
+            name: 'All',
+            id: '',
+          },
+          ...creatorsTagsName,
+        ]);
     },
     [allNFTs, filterCollectionByTag, filterCreatorByTag]
   );
 
   const getCreatorsBasedOnTag = React.useCallback(
-    (
-      tag = {
+    (tag = 'All') => {
+      setTagCreator(tag);
+      setTagCollection({ name: 'All', id: '', creator: '' });
+      setTagCampaign({
         name: 'All',
         id: '',
-      }
-    ) => {
-      setTagCreator(tag);
-      setTagCollection({ name: 'All', id: '' });
-      setTagCampaign({ name: 'All', id: '' });
+      });
       setIsClearSDGs(true);
       setSDGsGoals([]);
       const filteredCreatorsNFTs =
@@ -467,21 +458,27 @@ const CreatorNFTs = () => {
 
       const collectionsTagsName =
         filteredCreatorsNFTs &&
-        filterCollectionByTag({ name: 'All', id: '' }, filteredCreatorsNFTs);
+        filterCollectionByTag(
+          { name: 'All', id: '', creator: '' },
+          filteredCreatorsNFTs
+        );
       collectionsTagsName &&
-        setCollectionTags([{ name: 'All', id: '' }, ...collectionsTagsName]);
+        setCollectionTags([
+          { name: 'All', id: '', creator: '' },
+          ...collectionsTagsName,
+        ]);
 
       const campaignsTagsName =
         filteredCreatorsNFTs &&
         filterCampaignByTag(
-          { name: 'All', id: '', beneficiary: '' },
+          {
+            name: 'All',
+            id: '',
+          },
           filteredCreatorsNFTs
         );
       campaignsTagsName &&
-        setCampaignTags([
-          { name: 'All', id: '', beneficiary: '' },
-          ...campaignsTagsName,
-        ]);
+        setCampaignTags([{ name: 'All', id: '' }, ...campaignsTagsName]);
     },
     [allNFTs, setFilteredNFTs, filterCollectionByTag, filterCampaignByTag]
   );
@@ -596,7 +593,7 @@ const CreatorNFTs = () => {
   const CaptionItem = (nft) => (
     <div className='text-white text-left port-box'>
       <h5>
-        {nft.title}&nbsp;&nbsp;{' '}
+        {nft.title} &nbsp;&nbsp;{' '}
         {nft.isCreatorOwner === false && nft.isForSale === 'false' && (
           <img src={soldIcon} width='40px' alt='soldIcon' />
         )}
@@ -688,7 +685,7 @@ const CreatorNFTs = () => {
           </>
         )}
         {nft.isForSale === 'true' && <IconImage nft={nft} />}
-        &nbsp;&nbsp; &nbsp;&nbsp;{' '}
+        &nbsp;&nbsp;{' '}
         {process.env.REACT_APP_SHOW_TWITTER !== 'false' && (
           <NFTTwitterShare item={nft} />
         )}
@@ -700,7 +697,7 @@ const CreatorNFTs = () => {
           <QRCode
             value={`${window.location.origin}/#/nft-detail?id=${nft.tokenId}`}
             size={90}
-          />{' '}
+          />
         </Link>
         &nbsp;
         <CopyText
@@ -708,7 +705,7 @@ const CreatorNFTs = () => {
         />
         &nbsp;
         <CopyCode
-          link={`<iframe src='${window.location.origin}/#/nft-card?id=${nft.tokenId}'></iframe>`}
+          link={`<iframe src="${window.location.origin}/#/nft-card?id=${nft.tokenId}"></iframe>`}
         />
       </p>
       <p>
@@ -755,24 +752,26 @@ const CreatorNFTs = () => {
             <div className='dlab-bnr-inr-entry'>
               <h1 className='text-white d-flex align-items-center'>
                 <span className='mr-1'>
-                  {' '}
-                  {collection ? collectionName : creatorName}
+                  {campaign ? campaignName : beneficiaryName}
                 </span>
-                {collection &&
-                  process.env.REACT_APP_SHOW_TWITTER != 'false' && (
-                    <CampaignOrCollectionTwitterShare
-                      campaign={''}
-                      beneficiary={
-                        filteredNFTs && filteredNFTs[0]?.beneficiaryName
-                      }
-                      creator={creatorName}
-                      collection={collectionName}
-                      url={`${window.location.origin}/#/CreatorNFTs?creator=${creator}&collection=${collection}`}
-                      beneficiaryPercentage={
-                        allNFTs && allNFTs[0]?.beneficiaryPercentage
-                      }
-                    />
-                  )}
+                {campaign && process.env.REACT_APP_SHOW_TWITTER != 'false' && (
+                  <CampaignOrCollectionTwitterShare
+                    campaign={campaignName}
+                    beneficiary={
+                      beneficiary
+                        ? beneficiaryName
+                        : allNFTs && allNFTs[0]?.creatorName
+                    }
+                    beneficiaryPercentage={
+                      allNFTs && allNFTs[0]?.beneficiaryPercentage
+                    }
+                    url={
+                      beneficiary
+                        ? `${window.location.origin}/#/BeneficiaryNFTs?beneficiary=${beneficiary}&campaign=${campaign}`
+                        : `${window.location.origin}/#/CreatorNFTs?creator=${creator}&collection=${campaign}`
+                    }
+                  />
+                )}
                 &nbsp;
                 <CopyText link={window.location.href} />
                 &nbsp;&nbsp;
@@ -781,20 +780,29 @@ const CreatorNFTs = () => {
                   alt='viewIcon'
                   width='40px'
                   onClick={() => {
-                    setSelectedViewProfile(creator);
+                    setSelectedViewProfile(beneficiary);
                     setShowViewModal(true);
                   }}
                   className='cursor-pointer'
                 />
               </h1>
+              <p className='text-white ben-desc'>
+                {!campaign && beneficiaryDescription
+                  ? beneficiaryDescription
+                  : campaign && campaignDescription
+                  ? campaignDescription
+                  : ''}
+              </p>
 
               <div className='breadcrumb-row'>
                 <ul className='list-inline'>
                   <li>
                     <Link to={'#'}>Home</Link>
                   </li>
-                  <li className='ml-1'>{creatorName}</li>
-                  {collection && <li className='ml-1'>{collectionName}</li>}
+                  <li className='ml-1'>
+                    {beneficiary ? beneficiaryName : creator}
+                  </li>
+                  {campaign && <li className='ml-1'>{campaignName}</li>}
                 </ul>
               </div>
             </div>
@@ -803,16 +811,16 @@ const CreatorNFTs = () => {
         {/*  Section-1 Start  */}
         <div className='section-full content-inner-1 portfolio text-uppercase'>
           {SDGsGoalsData.length > 0 && (
-            <div className="site-filters  left mx-5   m-b40 d-flex">
-            <span>
-               <VINftsTooltip title={"Click for more info"}>  
+           <div className="site-filters  left mx-5   m-b40 d-flex">
+           <span>
+             <VINftsTooltip title={"Click for more info"}>  
                     <a href='https://sdgs.un.org/goals' target='_blank'>
                         <img
                             src={unitedNation}
                             style={{ width: 40, pointerEvents: 'none', cursor: 'default' }}
                         />
                     </a>
-               </VINftsTooltip> SDGs Goals:<br/><span className='fz-10'>SDGs are filtered based on<br/> the SDGs chosen only</span></span>
+             </VINftsTooltip> SDGs Goals:<br/><span className='fz-10'>SDGs are filtered based on<br/> the SDGs chosen only</span></span>
                <SDGsMultiSelectImages data={SDGsGoalsData}   SDGsChanged={(selectedData) => {
                       handleSDGsChange(selectedData); 
                }} isClear={isClearSDGs}/>
@@ -829,69 +837,71 @@ const CreatorNFTs = () => {
                       key={index}
                       item={singleTag}
                       handleSetTag={getCreatorsBasedOnTag}
-                      tagActive={tagCreator === singleTag ? true : false}
+                      tagActive={
+                        tagCreator.name === singleTag.name ? true : false
+                      }
                       type='creator'
-                      creator={creator}
+                      beneficiary={beneficiary}
                     />
                   ))}
               </ul>
             </div>
           )}
-          {/* {(collection === undefined || collection === null) && ( */}
-          <div className='site-filters clearfix  left mx-5   m-b40'>
+          {(campaign === undefined || campaign === null) && (
+            <div className='site-filters clearfix  left mx-5   m-b40'>
+              <ul className='filters' data-toggle='buttons'>
+                Campaign:{' '}
+                {campaignTags &&
+                  campaignTags.length > 0 &&
+                  campaignTags.map((singleTag, index) => (
+                    <TagLi
+                      key={index}
+                      item={singleTag}
+                      handleSetTag={getCampaignsBasedOnTag}
+                      tagActive={
+                        tagCampaign.name === singleTag.name ? true : false
+                      }
+                      type='campaign'
+                      beneficiary={beneficiary}
+                    />
+                  ))}
+              </ul>
+            </div>
+          )}
+          <div className='site-filters clearfix left mx-5  m-b40'>
             <ul className='filters' data-toggle='buttons'>
-              Campaign:{' '}
-              {campaignTags &&
-                campaignTags.length &&
-                campaignTags.map((singleTag, index) => (
+              Collection:{' '}
+              {collectionTags &&
+                collectionTags.length &&
+                collectionTags.map((singleTag, index) => (
                   <TagLi
                     key={index}
                     item={singleTag}
-                    handleSetTag={getCampaignsBasedOnTag}
+                    handleSetTag={getCollectionsBasedOnTag}
                     tagActive={
-                      tagCampaign.name === singleTag.name ? true : false
+                      tagCollection.name === singleTag.name ? true : false
                     }
-                    type='campaign'
-                    creator={creator}
+                    type='collection'
+                    beneficiary={beneficiary}
                   />
                 ))}
             </ul>
           </div>
-          {/* )} */}
-          {(collection === undefined || collection === null) && (
-            <div className='site-filters clearfix left mx-5  m-b40'>
-              <ul className='filters' data-toggle='buttons'>
-                Collection:{' '}
-                {collectionTags &&
-                  collectionTags.length > 0 &&
-                  collectionTags.map((singleTag, index) => (
-                    <TagLi
-                      key={index}
-                      item={singleTag}
-                      handleSetTag={getCollectionsBasedOnTag}
-                      tagActive={tagCollection === singleTag ? true : false}
-                      type='collection'
-                      creator={creator}
-                    />
-                  ))}
-              </ul>
-            </div>
-          )}
           {openSlider && filteredNFTs && filteredNFTs.length && (
             <Lightbox
               mainSrc={filteredNFTs[photoIndex].image}
               nextSrc={
-                filteredNFTs[(photoIndex + 1) % filteredNFTs.length].image
+                filteredNFTs[(photoIndex + 1) % filteredNFTs?.length].image
               }
               prevSrc={
                 filteredNFTs[
-                  (photoIndex + filteredNFTs.length - 1) % filteredNFTs.length
+                  (photoIndex + filteredNFTs?.length - 1) % filteredNFTs?.length
                 ].image
               }
               onCloseRequest={() => setOpenSlider(false)}
               onMovePrevRequest={() =>
                 setPhotoIndex(
-                  (photoIndex + filteredNFTs.length - 1) % filteredNFTs.length
+                  (photoIndex + filteredNFTs?.length - 1) % filteredNFTs?.length
                 )
               }
               onMoveNextRequest={() =>
@@ -900,7 +910,7 @@ const CreatorNFTs = () => {
               imageCaption={sliderCaptions[photoIndex]}
             />
           )}
-          {allNFTs && filteredNFTs ? (
+          {filteredNFTs ? (
             filteredNFTs?.length ? (
               <SimpleReactLightbox>
                 <SRLWrapper options={options}>
@@ -916,7 +926,7 @@ const CreatorNFTs = () => {
                         updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
                         imagesLoadedOptions={imagesLoadedOptions} // default {}
                       >
-                        {filteredNFTs.map((item, index) => (
+                        {filteredNFTs?.map((item, index) => (
                           <li
                             className='web design card-container col-lg-3 col-md-6 col-xs-12 col-sm-6 p-a0'
                             key={index}
@@ -978,10 +988,11 @@ const CreatorNFTs = () => {
             setShowViewModal(false);
           }}
           data={selectedViewProfile}
-          formName={ProfileFormsEnum.CreatorProfile}
+          formName={ProfileFormsEnum.BeneficiaryProfile}
         />
       )}
     </Layout>
   );
 };
-export default CreatorNFTs;
+
+export default BeneficiaryNFTs;

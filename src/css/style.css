@@ -1424,10 +1424,12 @@ dl dd {
     width: 100%;
     height: 100%;
     opacity: 0;
+    border-radius: 12px;
 }
 .dlab-img-overlay1:hover:before,
 .dlab-box:hover .dlab-img-overlay1:before {
     opacity: 0.5;
+    border-radius: 12px;
 }
 /*effect 2*/
 .dlab-img-overlay2:before {
@@ -2515,7 +2517,7 @@ blockquote:before {
 
 .site-header {
     position: relative;
-    z-index: 99999;
+    z-index: 1000;
 }
 .site-header ul,
 .site-header ol {
@@ -9682,6 +9684,14 @@ ul[class*="list-"]{
 .modal-header .modal-title {
     color: #fff;
 }
+.modal-header button{
+    font-size: 40px;
+    color: #fff;
+    opacity: 1;
+}
+.modal-header button span{
+    color: #fff;
+}
 .modal .modal-body {
     padding: 25px;
 }
@@ -13065,24 +13075,35 @@ ol.commentlist li .star-rating {
 	background:transparent;
 	font-size: inherit;
 }
-.portfolio  .portfolio-fullscreen{
+  .portfolio-fullscreen{
 	font-size: 30px;
 	position: absolute;
 	right: 15px;
 	line-height: 30px;
 	color: #fff;
 	opacity: 0.5;
+    display: flex;
+    flex-direction: row-reverse;
 }
-.portfolio  .buy-icon{
-    right: 65px;
+  .portfolio-fullscreen i,  .portfolio-fullscreen img ,  .portfolio-fullscreen  li a i{
+	color: #fff;
+	opacity: 0.5;
+	font-size: 30px;
+
+}
+ .copy {
+    font-size: 30px;
+}
+/* .portfolio  .buy-icon{
+    right: 55px;
 }
 .portfolio  .sale-icon {
-    right: 110px;
+    right: 60px;
 }
 .portfolio  .twitter-icon{
-    right:120px;
-    opacity: 1;
-}
+    right:100px;
+    opacity: 1; 
+}*/
 .portfolio  .portfolio-fullscreen:hover{
 	opacity:1;	
 }

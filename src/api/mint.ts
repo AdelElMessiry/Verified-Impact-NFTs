@@ -60,6 +60,7 @@ export async function mint(
     mintOptions,
     payments: PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
   });
+  mintOptions['hasReceipt'] = !!mintOptions.hasReceipt;
 
   const mintDeploy = await cep47.mint(
     publicKeyCLValue,
