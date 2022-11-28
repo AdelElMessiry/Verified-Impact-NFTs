@@ -6,11 +6,16 @@ import {
   CasperServiceByJsonRPC,
   DeployUtil,
   Signer,
+  CLValueBuilder,
 } from 'casper-js-sdk';
 
 import { cep47 } from '../lib/cep47';
 import { getCampaignDetails, parseCampaign } from '../api/campaignInfo';
-import { CONNECTION, DEPLOYER_ACC } from '../constants/blockchain';
+import {
+  CONNECTION,
+  DEPLOYER_ACC,
+  TREASURY_WALLET,
+} from '../constants/blockchain';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 
 export function HexToCLPublicKey(publicKey: string) {
@@ -120,12 +125,18 @@ export const getAccountBalance: any = async (publicKey: string) => {
   const latestBlock: any = await client.getLatestBlockInfo();
   const root = await client.getStateRootHash(latestBlock.block.hash);
   const MOTE_RATE = 1000000000;
-  const balanceUref = await client.getAccountBalanceUrefByPublicKey(
-    root,
-    CLPublicKey.fromHex(publicKey)
-  );
+  let balanceUref;
+  try {
+    balanceUref = await client.getAccountBalanceUrefByPublicKey(
+      root,
+      CLPublicKey.fromHex(publicKey)
+    );
+  } catch (err) {
+    return 0;
+  }
 
   //account balance from the last block
+
   const balance: any = await client.getAccountBalance(
     latestBlock.block.header.state_root_hash,
     balanceUref
@@ -154,14 +165,14 @@ export const nativeTransfer = async (
   toAddress: any,
   amount: any,
   isSignerTransfer: boolean,
-  ifOwner?: boolean
+  ifHash?: boolean
 ) => {
   const MOTE_RATE = 1000000000;
   console.log(selectedAddress);
 
   const fromAccount = CLPublicKey.fromHex(selectedAddress);
-  const toAccount = !ifOwner ? CLPublicKey.fromHex(toAddress) : toAddress;
-  amount = amount * MOTE_RATE;
+  const toAccount = ifHash ? toAddress : CLPublicKey.fromHex(toAddress);
+  amount = parseInt(amount) * MOTE_RATE;
   const ttl = 1800000;
 
   const PAYMENT_AMOUNT = PAYMENT_AMOUNTS.NATIVE_TRANSFER_PAYMENT_AMOUNT;
@@ -185,84 +196,117 @@ export const nativeTransfer = async (
   let signedDeployJson;
 
   if (isSignerTransfer) {
-    try {
-      signedDeployJson = await Signer.sign(
-        deployJson,
-        selectedAddress,
-        toAddress
-      );
-    } catch (e) {
-      console.log(e);
+    signedDeployJson = await Signer.sign(
+      deployJson,
+      selectedAddress,
+      toAddress
+    );
 
-      return;
-    }
     signedDeployJson = DeployUtil.deployFromJson(signedDeployJson).unwrap();
   } else {
     const client: any = new CasperClient(CONNECTION.NODE_ADDRESS);
     const KEYS_USER = await mapOwnerKeys();
     signedDeployJson = client.signDeploy(deploy, KEYS_USER);
-    // const KEYS_USER: any = Keys.Ed25519.parseKeyFiles(
-    //   `${USER_KEY_PAIR_PATH}/NFT_Deploy_public_key.pem`,
-    //   `${USER_KEY_PAIR_PATH}/NFT_Deploy_secret_key.pem`
-    // );
   }
 
-  try {
-    const transferDeployHash = await signedDeployJson.send(
-      CONNECTION.NODE_ADDRESS
-    );
-    console.log('Transfer Deploy hash', transferDeployHash);
+  const transferDeployHash = await signedDeployJson.send(
+    CONNECTION.NODE_ADDRESS
+  );
 
-    return transferDeployHash;
-  } catch (e) {
-    console.log(e);
-
-    return;
-  }
+  return transferDeployHash;
 };
 
 export const transferFees = async (buyer: string, tokenId: string) => {
-  try {
-    const tokenDetails = await cep47.getMappedTokenMeta(tokenId);
-    let owner = await cep47.getOwnerOf(tokenId);
-    owner = await hashToURef(owner);
-    const deployer = DEPLOYER_ACC;
+  // try {
+  const tokenDetails = await cep47.getMappedTokenMeta(tokenId);
+  let owner = await cep47.getOwnerOf(tokenId);
+  owner = await hashToURef(owner);
+  const deployer = DEPLOYER_ACC;
+  const treasury = TREASURY_WALLET;
 
-    const { beneficiary, price, campaign } = tokenDetails;
-    const campaignDetails: any = await getCampaignDetails(campaign);
-    const parsedCampaigns = await parseCampaign(campaignDetails);
-    const beneficiaryPercentage = parseInt(parsedCampaigns.requested_royalty);
-    const creatorPercentage = 100 - beneficiaryPercentage;
+  let { beneficiary, price, campaign } = tokenDetails;
+  // beneficiary = await hashToURef(`account-hash-${beneficiary}`);
 
-    const portalFees = (price / 100) * 2;
-    const finalPrice = price - portalFees;
+  const campaignDetails: any = await getCampaignDetails(campaign);
+  const parsedCampaigns: any = parseCampaign(campaignDetails);
 
-    const beneficiaryAmount = (finalPrice / 100) * beneficiaryPercentage;
-    const ownerAmount = (finalPrice / 100) * creatorPercentage;
+  const beneficiaryPercentage = parseInt(parsedCampaigns.requested_royalty);
+  const mappedWalletAdd = (parsedCampaigns.wallet_address =
+    parsedCampaigns.wallet_address.includes('Account') ||
+    parsedCampaigns.wallet_address.includes('Key')
+      ? parsedCampaigns.wallet_address.includes('Account')
+        ? parsedCampaigns.wallet_address.slice(13).replace(')', '')
+        : parsedCampaigns.wallet_address.slice(10).replace(')', '')
+      : parsedCampaigns.wallet_address);
 
-    console.log(tokenDetails);
+  beneficiary = await hashToURef(`account-hash-${mappedWalletAdd}`);
+  console.log(beneficiary);
+  const creatorPercentage = 100 - beneficiaryPercentage;
 
-    const deployerTransfer = await nativeTransfer(buyer, deployer, price, true);
+  const portalFees = (price / 100) * 2;
+  const finalPrice = price - portalFees;
 
-    const beneficiaryTransfer = await nativeTransfer(
+  const beneficiaryAmount =
+    beneficiaryPercentage && (finalPrice / 100) * beneficiaryPercentage;
+  const ownerAmount =
+    creatorPercentage && (finalPrice / 100) * creatorPercentage;
+
+  await nativeTransfer(buyer, deployer, price, true);
+
+  const treasuryTransfer =
+    portalFees &&
+    (await nativeTransfer(deployer, treasury, portalFees, false, false));
+
+  const beneficiaryTransfer =
+    beneficiaryAmount &&
+    (await nativeTransfer(
       deployer,
       beneficiary,
       beneficiaryAmount,
-      false
-    );
-
-    const ownerTransfer = await nativeTransfer(
-      deployer,
-      owner,
-      ownerAmount,
       false,
       true
-    );
+    ));
 
-    return ownerTransfer;
-  } catch (e) {
-    console.log(e);
+  const ownerTransfer =
+    ownerAmount &&
+    (await nativeTransfer(deployer, owner, ownerAmount, false, true));
 
-    return;
-  }
+  return ownerAmount ? ownerTransfer : beneficiaryTransfer;
+  // } catch (e) {
+  //   console.log(e);
+  //   return e;
+  // }
 };
+
+export const getNFTImage = async (tokenMetaUri: string) => {
+  const baseIPFS = 'https://vinfts.mypinata.cloud/ipfs/';
+  if (tokenMetaUri.includes('/')) {
+    const mappedUrl = tokenMetaUri.includes('ipfs/')
+      ? tokenMetaUri.split('ipfs/').pop()
+      : tokenMetaUri;
+    return baseIPFS + mappedUrl;
+  }
+  const resp = await fetch(baseIPFS + tokenMetaUri);
+  const imgString = await resp.text();
+  return imgString;
+};
+
+export function isValidHttpUrl(string: string) {
+  let url;
+
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === 'http:' || url.protocol === 'https:';
+}
+
+export function isValidWallet(publicKey: string) {
+  try {
+    return CLPublicKey.fromHex(publicKey) instanceof CLPublicKey;
+  } catch (error) {
+    return false;
+  }
+}

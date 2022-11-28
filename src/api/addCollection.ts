@@ -5,15 +5,18 @@ import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import { signDeploy } from '../utils/signer';
 import { CONNECTION } from '../constants/blockchain';
 
-//test commit
 export async function addCollection(
   name: string,
   description: string,
   url: string,
   creator: string,
-  deploySender: CLPublicKey
+  deploySender: CLPublicKey,
+  mode?: string,
+  collectionId?: string
 ) {
   const collectionDeploy = await cep47.addCollection(
+    collectionId ? collectionId : '0',
+    mode ? mode : 'ADD',
     name,
     description,
     creator,
@@ -34,4 +37,25 @@ export async function addCollection(
   );
   console.log('Deploy hash', collectionDeployHash);
   return collectionDeployHash;
+}
+
+export async function updateCollection(
+  collection_id: string,
+  name: string,
+  description: string,
+  url: string,
+  creator: string,
+  deploySender: CLPublicKey
+) {
+  const updateCollectionDeployHash = await addCollection(
+    name,
+    description,
+    url,
+    creator,
+    deploySender,
+    'UPDATE',
+    collection_id
+  );
+
+  return updateCollectionDeployHash;
 }

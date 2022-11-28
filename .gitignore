@@ -49,3 +49,9 @@ Thumbs.db
 *.mov
 *.wmv
 
+# Private env
+backend
+.env
+cors-proxy-server
+deploy-scripts
+

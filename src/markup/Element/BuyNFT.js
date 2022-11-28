@@ -1,56 +1,48 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import { CLPublicKey } from 'casper-js-sdk';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Spinner } from 'react-bootstrap';
+import { toast as VIToast } from 'react-toastify';
 
-import { transferFees } from '../../utils/contract-utils';
+import { transferFees, isValidHttpUrl } from '../../utils/contract-utils';
 import { transfer, purchaseNFT } from '../../api/transfer';
-import { approve } from '../../api/approve';
 import { getDeployDetails } from '../../api/universal';
 import { useAuth } from '../../contexts/AuthContext';
-import { toast as VIToast } from 'react-toastify';
-/**
- * @module BuyNFTModal
- */
-/** 
- * confirmation module for buy and transfer nfts
- * @property {boolean} show - show module render status
- * @property {function} handleCloseParent - callback function to parent on close modal
- * @property {object} data - object includes nft information
- * @property {boolean} isTransfer - detect nft is transfer or buy status
- */
-
+import { sendDiscordMessage } from '../../utils/discordEvents';
+import { SendTweetWithImage } from '../../utils/VINFTsTweets';
+import ReactGA from 'react-ga';
+import {
+  useNFTDispatch,
+  useNFTState,
+  refreshNFTs,
+  updateNFTs,
+} from '../../contexts/NFTContext';
+const InitialInputs = () => ({
+  inputs: {
+    address: '',
+  },
+});
 
 //buying NFT Modal
-const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
-  const IntialInputs = () => ({
-    inputs: {
-      address: '',
-    },
-  });
-
+const BuyNFTModal = ({
+  show,
+  handleCloseParent,
+  data,
+  isTransfer = false,
+  handleTransactionBuySuccess = () => {},
+}) => {
   const { entityInfo } = useAuth();
-  const [showModal, setShowModal] = useState(show);
-  const [state, setState] = useState(IntialInputs());
-  if (!data) return <></>;
-
+  const [showModal, setShowModal] = React.useState(show);
+  const [state, setState] = React.useState(InitialInputs());
+  const [isBuyClicked, setIsBuyClicked] = React.useState(false);
+  const { ...stateList } = useNFTState();
+  const nftDispatch = useNFTDispatch();
   //buy NFT Function
   const buyNFT = async () => {
     if (entityInfo.publicKey) {
+      setIsBuyClicked(true);
       const nftID = data.tokenId.toString();
 
-      // const approveTransfer = await approve(
-      //   CLPublicKey.fromHex(entityInfo.publicKey),
-      //   nftID
-      // );
-
-      // const deployApproveResult = await getDeployDetails(approveTransfer);
-      // console.log(
-      //   '...... Token approve transferred successfully',
-      //   deployApproveResult
-      // );
-      // VIToast.success('Token approve transferred successfully');
-      console.log(entityInfo.publicKey);
       try {
         const transferFeesHash = await transferFees(
           entityInfo.publicKey,
@@ -73,38 +65,94 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
           '...... Token fees transferred successfully',
           deployTransferResult
         );
-
-        VIToast.success('Transaction ended successfully');
+        if (deployTransferResult) {
+          ReactGA.event({
+            category: 'Success',
+            action: 'Buy nft',
+            label: `${entityInfo.publicKey}: bought a new nft id: ${nftID}`,
+          });
+          const changedNFT = Object.assign({}, data, {
+            isForSale: 'false',
+            isCreatorOwner: false,
+          });
+          await updateNFTs(nftDispatch, stateList, changedNFT);
+          handleTransactionBuySuccess(changedNFT);
+          VIToast.success('Transaction ended successfully');
+          await refreshNFTs(nftDispatch, stateList);
+          setIsBuyClicked(false);
+          handleClose();
+          await sendDiscordMessage(
+            process.env.REACT_APP_NFT_WEBHOOK_ID,
+            process.env.REACT_APP_NFT_TOKEN,
+            '',
+            '',
+            `Exciting news! [${data.title}] #NFT of [${data.creatorName}] creator has been sold as a donation for [${data.campaignName}] campaign. [Click here  to buy #verified-impact-nfts and support more causes.] (${window.location.origin}/#/) @casper_network @devxdao `
+          );
+          let image = encodeURI(data.image);
+          if (isValidHttpUrl(data.pureImageKey)) {
+            await SendTweetWithImage(
+              image,
+              `Exciting news! ${data.title} #NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao `
+            );
+          } else {
+            await SendTweetWithImage(
+              image,
+              `Exciting news! ${data.title} #NFT of ${data.creatorName} creator has been sold as a donation for ${data.campaignName} campaign. Click here ${window.location.origin}/#/ to buy #verified_impact_nfts and support more causes.  @vinfts @casper_network @devxdao`
+            );
+          }
+        } else {
+          setIsBuyClicked(false);
+        }
       } catch (err) {
-        console.log('Transfer Fees Err ' + err);
-        VIToast.error('Error happened please try again later');
+        if (err.message.includes('User Cancelled')) {
+          VIToast.error('User Cancelled Signing');
+          ReactGA.event({
+            category: 'User Cancelation',
+            action: 'Buy nft',
+            label: `${entityInfo.publicKey}: Cancelled Signing`,
+          });
+        } else {
+          VIToast.error('Error happened please try again later');
+          ReactGA.event({
+            category: 'Error',
+            action: 'Buy nft',
+            label: `${entityInfo.publicKey}: ${err.message}`,
+          });
+        }
+        setIsBuyClicked(false);
+        handleClose();
       }
-
-      // try {
-
-      // } catch (err) {
-      //   console.log('Transfer Err ' + err);
-      // }
     }
   };
-
   //transfer nft Function
   const transferNFT = async () => {
     const nftID = data.tokenId;
+    setIsBuyClicked(true);
     try {
-      const transferDeployHash = await transfer({
-        signer: CLPublicKey.fromHex(entityInfo.publicKey),
-        recipient: CLPublicKey.fromHex(state.inputs.address),
-        nftId: nftID,
-      });
-      if (transferDeployHash) {
+      const transferDeployHash = await transfer(
+        CLPublicKey.fromHex(entityInfo.publicKey),
+        CLPublicKey.fromHex(state.inputs.address),
+        nftID
+      );
+      const deployTransferResult = await getDeployDetails(transferDeployHash);
+      if (deployTransferResult) {
+        const changedNFT = Object.assign({}, data, {
+          isForSale: 'false',
+          isCreatorOwner: false,
+          tokenId: parseInt(data.tokenId),
+        });
+        await updateNFTs(nftDispatch, stateList, changedNFT);
+        handleTransactionBuySuccess(changedNFT);
         VIToast.success('NFT transfered successfully');
+        await refreshNFTs(nftDispatch, stateList);
+        handleClose();
       } else {
-        VIToast.error('Error happend please try again later');
+        VIToast.error('Error happened please try again later');
       }
     } catch (err) {
       console.log('Transfer Err ' + err);
-      VIToast.error('Error happend please try again later');
+      handleClose();
+      VIToast.error('Error happened please try again later');
     }
   };
 
@@ -126,7 +174,9 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
     });
   };
 
-  return (
+  return !data ? (
+    <></>
+  ) : (
     <Modal
       show={showModal}
       onHide={handleClose}
@@ -135,7 +185,9 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
       backdrop='static'
     >
       <Modal.Header closeButton>
-        <Modal.Title>Buy {data.title} NFT</Modal.Title>
+        <Modal.Title>
+          {isTransfer ? 'Transfer' : 'Buy'} {data.title} NFT
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div className='reserve-form'>
@@ -172,8 +224,15 @@ const BuyNFTModal = ({ show, handleCloseParent, data, isTransfer = false }) => {
           onClick={() => {
             isTransfer ? transferNFT() : buyNFT();
           }}
+          disabled={isBuyClicked}
         >
-          Buy
+          {isBuyClicked ? (
+            <Spinner animation='border' variant='light' />
+          ) : isTransfer ? (
+            'Transfer'
+          ) : (
+            'Buy'
+          )}
         </button>
       </Modal.Footer>
     </Modal>

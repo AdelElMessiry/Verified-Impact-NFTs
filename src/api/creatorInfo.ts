@@ -1,15 +1,15 @@
+import axios from 'axios';
+
 import { cep47 } from '../lib/cep47';
 import { getCollectionsList } from './collectionInfo';
 
 export async function getCreatorDetails(creatorId: string) {
-  console.log(creatorId);
-
   const creatorDetails = await cep47.getCreator(creatorId);
-  console.log(`NFT ${creatorId} creator: `, creatorDetails);
+  // console.log(`Creator ${creatorId} : `, creatorDetails);
   return creatorDetails;
 }
 
-export async function parseCreator(maybeValue: any) {
+export function parseCreator(maybeValue: any) {
   const jsMap: any = new Map();
 
   for (const [innerKey, value] of maybeValue) {
@@ -27,8 +27,15 @@ export async function getCreatorsList() {
   for (const id of [...(Array(parseInt(creatorCount)).keys() as any)]) {
     await getCreatorDetails((id + 1).toString())
       .then(async (rawCreator: any) => {
-        console.log(rawCreator);
-        const parsedCreator = await parseCreator(rawCreator);
+        const parsedCreator = parseCreator(rawCreator);
+        parsedCreator.address =
+          parsedCreator.address.includes('Account') ||
+          parsedCreator.address.includes('Key')
+            ? parsedCreator.address.includes('Account')
+              ? parsedCreator.address.slice(13).replace(')', '')
+              : parsedCreator.address.slice(10).replace(')', '')
+            : parsedCreator.address;
+
         creatorsList.push(parsedCreator);
       })
       .catch((err) => {
@@ -44,26 +51,95 @@ export async function getCreatorsCollectionsList() {
   const collectionsList = await getCollectionsList();
   const mappedCreatorsList: any = [];
 
-  creatorsList.find((creator: any, index: any) =>
-    collectionsList.length
-      ? collectionsList.map((collection: any) => {
-          !mappedCreatorsList.length &&
-            mappedCreatorsList.push({ ...creator, collections: [] });
-          return (
-            creator.address === collection.creator &&
-            mappedCreatorsList.find((newCreator: any) => {
-              return creator.id === newCreator.id
-                ? mappedCreatorsList[index].collections.push(collection)
-                : mappedCreatorsList.push({
-                    ...creator,
-                    collections: [collection],
-                  });
-            })
-          );
+  const pluckedCollections = collectionsList
+    .map(({ creator }: any) => creator)
+    .filter(
+      (creator: any, index: any, creators: any) =>
+        creators.indexOf(creator) === index
+    );
+
+  creatorsList.forEach((creator: any) =>
+    pluckedCollections.includes(creator.address)
+      ? mappedCreatorsList.push({
+          ...creator,
+          collections: collectionsList.filter(
+            (collection: any, index: any, collections: any) =>
+              collection.creator === creator.address
+            // &&
+            // index ===
+            //   collections.findIndex(
+            //     (idx: any) => idx.name === collection.name
+            //   )
+          ),
         })
-      : mappedCreatorsList.push({ ...creator, collections: [] })
+      : mappedCreatorsList.push({
+          ...creator,
+          collections: [],
+        })
   );
-  console.log(mappedCreatorsList);
 
   return mappedCreatorsList;
+}
+
+export async function _getCreatorsCollectionsList(
+  creatorsList: any,
+  collectionsList: any
+) {
+  // const creatorsList = await getCreatorsList();
+  // const collectionsList = await getCollectionsList();
+  const mappedCreatorsList: any = [];
+
+  const pluckedCollections = collectionsList
+    .map(({ creator }: any) => creator)
+    .filter(
+      (creator: any, index: any, creators: any) =>
+        creators.indexOf(creator) === index
+    );
+
+  creatorsList.forEach((creator: any) =>
+    pluckedCollections.includes(creator.address)
+      ? mappedCreatorsList.push({
+          ...creator,
+          collections: collectionsList.filter(
+            (collection: any, index: any, collections: any) =>
+              collection.creator === creator.address &&
+              index ===
+                collections.findIndex(
+                  (idx: any) => idx.name === collection.name
+                )
+          ),
+        })
+      : mappedCreatorsList.push({
+          ...creator,
+          collections: [],
+        })
+  );
+
+  return mappedCreatorsList;
+}
+
+export async function getCachedCreatorsList() {
+  const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
+  const apiName = 'creators';
+  const creators: any = await axios(
+    `${REACT_APP_NFT_API_BASE_URL}/${REACT_APP_NFT_API_ENV}/${apiName}`
+  );
+
+  return creators?.data.list;
+}
+
+export async function updateCachedCreator(creator: any, creators: any) {
+  const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
+  const apiName = 'updateCreator';
+
+  await axios.patch(
+    `${REACT_APP_NFT_API_BASE_URL}/${REACT_APP_NFT_API_ENV}/${apiName}`,
+    { creator }
+  );
+
+  creators[
+    creators.findIndex(({ address }: any) => address === creator.address)
+  ] = creator;
+
+  return creators;
 }
