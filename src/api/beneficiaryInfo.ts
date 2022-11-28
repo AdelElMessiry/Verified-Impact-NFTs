@@ -1,13 +1,27 @@
+import axios from 'axios';
 import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from './campaignInfo';
 
-export async function getBeneficiaryDetails(beneficiaryId: string) {
-  const beneficiaryDetails = await cep47.getBeneficiary(beneficiaryId);
+export async function getBeneficiaryDetails(
+  beneficiaryId: string,
+  isHash: boolean
+) {
+  const beneficiaryDetails = await cep47.getBeneficiary(beneficiaryId, false);
   // console.log(`NFT ${beneficiaryId} beneficiary: `, beneficiaryDetails);
   return beneficiaryDetails;
 }
 
-export async function parseBeneficiary(maybeValue: any) {
+export async function getBeneficiary(beneficiaryId: string, isHash: boolean) {
+  const beneficiaryDetails = await cep47.getBeneficiary(beneficiaryId, isHash);
+  return beneficiaryDetails;
+}
+
+export async function beneficiariesList() {
+  const beneficiariesList = await cep47.getBeneficiariesList();
+  return beneficiariesList;
+}
+
+export function parseBeneficiary(maybeValue: any) {
   const jsMap: any = new Map();
 
   for (const [innerKey, value] of maybeValue) {
@@ -19,25 +33,33 @@ export async function parseBeneficiary(maybeValue: any) {
 }
 
 export async function getBeneficiariesList() {
-  const beneficiaryCount: any = await cep47.totalBeneficiaries();
+  const list: any = await beneficiariesList();
 
-  const beneficiariesList: any = [];
-  for (const id of [...(Array(parseInt(beneficiaryCount)).keys() as any)]) {
+  const _beneficiariesList: any = [];
+  // for (const id of [...(Array(parseInt(beneficiaryCount)).keys() as any)]) {
+  for (const address of list) {
     // console.log((id + 1).toString());
 
-    await getBeneficiaryDetails((id + 1).toString())
+    await getBeneficiary(address.toString(), true)
       .then(async (rawBeneficiary: any) => {
         // console.log(rawBeneficiary);
-        const parsedBeneficiary = await parseBeneficiary(rawBeneficiary);
-        beneficiariesList.push(parsedBeneficiary);
+        const parsedBeneficiary = parseBeneficiary(rawBeneficiary);
+        parsedBeneficiary.address =
+          parsedBeneficiary.address.includes('Account') ||
+          parsedBeneficiary.address.includes('Key')
+            ? parsedBeneficiary.address.includes('Account')
+              ? parsedBeneficiary.address.slice(13).replace(')', '')
+              : parsedBeneficiary.address.slice(10).replace(')', '')
+            : parsedBeneficiary.address;
+        //parsedBeneficiary["sdgs"]=["19"];
+        _beneficiariesList.push(parsedBeneficiary);
       })
       .catch((err) => {
         console.log(err);
       });
   }
-  console.log(beneficiariesList);
 
-  return beneficiariesList;
+  return _beneficiariesList;
 }
 
 export async function getBeneficiariesCampaignsList() {
@@ -45,36 +67,119 @@ export async function getBeneficiariesCampaignsList() {
   const campaignsList = await getCampaignsList();
   const mappedBeneficiariesList: any = [];
 
-  beneficiariesList.find((beneficiary: any, index: any) =>
-    campaignsList.length
-      ? campaignsList.map((campaign: any) => {
-          !mappedBeneficiariesList.length &&
-            mappedBeneficiariesList.push({ ...beneficiary, campaigns: [] });
-          return (
-            beneficiary.address === campaign.wallet_address &&
-            mappedBeneficiariesList.find((newBeneficiary: any) => {
-              return beneficiary.id === newBeneficiary.id
-                ? mappedBeneficiariesList[index].campaigns.push(campaign)
-                : mappedBeneficiariesList.push({
-                    ...beneficiary,
-                    campaigns: [campaign],
-                  });
-            })
-          );
+  const pluckedCampaigns = campaignsList
+    .map(({ beneficiary_address }: any) => beneficiary_address)
+    .filter(
+      (creator: any, index: any, creators: any) =>
+        creators.indexOf(creator) === index
+    );
+
+  beneficiariesList.forEach((beneficiary: any) =>
+    pluckedCampaigns.includes(beneficiary.address)
+      ? mappedBeneficiariesList.push({
+          ...beneficiary,
+          campaigns: campaignsList.filter(
+            (campaign: any, index: any, campaigns: any) =>
+              campaign.beneficiary_address === beneficiary.address
+            // &&
+            // index ===
+            //   collections.findIndex(
+            //     (idx: any) => idx.name === collection.name
+            //   )
+          ),
         })
-      : mappedBeneficiariesList.push({ ...beneficiary, campaigns: [] })
+      : mappedBeneficiariesList.push({
+          ...beneficiary,
+          campaigns: [],
+        })
   );
-  console.log(mappedBeneficiariesList);
+
+  // console.log(mappedBeneficiariesList);
 
   return mappedBeneficiariesList;
 }
 
-// mappedBeneficiariesList.reduce((a: any, b: any) => {
-//   const found = a.find((e: any) => e.id == b.id);
-//   return (
-//     found
-//       ? mappedBeneficiariesList.campaigns.push(b)
-//       : a.push({ ...newBeneficiary, campaigns: [campaign] }),
-//     a
-//   );
-// }, [])
+export async function _getBeneficiariesCampaignsList(
+  beneficiariesList: any,
+  campaignsList: any
+) {
+  const mappedBeneficiariesList: any = [];
+
+  beneficiariesList = beneficiariesList.filter(
+    (beneficiary: any, index: any, beneficiaries: any) =>
+      index ===
+      beneficiaries.findIndex(
+        (idx: any) => idx.username === beneficiary.username
+      )
+  );
+
+  campaignsList = campaignsList.filter(
+    (campaign: any, index: any, campaigns: any) =>
+      index === campaigns.findIndex((idx: any) => idx.name === campaign.name)
+  );
+
+  const pluckedCampaigns = campaignsList
+    .map(({ beneficiary_address }: any) => beneficiary_address)
+    .filter(
+      (creator: any, index: any, creators: any) =>
+        creators.indexOf(creator) === index
+    );
+
+  beneficiariesList.forEach((beneficiary: any) =>
+    pluckedCampaigns.includes(beneficiary.address)
+      ? mappedBeneficiariesList.push({
+          ...beneficiary,
+          campaigns: campaignsList.filter(
+            (campaign: any, index: any, campaigns: any) =>
+              campaign.beneficiary_address.includes('Key')
+                ? campaign.beneficiary_address.slice(10).replace(')', '') ===
+                  beneficiary.address
+                : campaign.beneficiary_address === beneficiary.address
+            // &&
+            // index ===
+            //   collections.findIndex(
+            //     (idx: any) => idx.name === collection.name
+            //   )
+          ),
+        })
+      : mappedBeneficiariesList.push({
+          ...beneficiary,
+          campaigns: [],
+        })
+  );
+
+  // console.log(mappedBeneficiariesList);
+
+  return mappedBeneficiariesList;
+}
+
+export async function getCachedBeneficiariesList() {
+  const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
+  const apiName = 'beneficiaries';
+  const beneficiaries: any = await axios(
+    `${REACT_APP_NFT_API_BASE_URL}/${REACT_APP_NFT_API_ENV}/${apiName}`
+  );
+
+  return beneficiaries?.data.list;
+}
+
+export async function updateCachedBeneficiary(
+  beneficiary: any,
+  beneficiaries: any
+) {
+  const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
+  const apiName = 'updateBeneficiary';
+
+  await axios.patch(
+    `${REACT_APP_NFT_API_BASE_URL}/${REACT_APP_NFT_API_ENV}/${apiName}`,
+    { beneficiary }
+  );
+
+  beneficiaries[
+    beneficiaries.findIndex(
+      ({ address }: any) => address === beneficiary.address
+    )
+  ] = beneficiary;
+
+  return beneficiaries;
+}
