@@ -249,7 +249,7 @@
 	display: inline-block;
 }
 .choseus-tabs .nav li a.active{
-	color:#fff;
+	color:#6cc000;
 }
 .chosesus-content .list-checked li:before{
 	content:"\e64d";
@@ -525,7 +525,7 @@ footer .widget_services .list-2 li:before{
 .site-button, 
 .site-button-secondry{
 	position: relative;
-    z-index: 1;
+    /* z-index: 1; */
 	overflow:hidden;
 	vertical-align: middle;
 }

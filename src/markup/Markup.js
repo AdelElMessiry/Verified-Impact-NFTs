@@ -1,33 +1,48 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { AuthProvider } from '../contexts/AuthContext';
-import Index4 from './Pages/Index4';
-import NFTDetail from './Pages/NFTDetail';
-
-import ScrollToTop from './Element/ScrollToTop';
 import { HashRouter } from 'react-router-dom';
-import BenefeiciaryNFTs from './Pages/NFTs/BenefeiciaryNFTs';
+
+import { AuthProvider } from '../contexts/AuthContext';
+import { NFTProvider } from '../contexts/NFTContext';
+
+import Dashboard from './Pages/Dashboard';
+import NFTDetail from './Pages/NFTDetail';
+import BeneficiaryNFTs from './Pages/NFTs/BeneficiaryNFTs';
 import CreatorNFTs from './Pages/NFTs/CreatorNFTs';
 import MyNFTs from './Pages/NFTs/MyNFTs';
 import AddBeneficiary from './Pages/Admin/AddBeneficiary';
 import AddCampaign from './Pages/Admin/AddCampaign';
-import MyCreations from './Pages/NFTs/MyCreations';
 import MintNFT from './Pages/Admin/MintNFT';
-import Header1 from './Layout/Header1';
+import Profile from './Pages/Profile';
+import ManageBeneficiaries from './Pages/Admin/ManageBeneficiaries';
 
-const Markup =()=> {
-    return (
-      <AuthProvider>
+import Header from './Layout/Header';
+import ScrollToTop from './Element/ScrollToTop';
+import MyCollections from './Pages/MyCollections';
+import AddCollection from './Pages/Admin/AddEditCollection';
+import SignUpAsBeneficiary from './Pages/SignUpAsBeneficiary';
+import TermsOfServices from './Pages/TermsAndConditions';
+import NFTCardURL from './Element/NFTCardURL';
+import Privacy from './Pages/Privacy';
+import RequestForm from './Pages/RequestForm';
+import SDGGoalNFTs from './Pages/NFTs/SDGGoalNFTs';
+import BeneficiariesMarket from './Pages/BeneficiariesMarket';
+import CreatorsMarketPlace from './Pages/CreatorsMarketPlace';
+
+const Markup = () => {
+  return (
+    <AuthProvider>
+      <NFTProvider>
         <HashRouter>
           <div className='page-wraper'>
-            <Header1/>
+            {!window.location.hash.includes('nft-card') && <Header />}
             <Switch>
-              <Route path='/' exact component={Index4} />
+              <Route path='/' exact component={Dashboard} />
               <Route path='/nft-detail' exact component={NFTDetail} />
               <Route
-                path='/BenefeiciaryNFTs'
+                path='/BeneficiaryNFTs'
                 exact
-                component={BenefeiciaryNFTs}
+                component={BeneficiaryNFTs}
               />
               <Route path='/CreatorNFTs' exact component={CreatorNFTs} />
               <Route path='/my-NFTs' exact component={MyNFTs} />
@@ -37,16 +52,50 @@ const Markup =()=> {
                 component={AddBeneficiary}
               />
               <Route path='/admin_campaign' exact component={AddCampaign} />
-              <Route path='/my-creations' exact component={MyCreations} />
               <Route path='/mint-nft' exact component={MintNFT} />
+              <Route path='/profile' exact component={Profile} />
+              <Route path='/my-collections' exact component={MyCollections} />
+              <Route path='/add-collection' exact component={AddCollection} />
+              <Route
+                path='/manage-beneficiaries'
+                exact
+                component={ManageBeneficiaries}
+              />
+              <Route
+                path='/signup-as-beneficiary'
+                exact
+                component={SignUpAsBeneficiary}
+              />
+              <Route
+                path='/terms-of-services'
+                exact
+                component={TermsOfServices}
+              />
+              <Route path='/nft-card' exact component={NFTCardURL} />
+              <Route path='/privacy' exact component={Privacy} />
+              <Route path='/request-form' exact component={RequestForm} />
+              <Route
+                path='/SDGGoalNFTs'
+                exact
+                component={SDGGoalNFTs}
+              />
+              <Route
+                path='/BeneficiariesMarket'
+                exact
+                component={BeneficiariesMarket}
+              />
+              <Route
+                path='/CreatorsMarketPlace'
+                exact
+                component={CreatorsMarketPlace}
+              />
             </Switch>
           </div>
           <ScrollToTop />
-          {/* <ThemeButton /> */}
         </HashRouter>
-      </AuthProvider>
-    );
-  
-}
+      </NFTProvider>
+    </AuthProvider>
+  );
+};
 
 export default Markup;

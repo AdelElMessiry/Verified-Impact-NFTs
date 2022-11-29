@@ -1,4 +1,5 @@
 export const proxyServer = process.env.REACT_APP_PROXY_SERVER || '';
+export const NFT_STORAGE_KEY = process.env.REACT_APP_NFT_STORAGE_KEY;
 export const NODE_RPC_ADDRESS =
   process.env.REACT_APP_NODE_RPC_ADDRESS ||
   'https://node-clarity-testnet.make.services/rpc';
@@ -8,8 +9,12 @@ export const USER_KEY_PAIR_PATH =
   'D:/Ibrahim/github-projects/New folder/casperNFT_marketplace/deploy-scripts/keys/';
 
 export const DEPLOYER_ACC =
-  process.env.REACT_APP_DEPLOYER_ACC ||
-  '01e23d200eb0f3c8a3dacc8453644e6fcf4462585a68234ebb1c3d6cc8971148c2';
+  process.env.REACT_APP_CASPER_PUBLIC_KEY ||
+  '01fb6e663984ffaca91dbf3725e8d688659c66d5bf45d0cb2705cba04908d3b6b9';
+
+export const TREASURY_WALLET =
+  process.env.REACT_APP_CASPER_TREASURY ||
+  process.env.REACT_APP_CASPER_PUBLIC_KEY;
 
 export const CONNECTION = {
   NODE_ADDRESS: proxyServer + NODE_RPC_ADDRESS,
@@ -33,3 +38,12 @@ export const KEYS = {
     process.env.REACT_APP_DEPLOYER_ACC_HASH ||
     '01e23d200eb0f3c8a3dacc8453644e6fcf4462585a68234ebb1c3d6cc8971148c2',
 };
+
+export const NFT_CONTRACT_HASH = process.env.REACT_APP_CASPER_NFT_CONTRACT_HASH;
+export const NFT_PACKAGE_HASH =
+  process.env.REACT_APP_CASPER_NFT_CONTRACT_PACKAGE_HASH;
+
+export const PROFILE_CONTRACT_HASH =
+  process.env.REACT_APP_CASPER_PROFILE_CONTRACT_HASH;
+export const PROFILE_PACKAGE_HASH =
+  process.env.REACT_APP_CASPER_PROFILE_CONTRACT_PACKAGE_HASH;

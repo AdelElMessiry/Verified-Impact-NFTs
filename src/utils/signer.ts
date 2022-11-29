@@ -12,7 +12,7 @@ export const signDeployHex = async (deploy: Deploy, publicKeyHex: string) => {
     deployJSON,
     publicKeyHex,
     publicKeyHex
-  );
+  ).catch((err) => console.log(err));
   const signedDeploy = DeployUtil.deployFromJson(signedDeployJSON).unwrap();
 
   return signedDeploy;

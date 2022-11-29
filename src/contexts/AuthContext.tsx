@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { Signer } from 'casper-js-sdk';
+import { toast as VIToast } from 'react-toastify';
 
 import { getAccountBalance } from '../utils/contract-utils';
 interface IEntityInfo {
@@ -12,6 +13,7 @@ interface IAuthContextValue {
   login: () => void;
   logout: () => void;
   refreshAuth: () => void;
+  refreshBalance: () => void;
 }
 
 async function getActivePublicKey(): Promise<string> {
@@ -28,6 +30,16 @@ async function getConnectionStatus(): Promise<null | string> {
   if (!window.casperlabsHelper) {
     // alert("Please install Casper signer Signer extension")
     console.log('Casper signer not available :(');
+    const displayMessageWithLink = () => (
+      
+      <div>
+        Install the Casper signer extension from the Google extension store
+        {" "}
+        <a href="https://chrome.google.com/webstore/detail/casper-signer/djhndpllfiibmcdbnmaaahkhchcoijce" target="_blank" >Click Here</a>
+      </div>
+    );
+    VIToast.error(displayMessageWithLink, {
+      position: "top-center"})
     return null;
   }
 
@@ -35,7 +47,7 @@ async function getConnectionStatus(): Promise<null | string> {
   if (isConnected) {
     let pk = await getActivePublicKey();
     if (pk) {
-      console.log('connected to signer successfuly');
+      console.log('connected to signer successfully');
       return pk;
     }
     console.log(`connected to signer, but it is locked`);
@@ -50,6 +62,7 @@ const AuthContext = createContext<IAuthContextValue>({
   login: () => {},
   logout: () => {},
   refreshAuth: () => {},
+  refreshBalance: () => {},
 });
 
 const AuthProvider = (props: any) => {
@@ -67,6 +80,15 @@ const AuthProvider = (props: any) => {
   function refreshEntityInfo() {
     if (loggedIn) setEntityInfo({ publicKey: entityInfo.publicKey });
     else setEntityInfo({ publicKey: null });
+  }
+
+  async function refreshEntityBalance() {
+    if (loggedIn) {
+      const currentWalletBalance = await getAccountBalance(
+        entityInfo.publicKey
+      );
+      setBalance(currentWalletBalance.toString());
+    }
   }
 
   useEffect(() => {
@@ -125,6 +147,7 @@ const AuthProvider = (props: any) => {
     login,
     logout,
     refreshAuth: refreshEntityInfo,
+    refreshBalance: refreshEntityBalance,
   };
 
   useEffect(() => {
@@ -134,7 +157,10 @@ const AuthProvider = (props: any) => {
       '\n\n\n'
     );
     (async () => {
-      if (entityInfo.publicKey && balance == null) {
+      if (
+        entityInfo.publicKey
+        // && balance == null
+      ) {
         const currentWalletBalance = await getAccountBalance(
           entityInfo.publicKey
         );
