@@ -8,7 +8,7 @@ export async function transfer(
   recipient: CLPublicKey,
   nftId: string
 ) {
-  const transferDeploy = await cep47.transfer(recipient, [nftId], signer);
+  const transferDeploy = await cep47.transfer(recipient, nftId, signer);
   console.log('Transfer deploy:', transferDeploy);
 
   const signedTransferDeploy = await signDeploy(transferDeploy, signer);

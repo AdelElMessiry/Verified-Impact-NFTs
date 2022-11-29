@@ -1,24 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { getBeneficiariesCampaignsList } from '../../api/beneficiaryInfo';
-import { getCreatorsCollectionsList } from '../../api/creatorInfo';
+import { _getBeneficiariesCampaignsList } from '../../api/beneficiaryInfo';
+import { _getCreatorsCollectionsList } from '../../api/creatorInfo';
+// import { profileClient } from '../../api/profileInfo';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNFTState } from '../../contexts/NFTContext';
 
 const HeaderMenu = () => {
   const { isLoggedIn } = useAuth();
+  const { beneficiaries, campaigns, collections, profileCreators } = useNFTState();
 
-  const [beneficiaries, setBeneficiaries] = useState();
-  const [creators, setCreators] = useState();
-  useEffect(() => {
-    (async () => {
-      let beneficiaryList =
-        !beneficiaries && (await getBeneficiariesCampaignsList());
-      !beneficiaries && setBeneficiaries(beneficiaryList);
-      let creatorsList = !creators && (await getCreatorsCollectionsList());
-      !creators && setCreators(creatorsList);
-    })();
-  }, [creators, beneficiaries]);
+  const [creatorsList, setCreatorsList] = React.useState();
+  const [beneficiariesList, setBeneficiariesList] = React.useState();
+
+  const loadSubMenu = React.useCallback(async () => {
+    const beneficiaryList =
+      beneficiaries &&
+      campaigns &&
+      (await _getBeneficiariesCampaignsList(
+        beneficiaries?.filter(({ isApproved }) => isApproved === 'true'),
+        campaigns
+      ));
+    beneficiaryList && setBeneficiariesList(beneficiaryList);
+    const creatorList =
+    profileCreators &&
+      collections &&
+      (await _getCreatorsCollectionsList(profileCreators, collections));
+    creatorList && setCreatorsList(creatorList);
+  }, [beneficiaries, campaigns, collections, profileCreators]);
+
+  React.useEffect(() => {
+    loadSubMenu();
+  }, [loadSubMenu]);
+
   return (
     <>
       <ul className='nav navbar-nav'>
@@ -28,23 +43,23 @@ const HeaderMenu = () => {
           </Link>
         </li>
         <li>
-          <Link to={'#'}>
+          <span className='menu-parent-link'>
             Beneficiaries <i className='fa fa-chevron-down'></i>
-          </Link>
+          </span>
           <ul className='sub-menu'>
-            {beneficiaries?.map((b, index) => (
+            {beneficiariesList?.map((b, index) => (
               <li key={`#${index}`}>
                 <Link
-                  to={`./BenefeiciaryNFTs?beneficiary=${b.name}`}
+                  to={`./BeneficiaryNFTs?beneficiary=${b.address}`}
                   className='dez-page'
                 >
-                  {b.name} <i className='fa fa-angle-right'></i>
+                  {b.username} <i className='fa fa-angle-right'></i>
                 </Link>
                 <ul className='sub-menu'>
                   {b.campaigns?.map((c, index) => (
                     <li key={index}>
                       <Link
-                        to={`./BenefeiciaryNFTs?beneficiary=${b.name}&campaign=${c.name}`}
+                        to={`./BeneficiaryNFTs?beneficiary=${b.address}&campaign=${c.id}`}
                         className='dez-page'
                       >
                         {c.name}{' '}
@@ -54,26 +69,36 @@ const HeaderMenu = () => {
                 </ul>
               </li>
             ))}
+            <li>
+              <Link to={`./signup-as-beneficiary`} className='dez-page'>
+                Signup As Beneficiary
+              </Link>
+            </li>
+            <li>
+              <Link to={`./BeneficiariesMarket`} className='dez-page'>
+                Explore Beneficiaries
+              </Link>
+            </li>
           </ul>
         </li>
         <li>
-          <Link to={'#'}>
+          <span className='menu-parent-link'>
             Creators <i className='fa fa-chevron-down'></i>
-          </Link>
+          </span>
           <ul className='sub-menu'>
-            {creators?.map((c, index) => (
+            {creatorsList?.map((c, index) => (
               <li key={`#${index}`}>
                 <Link
-                  to={`./CreatorNFTs?creator=${c.name}`}
+                  to={`./CreatorNFTs?creator=${c.address}`}
                   className='dez-page'
                 >
-                  {c.name} <i className='fa fa-angle-right'></i>
+                  {c.username} <i className='fa fa-angle-right'></i>
                 </Link>
                 <ul className='sub-menu'>
                   {c.collections?.map((col, index) => (
                     <li key={index}>
                       <Link
-                        to={`./CreatorNFTs?creator=${c.name}&collection=${col.name}`}
+                        to={`./CreatorNFTs?creator=${c.address}&collection=${col.id}`}
                         className='dez-page'
                       >
                         {col.name}{' '}
@@ -83,6 +108,11 @@ const HeaderMenu = () => {
                 </ul>
               </li>
             ))}
+            <li>
+              <Link to={`./CreatorsMarketPlace`} className='dez-page'>
+                Explore Creators
+              </Link>
+            </li>
           </ul>
         </li>
         <li>
@@ -98,10 +128,21 @@ const HeaderMenu = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to={'./my-creations'} className='dez-page'>
-                    My Creations
+                  <Link to={'./my-collections'} className='dez-page'>
+                    My Collections
                   </Link>
                 </li>
+                <li>
+                  <Link to={'./profile'} className='dez-page'>
+                    Profile
+                  </Link>
+                </li>
+                {/* commented untill compelete phase2 */}
+                {/* <li>
+                  <Link to={'./profile'} className='dez-page'>
+                    Profile
+                  </Link>
+                </li> */}
               </ul>
             </>
           )}

@@ -1,4 +1,4 @@
-import { CLPublicKey } from 'casper-js-sdk';
+import { CLPublicKey, CLValueBuilder } from 'casper-js-sdk';
 
 import { cep47 } from '../lib/cep47';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
@@ -17,22 +17,34 @@ export interface ICampaignOptions {
 }
 
 export async function createCampaign(
-  // tokenId: string[],
   name: string,
   description: string,
-  wallet_address: string,
+  wallet_address: string, //hash
+  wallet_pk: string, //pk
   url: string,
   requested_royalty: string,
-  // paymentAmount: string,
-  deploySender: CLPublicKey
+  deploySender: CLPublicKey,
+  sdgs_ids: number[],
+  resale_prc: string,
+  mode?: string,
+  campaign_id?: string,
+  beneficiary_address?: string //hash
 ) {
+  if (mode && mode === 'ADD' && !beneficiary_address) {
+    beneficiary_address = wallet_address;
+  }
   const campaignDeploy = await cep47.createCampaign(
-    // tokenId,
+    campaign_id ? campaign_id : '0',
+    mode ? mode : 'ADD',
     name,
     description,
-    wallet_address,
+    CLValueBuilder.byteArray(Buffer.from(wallet_address, 'hex')),
+    wallet_pk,
+    CLValueBuilder.byteArray(Buffer.from(beneficiary_address!, 'hex')),
     url,
     requested_royalty,
+    sdgs_ids,
+    resale_prc,
     PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
     deploySender
   );
