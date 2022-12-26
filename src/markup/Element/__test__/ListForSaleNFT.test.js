@@ -1,8 +1,11 @@
 import ListForSaleNFTModal from '../ListForSaleNFT'
-import ReactDom from 'react-dom'
+import ReactDom from 'react-dom';
+import { NFTProvider } from '../../../contexts/NFTContext';
 test('should render buynft component', ()=>{
    const div = document.createElement('div')
-    ReactDom.render(<ListForSaleNFTModal show ={true} handleCloseParent={()=>{}} data= {{beneficiary: "01501b4037bdeffd70849a86698922f6f3ed2ff52dad5235b2472b09ae66e48e8c",
+    ReactDom.render(
+        <NFTProvider>
+    <ListForSaleNFTModal show ={true} handleCloseParent={()=>{}} data= {{beneficiary: "01501b4037bdeffd70849a86698922f6f3ed2ff52dad5235b2472b09ae66e48e8c",
     beneficiaryName: "Ukraine Gov",
     beneficiaryPercentage: "80",
     campaign: "1",
@@ -18,5 +21,7 @@ test('should render buynft component', ()=>{
     isForSale: "true",
     price: "100",
     title: "Snake Sunk ",
-    tokenId: 3}} /> , div)
+    tokenId: 3}} /> 
+    </NFTProvider>
+    , div)
 })

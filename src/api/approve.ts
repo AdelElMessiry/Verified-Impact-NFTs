@@ -17,7 +17,7 @@ import { contractHashToByteArray } from '../utils/contract-utils';
 
 export async function approve(recipient: CLPublicKey, nftId: string) {
   const spender = DEPLOYER_ACC;
-  const client = new CasperClient(CONNECTION.NODE_ADDRESS);
+  const client = new CasperClient(CONNECTION.NODE_ADDRESS!);
   const KEYS_USER: any = Keys.Ed25519.parseKeyFiles(
     `${USER_KEY_PAIR_PATH}/NFT_Deploy_public_key.pem`,
     `${USER_KEY_PAIR_PATH}/NFT_Deploy_secret_key.pem`

@@ -204,7 +204,7 @@ class ProfileClient {
     console.log('Signed Profile deploy:', signedProfileDeploy);
 
     const profileDeployHash = await signedProfileDeploy.send(
-      CONNECTION.NODE_ADDRESS
+      CONNECTION.NODE_ADDRESS!
     );
     console.log('Deploy hash', profileDeployHash);
     return profileDeployHash;
@@ -236,7 +236,7 @@ class ProfileClient {
     console.log('Signed Profile deploy:', signedProfileDeploy);
 
     const profileDeployHash = await signedProfileDeploy.send(
-      CONNECTION.NODE_ADDRESS
+      CONNECTION.NODE_ADDRESS!
     );
     console.log('Deploy hash', profileDeployHash);
     return profileDeployHash;

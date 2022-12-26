@@ -237,7 +237,7 @@ export async function setIsTokenForSale(
   console.log('Signed Updated NFT deploy:', signedUpdatedNftDeploy);
 
   const updatedNftDeployHash = await signedUpdatedNftDeploy.send(
-    CONNECTION.NODE_ADDRESS
+    CONNECTION.NODE_ADDRESS!
   );
   console.log('Deploy hash', updatedNftDeployHash);
 
@@ -270,7 +270,7 @@ export async function setIsTokenHasReceipt(
   console.log('Signed Updated NFT deploy:', signedUpdatedNftDeploy);
 
   const updatedNftDeployHash = await signedUpdatedNftDeploy.send(
-    CONNECTION.NODE_ADDRESS
+    CONNECTION.NODE_ADDRESS!
   );
   console.log('Deploy hash', updatedNftDeployHash);
 

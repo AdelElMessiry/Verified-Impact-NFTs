@@ -33,7 +33,7 @@ export async function addCollection(
   console.log('Signed collection deploy:', signedCollectionDeploy);
 
   const collectionDeployHash = await signedCollectionDeploy.send(
-    CONNECTION.NODE_ADDRESS
+    CONNECTION.NODE_ADDRESS!
   );
   console.log('Deploy hash', collectionDeployHash);
   return collectionDeployHash;
