@@ -1,10 +1,10 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { getCampaignsList } from '../campaignInfo';
-beforeAll(() => jest.setTimeout(300 * 1000))
+beforeAll(() => jest.setTimeout(5 * 1000))
 
 describe('get campaign using Promises', () => {
-  jest.setTimeout(30000);
+  jest.setTimeout(35000);
 test('campaigns data is array of objects', async () => {
 
   const data = await getCampaignsList();

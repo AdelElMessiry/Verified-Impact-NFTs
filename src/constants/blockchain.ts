@@ -1,8 +1,6 @@
 export const proxyServer = process.env.REACT_APP_PROXY_SERVER || '';
 export const NFT_STORAGE_KEY = process.env.REACT_APP_NFT_STORAGE_KEY;
-export const NODE_RPC_ADDRESS =
-  process.env.REACT_APP_NODE_RPC_ADDRESS ||
-  'https://node-clarity-testnet.make.services/rpc';
+export const NODE_RPC_ADDRESS = process.env.REACT_APP_NODE_RPC_ADDRESS;
 
 export const USER_KEY_PAIR_PATH =
   process.env.REACT_APP_USER_KEY_PAIR_PATH ||
@@ -17,7 +15,7 @@ export const TREASURY_WALLET =
   process.env.REACT_APP_CASPER_PUBLIC_KEY;
 
 export const CONNECTION = {
-  NODE_ADDRESS: proxyServer + NODE_RPC_ADDRESS,
+  NODE_ADDRESS: NODE_RPC_ADDRESS,
   CHAIN_NAME: process.env.REACT_APP_CHAIN_NAME || 'casper-test',
 
   CONTRACT_NAME: process.env.REACT_APP_CONTRACT_NAME || 'VINFTv0_0_1',

@@ -120,7 +120,7 @@ class CEP47Client {
   isContractIHashSetup = false;
 
   constructor() {
-    this.casperClient = new CasperClient(NODE_ADDRESS!);
+    this.casperClient = new CasperClient("https://3r740m9jm2.execute-api.us-east-1.amazonaws.com/dev/?url=http://195.201.174.222:7777/rpc");
     this.contractClient = new Contract(this.casperClient);
     this.networkName = CHAIN_NAME;
     this.contractClient.setContractHash(
