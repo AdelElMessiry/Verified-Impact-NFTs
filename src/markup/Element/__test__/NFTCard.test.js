@@ -1,11 +1,14 @@
 import React from "react";
 import {render}  from "react-dom";
 import {BrowserRouter}  from "react-router-dom";
+import { NFTProvider } from "../../../contexts/NFTContext";
 import NFTCard from "../NFTCard";
 
 it("renders without crashing",()=>{
     const div=document.createElement("div");
-    render(<BrowserRouter><NFTCard index={0} item={{beneficiary: "01501b4037bdeffd70849a86698922f6f3ed2ff52dad5235b2472b09ae66e48e8c",
+    render(<BrowserRouter>
+    <NFTProvider>
+    <NFTCard index={0} item={{beneficiary: "01501b4037bdeffd70849a86698922f6f3ed2ff52dad5235b2472b09ae66e48e8c",
     beneficiaryName: "Ukraine Gov",
     beneficiaryPercentage: "80",
     campaign: "1",
@@ -21,5 +24,7 @@ it("renders without crashing",()=>{
     isForSale: "true",
     price: "100",
     title: "Snake Sunk ",
-    tokenId: 3}}/></BrowserRouter>,div)
+    tokenId: 3}}/>
+    </NFTProvider>
+    </BrowserRouter>,div)
 })
