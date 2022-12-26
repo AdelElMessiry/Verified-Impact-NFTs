@@ -37,7 +37,7 @@ export async function addBeneficiary(
   console.log('Signed Beneficiary deploy:', signedBeneficiaryDeploy);
 
   const beneficiaryDeployHash = await signedBeneficiaryDeploy.send(
-    CONNECTION.NODE_ADDRESS
+    CONNECTION.NODE_ADDRESS!
   );
   console.log('Deploy hash', beneficiaryDeployHash);
   return beneficiaryDeployHash;
@@ -65,7 +65,7 @@ export async function approveBeneficiary(
   console.log('Signed Beneficiary Approval deploy:', signedBeneficiaryDeploy);
 
   const beneficiaryDeployHash = await signedBeneficiaryDeploy.send(
-    CONNECTION.NODE_ADDRESS
+    CONNECTION.NODE_ADDRESS!
   );
   console.log('Deploy hash', beneficiaryDeployHash);
   return beneficiaryDeployHash;

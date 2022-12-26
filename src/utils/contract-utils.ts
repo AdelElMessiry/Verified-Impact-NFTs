@@ -88,7 +88,7 @@ export const getAccountInfo: any = async (
 };
 
 export const hashToURef: any = async (accountHash: string) => {
-  const client = new CasperServiceByJsonRPC(CONNECTION.NODE_ADDRESS);
+  const client = new CasperServiceByJsonRPC(CONNECTION.NODE_ADDRESS!);
   const stateRootHash = await client.getStateRootHash();
   const blockState: any = await client.getBlockState(
     stateRootHash,
@@ -121,7 +121,7 @@ export const getAccountNamedKeyValue = (accountInfo: any, namedKey: string) => {
 };
 
 export const getAccountBalance: any = async (publicKey: string) => {
-  const client = new CasperServiceByJsonRPC(CONNECTION.NODE_ADDRESS);
+  const client = new CasperServiceByJsonRPC(CONNECTION.NODE_ADDRESS!);
   const latestBlock: any = await client.getLatestBlockInfo();
   const root = await client.getStateRootHash(latestBlock.block.hash);
   const MOTE_RATE = 1000000000;
@@ -204,13 +204,13 @@ export const nativeTransfer = async (
 
     signedDeployJson = DeployUtil.deployFromJson(signedDeployJson).unwrap();
   } else {
-    const client: any = new CasperClient(CONNECTION.NODE_ADDRESS);
+    const client: any = new CasperClient(CONNECTION.NODE_ADDRESS!);
     const KEYS_USER = await mapOwnerKeys();
     signedDeployJson = client.signDeploy(deploy, KEYS_USER);
   }
 
   const transferDeployHash = await signedDeployJson.send(
-    CONNECTION.NODE_ADDRESS
+    CONNECTION.NODE_ADDRESS!
   );
 
   return transferDeployHash;

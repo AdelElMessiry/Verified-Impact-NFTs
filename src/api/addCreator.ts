@@ -26,7 +26,7 @@ export async function addCreator(
   console.log('Signed creator deploy:', signedCreatorDeploy);
 
   const creatorDeployHash = await signedCreatorDeploy.send(
-    CONNECTION.NODE_ADDRESS
+    CONNECTION.NODE_ADDRESS!
   );
   console.log('Deploy hash', creatorDeployHash);
   return creatorDeployHash;

@@ -54,7 +54,7 @@ export async function createCampaign(
   console.log('Signed Campaign deploy:', signedCampaignDeploy);
 
   const campaignDeployHash = await signedCampaignDeploy.send(
-    CONNECTION.NODE_ADDRESS
+    CONNECTION.NODE_ADDRESS!
   );
   console.log('Deploy hash', campaignDeployHash);
   return campaignDeployHash;
