@@ -5,6 +5,7 @@ import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import { signDeploy } from '../utils/signer';
 import { CONNECTION } from '../constants/blockchain';
 
+// add new creator to the blockchain 
 export async function addCreator(
   name: string,
   description: string,

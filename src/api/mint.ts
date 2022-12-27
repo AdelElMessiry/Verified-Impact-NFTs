@@ -28,6 +28,14 @@ export interface IMintOptions {
   beneficiary: string;
   beneficiaryPercentage: string;
 }
+// mint new  nft function
+/**
+ * Represents nft func props .
+ * @constructor
+ * @param {string} creatorAddress - The nft creator address.
+ * @param {string} creatorName - The nft creator name.
+ * @param {any} mintOptions - mintOption is an objet contains all nft details like the title, desc, imageUrl etc.
+ */
 
 export async function mint(
   creatorAddress: string,

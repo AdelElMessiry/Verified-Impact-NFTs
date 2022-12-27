@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { cep47 } from '../lib/cep47';
 import { getCampaignsList } from './campaignInfo';
-
+//helper functions fetch beneficiaries information 
 export async function getBeneficiaryDetails(
   beneficiaryId: string,
   isHash: boolean

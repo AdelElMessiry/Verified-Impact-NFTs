@@ -2,11 +2,10 @@ import axios from 'axios';
 
 import { cep47 } from '../lib/cep47';
 
-export async function getCampaignDetails(campaignId: string) {
-  // console.log(campaignId);
+// helper functions to fetch campaign details
 
+export async function getCampaignDetails(campaignId: string) {
   const campaignDetails = await cep47.getCampaign(campaignId);
-  // console.log(`NFT ${campaignId} campaign: `, campaignDetails);
   return campaignDetails;
 }
 
