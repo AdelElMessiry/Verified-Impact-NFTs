@@ -15,7 +15,7 @@ export async function transfer(
   console.log('Signed Transfer deploy:', signedTransferDeploy);
 
   const transferDeployHash = await signedTransferDeploy.send(
-    CONNECTION.NODE_ADDRESS
+    CONNECTION.NODE_ADDRESS!
   );
   console.log('Deploy hash', transferDeployHash);
   return transferDeployHash;
@@ -29,7 +29,7 @@ export async function purchaseNFT(recipient: CLPublicKey, nftId: string) {
   console.log('Signed Purchase deploy:', signedPurchaseDeploy);
 
   const purchaseDeployHash = await signedPurchaseDeploy.send(
-    CONNECTION.NODE_ADDRESS
+    CONNECTION.NODE_ADDRESS!
   );
   console.log('Purchase deploy hash', purchaseDeployHash);
   return purchaseDeployHash;

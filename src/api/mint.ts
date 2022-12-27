@@ -74,7 +74,7 @@ export async function mint(
   const signedMintDeploy = await signDeploy(mintDeploy, publicKeyCLValue);
   console.log('Signed Mint deploy:', signedMintDeploy);
 
-  const mintDeployHash = await signedMintDeploy.send(CONNECTION.NODE_ADDRESS);
+  const mintDeployHash = await signedMintDeploy.send(CONNECTION.NODE_ADDRESS!);
   console.log('Deploy hash', mintDeployHash);
   return mintDeployHash;
 }
