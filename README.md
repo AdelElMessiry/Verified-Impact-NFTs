@@ -25,8 +25,7 @@ The steps below are a quick start if you have already set up your [develoment en
 You need the Rust toolchain to run the keys manager (or any other Casper smart contracts).
 
 ```bash
- rustup install $(cat rust-toolchain)
- rustup target add --toolchain $(cat rust-toolchain) wasm32-unknown-unknown
+ make prepare
 ```
 
 ### Compile the Smart Contracts
@@ -35,7 +34,6 @@ To compile the WASM file, use these commands:
 
 ```bash
  cd contracts
- make prepare
  make build-contract
 ```
 
