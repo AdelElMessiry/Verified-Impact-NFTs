@@ -1,9 +1,10 @@
 import { CLPublicKey } from 'casper-js-sdk';
 
 import { cep47 } from '../lib/cep47';
-// import { INFT } from '../pages/dash';
 import { HexToCLPublicKey } from '../utils/contract-utils';
 import { parseNFT } from '../utils/parsers';
+
+// helper functions to fetch user nft details
 
 export async function numberOfNFTsOfPubCLvalue(
   publicKeyCLValue: CLPublicKey

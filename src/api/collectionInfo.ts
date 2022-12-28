@@ -2,11 +2,9 @@ import axios from 'axios';
 
 import { cep47 } from '../lib/cep47';
 
+// helper function get collection details 
 export async function getCollectionDetails(collectionId: string) {
-  // console.log(collectionId);
-
   const collectionDetails = await cep47.getCollection(collectionId);
-  // console.log(`Collection ${collectionId} details: `, collectionDetails);
   return collectionDetails;
 }
 

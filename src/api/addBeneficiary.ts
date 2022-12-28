@@ -5,6 +5,7 @@ import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import { signDeploy } from '../utils/signer';
 import { CONNECTION } from '../constants/blockchain';
 
+// api for add new beneficiary to the blockchain 
 export async function addBeneficiary(
   name: string,
   description: string,

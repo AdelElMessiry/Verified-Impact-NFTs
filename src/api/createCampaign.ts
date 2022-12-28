@@ -15,7 +15,7 @@ export interface ICampaignOptions {
   paymentAmount: string;
   deploySender: CLPublicKey;
 }
-
+// helper function to create new campaign
 export async function createCampaign(
   name: string,
   description: string,

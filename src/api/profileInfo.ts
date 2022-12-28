@@ -18,7 +18,7 @@ import {
 const { NODE_ADDRESS, CHAIN_NAME } = CONNECTION;
 
 const { Contract } = Contracts;
-
+// class to manage All profile contract functions
 class ProfileClient {
   casperClient: CasperClient;
   contractClient: Contracts.Contract;

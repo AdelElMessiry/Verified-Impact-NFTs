@@ -1,5 +1,6 @@
 import axios from 'axios';
-// import { v4 as uuidv4 } from 'uuid';
+
+//upload images to server api 
 
 export async function uploadImg(file: File) {
   console.log('File', file);

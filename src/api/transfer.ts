@@ -2,7 +2,7 @@ import { cep47 } from '../lib/cep47';
 import { CLPublicKey } from 'casper-js-sdk';
 import { signDeploy } from '../utils/signer';
 import { CONNECTION } from '../constants/blockchain';
-
+// this method transfer the nft 
 export async function transfer(
   signer: CLPublicKey,
   recipient: CLPublicKey,

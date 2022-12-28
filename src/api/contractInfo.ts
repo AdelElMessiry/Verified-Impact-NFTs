@@ -1,5 +1,5 @@
 import { cep47 } from "../lib/cep47";
-
+//helper func to get contract details 
 export const fetchNftContractDetails = async () => {
   const totalSupplyRaw = await cep47.totalSupply() as any;
   const metaRaw = await cep47.meta() as any[];
