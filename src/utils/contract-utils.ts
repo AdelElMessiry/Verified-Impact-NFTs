@@ -8,6 +8,7 @@ import {
   Signer,
   CLValueBuilder,
 } from 'casper-js-sdk';
+import axios from 'axios';
 
 import { cep47 } from '../lib/cep47';
 import { getCampaignDetails, parseCampaign } from '../api/campaignInfo';
@@ -217,61 +218,87 @@ export const nativeTransfer = async (
 };
 
 export const transferFees = async (buyer: string, tokenId: string) => {
-  // try {
-  const tokenDetails = await cep47.getMappedTokenMeta(tokenId);
-  let owner = await cep47.getOwnerOf(tokenId);
-  owner = await hashToURef(owner);
-  const deployer = DEPLOYER_ACC;
-  const treasury = TREASURY_WALLET;
+  try {
+    const deployer = DEPLOYER_ACC;
+    const tokenDetails = await cep47.getMappedTokenMeta(tokenId);
+    let { price } = tokenDetails;
 
-  let { beneficiary, price, campaign } = tokenDetails;
-  // beneficiary = await hashToURef(`account-hash-${beneficiary}`);
+    const buyerBalance = getAccountBalance(buyer);
 
-  const campaignDetails: any = await getCampaignDetails(campaign);
-  const parsedCampaigns: any = parseCampaign(campaignDetails);
+    if (!(buyerBalance > price)) {
+      return 'Insufficient balance';
+    }
 
-  const beneficiaryPercentage = parseInt(parsedCampaigns.requested_royalty);
-  const mappedWalletAdd = (parsedCampaigns.wallet_address =
-    parsedCampaigns.wallet_address.includes('Account') ||
-    parsedCampaigns.wallet_address.includes('Key')
-      ? parsedCampaigns.wallet_address.includes('Account')
-        ? parsedCampaigns.wallet_address.slice(13).replace(')', '')
-        : parsedCampaigns.wallet_address.slice(10).replace(')', '')
-      : parsedCampaigns.wallet_address);
-
-  beneficiary = await hashToURef(`account-hash-${mappedWalletAdd}`);
-  console.log(beneficiary);
-  const creatorPercentage = 100 - beneficiaryPercentage;
-
-  const portalFees = (price / 100) * 2;
-  const finalPrice = price - portalFees;
-
-  const beneficiaryAmount =
-    beneficiaryPercentage && (finalPrice / 100) * beneficiaryPercentage;
-  const ownerAmount =
-    creatorPercentage && (finalPrice / 100) * creatorPercentage;
-
-  await nativeTransfer(buyer, deployer, price, true);
-
-  const treasuryTransfer =
-    portalFees &&
-    (await nativeTransfer(deployer, treasury, portalFees, false, false));
-
-  const beneficiaryTransfer =
-    beneficiaryAmount &&
-    (await nativeTransfer(
+    const priceTransferHash = await nativeTransfer(
+      buyer,
       deployer,
-      beneficiary,
-      beneficiaryAmount,
-      false,
+      price,
       true
-    ));
+    );
 
-  const ownerTransfer =
-    ownerAmount &&
-    (await nativeTransfer(deployer, owner, ownerAmount, false, true));
+    const FeesHash = await axios.post(
+      'https://jjpdgoswsf.execute-api.us-east-1.amazonaws.com/dev/distributeFee',
+      { buyer, tokenId, priceTransferHash }
+    );
 
-  return ownerAmount ? ownerTransfer : beneficiaryTransfer;
+    return FeesHash?.data.FeesHash;
+  } catch (error) {
+    return error;
+  }
+  // const tokenDetails = await cep47.getMappedTokenMeta(tokenId);
+  // let owner = await cep47.getOwnerOf(tokenId);
+  // owner = await hashToURef(owner);
+  // const deployer = DEPLOYER_ACC;
+  // const treasury = TREASURY_WALLET;
+
+  // let { beneficiary, price, campaign } = tokenDetails;
+  // // beneficiary = await hashToURef(`account-hash-${beneficiary}`);
+
+  // const campaignDetails: any = await getCampaignDetails(campaign);
+  // const parsedCampaigns: any = parseCampaign(campaignDetails);
+
+  // const beneficiaryPercentage = parseInt(parsedCampaigns.requested_royalty);
+  // const mappedWalletAdd = (parsedCampaigns.wallet_address =
+  //   parsedCampaigns.wallet_address.includes('Account') ||
+  //   parsedCampaigns.wallet_address.includes('Key')
+  //     ? parsedCampaigns.wallet_address.includes('Account')
+  //       ? parsedCampaigns.wallet_address.slice(13).replace(')', '')
+  //       : parsedCampaigns.wallet_address.slice(10).replace(')', '')
+  //     : parsedCampaigns.wallet_address);
+
+  // beneficiary = await hashToURef(`account-hash-${mappedWalletAdd}`);
+  // console.log(beneficiary);
+  // const creatorPercentage = 100 - beneficiaryPercentage;
+
+  // const portalFees = (price / 100) * 2;
+  // const finalPrice = price - portalFees;
+
+  // const beneficiaryAmount =
+  //   beneficiaryPercentage && (finalPrice / 100) * beneficiaryPercentage;
+  // const ownerAmount =
+  //   creatorPercentage && (finalPrice / 100) * creatorPercentage;
+
+  // await nativeTransfer(buyer, deployer, price, true);
+
+  // const treasuryTransfer =
+  //   portalFees &&
+  //   (await nativeTransfer(deployer, treasury, portalFees, false, false));
+
+  // const beneficiaryTransfer =
+  //   beneficiaryAmount &&
+  //   (await nativeTransfer(
+  //     deployer,
+  //     beneficiary,
+  //     beneficiaryAmount,
+  //     false,
+  //     true
+  //   ));
+
+  // const ownerTransfer =
+  //   ownerAmount &&
+  //   (await nativeTransfer(deployer, owner, ownerAmount, false, true));
+
+  // return ownerAmount ? ownerTransfer : beneficiaryTransfer;
   // } catch (e) {
   //   console.log(e);
   //   return e;
