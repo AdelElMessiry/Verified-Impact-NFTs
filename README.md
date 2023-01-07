@@ -34,7 +34,7 @@ To compile the WASM file, use these commands:
 
 ```bash
  make prepare
- make -C contracts build-contract
+ make build-contracts
 ```
 
 ### Client installation
