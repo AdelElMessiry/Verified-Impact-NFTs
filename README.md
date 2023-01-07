@@ -33,8 +33,8 @@ You need the Rust toolchain to run the keys manager (or any other Casper smart c
 To compile the WASM file, use these commands:
 
 ```bash
- cd contracts
- make build-contract
+ make prepare
+ make -C contracts build-contract
 ```
 
 ### Client installation

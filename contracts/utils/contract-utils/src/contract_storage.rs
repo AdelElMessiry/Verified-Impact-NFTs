@@ -1,5 +1,5 @@
 use alloc::vec::Vec;
-use core::lazy::OnceCell;
+use once_cell::unsync::OnceCell;
 
 use casper_contract::contract_api::runtime;
 use casper_types::system::CallStackElement;
