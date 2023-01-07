@@ -115,17 +115,35 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
     let selectedBeneficiaryList: any = [];
     let selectedCreatorsList: any = [];
     //let profiles = await profileClient.getProfilesList();
-    let profiles = await profileClient.getCachedProfilesList();
+    let profiles = await profileClient.getCachedProfilesList(); 
+    const profilesAddList = profiles.flatMap(Object.keys);
 
     profiles &&
-      profiles.forEach((data: any) => {
-        let lists: any = Object.values(data)[0];
+      profiles.forEach(
+        (item: any, i: number) =>
+        typeof(item) != "string" &&
+        Object.keys(profilesAddList[i] ) &&  Object.keys(item[profilesAddList[i]]?.beneficiary)?.length &&
+          selectedBeneficiaryList.push(item[profilesAddList[i]]?.beneficiary)
+      );
 
-        Object.keys(lists.beneficiary).length !== 0 &&
-          selectedBeneficiaryList.push(lists.beneficiary);
-        Object.keys(lists.creator).length !== 0 &&
-          selectedCreatorsList.push(lists.creator);
-      });
+    profiles &&
+      profiles.forEach(
+        (item: any, i: number) =>
+        typeof(item) != "string" &&
+          Object.keys(item[profilesAddList[i]]?.creator)?.length &&
+          selectedCreatorsList.push(item[profilesAddList[i]]?.creator)
+      );
+
+      profiles &&
+        profiles.forEach((data: any) => {
+          if(typeof(data) != "string"){
+            let lists: any = Object.values(data)[0];
+            Object.keys(lists?.beneficiary)?.length !== 0 &&
+              selectedBeneficiaryList.push(lists.beneficiary);
+            Object.keys(lists.creator).length !== 0 &&
+              selectedCreatorsList.push(lists.creator);
+          }
+        });
     const beneficiariesList = profiles && selectedBeneficiaryList;
     const profileCreatorsList = profiles && selectedCreatorsList;
 
@@ -149,10 +167,17 @@ export const NFTProvider: React.FC<{}> = ({ children }: any) => {
       creatorName:
         profileCreatorsList.find(({ address }: any) => nft.creator === address)
           ?.username || '',
+      creatorEvmWallet:
+        profileCreatorsList.find(({ address }: any) => nft.creator === address)
+          ?.evm_wallet || '',
       beneficiaryName:
         beneficiariesList.find(
           ({ address }: any) => nft.beneficiary === address
         )?.username || '',
+      beneficiaryEvmWallet:
+        beneficiariesList.find(
+          ({ address }: any) => nft.beneficiary === address
+        )?.evm_wallet || '',
       collectionName:
         collectionsList.find(({ id }: any) => nft.collection === id)?.name ||
         '',
