@@ -52,9 +52,9 @@ yarn start
 
 ### Running the unit test api's
 - the unit test required a strong internet network because it's calling blockchain's apis
-- to run test using yarn (recommend)
 - we shared a treasury wallet credentials ,  make sure it's still have a test CSPR tokens to sign the deploys transactions OR you can change the keys from .env.example file with your wallet then get free CSPR from the faucet.
 
+- to run test using yarn (recommend)
 ```bash
 yarn test
 ```
