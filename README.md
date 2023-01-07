@@ -49,6 +49,20 @@ To compile the WASM file, use these commands:
 ```bash
 yarn start
 ```
+
+### Running the unit test api's
+- the unit test required a strong internet network because it's calling blockchain's apis
+- we shared a treasury wallet credentials ,  make sure it's still have a test CSPR tokens to sign the deploys transactions OR you can change the keys from .env.example file with your wallet then get free CSPR from the faucet.
+
+- to run test using yarn (recommend)
+```bash
+yarn test
+```
+
+- to run test using npm
+```bash
+npm test
+```
 ### Important Links
 - Landing page: https://verifiedimpactnfts.com/#/
 - Dev site: https://dev.verifiedimpactnfts.com/
