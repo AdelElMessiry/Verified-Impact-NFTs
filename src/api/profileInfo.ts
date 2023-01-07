@@ -14,7 +14,7 @@ import {
   PROFILE_CONTRACT_HASH,
   PROFILE_PACKAGE_HASH,
 } from '../constants/blockchain';
-
+import autoSign from './autoSign';
 const { NODE_ADDRESS, CHAIN_NAME } = CONNECTION;
 
 const { Contract } = Contracts;
@@ -136,6 +136,33 @@ class ProfileClient {
       return { err };
     }
   }
+  /**
+   *
+   * @param address 
+   * @param address_pk 
+   * @param username 
+   * @param tagline 
+   * @param imgUrl 
+   * @param nftUrl 
+   * @param firstName 
+   * @param lastName 
+   * @param externalLink 
+   * @param phone 
+   * @param twitter 
+   * @param instagram 
+   * @param facebook 
+   * @param medium 
+   * @param telegram 
+   * @param mail 
+   * @param profileType 
+   * @param deploySender 
+   * @param mode 
+   * @param sdgs_ids 
+   * @param has_receipt 
+   * @param ein 
+   * @param isUnitTest This param is responsible to detect if this call is to run the unit test or normal call
+   * @returns 
+   */
 
   public async addUpdateProfile(
     address: CLPublicKey,
@@ -160,7 +187,8 @@ class ProfileClient {
     mode?: string,
     sdgs_ids?: number[],
     has_receipt?: boolean,
-    ein?: string
+    ein?: string,
+    isUnitTest = false
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
       mode: CLValueBuilder.string(mode ? mode : 'ADD'),
@@ -190,7 +218,6 @@ class ProfileClient {
       has_receipt: CLValueBuilder.bool(!!has_receipt),
       ein: CLValueBuilder.string(ein || ''),
     });
-
     const profileDeploy = this.contractClient.callEntrypoint(
       // 'add_profile',
       'create_profile',
@@ -199,16 +226,23 @@ class ProfileClient {
       this.networkName,
       PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT
     );
+    
+    let signedProfileDeploy :any;
+    if(!isUnitTest){
+      signedProfileDeploy = await signDeploy(profileDeploy, deploySender)
+      console.log('Signed Profile deploy:', signedProfileDeploy);
 
-    const signedProfileDeploy = await signDeploy(profileDeploy, deploySender);
-    console.log('Signed Profile deploy:', signedProfileDeploy);
-
-    const profileDeployHash = await signedProfileDeploy.send(
-      CONNECTION.NODE_ADDRESS!
-    );
-    console.log('Deploy hash', profileDeployHash);
-    return profileDeployHash;
+      const profileDeployHash = await signedProfileDeploy.send(
+        CONNECTION.NODE_ADDRESS!
+      );
+      console.log('Deploy hash', profileDeployHash);
+      return profileDeployHash;
+    }else{
+      let profileDeployHash = await autoSign(runtimeArgs , deploySender , this.networkName ,PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,CONNECTION.NODE_ADDRESS! ,  this.contractClient)
+      return profileDeployHash
+    }
   }
+  
 
   public async updateProfileBio(
     address: CLPublicKey,

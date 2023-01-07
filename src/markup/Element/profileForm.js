@@ -411,8 +411,8 @@ const ProfileForm = ({
           };
         }
         console.log("chnaged Data",changedData)
-        await updateProfiles(nftDispatch, stateList, changedData);
-      }
+        typeof(changedData) != "string" && await updateProfiles(nftDispatch, stateList, changedData)                
+        }
         if (
           formName === ProfileFormsEnum.BeneficiaryProfile &&
           !isProfileExist
