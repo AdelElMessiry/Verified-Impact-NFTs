@@ -2,10 +2,9 @@ import axios from 'axios';
 
 import { cep47 } from '../lib/cep47';
 import { getCollectionsList } from './collectionInfo';
-
+// fetch creator details from  the blockchain
 export async function getCreatorDetails(creatorId: string) {
   const creatorDetails = await cep47.getCreator(creatorId);
-  // console.log(`Creator ${creatorId} : `, creatorDetails);
   return creatorDetails;
 }
 
@@ -19,7 +18,7 @@ export function parseCreator(maybeValue: any) {
 
   return mapObj;
 }
-
+// fetch creators as a list 
 export async function getCreatorsList() {
   const creatorCount: any = await cep47.totalCreators();
 
@@ -45,7 +44,7 @@ export async function getCreatorsList() {
 
   return creatorsList;
 }
-
+// map the  creators objects and parse the creators collections
 export async function getCreatorsCollectionsList() {
   const creatorsList = await getCreatorsList();
   const collectionsList = await getCollectionsList();
@@ -65,11 +64,6 @@ export async function getCreatorsCollectionsList() {
           collections: collectionsList.filter(
             (collection: any, index: any, collections: any) =>
               collection.creator === creator.address
-            // &&
-            // index ===
-            //   collections.findIndex(
-            //     (idx: any) => idx.name === collection.name
-            //   )
           ),
         })
       : mappedCreatorsList.push({
@@ -80,13 +74,11 @@ export async function getCreatorsCollectionsList() {
 
   return mappedCreatorsList;
 }
-
+// map creators and push the collections as a prop on the creator object 
 export async function _getCreatorsCollectionsList(
   creatorsList: any,
   collectionsList: any
 ) {
-  // const creatorsList = await getCreatorsList();
-  // const collectionsList = await getCollectionsList();
   const mappedCreatorsList: any = [];
 
   const pluckedCollections = collectionsList

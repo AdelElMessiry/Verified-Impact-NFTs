@@ -4,7 +4,7 @@ import { CLPublicKey } from 'casper-js-sdk';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import { signDeploy } from '../utils/signer';
 import { CONNECTION } from '../constants/blockchain';
-
+// add new collection api to the blockchain
 export async function addCollection(
   name: string,
   description: string,
@@ -38,7 +38,7 @@ export async function addCollection(
   console.log('Deploy hash', collectionDeployHash);
   return collectionDeployHash;
 }
-
+// update specific collection details 
 export async function updateCollection(
   collection_id: string,
   name: string,

@@ -25,7 +25,7 @@ import { SendTweet } from '../../../utils/VINFTsTweets';
 import ReactGA from 'react-ga';
 import AddEditCollectionForm from '../../Element/AddEditCollectionForm';
 
-//add new beneficiary page
+//add new Collection page
 const AddCollection = () => {
   const { isLoggedIn, entityInfo } = useAuth();
   const search = useLocation().search;

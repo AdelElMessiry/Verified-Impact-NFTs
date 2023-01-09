@@ -40,11 +40,11 @@ class ProfileClient {
     this.contractClient.setContractHash(contractHash, contractPackageHash);
     this.isContractIHashSetup = true;
   }
-
+// fetch all profiles count 
   public async totalProfiles() {
     return this.contractClient.queryContractData(['total_profiles']);
   }
-
+// fetch all profiles from the contract
   public async profilesList() {
     const addresses: any = await this.contractClient.queryContractData([
       'all_profiles',
@@ -55,7 +55,7 @@ class ProfileClient {
     );
     return mappedAddresses;
   }
-
+// fetch specific profile with wallet and wallet type
   public async getProfile(address: string, isAccountHash?: Boolean) {
     try {
       address = isAccountHash
@@ -163,7 +163,7 @@ class ProfileClient {
    * @param isUnitTest This param is responsible to detect if this call is to run the unit test or normal call
    * @returns 
    */
-
+// add/updater user profile with deferent role and props
   public async addUpdateProfile(
     address: CLPublicKey,
     address_pk: string,
@@ -243,7 +243,7 @@ class ProfileClient {
     }
   }
   
-
+// add/update user bio 
   public async updateProfileBio(
     address: CLPublicKey,
     bio: string,
@@ -275,7 +275,7 @@ class ProfileClient {
     console.log('Deploy hash', profileDeployHash);
     return profileDeployHash;
   }
-
+// fetch profiles list 
   public async getProfilesList() {
     const addresses: any = await this.profilesList();
 
@@ -287,7 +287,7 @@ class ProfileClient {
 
     return mappedProfiles;
   }
-
+// fetch cached profile as a list from redis storage
   public async getCachedProfilesList() {
     const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
     const apiName = 'profiles';

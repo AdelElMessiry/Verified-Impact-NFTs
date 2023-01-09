@@ -4,9 +4,8 @@ import { cep47 } from '../lib/cep47';
 import { PAYMENT_AMOUNTS } from '../constants/paymentAmounts';
 import { signDeploy } from '../utils/signer';
 import { CONNECTION } from '../constants/blockchain';
-
+//interface explain the campaigns object props
 export interface ICampaignOptions {
-  // tokenId: string;
   name: string;
   description: string;
   wallet_address: string;

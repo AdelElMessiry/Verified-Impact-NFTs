@@ -15,7 +15,7 @@ export async function getBeneficiary(beneficiaryId: string, isHash: boolean) {
   const beneficiaryDetails = await cep47.getBeneficiary(beneficiaryId, isHash);
   return beneficiaryDetails;
 }
-
+//api for fetch all beneficiaries list 
 export async function beneficiariesList() {
   const beneficiariesList = await cep47.getBeneficiariesList();
   return beneficiariesList;
@@ -36,9 +36,7 @@ export async function getBeneficiariesList() {
   const list: any = await beneficiariesList();
 
   const _beneficiariesList: any = [];
-  // for (const id of [...(Array(parseInt(beneficiaryCount)).keys() as any)]) {
   for (const address of list) {
-    // console.log((id + 1).toString());
 
     await getBeneficiary(address.toString(), true)
       .then(async (rawBeneficiary: any) => {
@@ -61,7 +59,7 @@ export async function getBeneficiariesList() {
 
   return _beneficiariesList;
 }
-
+// fetch all beneficiaries and map to handle the beneficiaries campaigns 
 export async function getBeneficiariesCampaignsList() {
   const beneficiariesList = await getBeneficiariesList();
   const campaignsList = await getCampaignsList();

@@ -9,8 +9,8 @@ import PageTitle from '../../Layout/PageTitle';
 import PromptLogin from '../PromptLogin';
 
 import bnr1 from './../../../images/banner/bnr1.jpg';
-
-//adding new campaign page
+// Admin role user Level
+//adding new campaign page this page allow the beneficiary add new campaign
 const AddCampaign = () => {
   const { isLoggedIn } = useAuth();
   React.useEffect(() => {

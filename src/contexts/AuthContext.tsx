@@ -18,14 +18,12 @@ interface IAuthContextValue {
 
 async function getActivePublicKey(): Promise<string> {
   let pk = await Signer.getActivePublicKey().catch((err) => {
-    // console.log("Couldn't get active pub key, it should be locked", err);
-    // Signer.sendConnectionRequest();
     return '';
   });
   console.log('Got active pub key:', pk);
   return pk;
 }
-
+// check if user have the CSPR extension installed on his browser and display an error message 
 async function getConnectionStatus(): Promise<null | string> {
   if (!window.casperlabsHelper) {
     // alert("Please install Casper signer Signer extension")
@@ -71,7 +69,7 @@ const AuthProvider = (props: any) => {
   const [entityInfo, setEntityInfo] = useState<IEntityInfo>({
     publicKey: null,
   });
-
+// update user login state with ui 
   function updateLoginStatus(isLoggedIn: boolean, pubKey: string | null) {
     setLoggedIn(isLoggedIn);
     setEntityInfo({ publicKey: pubKey });

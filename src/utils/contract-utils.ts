@@ -120,7 +120,7 @@ export const getAccountNamedKeyValue = (accountInfo: any, namedKey: string) => {
   }
   return undefined;
 };
-
+// fetch account tokens 
 export const getAccountBalance: any = async (publicKey: string) => {
   const client = new CasperServiceByJsonRPC(CONNECTION.NODE_ADDRESS!);
   const latestBlock: any = await client.getLatestBlockInfo();

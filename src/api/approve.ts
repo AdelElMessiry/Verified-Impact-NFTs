@@ -14,7 +14,7 @@ import {
 } from '../constants/blockchain';
 import { setupContractHash } from '../lib/cep47';
 import { contractHashToByteArray } from '../utils/contract-utils';
-// api allow the beneficiary approve the nft under the campaigns
+// api allow the beneficiary approve a specific nft to display under the campaigns
 export async function approve(recipient: CLPublicKey, nftId: string) {
   const spender = DEPLOYER_ACC;
   const client = new CasperClient(CONNECTION.NODE_ADDRESS!);

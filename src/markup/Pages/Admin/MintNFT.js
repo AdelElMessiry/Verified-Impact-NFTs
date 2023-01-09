@@ -6,7 +6,6 @@ import ReactGA from 'react-ga';
 import { Form } from 'react-bootstrap';
 import CreatableSelect from 'react-select/creatable';
 import validator from 'validator';
-// import { NFTStorage } from 'nft.storage';
 import { NFTStorage } from 'nft.storage/dist/bundle.esm.min.js';
 import { CLPublicKey } from 'casper-js-sdk';
 
@@ -73,7 +72,6 @@ const MintNFT = () => {
   const [isNewNftMinted, setIsNewNftMinted] = React.useState(false);
   const [isClearSDGs, setIsClearSDGs] = React.useState(false);
 
-  // const [beneficiariesList, setBeneficiariesList] = React.useState();
   const [state, setState] = React.useState({
     inputs: {
       name: '',
@@ -89,6 +87,7 @@ const MintNFT = () => {
 
   const loadCollections = React.useCallback(async () => {
     if (entityInfo.publicKey) {
+      //fetch user profile from contract
       let userProfiles = await profileClient.getProfile(entityInfo.publicKey);
       if (userProfiles) {
         if (userProfiles.err === 'Address Not Found') {
@@ -103,7 +102,6 @@ const MintNFT = () => {
           userProfiles && setIsCreatorExist(true);
           if (list?.creator?.address !== '') {
             const _collections =
-              // existingCreator &&
               collections &&
               collections.filter(
                 ({ creator }) =>
@@ -166,9 +164,6 @@ const MintNFT = () => {
           : beneficiaries?.filter(({ isApproved }) => isApproved === 'true')[0]
               ?.address
       );
-    // campaigns?.length &&
-    //   !campaign &&
-    //   setCampaign(savedData ? savedData.campaign : campaigns[0]?.id);
 
     const filteredCampaigns =
       !campaignsList &&
@@ -211,9 +206,6 @@ const MintNFT = () => {
     beneficiaries,
     beneficiary,
     campaign,
-    // setBeneficiary,
-    // setCampaign,
-    // setCampaignsList,
     savedData,
   ]);
 
@@ -294,15 +286,9 @@ const MintNFT = () => {
       return;
     }
     isAnotherMint ? setIsMintAnotherClicked(true) : setIsMintClicked(true);
-    // let cloudURL = uploadedImageURL;
     let imageFile;
     if (!state.inputs.isImageURL && uploadedImageBlob) {
-      // console.log('Img', uploadedFile);
-      // console.log('Img url', uploadedImageBlob.name);
       try {
-        //   const image = new File([uploadedImageBlob], uploadedImageBlob.name, {
-        //     type: uploadedImageBlob.type,
-        //   });
         const client = new NFTStorage({ token: NFT_STORAGE_KEY });
         imageFile = await client.store({
           name: uploadedImageBlob.name,
@@ -317,8 +303,6 @@ const MintNFT = () => {
       VIToast.success('Image uploaded to cloud CDN successfully !');
     }
     let fineHref = imageFile?.data?.image?.pathname?.slice(2);
-    //https://dweb.link/ipfs/
-    // imageFile = 'https://vinfts.mypinata.cloud/ipfs' + fineHref;
     mintNewNFT(fineHref, isAnotherMint);
   }
 
@@ -487,7 +471,6 @@ const MintNFT = () => {
           action: 'Mint',
           label: `${creator}: ${entityInfo.publicKey} mint new NFT successfully`,
         });
-        //window.location.reload();
         setIsMintClicked(false);
         setIsMintAnotherClicked(false);
       } catch (err) {
