@@ -2,7 +2,7 @@ import React from 'react';
 import { CLPublicKey } from 'casper-js-sdk';
 import { profileClient } from './profileInfo';
 import { getDeployDetails } from './universal';
-
+// api update profile using for automation test only 
 export default async function UpdateProfile(wallet: string, userName: string, nftUrl: string, mail:string, phone: string) {
     let walletCl = CLPublicKey.fromHex(wallet);
     let update = await profileClient.addUpdateProfile(

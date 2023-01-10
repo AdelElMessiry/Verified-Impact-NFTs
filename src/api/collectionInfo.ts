@@ -18,7 +18,7 @@ export function parseCollection(maybeValue: any) {
 
   return mapObj;
 }
-
+//fetch collections from the blockchain and pares it to the creators
 export async function getUniqueCollectionsList() {
   const collectionCount: any = await cep47.totalCollections();
 
@@ -49,7 +49,7 @@ export async function getUniqueCollectionsList() {
 
   return { uniqueCollections, collectionsList };
 }
-
+// fetch collections and  parse it to the their creators as a list 
 export async function getCollectionsList() {
   const collectionCount: any = await cep47.totalCollections();
 
@@ -74,7 +74,7 @@ export async function getCollectionsList() {
 
   return collectionsList;
 }
-
+// fetch cached collections list from the redis storage
 export async function getCachedCollectionsList() {
   const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
   const apiName = 'collections';

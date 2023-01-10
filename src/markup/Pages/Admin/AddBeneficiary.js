@@ -23,7 +23,7 @@ import {
   useNFTDispatch,
   useNFTState,
 } from '../../../contexts/NFTContext';
-
+// Admin role user Level
 //add new beneficiary page
 const AddBeneficiary = () => {
   const { isLoggedIn, entityInfo } = useAuth();

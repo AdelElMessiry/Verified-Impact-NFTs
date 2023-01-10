@@ -1,6 +1,8 @@
 import React from 'react'
 import { Keys } from 'casper-js-sdk';
 
+
+// this api using  to auto sign deploy transaction without display the casper extension signer(using the wallet private key)
 export default async function autoSign(runtimeArgs:any ,deploySender:any, networkName :any, paymentAmount:any , nodeAddress:any, contractClient:any) {
     
       const privateKey  = Keys.Ed25519.parsePrivateKey(Keys.Ed25519.readBase64WithPEM(`${process.env.REACT_APP_TEST_WALLET_PRIVATE_KEY}`));

@@ -50,11 +50,10 @@ export async function getCampaignsList() {
         console.log(err);
       });
   }
-  // console.log(campaignsList);
 
   return campaignsList;
 }
-
+// fetch cached campaign  from redis storage 
 export async function getCachedCampaignsList() {
   const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
   const apiName = 'campaigns';
@@ -64,7 +63,7 @@ export async function getCachedCampaignsList() {
 
   return campaigns?.data.list;
 }
-
+// update campaigns after edit or add new in the redis 
 export async function updateCachedCampaign(campaign: any, campaigns: any) {
   const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
   const apiName = 'updateCampaign';

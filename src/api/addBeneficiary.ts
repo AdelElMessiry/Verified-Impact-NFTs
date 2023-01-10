@@ -21,7 +21,6 @@ export async function addBeneficiary(
     name,
     description,
     CLValueBuilder.byteArray(Buffer.from(address_hash, 'hex')),
-    // CLValueBuilder.byteArray(CLPublicKey.fromHex(address_hash).toAccountHash()),
     address_pk,
     mode ? mode : 'ADD',
     sdgs_ids,

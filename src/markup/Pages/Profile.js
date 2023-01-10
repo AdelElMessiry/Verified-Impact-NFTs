@@ -18,7 +18,7 @@ import ReactGA from 'react-ga';
 import { Spinner } from 'react-bootstrap';
 import { CLPublicKey } from 'casper-js-sdk';
 import ManageCollections from './ManageCollections';
-
+// profile ui page
 const Profile = () => {
   const { beneficiaries, creators } = useNFTState();
   const { isLoggedIn, entityInfo } = useAuth();

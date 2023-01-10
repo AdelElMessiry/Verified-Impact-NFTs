@@ -12,24 +12,21 @@ import { getCollectionsList } from '../api/collectionInfo';
 import { signDeploy } from '../utils/signer';
 import { CONNECTION } from '../constants/blockchain';
 import { getNFTImage, isValidHttpUrl } from '../utils/contract-utils';
-
+//function to get the nft owner
 export async function isIdOccupied(id: string): Promise<boolean> {
   id = String(Number(id));
   let owner = null;
   try {
     owner = await cep47.getOwnerOf(id);
     if (owner) {
-      // console.log("owner of", id, "is", owner);
-      // console.log("ID ", id, "is occupied");
       return true;
     }
   } catch (err) {
-    // console.log("ID ", id, "is unoccupied");
     return false;
   }
   return owner ? true : false;
 }
-
+// helper method to generate unique id
 export async function generateUniqueID(): Promise<number> {
   let randID: number;
   do {
@@ -39,18 +36,15 @@ export async function generateUniqueID(): Promise<number> {
   console.log(await isIdOccupied(String(randID)));
   return randID;
 }
-
+// func to fetch nft metadata from the blockchain
 export async function getNFTDetails(tokenId: string) {
-  // console.log(tokenId);
-
   const nft_metadata = await cep47.getMappedTokenMeta(tokenId);
   console.log(`NFT ${tokenId} metadata: `, nft_metadata);
   return nft_metadata;
 }
-
+// func to fetch all nft with metadata as a list
 export async function getNFTsList() {
   const nftsCount: any = await cep47.totalSupply();
-  // console.log(parseInt(nftsCount));
 
   const nftsList: any = [];
   for (let tokenId of [...(Array(parseInt(nftsCount)).keys() as any)]) {
@@ -58,12 +52,6 @@ export async function getNFTsList() {
 
     const nft_metadata = await cep47.getMappedTokenMeta(tokenId.toString());
     const ownerAddress = await cep47.getOwnerOf(tokenId.toString());
-
-    // const isCreatorOwner = nft_metadata.creator.includes('Key')
-    //   ? ownerAddress.slice(13) ===
-    //     nft_metadata.creator.slice(10).replace(')', '')
-    //   : ownerAddress === nft_metadata.creator;
-
     const isCreatorOwner =
       nft_metadata.creator.includes('Key') ||
       nft_metadata.creator.includes('Account')
@@ -81,13 +69,12 @@ export async function getNFTsList() {
           ? nft_metadata.creator.slice(13).replace(')', '')
           : nft_metadata.creator.slice(10).replace(')', '')
         : nft_metadata.creator;
-    // nft_metadata['sdgs'] = ['19'];
     nftsList.push({ ...nft_metadata, isCreatorOwner, tokenId });
   }
 
   return nftsList;
 }
-
+// func to map the cached data and detect the nft creator address
 export async function mapCachedNFTs(list: any) {
   const pluckedCreators = list
     .map(({ creator }: { creator: string }): string => creator)
@@ -124,7 +111,7 @@ export async function mapCachedNFTs(list: any) {
 
   return nftsList;
 }
-
+// fetch cached nft from redis storage
 export async function getCachedNFTsList(oldNFTsState?: any) {
   const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
   const apiName = 'nfts';
@@ -151,7 +138,7 @@ export async function getCachedNFTsList(oldNFTsState?: any) {
 
   return mappedNFTs;
 }
-
+// func to update the redis data after add or edit nfts
 export async function updateCachedNFT(nft: any, nfts: any) {
   const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
   const apiName = 'updatenft';
@@ -166,7 +153,7 @@ export async function updateCachedNFT(nft: any, nfts: any) {
   // const mappedNFTs = await mapCachedNFTs(updatedNFTs?.data.nfts);
   return nfts;
 }
-
+// get specific creator by id and fetch all nft then loop in nfts to detect the creator nfts 
 export async function getCreatorNftList(address: string) {
   const creator = CLPublicKey.fromHex(address).toAccountHashStr();
 
@@ -188,7 +175,7 @@ export async function getCreatorNftList(address: string) {
 
   return creatorList || [];
 }
-
+// fetch cached creator nfts from redis storage
 export async function getCachedCreatorNftList(nfts: any, address: string) {
   const creator = CLPublicKey.fromHex(address).toAccountHashStr();
 
@@ -211,7 +198,7 @@ export async function getCachedCreatorNftList(nfts: any, address: string) {
 
   return creatorList || [];
 }
-
+// set/un set nft for sale api func
 export async function setIsTokenForSale(
   isForSale: Boolean,
   tokenId: string,
@@ -246,7 +233,7 @@ export async function setIsTokenForSale(
 
   return deployUpdatedNftResult;
 }
-
+// func to override on the nft's has receipt prop
 export async function setIsTokenHasReceipt(
   hasReceipt: Boolean,
   tokenId: string,
@@ -279,7 +266,7 @@ export async function setIsTokenHasReceipt(
 
   return deployUpdatedNftResult;
 }
-
+// helper func to map in the nfts list and parser nft details
 export async function getMappedNfts() {
   const nftsList = await getNFTsList();
   nftsList.forEach((nft: any) => nft.isForSale === 'true');
@@ -316,6 +303,7 @@ export async function getMappedNfts() {
   };
 }
 
+// get nft with mapping to parse nft owner, creator and campaign
 export function getMappedNftsByList(
   nftsList: any,
   beneficiariesList: any,

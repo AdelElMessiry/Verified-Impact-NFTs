@@ -1,18 +1,8 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
-import { CLPublicKey } from 'casper-js-sdk';
-import { Row, Col, Spinner } from 'react-bootstrap';
-import { toast as VIToast } from 'react-toastify';
-
-import { transferFees } from '../../utils/contract-utils';
-import { transfer, purchaseNFT } from '../../api/transfer';
-import { getDeployDetails } from '../../api/universal';
-import { useAuth } from '../../contexts/AuthContext';
-import { sendDiscordMessage } from '../../utils/discordEvents';
-import { SendTweetWithImage } from '../../utils/VINFTsTweets';
 import AddEditCampaignForm from './AddEditCampaignForm';
 
-//buying NFT Modal
+//this shared component using in manage campaign page
 const AddEditCampaignsModal = ({
   show,
   handleCloseParent,

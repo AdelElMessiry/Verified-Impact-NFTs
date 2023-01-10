@@ -13,6 +13,7 @@ export class NFTReference {
     this.value = value;
   }
 }
+// interface to explain the mint object props
 export interface IMintOptions {
   title: string;
   description: string;
@@ -28,7 +29,7 @@ export interface IMintOptions {
   beneficiary: string;
   beneficiaryPercentage: string;
 }
-// mint new  nft function
+
 /**
  * Represents nft func props .
  * @constructor
@@ -36,38 +37,23 @@ export interface IMintOptions {
  * @param {string} creatorName - The nft creator name.
  * @param {any} mintOptions - mintOption is an objet contains all nft details like the title, desc, imageUrl etc.
  */
-
+// mint new  nft function
 export async function mint(
   creatorAddress: string,
   creatorName: string,
   mintOptions: any
 ) {
   const publicKeyCLValue = CLPublicKey.fromHex(creatorAddress);
+  // fetch user nfts
   const oldBalance = await numberOfNFTsOfPubCLvalue(publicKeyCLValue);
   console.log('...... No. of NFTs in your account before mint: ', oldBalance);
 
-  // const metas = [new Map()];
-
-  // metas[0].set('title', mintOptions.title);
-  // metas[0].set('description', mintOptions.description);
-  // metas[0].set('image', mintOptions.image);
-  // metas[0].set('price', mintOptions.price);
-  // metas[0].set('isForSale', String(mintOptions.isForSale));
-  // metas[0].set('currency', mintOptions.currency);
-  // metas[0].set('campaign', mintOptions.campaign);
-  // metas[0].set('creator', mintOptions.creator);
-  // metas[0].set('creatorPercentage', mintOptions.creatorPercentage || '');
-  // metas[0].set('collectionName', mintOptions.collectionName);
-  // metas[0].set('beneficiary', mintOptions.beneficiary);
-  // metas[0].set('beneficiaryPercentage', mintOptions.beneficiaryPercentage);
-  // console.log(metas);
-
   console.log('Final nft info:', {
     publicKeyCLValue,
-    // metas,
     mintOptions,
     payments: PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
   });
+  //hasReceipt prop is a confirmation from the deployer if he could give the nft buyer a receipt
   mintOptions['hasReceipt'] = !!mintOptions.hasReceipt;
 
   const mintDeploy = await cep47.mint(

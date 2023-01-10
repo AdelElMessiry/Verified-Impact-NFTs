@@ -9,7 +9,7 @@ import { useNFTState } from '../../contexts/NFTContext';
 import soldIcon from '../../images/icon/sold.png';
 import { Spinner } from 'react-bootstrap';
 
-//NFT Card component
+//NFT Card component. UI component display all nft details 
 const NFTCardURL = () => {
   const search = useLocation().search;
   const { nfts, beneficiaries, creators, campaigns, collections } =

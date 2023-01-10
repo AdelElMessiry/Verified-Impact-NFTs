@@ -9,10 +9,7 @@ import { parseNFT } from '../utils/parsers';
 export async function numberOfNFTsOfPubCLvalue(
   publicKeyCLValue: CLPublicKey
 ): Promise<number> {
-  // console.log("Public key to CLPublicKey: ", publicKeyCLValue);
-  // console.log("Public key to hex", publicKeyCLValue.toHex());
-  // console.log("Public key to acc hash string", publicKeyCLValue.toAccountHashStr());
-  // console.log("Public key to acc hash", publicKeyCLValue.toAccountHash());
+
 
   let num;
   try {
