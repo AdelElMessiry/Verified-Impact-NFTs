@@ -171,30 +171,6 @@ const BeneficiariesMarket = () => {
                 </div>
               )}
               {beneficiaries ? (
-                //   <table className='table'>
-                //   <thead>
-                //     <tr>
-                //       <th scope='col'></th>
-                //       <th scope='col'>Name</th>
-                //       <th scope='col'>Address</th>
-                //     </tr>
-                //   </thead>
-                //   <tbody>
-                //     {beneficiaries.length > 0 ? (
-                //       beneficiaries?.map((beneficiary) => (
-                //         beneficiary.isApproved == "true" &&
-                //         <MarketPlaceSingleRow
-                //           item={beneficiary}
-                //           key={beneficiary.address}
-                //         />
-                //       ))
-                //     ) : (
-                //       <h4 className='text-muted text-center my-5'>
-                //         No Beneficiaries registered yet
-                //       </h4>
-                //     )}
-                //   </tbody>
-                // </table>
                 <>
                   <div className="site-filters left mx-5  required-field">
                     <form>

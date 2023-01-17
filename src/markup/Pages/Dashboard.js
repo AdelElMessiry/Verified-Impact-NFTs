@@ -2,14 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Col, Form, Row, Spinner } from 'react-bootstrap';
 import Lightbox from 'react-image-lightbox';
-import Masonry from 'react-masonry-component';
 import Carousel from 'react-elastic-carousel';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper } from 'simple-react-lightbox';
-import QRCode from 'react-qr-code';
-//import { CLPublicKey, CLValueBuilder, CLAccountHash } from 'casper-js-sdk';
+import QRCode from 'react-qr-code';;
 import { useNFTState } from '../../contexts/NFTContext';
-// import { profileClient } from '../../api/profileInfo';
 
 import VideoPopup from '../Element/VideoPopup';
 import { CaptionCampaign } from '../Element/CaptionCampaign';
@@ -85,12 +82,6 @@ const Dashboard = () => {
   };
 
   const getNftsList = React.useCallback(async () => {
-    // const list = await profileClient
-    //   .profilesList
-    //   // '0127271ea03f8cb24e0e3100d18e4d29fc860b35a2c9eb86ae4cca280a8fc40e1f'
-    //   ();
-    // console.log(list);
-
     const nftsList = nfts && nfts.filter((nft) => nft.isForSale === 'true');
 
     nftsList && setAllNfts(nftsList);
