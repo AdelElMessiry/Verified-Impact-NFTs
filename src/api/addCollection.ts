@@ -38,7 +38,7 @@ export async function addCollection(
   console.log('Deploy hash', collectionDeployHash);
   return collectionDeployHash;
 }
-// update specific collection details 
+// update specific collection details
 export async function updateCollection(
   collection_id: string,
   name: string,
@@ -58,4 +58,28 @@ export async function updateCollection(
   );
 
   return updateCollectionDeployHash;
+}
+
+export async function removeCollection(
+  collectionId: string,
+  deploySender: CLPublicKey
+) {
+  const collectionDeploy = await cep47.removeCollection(
+    collectionId,
+    PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
+    deploySender
+  );
+  console.log('Collection removal deploy:', collectionDeploy);
+
+  const signedCollectionDeploy = await signDeploy(
+    collectionDeploy,
+    deploySender
+  );
+  console.log('Signed Beneficiary removal deploy:', signedCollectionDeploy);
+
+  const collectionDeployHash = await signedCollectionDeploy.send(
+    CONNECTION.NODE_ADDRESS!
+  );
+  console.log('Deploy hash', collectionDeployHash);
+  return collectionDeployHash;
 }
