@@ -57,6 +57,17 @@ use creator_control::CreatorControl;
 
 pub type Creator = BTreeMap<String, String>;
 
+#[repr(u16)]
+pub enum CollectionError {
+    LinkedCollection = 1002,
+}
+
+impl From<CollectionError> for ApiError {
+    fn from(error: CollectionError) -> Self {
+        ApiError::User(error as u16)
+    }
+}
+
 #[derive(Default)]
 struct ViToken(OnChainContractStorage);
 
@@ -97,6 +108,25 @@ impl ViToken {
     fn is_collection(&self, index: U256) -> bool {
         // Collections::instance().is_collection(index)
         CollectionControl::is_collection(self, index)
+    }
+
+    fn remove_collection(&self, index: U256) {
+        let caller = ViToken::default().get_caller();
+        let nfts_count = ViToken::default().balance_of(caller).as_usize();
+        let mut int_list = vec![0; nfts_count];
+
+        for (i, _) in int_list.iter_mut().enumerate() {
+            let token_id = ViToken::default()
+                .get_token_by_index(caller, U256::from(i))
+                .unwrap_or_revert();
+            let token_meta = ViToken::default().token_meta(token_id).unwrap_or_revert();
+
+            if U256::from(U256::from_dec_str(&token_meta["collection"]).unwrap()) == index {
+                revert(CollectionError::LinkedCollection);
+            }
+        }
+
+        CollectionControl::remove_collection(self, index)
     }
 
     fn get_beneficiary(&self, index: U256) -> Option<Beneficiary> {
@@ -646,6 +676,13 @@ fn is_collection() {
 }
 
 #[no_mangle]
+fn remove_collection() {
+    let index = runtime::get_named_arg::<U256>("index");
+    let ret = ViToken::default().remove_collection(index);
+    runtime::ret(CLValue::from_t(ret).unwrap_or_revert());
+}
+
+#[no_mangle]
 fn balance_of() {
     let owner = runtime::get_named_arg::<Key>("owner");
     let ret = ViToken::default().balance_of(owner);
@@ -1051,6 +1088,13 @@ fn get_entry_points() -> EntryPoints {
         "is_collection",
         vec![Parameter::new("index", U256::cl_type())],
         CLType::Option(Box::new(CLType::Bool)),
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+    entry_points.add_entry_point(EntryPoint::new(
+        "remove_collection",
+        vec![Parameter::new("index", U256::cl_type())],
+        <()>::cl_type(),
         EntryPointAccess::Public,
         EntryPointType::Contract,
     ));
