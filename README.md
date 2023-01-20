@@ -17,7 +17,7 @@ Creating a new type of NFT contract that will allow the beneficiary to issue a v
 The second objective is to apply the contract for the benefit of Ukraine, with artists ready to add their work.
 
 
-The steps below are a quick start if you have already set up your [develoment environment](https://docs.casperlabs.io/dapp-dev-guide/writing-contracts/getting-started), the [casper node](https://github.com/CasperLabs/casper-node), and the [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl) testing tool. 
+The steps below are a quick start if you have already set up your [development environment](https://docs.casperlabs.io/dapp-dev-guide/writing-contracts/getting-started), the [casper node](https://github.com/CasperLabs/casper-node), and the [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl) testing tool. 
 
 
 ### Set up the Rust toolchain
