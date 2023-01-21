@@ -13,13 +13,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CLPublicKey } from 'casper-js-sdk';
 
 import { useAuth } from '../../contexts/AuthContext';
-import { useNFTState } from '../../contexts/NFTContext';
 import {
   getMappedNftsByList,
   getCachedCreatorNftList,
 } from '../../api/nftInfo';
 import { CaptionCampaign } from '../Element/CaptionCampaign';
-
+import DeleteCollectionModal from '../Element/DeletCollectionModal';
 import Layout from '../Layout';
 import NFTTwitterShare from '../Element/TwitterShare/NFTTwitterShare';
 import CampaignOrCollectionTwitterShare from '../Element/TwitterShare/CampaignOrCollectionTwitterShare';
@@ -41,6 +40,12 @@ import unitedNation from '../../images/icon/unitedNation.png';
 
 import CopyCode from '../Element/copyCode';
 import { SDGsData } from '../../data/SDGsGoals';
+
+import { 
+  useNFTState,
+  refreshCollections,
+  useNFTDispatch
+} from '../../contexts/NFTContext';
 // Masonry section
 const breakPoints = [
   { width: 1, itemsToShow: 1 },
@@ -88,7 +93,8 @@ const TagLi = ({ name, handleSetTag, tagActive, type }) => {
 };
 
 const MyCollections = () => {
-  const { isLoggedIn, entityInfo } = useAuth();
+  const { isLoggedIn, entityInfo } = useAuth(); 
+   const { ...stateList } = useNFTState();
   const {
     nfts,
     beneficiaries,
@@ -124,20 +130,13 @@ const MyCollections = () => {
   const [isRefreshNFTList, setIsRefreshNFTList] = React.useState(false);
   const [changedNFT, setChangedNFT] = React.useState();
   const [isCreatorExist, setIsCreatorExist] = React.useState();
-
+  const [showEmptyCollectionModal , setShowEmptyCollectionModal] =  React.useState(false)
+  const [emptyCollection , setEmptyCollection] = React.useState([])
+  const nftDispatch = useNFTDispatch();
   //function returns button of buying NFT
   const IconImage = ({ nft }) => {
     return (
       <>
-        {/* <VINftsTooltip title={'Transfer NFT'}>
-          <i
-            className='ti-exchange-vertical transfer-icon buy-icon mfp-link fa-2x mfp-link portfolio-fullscreen'
-            onClick={() => {
-              setSelectedNFT(nft);
-              setShowBuyModal(true);
-            }}
-          ></i>
-        </VINftsTooltip> */}
         {nft.isOwner && (
           <VINftsTooltip
             title={
@@ -416,6 +415,7 @@ const MyCollections = () => {
         filteredNFTs &&
           filteredNFTs.forEach((nft) => captions.push(CaptionItem(nft)));
         filteredNFTs && captions.length && setSliderCaptions(captions);
+        filterEmptyCollections(collections , filteredNFTs)
       } else {
         setIsCreatorExist(false);
       }
@@ -431,7 +431,29 @@ const MyCollections = () => {
     nfts,
     profileCreators,
   ]);
-
+// detect user empty collection
+  const filterEmptyCollections = (collections , filteredNft)=>{
+    let newArr = [];
+    for (let i = 0; i < collections.length; i++) {
+      if (CLPublicKey.fromHex(entityInfo.publicKey).toAccountHashStr().slice(13) === collections[i].creator){
+        let found = false;
+        for (let j = 0; j < filteredNft.length; j++) {
+            if (collections[i].id === filteredNft[j].collection ) {              
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+          newArr.push(collections[i]);
+        }
+      }        
+    }
+    setEmptyCollection(newArr)
+  }
+  // refresh user creator collection after remove empty collection
+  const refreshCollectionAfterRemove = async()=>{
+    await refreshCollections(nftDispatch,stateList)
+  }
   React.useEffect(() => {
     ReactGA.pageview(window.location.pathname + 'my-collections');
     entityInfo.publicKey && getFilteredNFTs();
@@ -622,11 +644,18 @@ const MyCollections = () => {
                         alt='mintIcon'
                       />
                     </Link>
-                  </VINftsTooltip></>
+                  </VINftsTooltip>
+                  <div className='breadcrumb-row pt-2 '>
+                  <button onClick={()=>setShowEmptyCollectionModal(!showEmptyCollectionModal)}
+                  className='site-button-secondry radius-sm'>
+                  Show my Empty Collection
+                  </button>
+              </div>
+                  </>
                 }
                 </span>
               </h1>
-
+              
               <div className='breadcrumb-row'>
                 <ul className='list-inline'>
                   <li>
@@ -916,6 +945,20 @@ const MyCollections = () => {
           handleTransactionSuccess={(nft) => {
             setChangedNFT(nft);
             setIsRefreshNFTList(!isRefreshNFTList);
+          }}
+        />
+      )}
+            {showEmptyCollectionModal && (
+        <DeleteCollectionModal
+          show={showEmptyCollectionModal}
+          handleCloseParent={() => {
+            setShowEmptyCollectionModal(false);
+          }}
+          data={emptyCollection}
+          deleteCollection={() => {
+          console.log("update collections")
+          refreshCollectionAfterRemove()
+           // setShowEmptyCollectionModal(!showEmptyCollectionModal);
           }}
         />
       )}
