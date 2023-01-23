@@ -810,7 +810,7 @@ class CEP47Client {
     deploySender: CLPublicKey
   ) {
     const runtimeArgs = RuntimeArgs.fromMap({
-      collectionId: CLValueBuilder.u256(collectionId),
+      index: CLValueBuilder.u256(collectionId),
     });
 
     return this.contractClient.callEntrypoint(

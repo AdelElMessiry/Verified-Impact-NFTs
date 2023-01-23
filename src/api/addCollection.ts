@@ -66,7 +66,7 @@ export async function removeCollection(
 ) {
   const collectionDeploy = await cep47.removeCollection(
     collectionId,
-    PAYMENT_AMOUNTS.MINT_ONE_PAYMENT_AMOUNT,
+    PAYMENT_AMOUNTS.REMOVE_COLLECTION_PAYMENT_AMOUNT,
     deploySender
   );
   console.log('Collection removal deploy:', collectionDeploy);
