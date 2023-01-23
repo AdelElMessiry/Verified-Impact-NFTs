@@ -5,7 +5,7 @@ import Lightbox from 'react-image-lightbox';
 import Carousel from 'react-elastic-carousel';
 import SimpleReactLightbox from 'simple-react-lightbox';
 import { SRLWrapper } from 'simple-react-lightbox';
-import QRCode from 'react-qr-code';;
+import QRCode from 'react-qr-code';
 import { useNFTState } from '../../contexts/NFTContext';
 
 import VideoPopup from '../Element/VideoPopup';
