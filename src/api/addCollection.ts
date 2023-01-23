@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import { cep47 } from '../lib/cep47';
 import { CLPublicKey } from 'casper-js-sdk';
 
@@ -82,4 +84,19 @@ export async function removeCollection(
   );
   console.log('Deploy hash', collectionDeployHash);
   return collectionDeployHash;
+}
+
+export async function removeCollectionFromCache(collectionId: string) {
+  const { REACT_APP_NFT_API_BASE_URL, REACT_APP_NFT_API_ENV } = process.env;
+  const apiName = 'removeCollection';
+  const response: any = await axios.delete(
+    `${REACT_APP_NFT_API_BASE_URL}/${REACT_APP_NFT_API_ENV}/${apiName}`,
+    {
+      params: {
+        collectionId,
+      },
+    }
+  );
+
+  return response?.data.list;
 }
