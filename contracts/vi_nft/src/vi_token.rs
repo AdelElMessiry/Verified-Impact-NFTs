@@ -128,7 +128,11 @@ impl ViToken {
             }
         }
 
-        CollectionControl::remove_collection(self, index)
+        CollectionControl::remove_collection(self, index);
+        let new_collection_count = collection_control::total_collections()
+            .checked_sub(U256::one())
+            .unwrap();
+        collection_control::set_total_collections(new_collection_count);
     }
 
     fn is_existent_beneficiary(&self, address: Key) -> bool {
