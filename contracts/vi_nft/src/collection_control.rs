@@ -21,6 +21,10 @@ pub trait CollectionControl<Storage: ContractStorage>: ContractContext<Storage> 
         Collections::instance().is_collection(&index)
     }
 
+    fn remove_collection(&self, index: U256) {
+        Collections::instance().remove_collection(index)
+    }
+
     fn get_collection(&self, index: U256) -> Option<Collection> {
         Collections::instance().get_collection(index)
     }
@@ -55,6 +59,11 @@ impl Collections {
 
     pub fn get_collection(&self, index: U256) -> Option<Collection> {
         self.collections_list_dict.get(&index.to_string())
+    }
+
+    pub fn remove_collection(&self, index: U256) {
+        self.collections_list_dict
+            .remove::<U256>(&index.to_string())
     }
 }
 
