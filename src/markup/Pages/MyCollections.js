@@ -46,6 +46,7 @@ import {
   refreshCollections,
   useNFTDispatch
 } from '../../contexts/NFTContext';
+import { removeCollections } from '../../contexts/NFTContext';
 // Masonry section
 const breakPoints = [
   { width: 1, itemsToShow: 1 },
@@ -415,7 +416,7 @@ const MyCollections = () => {
         filteredNFTs &&
           filteredNFTs.forEach((nft) => captions.push(CaptionItem(nft)));
         filteredNFTs && captions.length && setSliderCaptions(captions);
-        filterEmptyCollections(collections , filteredNFTs)
+        collections && collections.length > 0 && filterEmptyCollections(collections , filteredNFTs)
       } else {
         setIsCreatorExist(false);
       }
@@ -451,8 +452,8 @@ const MyCollections = () => {
     setEmptyCollection(newArr)
   }
   // refresh user creator collection after remove empty collection
-  const refreshCollectionAfterRemove = async()=>{
-    await refreshCollections(nftDispatch,stateList)
+  const refreshCollectionAfterRemove = async(collection)=>{
+    await removeCollections(nftDispatch, stateList , collection.id)
   }
   React.useEffect(() => {
     ReactGA.pageview(window.location.pathname + 'my-collections');
@@ -955,10 +956,8 @@ const MyCollections = () => {
             setShowEmptyCollectionModal(false);
           }}
           data={emptyCollection}
-          deleteCollection={() => {
-          console.log("update collections")
-          refreshCollectionAfterRemove()
-           // setShowEmptyCollectionModal(!showEmptyCollectionModal);
+          deleteCollection={(collection) => {
+            refreshCollectionAfterRemove(collection)
           }}
         />
       )}
