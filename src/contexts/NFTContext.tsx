@@ -345,17 +345,20 @@ export const updateProfiles = async (
   const profilesAddList = updatedProfiles.flatMap(Object.keys);
   const cachedBeneficiaries: any = [];
   const cachedCreators: any = [];
+  updatedProfiles.forEach((item: any, i: number) => {
+    if (item[profilesAddList[i]]?.beneficiary) {
+        Object.keys(item[profilesAddList[i]].beneficiary)?.length &&
+        cachedBeneficiaries.push(item[profilesAddList[i]].beneficiary)
+    }
+});
 
   updatedProfiles.forEach(
-    (item: any, i: number) =>
-      Object.keys(item[profilesAddList[i]]?.beneficiary)?.length &&
-      cachedBeneficiaries.push(item[profilesAddList[i]]?.beneficiary)
-  );
-
-  updatedProfiles.forEach(
-    (item: any, i: number) =>
-      Object.keys(item[profilesAddList[i]]?.creator)?.length &&
+    (item: any, i: number) =>{
+      if (item[profilesAddList[i]]?.creator) {
+        Object.keys(item[profilesAddList[i]]?.creator)?.length &&
       cachedCreators.push(item[profilesAddList[i]]?.creator)
+      }
+    }      
   );
 
   dispatch({

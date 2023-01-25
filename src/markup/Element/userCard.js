@@ -21,6 +21,7 @@ import Platinum from '../../images/icon/Platinum.png';
 import Silver from '../../images/icon/Silver.png';
 import CopyText from './copyText';
 export default function UserCard({ item, type = 'beneficiary' }) {
+
     const history = useHistory();
     const noData = "No Data Provided"
     const sendMail = (email) => {
@@ -57,11 +58,11 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                 <li className='text-success mr-1 align-items-center'>
                     <VINftsTooltip
                         title={`${item.facebook == "" ? noData
-                            : item.facebook
+                            : "https://facebook.com/" + item.facebook
                             } `}
                     >
                         <label>
-                            <a href={item.facebook} target="_blank" className={item.facebook == "" ? 'disable-social-media-anchor' : ""}>
+                            <a href={`https://facebook.com/${item.facebook}`} target="_blank" className={item.facebook == "" ? 'disable-social-media-anchor' : ""}>
                                 <FontAwesomeIcon icon={faFacebook} size="2x" className={item.facebook == "" ? '': "facebook-icon"}/>
                             </a>
                         </label>
@@ -71,11 +72,11 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                 <li className='text-success mr-1 align-items-center'>
                     <VINftsTooltip
                         title={`${item.twitter == "" ? noData
-                            : item.twitter
+                            : "https://twitter.com/" + item.twitter
                             } `}
                     >
                         <label>
-                            <a href={item.twitter} target="_blank" className={item.twitter == "" ? 'disable-social-media-anchor' : ""}>
+                            <a href={`https://twitter.com/${item.twitter}`} target="_blank" className={item.twitter == "" ? 'disable-social-media-anchor' : ""}>
                                 <FontAwesomeIcon icon={faTwitter} size="2x" />
                             </a>
                         </label>
@@ -84,11 +85,11 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                 <li className='text-success mr-1 align-items-center'>
                     <VINftsTooltip
                         title={`${item.instagram == "" ? noData
-                            : item.instagram
+                            : "https://www.instagram.com/" + item.instagram
                             } `}
                     >
                         <label>
-                            <a href={item.instagram} target="_blank" className={item.instagram == "" ? 'disable-social-media-anchor' : ""}>
+                            <a href={`https://www.instagram.com/${item.instagram}`} target="_blank" className={item.instagram == "" ? 'disable-social-media-anchor' : ""}>
                                 <FontAwesomeIcon icon={faInstagram} size="2x" className={item.instagram == "" ? '': "instagram-icon"}/>
                             </a>
                         </label>
@@ -97,11 +98,11 @@ export default function UserCard({ item, type = 'beneficiary' }) {
                 <li className='text-success mr-1 align-items-center'>
                     <VINftsTooltip
                         title={`${item.telegram == "" ? noData
-                            : item.telegram
+                            : "https://t.me/" + item.telegram
                             } `}
                     >
                         <label>
-                            <a href={item.telegram} target="_blank" className={item.telegram == "" ? 'disable-social-media-anchor' : ""}>
+                            <a href={`https://t.me/${item.telegram}`} target="_blank" className={item.telegram == "" ? 'disable-social-media-anchor' : ""}>
                                 <FontAwesomeIcon icon={faTelegram} size="2x" className={item.telegram == "" ? '': "telegram-icon"}/>
                             </a>
                         </label>
