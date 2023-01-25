@@ -10,7 +10,6 @@ import { ProfileFormsEnum } from '../../Enums/index';
 import { useAuth } from '../../contexts/AuthContext';
 import { getDeployDetails } from '../../api/universal';
 import { uploadImg } from '../../api/imageCDN';
-import { SocialLinks } from 'social-links';
 import SDGsMultiSelect from './SDGsMultiSelect';
 import { SDGsData } from '../../data/SDGsGoals';
 import {
@@ -72,13 +71,7 @@ const ProfileForm = ({
   const [showNFTURLErrorMsg, setShowNFTURLErrorMsg] = React.useState(false);
   const [showExternalURLErrorMsg, setShowExternalURLErrorMsg] =
     React.useState(false);
-  const [socialErrors, setSocialErrors] = useState({
-    twitter: true,
-    instagram: true,
-    medium: true,
-    facebook: true,
-    telegram: true,
-  });
+
   const [SDGsGoals, setSDGsGoals] = React.useState([SDGsData[18].value]);
   const [mandatorySDGs, setMandatorySDGs] = React.useState([SDGsData[18].value]);
   const [showBioModal, setShowBioModal] = React.useState(false);
@@ -172,22 +165,7 @@ const ProfileForm = ({
         : setShowExternalURLErrorMsg(true);
     }
   };
-  const socialLinks = new SocialLinks();
-  // check social links validation
-  const checkSocialLinksValidation = (value, socialType) => {
-    const urlSocialInputs = socialErrors;
-    if (value == "" ) {
-      urlSocialInputs[socialType] = true;
-    } else if (!value.includes("https://")) {
-      urlSocialInputs[socialType] = value.includes("https://");
-    } else {
-      urlSocialInputs[socialType] = socialLinks.isValid(socialType, value);
-    }
-    setSocialErrors({
-      ...socialErrors,
-      urlSocialInputs,
-    });
-  };
+
   //handling minting new NFT
   async function handleSave() {
     if (!uploadedProfileImageURL) {
@@ -204,14 +182,7 @@ const ProfileForm = ({
     ) {
       return;
     }
-    if (
-      !socialErrors.facebook ||
-      !socialErrors.twitter ||
-      !socialErrors.instagram ||
-      !socialErrors.medium ||
-      !socialErrors.telegram
-    )
-      return;
+    
     setIsSaveButtonClicked(true);
     let cloudProfileURL = uploadedProfileImageURL;
     let cloudNFTURL = uploadedNFTImageURL;
@@ -622,17 +593,12 @@ const ProfileForm = ({
                 name='twitter'
                 className='form-control'
                 value={state.inputs.twitter}
-                placeholder="https://twitter.com/userName"
+                placeholder="Twitter userName"
                 onChange={(e) => {
                   handleChange(e);
-                  checkSocialLinksValidation(e.target.value, 'twitter');
+                 // checkSocialLinksValidation(e.target.value, 'twitter');
                 }}
               />
-              {!socialErrors.twitter && (
-                <span className='text-danger'>
-                  Please enter Valid Twitter URL
-                </span>
-              )}
             </Col>
             <Col>
               <span>Instagram</span>
@@ -641,17 +607,12 @@ const ProfileForm = ({
                 name='instagram'
                 className='form-control'
                 value={state.inputs.instagram}
-                placeholder="https://instagram.com/userName"
+                placeholder="Instagram userName"
                 onChange={(e) => {
                   handleChange(e);
-                  checkSocialLinksValidation(e.target.value, 'instagram');
+                 // checkSocialLinksValidation(e.target.value, 'instagram');
                 }}
               />
-              {!socialErrors.instagram && (
-                <span className='text-danger'>
-                  Please enter Valid Instagram URL
-                </span>
-              )}
             </Col>
           </Row>
           <Row className='form-group'>
@@ -662,17 +623,12 @@ const ProfileForm = ({
                 name='facebook'
                 className='form-control'
                 value={state.inputs.facebook}
-                placeholder='https://facebook.com/userName'
+                placeholder='FaceBook userName'
                 onChange={(e) => {
                   handleChange(e);
-                  checkSocialLinksValidation(e.target.value, 'facebook');
+                 // checkSocialLinksValidation(e.target.value, 'facebook');
                 }}
               />
-              {!socialErrors.facebook && (
-                <span className='text-danger'>
-                  Please enter Valid Facebook URL{' '}
-                </span>
-              )}
             </Col>
             <Col>
               <span>Medium</span>
@@ -681,17 +637,12 @@ const ProfileForm = ({
                 name='medium'
                 className='form-control'
                 value={state.inputs.medium}
-                placeholder="https://medium.com/@userName"
+                placeholder="Medium userName"
                 onChange={(e) => {
                   handleChange(e);
-                  checkSocialLinksValidation(e.target.value, 'medium');
+                 // checkSocialLinksValidation(e.target.value, 'medium');
                 }}
               />
-              {!socialErrors.medium && (
-                <span className='text-danger'>
-                  Please enter Valid Medium URL
-                </span>
-              )}
             </Col>
           </Row>
           <Row className='form-group'>
@@ -712,17 +663,11 @@ const ProfileForm = ({
                 name='telegram'
                 className='form-control'
                 value={state.inputs.telegram}
-                placeholder='https://t.me/userName'
+                placeholder='Telegram userName'
                 onChange={(e) => {
                   handleChange(e);
-                  checkSocialLinksValidation(e.target.value, 'telegram');
                 }}
               />
-              {!socialErrors.telegram && (
-                <span className='text-danger'>
-                  Please enter Valid Telegram URL
-                </span>
-              )}
             </Col>
           </Row>
           {(formName === ProfileFormsEnum.BeneficiaryProfile || isSignUpBeneficiary) && (
@@ -802,9 +747,6 @@ const ProfileForm = ({
                       handleChange(e);
                     }}
                   />
-                  {!socialErrors.telegram && (
-                    <span className='text-danger'>Please set the EIN</span>
-                  )}
                 </Col>
               </Row>
               )}

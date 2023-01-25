@@ -105,28 +105,28 @@ const ViewProfile = ({ show, handleCloseParent, data, formName }) => {
                       <ul className="list-inline">
                         {profileDetails.facebook && (
                           <li>
-                            <a href={profileDetails.facebook} target="_blank">
+                            <a href={`https://facebook.com/${profileDetails.facebook}`} target="_blank">
                               <FontAwesomeIcon icon={faFacebook} size="2x" />
                             </a>
                           </li>
                         )}
                         {profileDetails.telegram && (
                           <li>
-                            <a href={profileDetails.telegram} target="_blank">
+                            <a href={`https://t.me/${profileDetails.telegram}`} target="_blank">
                               <FontAwesomeIcon icon={faTelegram} size="2x" />
                             </a>
                           </li>
                         )}
                         {profileDetails.twitter && (
                           <li>
-                            <a href={profileDetails.twitter} target="_blank">
+                            <a href={`https://twitter.com/${profileDetails.twitter}`} target="_blank">
                               <FontAwesomeIcon icon={faTwitter} size="2x" />
                             </a>
                           </li>
                         )}
                         {profileDetails.meduim && (
                           <li>
-                            <a href={profileDetails.meduim} target="_blank">
+                            <a href={`https://medium.com/${profileDetails.medium}`} target="_blank">
                               <FontAwesomeIcon icon={faMedium} size="2x" />
                             </a>
                           </li>
